@@ -1,0 +1,3 @@
+*.svg binary
+*.png binary
+*.pdf diff=pdf

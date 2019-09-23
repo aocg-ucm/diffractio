@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+sympy
+nbsphinx
+hickle
+opencv-python
+numexpr
+mayavi
