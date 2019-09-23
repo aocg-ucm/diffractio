@@ -55,13 +55,12 @@ def simple_sphere_with_with_gradient_index():
         p=pn)
     print("n={}".format(ref_index))
 
-    t0.sphere(
-        r0=(0, 100), radius=(75, 75), refraction_index=1.01, angle=(0, (0, 0)))
+    t0.sphere(r0=(0, 100), radius=(75, 75), refraction_index=1.01, angle=0)
     t0.sphere(
         r0=center,
         radius=(radius, radius),
         refraction_index=ref_index,
-        angle=(0, (0, 0)))
+        angle=0)
 
     t0.draw_refraction_index(draw_borders=False, scale='equal')
     t0.BPM(verbose=False)

@@ -23,12 +23,12 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 from diffractio import degrees, np, um
-from diffractio.scalar_fields_XYZ import scalar_fields_XYZ
+from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
 
 # from diffractio.utils_volumenSlicerLM import slicerLM
 
 
-class Scalar_mask_XYZ(scalar_fields_XYZ):
+class Scalar_mask_XYZ(Scalar_field_XYZ):
     def __init__(self, x, y, z, wavelength, n_background=1., info=''):
         # print("init de Scalar_mask_XYZ")
         super(self.__class__, self).__init__(x, y, z, wavelength, n_background,

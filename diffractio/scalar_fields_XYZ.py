@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates scalar_fields_XYZ class and several functions for multiprocessing.
+This module generates Scalar_field_XYZ class and several functions for multiprocessing.
 It is required also for generating masks and fields.
 The main atributes are:
     * self.u - field XYZ
@@ -21,7 +21,7 @@ The magnitude is related to microns: `micron = 1.`
 *Definition of a scalar field*
     * load and save data
     * to_scalar_fields_XY
-    * xz_2_xyz
+    * xy_2_xyz
     * cut_function
     * __rotate__
     * __rotate_axis__
@@ -34,7 +34,7 @@ The magnitude is related to microns: `micron = 1.`
 *Drawing functions*
     * draw_intensityXYZ
     * draw_intensityXY
-    * draw_intensityYZ
+    * draw_intensityXZ
     * drawVolumen3D
     * draw_refraction_index3D
     * video
@@ -52,7 +52,7 @@ from numpy.fft.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import copyreg, degrees, mm, np, num_max_processors, plt
-from diffractio.scalar_fields_XY import scalar_fields_XY
+from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
                                      save_data_common)
@@ -67,11 +67,11 @@ from diffractio.utils_slicer import slicerLM
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 
-class scalar_fields_XYZ(object):
+class Scalar_field_XYZ(object):
     """Class for 3D scalar fields.
 
     Parameters:
-        u0 (scalar_fields_XY): Initial scalar field. wavelength, and x, y arrays are obtained from this field.
+        u0 (Scalar_field_XY): Initial scalar field. wavelength, and x, y arrays are obtained from this field.
         z (numpy.array): linear array with equidistant positions.
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
@@ -85,7 +85,7 @@ class scalar_fields_XYZ(object):
             The number of data is preferibly 2**n.
         self.u (numpy.array): equal size than X. complex field
         self.wavelength (float): wavelength of the incident field.
-        self.u0 (scalar_fields_XY): Initial XY field
+        self.u0 (Scalar_field_XY): Initial XY field
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
 
@@ -110,7 +110,7 @@ class scalar_fields_XYZ(object):
 
         if x is not None and z is not None:
             self.X, self.Y, self.Z = ndgrid(x, y, z)
-            self.u0 = scalar_fields_XY(x, y, wavelength)
+            self.u0 = Scalar_field_XY(x, y, wavelength)
             self.u = np.zeros_like(self.X, dtype=complex)
             self.n = n_background * np.ones_like(self.X, dtype=complex)
         else:
@@ -122,17 +122,17 @@ class scalar_fields_XYZ(object):
             self.n = None
         self.info = info
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
-        self.type = 'scalar_fields_XYZ'
+        self.type = 'Scalar_field_XYZ'
         self.date = get_date()
 
-    def xz_2_xyz(self, u0_XY, z):
+    def xy_2_xyz(self, u0_XY, z):
         """Similar to Init. send a Scalarfield_XY and passes to XYZ.
 
         Parameters:
-            scalar_fields_XY (scalar_fields_XY): init field
+            u0_XY (Scalar_field_XY): init field
             z (numpy.array): array with z positions
         """
-        u0 = u0_XY
+        u0 = u0_XY[0]
         self.x = u0.x
         self.y = u0.y
         self.z = z
@@ -147,14 +147,10 @@ class scalar_fields_XYZ(object):
         self.n = np.ones(
             np.shape(self.X), dtype=float)  # el índice de refracción
 
-        print(u0_XY[0].u)
-
         for i in range(len(self.z)):
             # print self.u[:,:,i].shape
-            # print scalar_fields_XY[i].u.shape
+            # print Scalar_field_XY[i].u.shape
             self.u[:, :, i] = u0_XY[i].u
-
-        print(self.z)
 
     def __str__(self):
         """Represents main data."""
@@ -183,19 +179,19 @@ class scalar_fields_XYZ(object):
         return ""
 
     def __add__(self, other, kind='standard'):
-        """Adds two scalar_fields_XYZ. For example two light sources or two masks.
+        """Adds two Scalar_field_XYZ. For example two light sources or two masks.
 
         Parameters:
-            other (scalar_fields_XYZ): 2nd field to add
+            other (Scalar_field_XYZ): 2nd field to add
             kind (str): instruction how to add the fields:
                 - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
                 - 'standard': add fields u3=u1+u2 and does nothing.
 
         Returns:
-            scalar_fields_XYZ: `u3 = u1 + u2`
+            Scalar_field_XYZ: `u3 = u1 + u2`
         """
 
-        u3 = scalar_fields_XYZ(self.x, self.y, self.z, self.wavelength,
+        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
                               self.n_background)
         u3.n = self.n
 
@@ -214,10 +210,10 @@ class scalar_fields_XYZ(object):
         return u3
 
     def __sub__(self, other):
-        """Substract two scalar_fields_XYZ For example two light sources or two masks.
+        """Substract two Scalar_field_XYZ For example two light sources or two masks.
 
         Parameters:
-            other (scalar_fields_XYZ): field to substract
+            other (Scalar_field_XYZ): field to substract
 
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
@@ -226,7 +222,7 @@ class scalar_fields_XYZ(object):
             It can be improved for maks (not having less than 1)
         """
 
-        u3 = scalar_fields_XYZ(self.x, self.y, self.z, self.wavelength,
+        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
                               self.n_background)
         u3.n = self.n
         u3.u = self.u - other.u
@@ -356,7 +352,7 @@ class scalar_fields_XYZ(object):
               if '' - takes the current limit y[0] and z[-1]
             num_points (int): it resamples x, y and u
                 [],'',0,None -> it leave the points as it is
-            new_field (bool): it returns a new scalar_fields_XY
+            new_field (bool): it returns a new Scalar_field_XY
             interp_kind: numbers between 1 and 5
         """
         if x_limits == '':
@@ -446,7 +442,7 @@ class scalar_fields_XYZ(object):
             self.Y = Y_new
             self.Z = Z_new
         elif new_field is True:
-            field = scalar_fields_XYZ(
+            field = Scalar_field_XYZ(
                 x=x_new, y=y_new, z=z_new, wavelength=self.wavelength)
             field.u = u_new
             field.n = n_new
@@ -468,9 +464,9 @@ class scalar_fields_XYZ(object):
             self.u[:, :, iz] = self.u[:, :, iz] + u0.u
 
     def final_field(self):
-        """Returns the final field as a scalar_fields_XYZ."""
+        """Returns the final field as a Scalar_field_XYZ."""
 
-        u_final = scalar_fields_XY(
+        u_final = Scalar_field_XY(
             x=self.x,
             y=self.y,
             wavelength=self.wavelength,
@@ -507,8 +503,6 @@ class scalar_fields_XYZ(object):
 
         Returns:
            time in the processing
-
-
         """
 
         time1 = time.time()
@@ -543,7 +537,7 @@ class scalar_fields_XYZ(object):
             amplification (int,int): number of fields
 
         Returns:
-           scalar_fields_XY:
+           Scalar_field_XY:
         """
 
         x0 = self.x[0]
@@ -558,9 +552,9 @@ class scalar_fields_XYZ(object):
         Gy = np.linspace(y0 * amplification, y1 * amplification,
                          ny * amplification)
 
-        field_output = scalar_fields_XY(Gx, Gy, self.wavelength)
+        field_output = Scalar_field_XY(Gx, Gy, self.wavelength)
 
-        fieldij = scalar_fields_XYZ(self.x, self.y, self.wavelength)
+        fieldij = Scalar_field_XYZ(self.x, self.y, self.wavelength)
         for ix in range(0, amplification):
             ixini = ix * nx
             ixfin = (ix + 1) * nx - 1
@@ -641,11 +635,11 @@ class scalar_fields_XYZ(object):
             self.u = field
 
     def to_scalar_fields_XY(self,
-                           iz0=None,
-                           z0=None,
-                           is_class=True,
-                           matrix=False):
-        """pass results to scalar_fields_XY. Only one of the first two variables
+                            iz0=None,
+                            z0=None,
+                            is_class=True,
+                            matrix=False):
+        """pass results to Scalar_field_XY. Only one of the first two variables
          (iz0,z0) should be used
 
         Parameters:
@@ -658,7 +652,7 @@ class scalar_fields_XYZ(object):
             Simplify and change variable name clase
         """
         if is_class is True:
-            field_output = scalar_fields_XY(
+            field_output = Scalar_field_XY(
                 x=self.x, y=self.y, wavelength=self.wavelength)
             if iz0 is None:
                 iz, tmp1, tmp2 = nearest(self.z, z0)
@@ -778,6 +772,7 @@ class scalar_fields_XYZ(object):
     #         filename: ''         - shown in screen
     #                   'name.avi' - performs a video
     #     """
+
     #     # TODO: exportada de camposXY y hay que pasar aqui, es facil,
     #             pero no esta hecho
     #     # LUIS MIGUEL
@@ -832,7 +827,7 @@ class scalar_fields_XYZ(object):
             verbose (bool): prints info
         """
 
-        u_zi = scalar_fields_XY(self.x, self.y, self.wavelength)
+        u_zi = Scalar_field_XY(self.x, self.y, self.wavelength)
         beam_width_x = np.zeros_like(self.z)
         beam_width_y = np.zeros_like(self.z)
         principal_axis_z = np.zeros_like(self.z)
@@ -1073,7 +1068,7 @@ class scalar_fields_XYZ(object):
             draw_borders (bool): check
 
         Todo:
-            Simplify, since we get to_scalar_fields_XY, draw with scalar_fields_XY.draw
+            Simplify, since we get to_scalar_fields_XY, draw with Scalar_field_XY.draw
             include kind and other parameters of draw
         """
         plt.figure()

@@ -43,13 +43,13 @@ from PIL import Image
 from scipy.signal import fftconvolve
 
 from diffractio import degrees, np, plt, sp, um
-from diffractio.scalar_sources_XY import scalar_fields_XY, Scalar_source_XY
+from diffractio.scalar_sources_XY import Scalar_field_XY, Scalar_source_XY
 from diffractio.utils_drawing import get_image
 from diffractio.utils_math import fft_convolution2d, nearest, nearest2
 from diffractio.utils_optics import roughness_2D
 
 
-class Scalar_mask_XY(scalar_fields_XY):
+class Scalar_mask_XY(Scalar_field_XY):
     """Class for working with XY scalar masks.
 
     Parameters:

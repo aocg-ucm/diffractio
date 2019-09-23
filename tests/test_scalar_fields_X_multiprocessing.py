@@ -13,7 +13,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from diffractio import degrees, eps, max_num_processors, mm, no_date, plt, um
+from diffractio import degrees, eps, num_max_processors, mm, no_date, plt, um
 from diffractio.scalar_fields_X import (Scalar_field_X,
                                         extended_polychromatic_source,
                                         extended_source_multiprocessing,
@@ -99,7 +99,7 @@ class Test_Scalar_fields_X(object):
     #     func_name = sys._getframe().f_code.co_name
     #     filename = '{}{}'.format(newpath, func_name)
     #
-    #     num_cores = max_num_processors  # el paralelizado no funciona
+    #     num_cores = num_max_processors  # el paralelizado no funciona
     #     x = np.linspace(-250 * um, 250 * um, 1024 * 8)
     #     wavelength = 0.6328 * um
     #
@@ -205,7 +205,7 @@ class Test_Scalar_fields_X(object):
             __function_polychromatic__,
             wavelengths,
             spectrum_gauss,
-            num_processors=max_num_processors,
+            num_processors=num_max_processors,
             verbose=True)
         intensity0, u_s0, time_proc0 = polychromatic_multiprocessing(
             __function_polychromatic__,
@@ -237,7 +237,7 @@ class Test_Scalar_fields_X(object):
         intensity, u_s, time_proc = extended_source_multiprocessing(
             __experiment_extended_source__,
             x0s,
-            num_processors=max_num_processors,
+            num_processors=num_max_processors,
             verbose=True)
         intensity0, u_s0, time_proc0 = extended_source_multiprocessing(
             __experiment_extended_source__,
@@ -282,7 +282,7 @@ class Test_Scalar_fields_X(object):
         t2.ronchi_grating(period, x0=0 * um, fill_factor=0.5)
 
         deltas_x = np.linspace(-60 * um, 60 * um, 51)  # 512
-        num_processors = max_num_processors
+        num_processors = num_max_processors
 
         dict_Parameters = creation_dictionary(
             deltas_x=deltas_x, period=period, t1=t1, t2=t2)
@@ -408,7 +408,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
         wavelengths = np.linspace(0.3 * um, 0.8 * um, 101)
         spectrum_gauss = gauss_spectrum(
             wavelengths=wavelengths, w_central=0.6, Dw=0.1, normalize=True)
-        num_processors = max_num_processors
+        num_processors = num_max_processors
 
         dict_Parameters0 = dict(
             x0=x0,
@@ -453,7 +453,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
         filename = '{}{}'.format(newpath, func_name)
 
         slit_sizes = np.linspace(5 * um, 50 * um, 10)
-        num_processors = max_num_processors
+        num_processors = num_max_processors
 
         u_s, time_proc = execute_multiprocessing(
             __experiment_double_slit_array__,
@@ -503,7 +503,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
             x0s,
             wavelengths,
             spectrum_gauss,
-            num_processors=max_num_processors,
+            num_processors=num_max_processors,
             verbose=True)
 
         plt.figure()

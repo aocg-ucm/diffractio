@@ -8,8 +8,8 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, eps, mm, no_date, np, plt, um
-from diffractio.scalar_fields_XYZ import scalar_fields_XYZ
+from diffractio import degrees, eps, mm, no_date, np, um
+from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
 from diffractio.scalar_sources_XY import Scalar_source_XY
@@ -42,7 +42,7 @@ class Test_Scalar_fields_XYZ(object):
         z0 = np.linspace(-length / 2, length / 2, numdata)
         wavelength = 0.5 * um
 
-        t1 = scalar_fields_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
+        t1 = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
 
         t1.u = np.ones_like(t1.u)
         t1.save_data(filename=filename, method='savez_compressed', add_name='')
@@ -50,7 +50,7 @@ class Test_Scalar_fields_XYZ(object):
         save_figure_test(newpath, func_name, add_name='_save')
         del t1
 
-        t2 = scalar_fields_XYZ(x=None, y=None, z=None, wavelength=None)
+        t2 = Scalar_field_XYZ(x=None, y=None, z=None, wavelength=None)
         t2.load_data(
             filename=filename, method='savez_compressed', verbose=True)
 
@@ -68,7 +68,7 @@ class Test_Scalar_fields_XYZ(object):
         z0 = np.linspace(-length / 2, length / 2, numdata)
         wavelength = 0.5 * um
 
-        u0 = scalar_fields_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
+        u0 = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
 
         proposal = 0 * u0.u
 
@@ -99,7 +99,7 @@ class Test_Scalar_fields_XYZ(object):
         t1.ronchi_grating(period=10 * um, x0=0 * um, angle=0 * degrees)
         t3 = u1 * t1
 
-        uxyz = scalar_fields_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
+        uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.incident_field(t3)
         uxyz.RS()
         uxyz.draw_intensityXYZ(logarithm=False, normalize='maximum')
@@ -205,7 +205,7 @@ class Test_Scalar_fields_XYZ(object):
 
         t3 = u1 * t1 * t2
 
-        uxyz = scalar_fields_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
+        uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.incident_field(t3)
         uxyz.RS()
 
@@ -249,7 +249,7 @@ class Test_Scalar_fields_XYZ(object):
         t1.ronchi_grating(period=10 * um, x0=0 * um, angle=0 * degrees)
         t3 = u1 * t1
 
-        uxyz = scalar_fields_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
+        uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.incident_field(t3)
         uxyz.RS()
 
@@ -317,8 +317,8 @@ class Test_Scalar_fields_XYZ(object):
 
         uxyz.draw_intensityXYZ(logarithm=True, normalize='maximum')
         uxyz.draw_refraction_index3D()
-        uxyz.draw_intensityYZ(
-            x0=0.01, logarithm=True, normalize='false', draw_borders=False)
+        uxyz.draw_intensityXZ(
+            y0=0.01, logarithm=True, normalize='false', draw_borders=False)
 
         # uxyz.drawVolumen3D(logarithm=True, normalize='maximum')
 
@@ -375,15 +375,15 @@ class Test_Scalar_fields_XYZ(object):
         save_figure_test(newpath, func_name)
         assert True
 
-    def test_xz_2_xyz(self):
+    def test_xy_2_xyz(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        numdata = 64
+        numdata = 32
         x0 = np.linspace(-length / 2, length / 2, numdata)
         y0 = np.linspace(-length / 2, length / 2, numdata)
-        z0 = np.linspace(.1 * mm, .2 * mm, 64)
+        z0 = np.linspace(.1 * mm, .2 * mm, 32)
         wavelength = 0.6328 * um
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -396,26 +396,26 @@ class Test_Scalar_fields_XYZ(object):
 
         u2 = u1 * t1 * t2
         u2.draw()
-        scalar_fields_XY = []
+        fields_XY = []
         for i in range(len(z0)):
             u3 = u2.RS(z=z0[i], new_field=True)
-            scalar_fields_XY.append(u3)
+            fields_XY.append(u3)
 
         z0p = np.linspace(1 * mm, 7 * mm, numdata)
-        uxyz = scalar_fields_XYZ(x=x0, y=y0, z=z0p, wavelength=wavelength)
+        uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0p, wavelength=wavelength)
         uxyz.incident_field(u2)
-        uxyz.xz_2_xyz(scalar_fields_XY, z0)
+        uxyz.xy_2_xyz(fields_XY, z0)
 
         # uxyz.drawVolumen3D()
         uxyz.video(
-            '../tests/tests_results_0/scalar_fields_XYZ/test_xz_2_xyz.html',
+            '../tests/tests_results_0/scalar_fields_XYZ/test_xy_2_xyz.html',
             kind='intensity',
             frame=True)
         u3.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
         assert True
 
-    def test_cut_function(self):
+    def test_cut_resample(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
@@ -449,14 +449,14 @@ class Test_Scalar_fields_XYZ(object):
 
         # uxyz.draw_refraction_index3D()
         uxyz.draw_intensityXYZ()
-        uxyz2 = uxyz.cut_function(
-            xmin=-25 * um,
-            xmax=25 * um,
-            ymin=-25 * um,
-            ymax=25 * um,
-            zmin=0 * um,
-            zmax=50 * um,
-            new_field=True)
+        uxyz2 = uxyz.cut_resample(
+            x_limits=(-25 * um, 25 * um),
+            y_limits=(-25 * um, 25 * um),
+            z_limits=(0 * um, 250 * um),
+            num_points=[],
+            new_field=True,
+            interp_kind=(3, 1))
+
         uxyz2.draw_intensityXYZ()
         # uxyz2.draw_refraction_index3D()
         uxyz2.save_data(filename=filename, method='savez_compressed')

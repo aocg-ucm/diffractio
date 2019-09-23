@@ -371,9 +371,7 @@ class Scalar_field_XZ(object):
             plt.plot(self.z, lineas_filtradas)
             plt.xlabel('z ($\mu m$)')
             plt.ylabel('filtered zone)')
-
             plt.title("detection of edges", fontsize=24)
-            plt.savefig("detection.png")
 
             diferencias_indice = np.abs(self.n - indice_sin_variar)
 
@@ -436,7 +434,7 @@ class Scalar_field_XZ(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, 'xy', verbose, method)
+        dict0 = load_data_common(self, filename, 'xz', verbose, method)
 
         if verbose:
             print(dict0)

@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates scalar_fields_XY class.
+This module generates Scalar_field_XY class.
 
 It can be considered an extension of Scalar_field_X for visualizing XY fields
 
@@ -31,7 +31,7 @@ The magnitude is related to microns: `micron = 1.`
 *Definition of a scalar field*
     * instatiation,
     * save, load data
-    * cut_function, extender, redimensionar, binarize, discretize
+    * cut_resample, binarize, discretize
     * get_phase, get_amplitude, remove_amplitude, remove_phase, amplitude2phase, phase2amplitude
 
 *Propagation*
@@ -49,8 +49,8 @@ The magnitude is related to microns: `micron = 1.`
     * draw2D
     * several_propagations
     * kernelRS, kernelRSinverse, kernelFresnel
-
 """
+
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 import scipy.ndimage
@@ -79,7 +79,7 @@ except:
     print("cv2 not imported. Function send_image_screen cannot be used")
 
 
-class scalar_fields_XY(object):
+class Scalar_field_XY(object):
     """Class for working with XY scalar fields.
 
     Parameters:
@@ -111,7 +111,7 @@ class scalar_fields_XY(object):
             self.u = None
         self.info = info
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
-        self.type = 'scalar_fields_XY'
+        self.type = 'Scalar_field_XY'
         self.date = get_date()
 
     def __str__(self):
@@ -147,11 +147,12 @@ class scalar_fields_XY(object):
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
         """
-        u3 = scalar_fields_XY(self.x, self.y, self.wavelength)
+        u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
         u3.u = self.u + other.u
+        return u3
 
     def __sub__(self, other):
-        """Substract two scalar_fields_XY. For example two light sources or two masks
+        """Substract two Scalar_field_XY. For example two light sources or two masks
 
         Parameters:
             other (Scalar_field_X): field to substract
@@ -163,8 +164,8 @@ class scalar_fields_XY(object):
         Todo:
             It can be improved for maks (not having less than 1)
         """
-        # Se llama a la clase scalar_fields_XY
-        u3 = scalar_fields_XY(self.x, self.y, self.wavelength)
+        # Se llama a la clase Scalar_field_XY
+        u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
         # Campo diferencia
         u3.u = self.u - other.u
         return u3
@@ -178,9 +179,9 @@ class scalar_fields_XY(object):
         Returns:
             Scalar_field_X: :math:`u_1(x)= u_0(x)*t(x)`
         """
-        new_field = scalar_fields_XY(self.x, self.y, self.wavelength)
+        new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         new_field.u = self.u * other.u
-        # new_field = scalar_fields_XY(self.x, self.y, self.wavelength)
+        # new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         # t1 = np.abs(self.u)
         # t2 = np.abs(other.u)
         # f1 = angle(self.u)
@@ -222,10 +223,10 @@ class scalar_fields_XY(object):
             Scalar_field_X: `u3 = u1 + u2`
         """
         if kind == 'standard':
-            u3 = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
             u3.u = self.u + other.u
         elif kind == 'maximum1':
-            u3 = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
             t1 = np.abs(self.u)
             t2 = np.abs(other.u)
             f1 = angle(self.u)
@@ -290,7 +291,8 @@ class scalar_fields_XY(object):
         """
         dict0 = load_data_common(self, filename, 'xy', verbose, method)
 
-        print(dict0)
+        if verbose:
+            print(dict0)
         if dict0 is not None:
             if isinstance(dict0, dict):
                 self.__dict__ = dict0
@@ -315,7 +317,7 @@ class scalar_fields_XY(object):
               if '' - takes the current limit y[0] and y[-1]
             num_points (int): it resamples x, y and u
                 [],'',0,None -> it leave the points as it is
-            new_field (bool): it returns a new scalar_fields_XY
+            new_field (bool): it returns a new Scalar_field_XY
             interp_kind: numbers between 1 and 5
         """
         if x_limits == '':
@@ -379,7 +381,7 @@ class scalar_fields_XY(object):
             self.X = X_new
             self.Y = Y_new
         elif new_field is True:
-            field = scalar_fields_XY(
+            field = Scalar_field_XY(
                 x=x_new, y=y_new, wavelength=self.wavelength)
             field.u = u_new
             return field
@@ -437,7 +439,7 @@ class scalar_fields_XY(object):
         ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * z
 
         if new_field is True:
-            field_output = scalar_fields_XY(self.x, self.y, self.wavelength)
+            field_output = Scalar_field_XY(self.x, self.y, self.wavelength)
             field_output.x = kx
             field_output.y = ky
 
@@ -477,7 +479,7 @@ class scalar_fields_XY(object):
         if matrix is True:
             return ttf1
         else:
-            u3 = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
 
             # x scaling - Infor
             num_x = self.x.size
@@ -620,7 +622,7 @@ class scalar_fields_XY(object):
             return Usalida / z
 
         if new_field is True:
-            field_output = scalar_fields_XY(self.x, self.y, self.wavelength)
+            field_output = Scalar_field_XY(self.x, self.y, self.wavelength)
             field_output.u = Usalida / z
             field_output.quality = self.quality
             return field_output
@@ -677,7 +679,7 @@ class scalar_fields_XY(object):
                       amplification_y * ancho_y / 2,
                       num_pixels_y * amplification_y)
 
-        U_final = scalar_fields_XY(x=X0, y=Y0, wavelength=self.wavelength)
+        U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
 
         for i, xi in zip(list(range(len(posiciones_x))), flipud(posiciones_x)):
             for j, yi in zip(
@@ -966,7 +968,7 @@ class scalar_fields_XY(object):
 
         Parameters:
             matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new scalar_fields_XY
+            new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X
@@ -978,7 +980,7 @@ class scalar_fields_XY(object):
             return amplitude
 
         if new_field is True:
-            u_salida = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u_salida = Scalar_field_XY(self.x, self.y, self.wavelength)
             u_salida.u = amplitude
             return u_salida
 
@@ -990,7 +992,7 @@ class scalar_fields_XY(object):
 
         Parameters:
             matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new scalar_fields_XY
+            new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
@@ -1002,7 +1004,7 @@ class scalar_fields_XY(object):
             return phase
 
         if new_field is True:
-            u_salida = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u_salida = Scalar_field_XY(self.x, self.y, self.wavelength)
             u_salida.u = phase
             return u_salida
 
@@ -1015,7 +1017,7 @@ class scalar_fields_XY(object):
         Parameters:
             sign (bool): If True, sign is kept, else, it is removed
             matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new scalar_fields_XY
+            new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
@@ -1034,7 +1036,7 @@ class scalar_fields_XY(object):
             return only_amplitude
 
         if new_field is True:
-            u_salida = scalar_fields_XY(self.x, self.y, self.wavelength)
+            u_salida = Scalar_field_XY(self.x, self.y, self.wavelength)
             u_salida.u = only_amplitude
             return u_salida
 
@@ -1059,7 +1061,7 @@ class scalar_fields_XY(object):
             matrix (bool): if True it returs a matrix
 
         Returns:
-            scalar_fields_XY: if new_field is True returns scalar_fields_XY
+            Scalar_field_XY: if new_field is True returns Scalar_field_XY
 
         Todo:
             Check and pass to utils
@@ -1104,7 +1106,7 @@ class scalar_fields_XY(object):
             return
 
         if new_field is True:
-            cn = scalar_fields_XY(self.x, self.y, self.wavelength)
+            cn = Scalar_field_XY(self.x, self.y, self.wavelength)
             cn.u = fieldDiscretizado
             return cn
 
@@ -1130,7 +1132,7 @@ class scalar_fields_XY(object):
             matrix (bool): if True it returs a matrix
 
         Returns:
-            scalar_fields_XY: if new_field is True returns scalar_fields_XY
+            Scalar_field_XY: if new_field is True returns Scalar_field_XY
 
         Todo:
             Check and pass to utils
@@ -1197,7 +1199,7 @@ class scalar_fields_XY(object):
             return
 
         if new_field is True:
-            cn = scalar_fields_XY(self.x, self.y, self.wavelength)
+            cn = Scalar_field_XY(self.x, self.y, self.wavelength)
             cn.u = fieldDiscretizado
             return cn
 

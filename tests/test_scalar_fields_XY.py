@@ -6,7 +6,7 @@ import os
 import sys
 
 from diffractio import degrees, eps, mm, no_date, np, plt, um
-from diffractio.scalar_fields_XY import scalar_fields_XY
+from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_common import several_propagations
@@ -173,16 +173,16 @@ class Test_Scalar_fields_XY(object):
         filename = '{}{}.npz'.format(newpath, func_name)
 
         t1 = field_gauss
+        t1.info = 'test save load'
         t1.draw(kind='intensity')
         plt.title('t1')
         t1.save_data(filename=filename, method='savez_compressed', add_name='')
 
         save_figure_test(newpath, func_name, add_name='_save')
-        del t1
 
-        t2 = Scalar_mask_XY(None, None, None)
+        t2 = Scalar_field_XY(None, None, None)
         t2.load_data(
-            filename=filename, method='savez_compressed', verbose=True)
+            filename=filename, method='savez_compressed', verbose=False)
         t2.draw(kind='intensity')
 
         save_figure_test(newpath, func_name, add_name='_load')

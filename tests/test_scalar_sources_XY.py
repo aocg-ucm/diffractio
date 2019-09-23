@@ -8,7 +8,7 @@ import os
 import sys
 
 from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
-from diffractio.scalar_fields_XY import scalar_fields_XY
+from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_math import nearest2

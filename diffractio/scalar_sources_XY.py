@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This module generates Scalar_source_XY class for defining sources.
-Its parent is scalar_fields_XY.
+Its parent is Scalar_field_XY.
 
 The main atributes are:
     * self.x - x positions of the field
@@ -41,11 +41,11 @@ from scipy.special import j0, j1, jv
 from scipy.special.orthogonal import hermite
 
 from diffractio import degrees, mm, np, um
-from diffractio.scalar_fields_XY import scalar_fields_XY
+from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.utils_math import delta_kronecker
 
 
-class Scalar_source_XY(scalar_fields_XY):
+class Scalar_source_XY(Scalar_field_XY):
     """Class for XY scalar sources.
 
     Parameters:

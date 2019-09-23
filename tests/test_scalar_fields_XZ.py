@@ -135,7 +135,7 @@ class Test_Scalar_fields_XZ(object):
             type_filter=3,
             pixels_filtering=2,
             max_diff_filter=0.01,
-            draw_check=True)
+            draw_check=False)
         u1.BPM(verbose=False)
 
         u1.draw(
@@ -197,7 +197,7 @@ class Test_Scalar_fields_XZ(object):
         u1.save_data(filename=filename)
 
         u2 = Scalar_field_XZ(None, None, None)
-        u2.load_data(filename=filename, verbose=True)
+        u2.load_data(filename=filename, verbose=False)
         u2.draw_refraction_index()
         u2.draw(logarithm=True, normalize='maximum', draw_borders=True)
 
@@ -242,8 +242,8 @@ class Test_Scalar_fields_XZ(object):
         """
         generates a field and I cut_resample it
         """
-        x0 = np.linspace(-150 * um, 150 * um, 512)
-        z0 = np.linspace(-50 * um * um, 300 * um, 512)
+        x0 = np.linspace(-150 * um, 150 * um, 256)
+        z0 = np.linspace(-50 * um * um, 300 * um, 256)
         wavelength = 5 * um
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
         u0.plane_wave(A=1, theta=0 * degrees)
@@ -828,7 +828,7 @@ class Test_Scalar_fields_XZ(object):
             type_filter=3,
             pixels_filtering=2,
             max_diff_filter=0.01,
-            draw_check=True)
+            draw_check=False)
         save_figure_test(newpath, func_name, add_name='_n_diff')
 
         u1.BPM(verbose=False)
