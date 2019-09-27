@@ -63,8 +63,7 @@ import types
 
 from numpy import (angle, array, concatenate, exp, linspace, pi, shape, sqrt,
                    zeros)
-from numpy.fft.fftpack import fft, ifft
-from numpy.fft.helper import fftshift
+from scipy.fftpack import fft, ifft, fftshift
 from scipy.interpolate import interp1d
 from scipy.special import hankel1
 

@@ -65,9 +65,9 @@ from multiprocessing import Pool
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
-from numpy.fft import fft, ifft
-from numpy.fft.fftpack import fft2, ifft2
-from numpy.fft.helper import fftshift
+from scipy.fftpack import fft, ifft
+from scipy.fftpack import fft2, ifft2
+from scipy.fftpack import fftshift
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import degrees, mm, np, num_max_processors, plt, seconds, um

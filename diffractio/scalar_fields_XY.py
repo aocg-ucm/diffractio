@@ -56,8 +56,8 @@ import matplotlib.cm as cm
 import scipy.ndimage
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
-from numpy.fft.fftpack import fft2, ifft2
-from numpy.fft.helper import fftshift
+from scipy.fftpack import fft2, ifft2
+from scipy.fftpack import fftshift
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import degrees, mm, np, plt, seconds, um

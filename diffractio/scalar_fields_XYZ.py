@@ -44,14 +44,15 @@ The magnitude is related to microns: `micron = 1.`
 import time
 import types
 from multiprocessing import Pool
+import copyreg
 
 import matplotlib.animation as manimation
 from mayavi import mlab
 from numpy import cos, diff, gradient, sin
-from numpy.fft.fftpack import fft2, ifft2
+from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import copyreg, degrees, mm, np, num_max_processors, plt
+from diffractio import degrees, mm, np, num_max_processors, plt
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
