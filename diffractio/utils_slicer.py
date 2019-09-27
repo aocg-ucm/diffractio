@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Example of an elaborate dialog showing a multiple views on the same data, with
-3 cuts synchronized.
+"""Example of an elaborate dialog showing a multiple views on the same data, with 3 cuts synchronized.
 
 This example shows how to have multiple views on the same data, how to
 embedded multiple scenes in a dialog, and the caveat in populating them
@@ -30,7 +28,6 @@ on it is strongly simplified by turning off interaction, and choosing
 specific scene interactor styles. Indeed, non-technical users can be
 confused with too rich interaction.
 """
-import numpy as np
 from mayavi import mlab
 from mayavi.core.api import PipelineBase, Source
 from mayavi.core.ui.api import MayaviScene, MlabSceneModel, SceneEditor
@@ -40,26 +37,6 @@ from tvtk.api import tvtk
 from tvtk.pyface.scene import Scene
 
 
-"""
-from traits.api import (HasTraits, Either, Array, Any, TraitError, Float, Int)
-from mayavi.core.traits import ShadowProperty
-
-from traits.has_traits import HasTraits
-from traits.trait_kinds import Instance, Array, on_trait_change
-from traits.ui.api import View, Item, HGroup, Group
-
-from tvtk.api import tvtk
-from tvtk.pyface.scene import Scene
-
-from mayavi import mlab
-from mayavi.core.api import PipelineBase, Source
-from mayavi.core.ui.api import SceneEditor, MayaviScene
-from mayavi.tools.mlab_scene_model import MlabSceneModel
-"""
-
-
-# # # # # # # # # # # # # # ## # # # # # # # # # # # # # # # # # # # # # # # #
-# The object implementing the dialog
 class VolumeSlicer(HasTraits):
     # The data to plot
     data = Array()
@@ -80,7 +57,6 @@ class VolumeSlicer(HasTraits):
 
     _axis_names = dict(x=0, y=1, z=2)
 
-    # ---------------------------------------------------------------------------
     def __init__(self, **traits):
         super(VolumeSlicer, self).__init__(**traits)
         # Force the creation of the image_plane_widgets:
@@ -88,9 +64,6 @@ class VolumeSlicer(HasTraits):
         self.ipw_3d_y
         self.ipw_3d_z
 
-    # ---------------------------------------------------------------------------
-    # Default values
-    # ---------------------------------------------------------------------------
     def _data_src3d_default(self):
         return mlab.pipeline.scalar_field(
             self.data, figure=self.scene3d.mayavi_scene)
@@ -111,9 +84,6 @@ class VolumeSlicer(HasTraits):
     def _ipw_3d_z_default(self):
         return self.make_ipw_3d('z')
 
-    # ---------------------------------------------------------------------------
-    # Scene activation callbaks
-    # ---------------------------------------------------------------------------
     @on_trait_change('scene3d.activated')
     def display_scene3d(self):
         outline = mlab.pipeline.outline(
@@ -167,8 +137,8 @@ class VolumeSlicer(HasTraits):
         ipw.ipw.add_observer('StartInteractionEvent', move_view)
 
         # Center the image plane widget
-        ipw.ipw.slice_position = 0.5 * self.data.shape[self.
-                                                       _axis_names[axis_name]]
+        ipw.ipw.slice_position = 0.5 * self.data.shape[
+            self._axis_names[axis_name]]
 
         # Position the view for the scene
         views = dict(
