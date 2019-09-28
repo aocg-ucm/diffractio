@@ -53,7 +53,7 @@ copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 
 # Funcion inversa a la anterior
-def desdoblar_desde_iterable(iterable, shape=0):
+def separate_from_iterable(iterable, shape=0):
     """This function does somehow the opposite of the previous one, it takes an
     iterable made of lists and separates each one in a different variable,
     reshaped with the desired shape
@@ -163,23 +163,3 @@ def execute_multiprocessing(__function_process__,
     if verbose is True:
         print("num_proc: {}, time={}".format(num_processors, t2 - t1))
     return data_pool, t2 - t1
-
-
-if __name__ == '__main__':
-
-    def function_to_test(iterable, constant):
-        return iterable**2 * constant
-
-    dict_constants = {'x': 3, 'y': 4}
-    N = 50000
-    variable_process = np.linspace(0, 1, N)
-    start = time.time()
-    sc = auxiliar_multiprocessing()
-    sc.execute_multiprocessing(function_to_test, variable_process, 1, 8)
-    # print("{}".format(np.array(sc.result)))
-    print("8 processes pool took {} seconds".format(time.time() - start))
-    start = time.time()
-    res = range(N)
-    for ind, val in enumerate(variable_process):
-        res[ind] = function_to_test(val, 1)
-    print("Single process pool took {} seconds".format(time.time() - start))

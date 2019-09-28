@@ -65,9 +65,7 @@ from multiprocessing import Pool
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
-from scipy.fftpack import fft, ifft
-from scipy.fftpack import fft2, ifft2
-from scipy.fftpack import fftshift
+from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import degrees, mm, np, num_max_processors, plt, seconds, um
@@ -91,7 +89,7 @@ class Scalar_field_XZ(object):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
@@ -99,7 +97,7 @@ class Scalar_field_XZ(object):
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.z (numpy.array): linear array wit equidistant positions for z values
         self.wavelength (float): wavelength of the incident field.
         self.u0 (numpy.array): (x) size x - field at the last z position
@@ -257,7 +255,7 @@ class Scalar_field_XZ(object):
             self.n = n_rotate
             self.n[self.n == 0] = self.n_background
 
-        self.surface_detection()
+        self.surface_detection(mode=1, min_incr=0.1, reduce_matrix='standard')
 
         if kind in ('field', 'all'):
             u_real_rotate = rotate_image(self.z, self.x, np.real(self.u),
@@ -335,8 +333,8 @@ class Scalar_field_XZ(object):
             lineas_filtradas = np.zeros_like(self.z)
             filtro1 = np.zeros_like(self.x)
             sizex = len(filtro1)
-            i_centerx = int(sizex / 2)
             centerx = (self.x[-1] + self.x[0]) / 2
+            # i_centerx = int(sizex / 2)
             # filtro1[i_centerx - pixels_filtering:i_centerx + pixels_filtering] = 1
             filtro1 = np.exp(
                 -(self.x - centerx)**2 / (2 * pixels_filtering**2))
@@ -1022,7 +1020,19 @@ class Scalar_field_XZ(object):
 
         return intensity_prof
 
-    def detect_borders_n(self, n_edge):
+    def detect_index_variations(self, n_edge, incr_n=0.1):
+        """In a XZ masks, detects refraction index variations.
+
+        Parameteres:
+            n_edge (float):
+            incr_n (float): refraction index variation to detect
+
+        Returns:
+            x_lens_l (np.array): x for left edge.
+            h_lens_l (np.array): h for left edge.
+            x_lens_r (np.array): x for right edge.
+            h_lens_r (np.array): h for right edge.
+        """
         z_new = self.z
         x_new = self.x
 
@@ -1033,8 +1043,8 @@ class Scalar_field_XZ(object):
         diff1a = np.diff(iborders, axis=1)
 
         # cada uno de los lados
-        ix_l, iz_l = (diff1a > 0.1).nonzero()
-        ix_r, iz_r = (diff1a < -0.1).nonzero()
+        ix_l, iz_l = (diff1a > incr_n).nonzero()
+        ix_r, iz_r = (diff1a < -incr_n).nonzero()
 
         x_lens_l = x_new[ix_l]
         h_lens_l = z_new[iz_l]
@@ -1057,14 +1067,7 @@ class Scalar_field_XZ(object):
         dz_bpm = 25 * um
 
         variation = np.std(np.abs(self.n), axis=0)
-        v_medio = np.mean(np.abs(self.n), axis=0)
 
-        # if verbose is True:
-        #     plt.figure()
-        #     plt.subplot(121)
-        #     plt.plot(self.z, variation)
-        #     plt.subplot(122)
-        #     plt.plot(self.z, v_medio)
         z_transitions = [self.z[0]]
         num_transition = 0
 
@@ -1090,9 +1093,9 @@ class Scalar_field_XZ(object):
                 algorithm.append('RS')
                 refr_index_RS.append(self.n[0, i])
 
-            # elif algorithm[num_transition]=='RS' and np.abs(v_medio[i])!=np.abs(v_medio[i-1]) and variation[i]==0:
+            # elif algorithm[num_transition]=='RS' and np.abs(v_mean[i])!=np.abs(v_mean[i-1]) and variation[i]==0:
             #   print("b {} - {} RS->RS".format(variation[i],self.z[i]))
-            #   print( np.abs(v_medio[i]))
+            #   print( np.abs(v_mean[i]))
             #   # detect planar change of refraction index:
             #   # create new transition
             #   num_transition=num_transition+1
@@ -1120,18 +1123,25 @@ class Scalar_field_XZ(object):
 
         return z_transitions, algorithm, refr_index_RS
 
-    def surface_detection(self, min_incr=0.1, reduce_matrix='standard'):
+    def surface_detection(self,
+                          mode=1,
+                          min_incr=0.1,
+                          reduce_matrix='standard',
+                          has_draw=False):
         """detect edges of variation in refraction index.
 
         Parameters:
+            mode (int): 1 or 2, algorithms for surface detection: 1-gradient, 2-diff
             min_incr (float): minimum incremental variation to detect
             reduce_matrix (int, int) or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
+            has_draw (bool): If True draw.
         """
 
         if reduce_matrix is False:
             n_new = self.n
             z_new = self.z
             x_new = self.x
+
         elif reduce_matrix is 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
@@ -1142,20 +1152,23 @@ class Scalar_field_XZ(object):
                 reduction_x = 1
             if reduction_z == 0:
                 reduction_z = 1
+
             n_new = self.n[::reduction_x, ::reduction_z]
             z_new = self.z[::reduction_z]
             x_new = self.x[::reduction_x]
+
         else:
             n_new = self.n[::reduce_matrix[0], ::reduce_matrix[1]]
+
             # cuidado, que puede ser al revés
             z_new = self.z[::reduce_matrix[1]]
             x_new = self.x[::reduce_matrix[0]]
 
-        mode = 1
-        if mode == 0:
+        mode = 2
+        if mode == 1:
             diff1 = gradient(np.abs(n_new), axis=0)
             diff2 = gradient(np.abs(n_new), axis=1)
-        elif mode == 1:
+        elif mode == 2:
             diff1 = diff(np.abs(n_new), axis=0)
             diff2 = diff(np.abs(n_new), axis=1)
             # print diff1.shape, diff2.shape, len(self.z), len(self.x)
@@ -1167,10 +1180,13 @@ class Scalar_field_XZ(object):
         t = np.abs(diff1) + np.abs(diff2)
 
         ix, iy = (t > min_incr).nonzero()
-        # plt.figure()
-        # extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
-        # plt.imshow(t, extent=extension, alpha=0.5)
         self.borders = z_new[iy], x_new[ix]
+
+        if has_draw:
+            plt.figure()
+            extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
+            plt.imshow(t, extent=extension, alpha=0.5)
+
         return z_new[iy], x_new[ix]
 
     def draw(self,
@@ -1185,7 +1201,7 @@ class Scalar_field_XZ(object):
              colorbar_kind=False,
              colormap_kind="gist_heat",
              z_scale='um'):
-        """Draws  XZ field
+        """Draws  XZ field.
 
         Parameters:
             kind (str): type of drawing:
@@ -1209,6 +1225,7 @@ class Scalar_field_XZ(object):
 
         if reduce_matrix is False:
             amplitude, intensity, phase = field_parameters(self.u)
+
         elif reduce_matrix is 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
@@ -1274,7 +1291,7 @@ class Scalar_field_XZ(object):
 
         if draw_borders is True:
             if self.borders is None:
-                self.surface_detection(min_incr, reduce_matrix)
+                self.surface_detection(1, min_incr, reduce_matrix)
             plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
 
         if not filename == '':
@@ -1354,7 +1371,7 @@ class Scalar_field_XZ(object):
 
         if draw_borders is True:
             if self.borders is None:
-                self.surface_detection(min_incr, reduce_matrix)
+                self.surface_detection(1, min_incr, reduce_matrix)
 
             plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
 

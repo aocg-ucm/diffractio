@@ -35,17 +35,17 @@ class Scalar_mask_X(Scalar_field_X):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
-        self.quality (float): quality of RS propagation
+        self.quality (float): quality of RS algorithm
         self.info (str): description of data
         self.type (str): Class of the field
         self.date (str): date when performed
@@ -641,7 +641,7 @@ class Scalar_mask_X(Scalar_field_X):
         return t.u
 
     def blazed_grating(self, period=40 * um, height=2 * um, n=1.5, x0=0 * um):
-        """binary grating amplitude and/or phase
+        """Phase, blazed grating. The phase shift is determined by heigth and refraction index.
 
         Parameters:
             period (float): period of the grating
@@ -652,16 +652,19 @@ class Scalar_mask_X(Scalar_field_X):
 
         k = 2 * np.pi / self.wavelength
 
-        # Calculo de la pendiente
-        pendiente = height / period
-        # Calculo de la height
-        h = (self.x - x0) * pendiente
+        # Slope computation
+        slope = height / period
 
-        # Calculo del a phase
+        # Height computation
+        h = (self.x - x0) * slope
+
+        # Phase computation
         phase = k * (n - 1) * h
-        # Definicion del origen
+
+        # removing phase min
         phase = phase - phase.min()
-        # Normalizacion entre 0 y 2pi
+
+        # normalization between 0 and 2pi
         phase = np.remainder(phase, 2 * np.pi)
         self.u = np.exp(1j * phase)
         return phase
@@ -944,7 +947,7 @@ class Scalar_mask_X(Scalar_field_X):
             self.u = t_binaria
         elif kind == 'phase_binaria':
             self.u = np.exp(1.j * phase_max * t_binaria)
-        self.u = cut_function(self.x, self.u, length)
+        self.u = cut_function(self.x, self.u, length, '')
         # plt.figure()
         # plt.plot(t)
         return t

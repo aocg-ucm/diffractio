@@ -155,11 +155,6 @@ class Test_utils_math(object):
 
         assert True
 
-    def test_muestrear(self):
-        # TODO:
-
-        assert True
-
     def test_fft_convolution2d(self):
         # TODO:
 

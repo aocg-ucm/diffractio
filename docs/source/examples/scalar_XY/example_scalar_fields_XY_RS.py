@@ -4,7 +4,7 @@
 Clases scalar_fields_XY y Fuentes2D con las fuentes utilizadas para propagacion
 """
 
-from diffractio import degrees, mm, np, plt, sp, um
+from diffractio import degrees, mm, np, plt, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 

@@ -41,10 +41,10 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 
+import copyreg
 import time
 import types
 from multiprocessing import Pool
-import copyreg
 
 import matplotlib.animation as manimation
 from mayavi import mlab
@@ -79,11 +79,11 @@ class Scalar_field_XYZ(object):
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.y (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.z (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.u (numpy.array): equal size than X. complex field
         self.wavelength (float): wavelength of the incident field.
         self.u0 (Scalar_field_XY): Initial XY field
@@ -869,7 +869,7 @@ class Scalar_field_XYZ(object):
 
         return beam_width_x, beam_width_y, principal_axis_z
 
-    def surface_detection(self, min_incr=0.01, has_draw=False):
+    def surface_detection(self, mode=1, min_incr=0.01, has_draw=False):
         """detect edges of variation in refraction index
 
         Parameters:
@@ -880,7 +880,6 @@ class Scalar_field_XYZ(object):
             Check
         """
 
-        mode = 1
         if mode == 0:
             diff1 = gradient(np.abs(self.n), axis=0)
             diff2 = gradient(np.abs(self.n), axis=1)
@@ -1003,7 +1002,7 @@ class Scalar_field_XYZ(object):
 
         if draw_borders is True:
             if self.borders is None:
-                self.surface_detection(min_incr, reduce_matrix)
+                self.surface_detection(1, min_incr, reduce_matrix)
             plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
 
         if not filename == '':
@@ -1100,11 +1099,11 @@ class Scalar_field_XYZ(object):
         plt.title('intensity YZ', fontsize=20)
         h1.set_cmap("gist_heat")  # OrRd # Reds_r gist_heat
         plt.colorbar()
+
         # -----------------     no functiona de momento -----------------
         if draw_borders is True:
             x_surface, y_surface, z_surface, x_draw_intensity, \
               y_draw_intensity, z_draw_intensity = self.surface_detection()
-            # print z_surface, x_surface
             print((len(intensity), len(z_draw_intensity)))
             plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 

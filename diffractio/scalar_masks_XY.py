@@ -43,7 +43,8 @@ from PIL import Image
 from scipy.signal import fftconvolve
 
 from diffractio import degrees, np, plt, sp, um
-from diffractio.scalar_sources_XY import Scalar_field_XY, Scalar_source_XY
+from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_drawing import get_image
 from diffractio.utils_math import fft_convolution2d, nearest, nearest2
 from diffractio.utils_optics import roughness_2D
@@ -54,14 +55,14 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         x (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -208,7 +209,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             covolved_image[covolved_image <= binarize] = 0
 
         if new_field is True:
-            new = scalar_fields_XY(self.x, self.y, self.wavelength)
+            new = Scalar_field_XY(self.x, self.y, self.wavelength)
             new.u = covolved_image
             return new
         else:
@@ -1148,12 +1149,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             r0 (float, float): (x0,y0) - center of archimedes_spiral
             period (float): period of spiral
             phase (float): initial phase of spiral
-            power (int): power of spiral
+            p (int): power of spiral
             radius (float): radius of the mask
             binaria (bool): if True binary mask
 
         Example:
-            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees, phase=0 * degrees, power=1, radius=200 * um, binaria=True)
+            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees, phase=0 * degrees, p=1, radius=200 * um, binaria=True)
         """
 
         x0, y0 = r0

@@ -1,16 +1,6 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-# ----------------------------------------------------------------------
-# Name:        utils_funcs_varias.py
-# Purpose:     functiones de proposito utils para LM
-#
-# Author:      Luis Miguel Sanchez Brea
-#
-# Created:     2011
-# Licence:     GPL
-# ----------------------------------------------------------------------
-""" Funciones de proposito utils """
+""" Functions for drawing """
 
 import os
 
@@ -76,20 +66,21 @@ from .utils_optics import field_parameters
 
 
 def get_image():
+    """TODO: lost function"""
+
     kinds = ('png', 'jpg', 'gif', 'tif', 'xpm')
-    nombre = select_file(kinds, nombreGenerico='images')
-    return nombre
+    filename = select_file(kinds, nombreGenerico='images')
+    return filename
 
 
-def save_drawing(nombre):
-    plt.gcf()
-    # print(nombre)
-    plt.savefig(nombre, pad_inches=0.1, dpi=300, bbox_inches='tight')  #
+def view_image(filename):
+    """reproduces image
 
-
-def view_image(nombre):
-    if not nombre == '' and nombre is not None:
-        mpimg.imread(nombre)
+    Parameters:
+        filename (str): filename
+    """
+    if not filename == '' and filename is not None:
+        mpimg.imread(filename)
         plt.show()
 
 
@@ -346,26 +337,25 @@ def draw_several_fields(fields,
 #                     writer.grab_frame()
 
 
-def change_image_size(nombre_image,
+def change_image_size(image_name,
                       length='800x600',
                       nombre_final='prueba.png',
                       dpi=300):
     """cambia el tamaño con imageMagick
-    convert nombre_image -resize '1000' -units 300 nombre_final.png
+    convert image_name -resize '1000' -units 300 nombre_final.png
         - anchura 1000 - mantiene forma
-    convert nombre_image -resize 'x200' nombre_final.png
+    convert image_name -resize 'x200' nombre_final.png
         - height  200  - mantiene forma
-    convert nombre_image -resize '100x200>' nombre_final.png
+    convert image_name -resize '100x200>' nombre_final.png
         - mantiene forma, lo que sea mayor
-    convert nombre_image -resize '100x200<' nombre_final.png
+    convert image_name -resize '100x200<' nombre_final.png
         - mantiene forma, lo que sea menor
-    convert nombre_image -resize '@1000000' nombre_final.png
+    convert image_name -resize '@1000000' nombre_final.png
         - mantiene la forma, con 1Mpixel
-    convert nombre_image -resize '100x200!' nombre_final.png
+    convert image_name -resize '100x200!' nombre_final.png
         - obliga a tener el tamaño, no mantiene escala
     """
-    texto = "convert {} -resize {} {}".format(nombre_image, length,
-                                              nombre_final)
+    texto = "convert {} -resize {} {}".format(image_name, length, nombre_final)
     print(texto)
     os.system(texto)
 
@@ -409,12 +399,12 @@ def extract_image_from_video(nombre_video=None,
 
 def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
     """
-    function complementaria para normalize el dibujo
-    TODO: Si hay alguna funcion 'convertir_dibujo' pasar a 'normalize_draw'
+    Gets a filed and changes its caracteristics for drawing
+
     Parameters:
-        u - field
-        logarithm: True or False
-        normalize: False, 'maximum', 'intensity', 'area'
+        u (field): field
+        logarithm (bool): If True applies logarithm to image: np.log(u + 1)
+        normalize (str or bool): False, 'mean', 'intensity'
     """
     if logarithm == 1:
         u = np.log(u + 1)
@@ -424,13 +414,11 @@ def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
         pass
     elif normalize == 'maximum':
         u = u / (np.abs(u).max() + eps)
-    elif normalize == 'intensity':
+    elif normalize == 'mean':
         u = u / u.mean()
-    elif normalize == 'area':
-        # TODO:  normalize =='area'
-        pass
+
     else:
-        print("no normalization: not False, 'maximum, 'intensity'")
+        print("no normalization: not False, 'maximum, 'mean'")
 
     if cut_value not in ([], '', 0, None):
         u[u > cut_value] = cut_value
@@ -439,15 +427,16 @@ def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
 
 
 def prepare_drawing(u, kind='intensity', logarithm=False, normalize=False):
-    """prepare drawing:
-    it is necessary that figure is previously defined: plt.figure()
+    """It is necessary that figure is previously defined: plt.figure()
+
     Parameters:
         u - field
         kind - 'intensity', 'amplitude', 'phase'
         logarithm - True or False
         normalize: False, 'maximum', 'intensity', 'area'
-    Output:
-        returns I_drawing for direct plotting
+
+    Returns:
+        returns (numpy.array): I_drawing for direct plotting
     """
     amplitude, intensity, phase = field_parameters(u)
 
@@ -457,7 +446,7 @@ def prepare_drawing(u, kind='intensity', logarithm=False, normalize=False):
         # plt.title('Intensity')
     elif kind == 'amplitude':
         I_drawing = amplitude
-        I_drawing = normalize_draw(I_drawing, logarithm, normalize)
+        I_drawingOutput = normalize_draw(I_drawing, logarithm, normalize)
         # plt.title('Amplitude')
     elif kind == 'phase':
         I_drawing = phase

@@ -10,10 +10,10 @@ import types
 
 import numpy as np
 
-from diffractio import degrees, eps, mm, no_date, plt, um
+from diffractio import eps, no_date, plt, um
 from diffractio.scalar_fields_X import Scalar_field_X
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
-from diffractio.utils_tests import comparison, save_data_test, save_figure_test
+from diffractio.utils_tests import comparison, save_figure_test
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -321,7 +321,7 @@ class Test_Scalar_fields_X(object):
         save_figure_test(newpath, func_name, add_name='_mask')
         u0.save_data(filename=filename + '_mask', method='savez_compressed')
 
-        mtf1 = u0.MTF(kind='mm', has_draw=True)
+        u0.MTF(kind='mm', has_draw=True)
         plt.xlim(-250, 250)
         save_figure_test(newpath, func_name, add_name='_mtf')
         assert True

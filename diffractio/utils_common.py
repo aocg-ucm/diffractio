@@ -31,8 +31,8 @@ def several_propagations(iluminacion, masks, distances):
 
 
     Returns:
-    u0: field at the last plane given by distances
-    u1: field just at the plane of the last mask
+        Scalar_field_XY: u0 field at the last plane given by distances
+        Scalar_field_XY: u1 field just at the plane of the last mask
     '''
 
     u0 = iluminacion
@@ -56,8 +56,12 @@ def get_date():
 
 
 def save_data_common(cls, filename='', method='hickle', description=''):
-    """save data
-    methods: savez, savez_compressed hickle, matlab, (h5py not yet)
+    """Common save data function to be used in all the modules.
+
+    Parameters:
+        filename (str): filename
+        method (str): saving method: savez, savez_compressed hickle, matlab, (h5py not yet)
+        description (str): text to be stored in the dictionary to save.
     """
 
     now = datetime.datetime.now()
@@ -85,8 +89,20 @@ def save_data_common(cls, filename='', method='hickle', description=''):
     #         f.attrs['date'] = date
 
 
-def load_data_common(cls, filename, kind_axis, verbose=False, method=''):
-    """load data to hickle"""
+def load_data_common(cls, filename, method='', verbose=False):
+    """Common load data function to be used in all the modules.
+
+    Parameters:
+        filename (str): filename
+        method (str): saving method: savez, savez_compressed hickle, matlab, (h5py not yet)
+        verbose (bool): If True prints data
+    """
+
+    def print_data_dict(dict0):
+        for k, v in dict0.items():
+            print("{:12} = {}".format(k, v))
+        print("\nnumber of data = {}".format(len(dict0['x'])))
+
     try:
 
         if method == 'hickle':
@@ -111,13 +127,14 @@ def load_data_common(cls, filename, kind_axis, verbose=False, method=''):
     #     y_read = f['dict']['Y'][:]
 
 
-def print_data_dict(dict0):
-    for k, v in dict0.items():
-        print("{:12} = {}".format(k, v))
-    print("\nnumber of data = {}".format(len(dict0['x'])))
-
-
 def print_axis_info(cls, axis):
+    """Prints info about axis
+
+    Parameters:
+        cls (class): class of the modulus.
+        axis (): axis x, y, z... etc.
+    """
+
     x0 = eval("cls.{}[0]".format(axis))
     x1 = eval("cls.{}[-1]".format(axis))
     length = x1 - x0
@@ -128,7 +145,13 @@ def print_axis_info(cls, axis):
 
 
 def date_in_name(filename):
-    """introduces a date in the filename
+    """introduces a date in the filename""
+
+    Parameters:
+        filename (str): filename
+
+    Returns:
+        (str): filename with current date
     """
     divided = filename.split(".")
     extension = divided[-1]

@@ -3,14 +3,16 @@
 """ Common functions to classes """
 
 from copy import deepcopy
+from math import factorial
 
 import numpy as np
 import scipy.ndimage as ndimage
 from numpy import angle, array, exp, linspace, ones_like, pi, sqrt, zeros
 from scipy.signal import fftconvolve
 
+from diffractio import mm
 
-# tested
+
 def distance(x1, x2):
     """
     Compute distance between two vectors.
@@ -203,7 +205,7 @@ def get_phase(u):
 
 def amplitude2phase(u):
     """Passes the amplitude of a complex field to phase. Previous phase is removed.
-    $u = A e^{i \phi}  -> e^(i abs(amp))$
+    :math:`u = A e^{i \phi}  -> e^(i abs(A))`
 
     Parameters:
         u (numpy.array, dtype=complex): complex field
@@ -250,26 +252,30 @@ def normalize(v, order=2):
     return v / norm
 
 
-def normalize_field(u, kind='intensity'):
-    """Normalize the field
-
-    Parameters:
-        kind (str): 'intensity' 'area'
-
-    Todo:
-        pass to utils
-    """
-
-    if kind == 'intensity':
-        intensity = np.abs(u**2)
-        maximum = sqrt(intensity.max())
-        u = u / maximum
-    if kind == 'area':
-        intensity = np.abs(u**2)
-        maximum = intensity.sum()
-        u = u / maximum
-
-        return u
+#
+# def normalize_field(u, kind='intensity'):
+#     """Normalize the field.
+#
+#     Parameters:
+#         u (np.array): field
+#         kind (str): normalization parameter -'intensity' 'area'
+#
+#     Returns:
+#         normalized value
+#
+#
+#     """
+#
+#     if kind == 'intensity':
+#         intensity = np.abs(u**2)
+#         maximum = sqrt(intensity.max())
+#         u = u / maximum
+#     if kind == 'area':
+#         intensity = np.abs(u**2)
+#         maximum = intensity.sum()
+#         u = u / maximum
+#
+#         return u
 
 
 def binarize(vector, min_value=0, max_value=1):
@@ -314,31 +320,28 @@ def discretize(u,
     Returns:
         scalar_fields_XY: if new_field is True returns scalar_fields_XY
 
-    Todo:
-        Check and pass to utils
     """
 
     if kind == 'amplitude':
-        heights = linspace(0, 1, num_levels)
+        heights = np.linspace(0, 1, num_levels)
         posX = 256 / num_levels
 
         amplitude = get_amplitude(matrix=True, new_field=False)
         phase = get_phase(matrix=True, new_field=False)
-        imageDiscretizada = amplitude
+        discretized_image = amplitude
 
         dist = factor * posX
-        print("dist:", dist)
 
         for i in range(num_levels):
             centro = posX / 2 + i * posX
             abajo = amplitude * 256 > centro - dist / 2
             arriba = amplitude * 256 <= centro + dist / 2
             Trues = abajo * arriba
-            imageDiscretizada[Trues] = centro / 256
+            discretized_image[Trues] = centro / 256
             # heights[i]+posX/(256*2)
             # falta compute el porcentaje de height
 
-        fieldDiscretizado = imageDiscretizada * phase
+        fieldDiscretizado = discretized_image * phase
 
     if kind == 'phase':
         ang = angle(get_phase(matrix=True, new_field=False)) + phase0 + pi
@@ -346,41 +349,44 @@ def discretize(u,
         amplitude = get_amplitude(matrix=True, new_field=False)
 
         heights = linspace(0, 2 * pi, num_levels + 1)
-        # no hay tantos levels, pero es para buscar los centros
-        # heights=heights[0:-1]
-        # anchuras = 2 * pi / num_levels
-        # cortes = heights + anchuras / 2
+
         dist = factor * (heights[1] - heights[0])
 
-        # print "heights: ", heights
-        # print "cortes: ", cortes
-
-        imageDiscretizada = exp(1j * (ang))
+        discretized_image = exp(1j * (ang))
 
         for i in range(num_levels + 1):
             centro = heights[i]
             abajo = (ang) > (centro - dist / 2)
             arriba = (ang) <= (centro + dist / 2)
             Trues = abajo * arriba
-            imageDiscretizada[Trues] = exp(1j * (centro))  # - pi
+            discretized_image[Trues] = exp(1j * centro)  # - pi
 
         Trues = (ang) > (centro + dist / 2)
-        imageDiscretizada[Trues] = exp(1j * (heights[0]))  # - pi
+        discretized_image[Trues] = exp(1j * heights[0])  # - pi
 
         # esto no haría falta, pero es para tener tantos levels
         # como decimos, no n+1 (-pi,pi)
-        phase = angle(imageDiscretizada) / pi
+        phase = angle(discretized_image) / pi
         phase[phase == 1] = -1
         phase = phase - phase.min()  # esto lo he puesto a última hora
-        imageDiscretizada = exp(1j * pi * phase)
+        discretized_image = exp(1j * pi * phase)
 
-        fieldDiscretizado = amplitude * imageDiscretizada
+        fieldDiscretizado = amplitude * discretized_image
 
         return fieldDiscretizado
 
 
 def delta_kronecker(a, b):
-    """Delta kronecker"""
+    """Delta kronecker
+
+    Parameters:
+        a (np.float): number
+        b (np.float): number
+
+    Returns:
+        1 if a==b and 0 if a<>b
+    """
+
     if a == b:
         return 1
     else:
@@ -437,6 +443,7 @@ def divergence(E, r):
 
 def curl(E, r):
     """Returns the Curl of a field a given point (x0,y0,z0)
+
     Parameters:
         E (numpy.array): complex field
         r (numpy.array): 3x1 array with position r=(x,y,z).
@@ -524,15 +531,16 @@ def get_edges(x,
     return pos_transitions, type_transitions, raising, falling
 
 
-def cut_function(x, y, longitud):
-    """
-        tenemos una function y(x) que tiene ciertos values
-        solamente dejamos fuera de 0 aquellos que esten dentro de longitud
+def cut_function(x, y, length, x_center=''):
+    """ takes values of function inside (x_center+length/2: x_center+length/2)
+
         """
-    x_central = (x[0] + x[-1]) / 2
-    incr = longitud / 2
-    left = x_central - incr
-    right = x_central + incr
+    if x_center in ('', None, []):
+        x_center = (x[0] + x[-1]) / 2
+
+    incr = length / 2
+    left = x_center - incr
+    right = x_center + incr
 
     i_min, _, _ = nearest(x, left)
     i_max, _, _ = nearest(x, right)
@@ -542,31 +550,6 @@ def cut_function(x, y, longitud):
     y[-1] = y[-2]
 
     return y
-
-
-def muestrear(xsampling, data):
-    """devuelve un array de points, ysampling,
-     donde vale 0 si no es nearest y 1 si lo es.
-        Esta function es valida para luego hacer las convoluciones
-
-        Parameters:
-        * xsampling : array de points que son las posiciones del sampling
-        * xdata    : array  de points de las posiciones de los 'sensors'
-
-        outputs:
-        * ysampling : array con el mismo length de ysampling con values 0 o 1
-
-        mejoras:
-        * he metido un bucle for que creo que habria que remove
-        * incluir n dimensiones
-        """
-
-    ysampling = np.zeros(xsampling.shape, dtype=float)
-
-    imenores, values, distances = nearest2(xsampling, data)  # @UnusedVariable
-    for i in imenores:
-        ysampling[int(i)] = 1.
-    return ysampling
 
 
 # def sampling(u, x0=0, x1=1, num_data=1000):
@@ -592,27 +575,60 @@ def muestrear(xsampling, data):
 
 
 def fft_convolution2d(x, y):
-    """ 2D convolution, using FFT"""
+    """ 2D convolution, using FFT
+
+    Parameters:
+        x (numpy.array): array 1 to convolve
+        y (numpy.array): array 2 to convolve
+
+    Returns:
+        convolved function
+    """
     return fftconvolve(x, y, mode='same')
 
 
 def fft_convolution1d(x, y):
-    """ 1D convolution, using FFT """
+    """ 1D convolution, using FFT
+
+    Parameters:
+        x (numpy.array): array 1 to convolve
+        y (numpy.array): array 2 to convolve
+
+    Returns:
+        convolved function
+    """
     return fftconvolve(x, y, mode='same')
 
 
 def fft_correlation1d(x, y):
+    """ 1D correlation, using FFT (fftconvolve)
+
+    Parameters:
+        x (numpy.array): array 1 to convolve
+        y (numpy.array): array 2 to convolve
+
+    Returns:
+        numpy.array: correlation function
+    """
     return fftconvolve(x, y[::-1], mode='same')
 
 
 def fft_correlation2d(x, y):
+    """Parameters:
+        x (numpy.array): array 1 to convolve
+        y (numpy.array): array 2 to convolve
+
+    Returns:
+        numpy.array: 2d correlation function
+    """
+
     return fftconvolve(x, y[::-1, ::-1], mode='same')
 
 
 def rotate_image(x, z, img, angle, pivot_point):
-    """similar to rotate image, but not from the center but from the given point
-    https://stackoverflow.com/questions/25458442/rotate-a-2d-image-around-specified-origin-in-python
+    """similar to rotate image, but not from the center but from the given
 
+    https://stackoverflow.com/questions/25458442/rotate-a-2d-image-around-specified-origin-in-python point
     Parameters:
         img (np.array): image to rotate
         angle (float): angle to rotate
@@ -623,14 +639,12 @@ def rotate_image(x, z, img, angle, pivot_point):
     """
 
     # first get (i,j) pixel of rotation
-
     ipivotz, _, _ = nearest(z, pivot_point[0])
     ipivotx, _, _ = nearest(x, pivot_point[1])
 
     ipivot = [ipivotz, ipivotx]
 
     # rotates
-
     padX = [img.shape[1] - ipivot[0], ipivot[0]]
     padZ = [img.shape[0] - ipivot[1], ipivot[1]]
     imgP = np.pad(img, [padZ, padX], 'constant')
@@ -640,70 +654,127 @@ def rotate_image(x, z, img, angle, pivot_point):
 
 
 def cart2pol(x, y):
-    """
-    cartesian to polar coordinate transformation
+    """ cartesian to polar coordinate transformation.
+
+    Parameters:
+        x (np.array): x coordinate
+        y (np.aray): y coordinate
+
+    Returns:
+        numpy.array: rho
+        numpy.array: phi
     """
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
-    return (rho, phi)
+    return rho, phi
 
 
 def pol2cart(rho, phi):
     """
     polar to cartesian coordinate transformation
+
+    Parameters:
+        rho (np.array): rho coordinate
+        rho (np.aray): rho coordinate
+
+    Returns:
+        numpy.array: x
+        numpy.array: y
     """
+
     x = rho * np.cos(phi)
     y = rho * np.sin(phi)
     return (x, y)
 
 
-#
-# def fft_convolution2d_shen_proposal(u1, u2, new_field=True, verbose=True):
-#     """Convolution procedure Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
-#
-#     With field of size N*M, the result of propagation is also a field N*M.
-#
-#     Parameters:
-#         u1, u2 (numpy.array): fields
-#         new_field (bool): if False the computation goes to self.u
-#                           if True a new instance is produced
-#         verbose (bool): if True it writes to shell
-#
-#     Returns:
-#         if New_field is True: Scalar_field_X
-#         else None
-#     """
-#
-#     nx, ny = u1.shape
-#
-#     # matrix W para integración simpson
-#     # he tenido problemas porque en shen viene para matrices cuadradas
-#     # y yo admito matrices rectangulares. pero he solucionado.
-#     a = [2, 4]
-#     num_repx = int(round((nx) / 2) - 1)
-#     num_repy = int(round((ny) / 2) - 1)
-#     # print( num_repx, num_repy)
-#     bx = array(a * num_repx)
-#     by = array(a * num_repy)
-#     cx = concatenate(((1, ), bx, (2, 1))) / 3.
-#     cy = concatenate(((1, ), by, (2, 1))) / 3.
-#
-#     if float(nx) / 2 == round(nx / 2):  # es par
-#         i_centralx = num_repx + 1
-#         cx = concatenate((cx[:i_centralx], cx[i_centralx + 1:]))
-#     if float(ny) / 2 == round(ny / 2):  # es par
-#         i_centraly = num_repy + 1
-#         cy = concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
-#
-#     d1x = matrix(cx)
-#     d1y = matrix(cy)
-#     W = array(d1y.T * d1x)
-#     # W=1
-#
-#     U1 = zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
-#     U1[0:ny, 0:nx] = array(W * u1)
-#
-#     # calculo de la transformada de Fourier
-#     S = ifft2(fft2(U1) * fft2(u2))
-#     # transpose cambiado porque daba problemas para matrices no cuadradas
-#     return S[ny - 1:, nx - 1:]  # hasta el final
+def fZernike(X, Y, n, m, radius=5 * mm):
+    """Zernike function for aberration computation.
+
+    R. Navarro, J. Arines, R. Rivera "Direct and inverse discrete Zernike transform" Opt. Express 17(26) 24269
+
+    ANSI
+
+    Note:
+        k>=l
+
+        if k is even then l is even.
+        if k is  odd then l is  odd.
+
+    The first polinomial is the real part ant the second de imaginary part.
+
+
+    * n     m        aberración
+    * 0     0        piston
+    * 1    -1        vertical tilt
+    * 1     1        horizontal tilt
+    * 2    -2        astigmatismo oblicuo
+    * 2     0        desenfoque miopía si c>0 o desenfoque hipermetropía si c<0
+    * 2     2        astigmatismo anormal si c>0 o astigmatismo normal si c<0
+    * 3    -3        trebol oblicuo
+    * 3    -1        coma vertical, c>0 empinamiento superior, c<0 emp. inferior
+    * 3     1        como horizontal
+    * 3     3        trebol horizontal
+    * 4    -4        trebol de cuatro hojas oblicuo
+    * 4    -2        astigmatismo secundario oblicuo
+    * 4     0        esférica c>0 periferia más miópica que centro, c<0 periferia más hipertrópica que el centro
+    * 4     2        astigmatismo secundario a favor o en contra de la regla
+    * 4     4        trebol de cuatro hojas horizontal
+    """
+
+    R = np.sqrt(X**2 + Y**2) / (radius)
+    THETA = np.arctan2(X, Y)
+
+    N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
+
+    Z = zeros(R.shape, dtype=np.float)
+    for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(
+            np.abs(n - s)) / (factorial(np.abs(s)) * factorial(
+                np.abs(round(0.5 * (n + np.abs(m)) - s))) * factorial(
+                    np.abs(round(0.5 * (n - np.abs(m)) - s))))
+
+    if m >= 0:
+        fz1 = N * Z * np.cos(m * THETA)
+    else:
+        fz1 = N * Z * np.sin(np.abs(m) * THETA)
+
+    fz1[R >= 1] = 0
+    return fz1
+
+
+def laguerre_polynomial_nk(x, n=4, k=5):
+    """Auxiliar laguerre polinomial of orders n and k
+        function y = LaguerreGen(varargin)
+        LaguerreGen calculates the utilsized Laguerre polynomial L{n, alpha}
+        This function computes the utilsized Laguerre polynomial L{n,alpha}.
+        If no alpha is supplied, alpha is set to zero and this function
+        calculates the "normal" Laguerre polynomial.
+
+        References:
+            Szeg: "Orthogonal Polynomials" 1958, formula (5.1.10)
+
+        Parameters:
+        - n = nonnegative integer as degree level
+        - alpha >= -1 real number (input is optional)
+
+        The output is formated as a polynomial vector of degree (n+1)
+        corresponding to MatLab norms (that is the highest coefficient
+        is the first element).
+
+        Example:
+        - polyval(LaguerreGen(n, alpha), x) evaluates L{n, alpha}(x)
+        - roots(LaguerreGen(n, alpha)) calculates roots of L{n, alpha}
+
+        Calculation is done recursively using matrix operations for very fast
+        execution time.
+
+        Author: Matthias.Trampisch@rub.de
+        Date: 16.08.2007
+        Version 1.2"""
+
+    f = factorial
+    summation = np.zeros_like(x, dtype=float)
+    for m in range(n + 1):
+        summation = summation + (-1)**m * f(n + k) / (
+            f(n - m) * f(k + m) * f(m)) * x**m
+    return summation

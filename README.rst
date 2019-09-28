@@ -155,6 +155,13 @@ References
 
 * F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
 
+* Engineering optics with matlab"
+
+* Fast Bessel and Hankle functions: https://dlmf.nist.gov/10.2#E5
+
+* Beam width: https://en.wikipedia.org/wiki/Beam_diameter
+
+* JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger 
 
 
 Credits

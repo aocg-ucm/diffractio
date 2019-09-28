@@ -12,10 +12,10 @@ This module generates Scalar_field_X class and several functions for multiproces
 It is required also for generating masks and fields.
 
 The main atributes are:
-        * self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+        * self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly $2^n$.
         * self.wavelength (float): wavelength of the incident field.
         * self.u (numpy.array): equal size than x. complex field
-        * self.quality (float): quality of RS propagation
+        * self.quality (float): quality of RS algorithm
         * self.info (str): description of data
         * self.type (str): Class of the field
         * self.date (str): date when performed
@@ -24,8 +24,8 @@ The main atributes are:
 *Class for unidimensional scalar fields*
 
 *Definition of a scalar field*
-    * instatiation, clear_field, print
-    * add, substract for sources, multiply for masks
+    * instantiation, clear_field, print
+    * add, substract for sources, multiply for masks and sources
     * save, load data
     * insert masks, insert_array_masks - insert other masks inside the mask
 
@@ -63,7 +63,7 @@ import types
 
 from numpy import (angle, array, concatenate, exp, linspace, pi, shape, sqrt,
                    zeros)
-from scipy.fftpack import fft, ifft, fftshift
+from scipy.fftpack import fft, fftshift, ifft
 from scipy.interpolate import interp1d
 from scipy.special import hankel1
 
@@ -83,17 +83,17 @@ class Scalar_field_X(object):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
-        self.quality (float): quality of RS propagation
+        self.quality (float): quality of RS algorithm
         self.info (str): description of data
         self.type (str): Class of the field
         self.date (str): date when performed
@@ -303,7 +303,6 @@ class Scalar_field_X(object):
 
     def incident_field(self, u0):
         """Incident field for the experiment. It takes a Scalar_source_X field.
-        TODO: test
 
         Parameters:
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
@@ -380,7 +379,7 @@ class Scalar_field_X(object):
         """Fast Fourier Transform (fftshift) of the field
 
         .. math::
-             \mathbf{E}(x,y,z) = \frac{e^{ik(z+\frac{x^{2}+y^{2}}{2z})}}{i\lambda z} \int\mathbf{E}_{0}(\zeta,\eta) e^{-i \frac{k}{f'}(x'\zeta+y'\eta)}d\zeta d\eta.
+             \mathbf{E}(x,y,z)=\frac{e^{i k (z+\frac{x^{2}+y^{2}}{2z})}}{i\lambda z} \int\mathbf{E}_{0}(\zeta,\eta) e^{-i \frac{k}{f'}(x'\zeta+y'\eta)}d\zeta d\eta.
 
         Parameters:
             z (float): distance to the observation plane or focal of lens. If None the exit is in radians
@@ -666,10 +665,10 @@ class Scalar_field_X(object):
 
     # Here this function is not very useful. Perphaps it is used at XZ
     def BPM(self, deltaz, n, matrix=False, verbose=False):
-        """Beam propagation method (BPM).Fills self.u parameter
+        """Beam propagation method (BPM).Fills self.u parameter.
 
         References:
-           Algorithm in "Engineering optics with matlab" pag 119
+           Algorithm in "Engineering optics with matlab" pag 119.
 
         Parameters:
             deltaz (float): propagation distance
@@ -678,7 +677,7 @@ class Scalar_field_X(object):
             verbose (bool): shows data process by screen
 
         Note:
-            Axis were tranposed in comparison to RS
+            Axis were transposed in comparison to RS
 
         """
 
@@ -930,7 +929,8 @@ def kernelRS(x, wavelength, z, n=1, kind='z', fast=False):
 
     The approximation is much faster: comes in  https://dlmf.nist.gov/10.2#E5
 
-        hk1 = sqrt(2 / (pi * k * R)) * exp(1.j * (k * R - 3 * pi / 4))
+    .. math::
+        hk1 = \sqrt(\frac{2} {\pi \, k \, R})  e^(1.j  (k . R - 3 * \pi / 4))
 
 
     Parameters:

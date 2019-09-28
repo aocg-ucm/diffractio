@@ -123,8 +123,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 50 * um
-        numdataX = 128
-        numdataZ = 128
+        numdataX = 64
+        numdataZ = 64
 
         longitud = 50 * um
 
@@ -156,8 +156,8 @@ class Test_Scalar_fields_XYZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-25 * um, 25 * um, 128)
-        y0 = np.linspace(-25 * um, 25 * um, 128)
+        x0 = np.linspace(-25 * um, 25 * um, 64)
+        y0 = np.linspace(-25 * um, 25 * um, 64)
         z0 = np.linspace(100 * um, 500 * um, 64)
         wavelength = .6328 * um
 
@@ -186,8 +186,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 500 * um
-        x0 = np.linspace(-length / 2, length / 2, 256)
-        y0 = np.linspace(-length / 2, length / 2, 256)
+        x0 = np.linspace(-length / 2, length / 2, 64)
+        y0 = np.linspace(-length / 2, length / 2, 64)
         z0 = np.linspace(2 * mm, 7 * mm, 32)
         wavelength = 0.6328 * um
 
@@ -231,7 +231,7 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        numdata = 128
+        numdata = 64
         x0 = np.linspace(-length / 2, length / 2, numdata)
         y0 = np.linspace(-length / 2, length / 2, numdata)
         wavelength = 0.5 * um
@@ -281,8 +281,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 80 * um
-        numdataX = 256
-        numdataZ = 128
+        numdataX = 64
+        numdataZ = 64
         longitud = 400 * um
         radiusFibra = 10 * um
         x0 = np.linspace(-length / 2, length / 2, numdataX)
@@ -335,8 +335,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 80 * um
-        numdataX = 128
-        numdataZ = 16
+        numdataX = 64
+        numdataZ = 64
         longitud = 50 * um
         radiusFibra = 10 * um
         x0 = np.linspace(-length / 2, length / 2, numdataX)
@@ -380,10 +380,10 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        numdata = 32
+        numdata = 64
         x0 = np.linspace(-length / 2, length / 2, numdata)
         y0 = np.linspace(-length / 2, length / 2, numdata)
-        z0 = np.linspace(.1 * mm, .2 * mm, 32)
+        z0 = np.linspace(.1 * mm, .2 * mm, 64)
         wavelength = 0.6328 * um
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -420,8 +420,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 50 * um
-        numdataX = 256
-        numdataZ = 128
+        numdataX = 64
+        numdataZ = 64
         longitud = 512 * um
         radiusFibra = 25 * um
         x0 = np.linspace(-length, length, numdataX)
@@ -467,8 +467,8 @@ class Test_Scalar_fields_XYZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-25 * um, 25 * um, 128)
-        y0 = np.linspace(-25 * um, 25 * um, 128)
+        x0 = np.linspace(-25 * um, 25 * um, 64)
+        y0 = np.linspace(-25 * um, 25 * um, 64)
         z0 = np.linspace(100 * um, 500 * um, 64)
         wavelength = 0.55 * um
 

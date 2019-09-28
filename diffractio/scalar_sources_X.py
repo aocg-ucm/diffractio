@@ -37,17 +37,17 @@ class Scalar_source_X(Scalar_field_X):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
-        self.quality (float): quality of RS propagation
+        self.quality (float): quality of RS algorithm
         self.info (str): description of data
         self.type (str): Class of the field
         self.date (str): date when performed
@@ -162,9 +162,9 @@ class Scalar_source_X(Scalar_field_X):
         """Several paralel plane waves
 
         Parameters:
-            params: list with a dictionary:
-                A (float): maximum amplitude
-                z0 (float): constant value for phase shift
+            A (float): maximum amplitude
+            num_beams (int): number of ints
+            max_angle (float): maximum angle for beams
         """
         # Definicion del vector de onda
 
@@ -194,7 +194,7 @@ class Scalar_source_X(Scalar_field_X):
                 z0 (float): constant value for phase shift
                 x_central (float): central position of rays
                 x_range (float): range of rays
-                theta (float): angle
+                theta (float): angle of the parallel beams
         """
 
         t = np.zeros_like(self.u, dtype=complex)
@@ -210,12 +210,14 @@ class Scalar_source_X(Scalar_field_X):
         """Several inclined gauss beams
 
         Parameters:
-            params: list with a dictionary:
-                A (float): maximum amplitude
-                num_beams (int): number of gaussian beams (equidistintan)
-                w0 (float): beam width of the bemas
-                x0 (float): initial position of gauss beam at x
-                z0 (float): constant value for phase shift
+            A (float): maximum amplitude
+            num_beams (int): number of gaussian beams (equidistintan)
+            w0 (float): beam width of the bemas
+            x0 (fl(float): maximum amplitude
+            num_beams (int): number of ints
+            maoat): initial position of gauss beam at x
+            z0 (float): constant value for phase shift
+            max_angle (float): maximum angle for beams
         """
         # Definicion del vector de onda
 

@@ -36,13 +36,13 @@ The magnitude is related to microns: `micron = 1.`
 
 from math import factorial
 
-from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros, zeros_like
+from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
 from scipy.special import j0, j1, jv
 from scipy.special.orthogonal import hermite
 
-from diffractio import degrees, mm, np, um
+from diffractio import degrees, np, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.utils_math import delta_kronecker
+from diffractio.utils_math import fZernike, laguerre_polynomial_nk
 
 
 class Scalar_source_XY(Scalar_field_XY):
@@ -50,14 +50,14 @@ class Scalar_source_XY(Scalar_field_XY):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         y (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -229,7 +229,6 @@ class Scalar_source_XY(Scalar_field_XY):
 
     def hermite_gauss_beam(self, A, r0, w0, m, n, c_mn):
         """Hermite Gauss beam.
-            tesis de alejandro cámara , ec (2.6)
 
         Parameters:
             A (float): amplitude of the Hermite Gauss beam
@@ -244,7 +243,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
         """
         x0, y0 = r0
-        I = zeros(self.X.shape, dtype=np.float)
+        intesity = zeros(self.X.shape, dtype=np.float)
 
         for s in range(len(m)):
             Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) * exp(
@@ -256,15 +255,17 @@ class Scalar_source_XY(Scalar_field_XY):
             # f =  sqrt(2) / (sqrt(2**m[s]*factorial(m[s]))*sqrt(2**n[s]*factorial(n[s])))
             # el de arriba normaliza en intensity y está dividido entre 1/w0
             print(Ix.max())
-            I = I + f * c_mn[s] * Ix * Iy
+            intesity = intesity + f * c_mn[s] * Ix * Iy
 
-        self.u = A * I
+        self.u = A * intesity
 
     def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
         """Zernike beam.
+
             n=1,2,3,...
             m=-n:-n+2, ...., n-2, n
             # n,m,c_nm are lists with coefficients
+
         Parameters:
             A (float): amplitude of the Hermite Gauss beam
             r0 (float, float): (x,y) position of source
@@ -365,6 +366,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 A (float): maximum amplitude
                 num_beams (int, int): number of beams in the x and y directions
                 max_angle (float, float): maximum angle of the beams
+                z0 (float): position of the beams
         """
 
         num_beams_x, num_beams_y = num_beams
@@ -392,15 +394,14 @@ class Scalar_source_XY(Scalar_field_XY):
         """Several parallel gauss beams
 
         Parameters:
-            params: list with a dictionary:
-                A (float): maximum amplitude
-                num_beams (int, int): number of gaussian beams (equidistintan) in x and y direction.
-                w0 (float): beam width of the bemas
-                z0 (float): constant value for phase shift
-                r0 (float, float): central position of rays (x_c, y_c)
-                r_range (float, float): range of rays x, y
-                theta (float): angle
-                phi (float): angle
+            A (float): maximum amplitude
+            num_beams (int, int): number of gaussian beams (equidistintan) in x and y direction.
+            w0 (float): beam width of the bemas
+            z0 (float): constant value for phase shift
+            r0 (float, float): central position of rays (x_c, y_c)
+            r_range (float, float): range of rays x, y
+            theta (float): angle
+            phi (float): angle
         """
 
         x_range, y_range = r_range
@@ -423,13 +424,12 @@ class Scalar_source_XY(Scalar_field_XY):
         """Several inclined gauss beams
 
         Parameters:
-            params: list with a dictionary:
-                A (float): maximum amplitude
-                num_beams (int, int): number of gaussian beams (equidistintan) in x and y direction.
-                w0 (float): beam width
-                r0 (float, float): central position of rays (x_c, y_c)
-                z0 (float): constant value for phase shift
-                max_angle (float, float): maximum angles
+            A (float): maximum amplitude
+            num_beams (int, int): number of gaussian beams (equidistintan) in x and y direction.
+            w0 (float): beam width
+            r0 (float, float): central position of rays (x_c, y_c)
+            z0 (float): constant value for phase shift
+            max_angle (float, float): maximum angles
         """
 
         num_beams_x, num_beams_y = num_beams
@@ -487,87 +487,3 @@ def __funcLaguerre__(X, Y, m = 4, n = 5, w0 = 50 * um):
     # La última fila es el polinomio de Laguerre L{n, alpha}
     return L[n + 1, :]
 """
-
-
-def laguerre_polynomial_nk(x, n, k):
-    """functionAuxiliar laguerre_polynomial_nk
-    The formula is taken from "Orthogonal Polynomials" 1958, formula (5.1.10)
-
-    Parameters:
-        x (float): position
-        n (int): nonnegative integer as degree level
-        k (int):
-
-    Returns:
-        polynomial vector of degree (n+1)
-
-    Example:
-        laguerre_polynomial_nk(x, n=4, k=5)
-    """
-
-    # cambio de nombre a la función para simplificar
-    f = factorial
-
-    # Se reserva memoria para más rapidez
-    suma = zeros_like(x, dtype=float)
-
-    for m in range(n + 1):
-        suma = suma + (-1)**m * f(n + k) / (f(n - m) * f(k + m) * f(m)) * x**m
-
-    return suma
-
-
-def fZernike(X, Y, n, m, radius=5 * mm):
-    """polinomio de zernike_beam
-
-    R. Navarro, J. Arines, R. Rivera
-    "Direct and inverse discrete Zernike transform" Opt. Express 17(26) 24269
-
-    ANSI
-
-    si k=par entonces l tiene que ser par
-
-    si k=impar entonces l tiene que ser impar
-
-    k>=l
-
-    uno de los polinomios es la parte real y el otro la parte compleja
-
-
-    * n     m        aberración
-    * 0     0        piston
-    * 1    -1        vertical tilt
-    * 1     1        horizontal tilt
-    * 2    -2        astigmatismo oblicuo
-    * 2     0        desenfoque miopía si c>0 o desenfoque hipermetropía si c<0
-    * 2     2        astigmatismo anormal si c>0 o astigmatismo normal si c<0
-    * 3    -3        trebol oblicuo
-    * 3    -1        coma vertical, c>0 empinamiento superior, c<0 emp. inferior
-    * 3     1        como horizontal
-    * 3     3        trebol horizontal
-    * 4    -4        trebol de cuatro hojas oblicuo
-    * 4    -2        astigmatismo secundario oblicuo
-    * 4     0        esférica c>0 periferia más miópica que centro, c<0 periferia más hipertrópica que el centro
-    * 4     2        astigmatismo secundario a favor o en contra de la regla
-    * 4     4        trebol de cuatro hojas horizontal
-    """
-
-    R = sqrt(X**2 + Y**2) / (radius)
-    THETA = arctan2(X, Y)
-
-    N = sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
-
-    Z = zeros(R.shape, dtype=np.float)
-    for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(
-            np.abs(n - s)) / (factorial(np.abs(s)) * factorial(
-                np.abs(round(0.5 * (n + np.abs(m)) - s))) * factorial(
-                    np.abs(round(0.5 * (n - np.abs(m)) - s))))
-
-    if m >= 0:
-        fz1 = N * Z * cos(m * THETA)
-    else:
-        fz1 = N * Z * sin(np.abs(m) * THETA)
-
-    fz1[R >= 1] = 0
-    return fz1

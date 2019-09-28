@@ -46,7 +46,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
@@ -54,7 +54,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.z (numpy.array): linear array wit equidistant positions for z values
         self.wavelength (float): wavelength of the incident field.
         self.u0 (numpy.array): (x) size x - field at the last z position
@@ -1334,7 +1334,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         for i, n_layer in enumerate(n_layers[:-1]):
             indice_average = (n_layers[i] + n_layers[i + 1]) / 2
 
-            x_lens_l, h_lens_l, x_lens_r, h_lens_r = self.detect_borders_n(
+            x_lens_l, h_lens_l, x_lens_r, h_lens_r = self.detect_index_variations(
                 n_edge=n_layers[i])
 
             roughness_envelope_l = (

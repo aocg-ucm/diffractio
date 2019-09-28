@@ -19,7 +19,7 @@ The main atributes are:
     * self.u (numpy.array): equal size to x * y. complex field
     * self.X (numpy.array): equal size to x * y. complex field
     * self.Y (numpy.array): equal size to x * y. complex field
-    * self.quality (float): quality of RS propagation
+    * self.quality (float): quality of RS algorithm
     * self.info (str): description of data
     * self.type (str): Class of the field
     * self.date (str): date when performed
@@ -56,8 +56,7 @@ import matplotlib.cm as cm
 import scipy.ndimage
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
-from scipy.fftpack import fft2, ifft2
-from scipy.fftpack import fftshift
+from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import degrees, mm, np, plt, seconds, um
@@ -84,14 +83,14 @@ class Scalar_field_XY(object):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         y (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly 2**n.
+            The number of data is preferibly $2^n$.
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -1144,7 +1143,7 @@ class Scalar_field_XY(object):
 
             amplitude = self.get_amplitude(matrix=True, new_field=False)
             phase = self.get_phase(matrix=True, new_field=False)
-            imageDiscretizada = amplitude
+            discretized_image = amplitude
 
             dist = factor * posX
 
@@ -1153,11 +1152,11 @@ class Scalar_field_XY(object):
                 abajo = amplitude * 256 > centro - dist / 2
                 arriba = amplitude * 256 <= centro + dist / 2
                 Trues = abajo * arriba
-                imageDiscretizada[Trues] = centro / 256
+                discretized_image[Trues] = centro / 256
                 # heights[i]+posX/(256*2)
                 # falta compute el porcentaje de height
 
-            fieldDiscretizado = imageDiscretizada * phase
+            fieldDiscretizado = discretized_image * phase
 
         if kind == 'phase':
             ang = angle(self.get_phase(matrix=True,
@@ -1173,26 +1172,26 @@ class Scalar_field_XY(object):
             dist = factor * (heights[1] - heights[0])
 
             imageTemporal = exp(1j * (ang - pi))
-            imageDiscretizada = exp(1j * (ang))
+            discretized_image = exp(1j * (ang))
 
             for i in range(num_levels + 1):
                 centro = heights[i]
                 abajo = (ang) > (centro - dist / 2)
                 arriba = (ang) <= (centro + dist / 2)
                 Trues = abajo * arriba
-                imageDiscretizada[Trues] = exp(1j * (centro))  # - pi
+                discretized_image[Trues] = exp(1j * (centro))  # - pi
 
             Trues = (ang) > (centro + dist / 2)
-            imageDiscretizada[Trues] = exp(1j * (heights[0]))  # - pi
+            discretized_image[Trues] = exp(1j * (heights[0]))  # - pi
 
             # esto no haría falta, pero es para tener tantos levels
             # como decimos, no n+1 (-pi,pi)
-            phase = angle(imageDiscretizada) / pi
+            phase = angle(discretized_image) / pi
             phase[phase == 1] = -1
             phase = phase - phase.min()  # esto lo he puesto a última hora
-            imageDiscretizada = exp(1j * pi * phase)
+            discretized_image = exp(1j * pi * phase)
 
-            fieldDiscretizado = amplitude * imageDiscretizada
+            fieldDiscretizado = amplitude * discretized_image
 
         if new_field is False and matrix is False:
             self.u = fieldDiscretizado
@@ -1260,7 +1259,7 @@ class Scalar_field_XY(object):
         else:
             self.reduce_matrix = reduce_matrix
 
-        kinds = ('intensity', 'amplitude', 'phase', 'field', 'fieldReal')
+        # kinds = ('intensity', 'amplitude', 'phase', 'field', 'fieldReal')
 
         if kind == 'intensity':
             id_fig, IDax, IDimage = self.__draw_intensity__(

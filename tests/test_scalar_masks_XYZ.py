@@ -33,8 +33,8 @@ class Test_Scalar_masks_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 100 * um
-        numdataX = 128
-        numdataZ = 128
+        numdataX = 64
+        numdataZ = 64
 
         longitud = 50 * um
 

@@ -42,7 +42,7 @@ def roughness_1D(x, t, s, kind='normal'):
     ancho = x[-1] - x[0]
     dx = x[1] - x[0]
 
-    # PARAMETROS DE LA SUPERFICIE
+    # Surface parameters
 
     L_ancho = ancho / (2 * dx)
     M = round(4 * t / (np.sqrt(2) * dx))
@@ -52,9 +52,11 @@ def roughness_1D(x, t, s, kind='normal'):
     # GENERACION DE LA SUPERFICIE
     # Desplazamientos para correlacionar
     desp_ancho = np.arange(-M, M + 1)
+
     # (dominio del kernel de la correlacion)
     desp_ancho = desp_ancho * dx
     pesos = np.exp(-2 * (desp_ancho**2 / t**2))
+
     # print np.sqrt((pesos**2).sum())
     pesos = np.abs(pesos / np.sqrt(
         (pesos**2).sum()))  # p' q' la suma de sus squares de 1
@@ -62,12 +64,7 @@ def roughness_1D(x, t, s, kind='normal'):
     # Alturas no correlacionadas # con distribucion N(0,s)
     if kind == 'normal':
         h_no_corr = s * np.random.randn(2 * N_ancho + 1)
-        # Alturas correlacionadas en el plano:
-        # Las heights salen de correlacionar entre si las h no corr
-        # reemplazando una de ellas por el promedio ponderado con sus vecinas
         h_corr = fft_convolution1d(h_no_corr, pesos)
-        # Como la function pesos es par, las
-        # En en la conv 2D los pesos deben ir 2 dos en el argumentos
         h_corr = h_corr[0:len(x)]
     elif kind == 'uniform':
         h_corr = s * (np.random.rand(len(x)) - 0.5)
@@ -179,15 +176,9 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
     """
 
     maximum = y.max()
-
     level = percentaje * maximum
-
     i_max = np.argmax(y)
 
-    # keep for testing:
-    # plt.figure()
-    # plt.plot(x, y, 'k')
-    # plt.title('in: width_percentaje')
     if i_max == 0:
         i_left = 0
         print("beam width out of range")
@@ -212,7 +203,7 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
     return width, x_list, i_list
 
 
-def beam_width_2D(x, y, I):
+def beam_width_2D(x, y, intensity):
     """2D beam width
     ISO11146 width
     References:
@@ -223,7 +214,7 @@ def beam_width_2D(x, y, I):
     Parameters:
         x (np.array): 1d x
         y (np.array): 1d y
-        I(np.array):  intensity
+        intensity (np.array):  intensity
 
     Returns:
         (float): dx width x
@@ -233,14 +224,14 @@ def beam_width_2D(x, y, I):
 
     """
     X, Y = np.meshgrid(x, y)
-    I = I - I.min()
+    intensity = intensity - intensity.min()
 
-    P = I.sum()
-    x_mean = (I * X).sum() / P
-    y_mean = (I * Y).sum() / P
-    x2_mean = (I * (X - x_mean)**2).sum() / P
-    y2_mean = (I * (Y - y_mean)**2).sum() / P
-    xy_mean = (I * (X - x_mean) * (Y - y_mean)).sum() / P
+    P = intensity.sum()
+    x_mean = (intensity * X).sum() / P
+    y_mean = (intensity * Y).sum() / P
+    x2_mean = (intensity * (X - x_mean)**2).sum() / P
+    y2_mean = (intensity * (Y - y_mean)**2).sum() / P
+    xy_mean = (intensity * (X - x_mean) * (Y - y_mean)).sum() / P
     gamma = (x2_mean - y2_mean) / np.abs(x2_mean - y2_mean + 1e-16)
     principal_axis = 0.5 * np.arctan2(2 * xy_mean, x2_mean - y2_mean)
     dx = 2 * sqrt(2) * sqrt(x2_mean + y2_mean + gamma * sqrt(
@@ -301,33 +292,38 @@ def refraction_index(filename, wavelength, raw=False, has_draw=True):
         return f_n(wavelength), f_kappa(wavelength)
 
 
-def FWHM1D(x, I, percentaje=0.5, remove_background='mean', has_drawing=True):
+def FWHM1D(x,
+           intensity,
+           percentaje=0.5,
+           remove_background='mean',
+           has_drawing=True):
     """FWHM
 
     remove_background = 'min', 'mean', 'None'"""
 
     if remove_background == 'mean':
-        I_background = I.mean()
+        I_background = intensity.mean()
     elif remove_background == 'min':
-        I_background = I.min()
+        I_background = intensity.min()
     else:
-        I_background = np.zeros_like(I)
+        I_background = np.zeros_like(intensity)
 
-    I = I - I_background
+    intensity = intensity - I_background
 
     delta_x = x[1] - x[0]
-    amp_max = I.max()
+    amp_max = intensity.max()
     amp_med = amp_max * percentaje
-    i_max = np.where(I == amp_max)
+    i_max = np.where(intensity == amp_max)
     i_max = int(i_max[0][0])
-    left = I[0:i_max]
-    right = I[i_max::]
+    left = intensity[0:i_max]
+    right = intensity[i_max::]
 
     i_left, _, distance_left = nearest(left, percentaje * amp_max)
-    slope_left = (I[i_left + 1] - I[i_left]) / delta_x
+    slope_left = (intensity[i_left + 1] - intensity[i_left]) / delta_x
 
     i_right, _, distance_right = nearest(right, percentaje * amp_max)
-    slope_right = (I[i_max + i_right] - I[i_max + i_right - 1]) / delta_x
+    slope_right = (
+        intensity[i_max + i_right] - intensity[i_max + i_right - 1]) / delta_x
 
     i_right = i_right + i_max
 
@@ -339,29 +335,38 @@ def FWHM1D(x, I, percentaje=0.5, remove_background='mean', has_drawing=True):
     amp_max = amp_max + I_background
     amp_med = amp_med + I_background
 
-    I = I + I_background
+    intensity = intensity + I_background
 
     if has_drawing is True:
         if remove_background is True:
-            I = I + I.min()
+            intensity = intensity + intensity.min()
         plt.figure()
 
-        plt.plot(x, I, 'k', lw=2)
+        plt.plot(x, intensity, 'k', lw=2)
         plt.plot([x[0], x[-1]], [amp_max, amp_max], 'r--')
         plt.plot([x[0], x[-1]], [amp_med, amp_med], 'r--')
 
-        plt.plot(x[i_max], I[i_max], 'ro', ms=8)
-        plt.plot(x[int(i_left)] + distance_left, I[int(i_left)], 'ro', ms=8)
-        plt.plot(x[int(i_right)] + distance_right, I[int(i_right)], 'ro', ms=8)
+        plt.plot(x[i_max], intensity[i_max], 'ro', ms=8)
+        plt.plot(
+            x[int(i_left)] + distance_left, intensity[int(i_left)], 'ro', ms=8)
+        plt.plot(
+            x[int(i_right)] + distance_right,
+            intensity[int(i_right)],
+            'ro',
+            ms=8)
 
     return FWHM_x
 
 
-def FWHM2D(x, y, I, percentaje=0.5, remove_background='mean',
+def FWHM2D(x,
+           y,
+           intensity,
+           percentaje=0.5,
+           remove_background='mean',
            has_drawing=True):
 
-    Ix = I.sum(axis=0)
-    Iy = I.sum(axis=1)
+    Ix = intensity.sum(axis=0)
+    Iy = intensity.sum(axis=1)
 
     FWHM_x = FWHM1D(
         x, Ix, percentaje, remove_background, has_drawing=has_drawing)
@@ -372,7 +377,7 @@ def FWHM2D(x, y, I, percentaje=0.5, remove_background='mean',
 
 
 def detect_intensity_range(x,
-                           I,
+                           intensity,
                            percentage=0.95,
                            has_draw=True,
                            logarithm=True):
@@ -380,7 +385,7 @@ def detect_intensity_range(x,
 
     Parameters:
         x (np.array): x positions
-        I (np.array): Intensity of the 1D beam
+        intensity (np.array): Intensity of the 1D beam
         percentage (float): value 0-1 representing the percentage of intensity between area
         has_draw (bool): if True draws the field an the range
         logarithm (bool): when has_draw, draws logarithm or normal intensity
@@ -390,14 +395,14 @@ def detect_intensity_range(x,
 
     """
 
-    I_cum = I.cumsum()
+    I_cum = intensity.cumsum()
 
     pc = percentage + (1 - percentage) / 2
     Icum_min = (1 - pc) * I_cum.max()
     Icum_max = I_cum.max() * pc
 
-    I_min = I.min()
-    I_max = I.max()
+    I_min = intensity.min()
+    I_max = intensity.max()
 
     i_min, _, _ = nearest(I_cum, Icum_min)
     i_max, _, _ = nearest(I_cum, Icum_max)
@@ -409,14 +414,14 @@ def detect_intensity_range(x,
         fig, ax = plt.subplots()
 
         if logarithm is True:
-            I2 = np.log(I + 1)
+            I2 = np.log(intensity + 1)
             I_min2 = np.log(I_min + 1)
             I_max2 = np.log(I_max + 1)
 
             I2 = I2 / I2.max()
             I_max2 = I_max2 / I_max2.max()
         else:
-            I2 = I
+            I2 = intensity
             I_min2 = I_min
             I_max2 = I_max
 
@@ -560,44 +565,6 @@ def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose=False):
             lines_mm, freq_50_ideal))
 
     return strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
-
-
-def laguerre_polynomial_nk(x, n=4, k=5):
-    """functionAuxiliar
-        function y = LaguerreGen(varargin)
-        LaguerreGen calculates the utilsized Laguerre polynomial L{n, alpha}
-        This function computes the utilsized Laguerre polynomial L{n,alpha}.
-        If no alpha is supplied, alpha is set to zero and this function
-        calculates the "normal" Laguerre polynomial.
-
-        References:
-            Szeg: "Orthogonal Polynomials" 1958, formula (5.1.10)
-
-        Parameters:
-        - n = nonnegative integer as degree level
-        - alpha >= -1 real number (input is optional)
-
-        The output is formated as a polynomial vector of degree (n+1)
-        corresponding to MatLab norms (that is the highest coefficient
-        is the first element).
-
-        Example:
-        - polyval(LaguerreGen(n, alpha), x) evaluates L{n, alpha}(x)
-        - roots(LaguerreGen(n, alpha)) calculates roots of L{n, alpha}
-
-        Calculation is done recursively using matrix operations for very fast
-        execution time.
-
-        Author: Matthias.Trampisch@rub.de
-        Date: 16.08.2007
-        Version 1.2"""
-
-    f = factorial
-    summation = np.zeros_like(x, dtype=float)
-    for m in range(n + 1):
-        summation = summation + (-1)**m * f(n + k) / (
-            f(n - m) * f(k + m) * f(m)) * x**m
-    return summation
 
 
 def gauss_spectrum(wavelengths, w_central, Dw, normalize=True):
@@ -929,7 +896,7 @@ def drawTransmitancias(theta_i,
     plt.plot(
         theta_i / degrees, np.real(T_par), 'r', lw=2, label=r"$T_{\parallel}$")
     plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$I$", fontsize=22)
+    plt.ylabel(r"$intensity$", fontsize=22)
     plt.ylim(-0.1, 2)
     plt.legend(loc=3, prop={'size': 18})
 
