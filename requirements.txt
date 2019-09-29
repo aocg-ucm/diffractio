@@ -9,4 +9,3 @@ numexpr
 mayavi
 pandas
 traits
-tvtk
