@@ -1,9 +1,14 @@
 numpy
 scipy
 matplotlib
-sympy
+PIL
 nbsphinx
 hickle
 opencv-python
 numexpr
 mayavi
+copyreg
+pandas
+multiprocessing
+traits
+tvtk

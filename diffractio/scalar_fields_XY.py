@@ -52,7 +52,6 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 import matplotlib.animation as animation
-import matplotlib.cm as cm
 import scipy.ndimage
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
