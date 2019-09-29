@@ -8,6 +8,5 @@ opencv-python
 numexpr
 mayavi
 pandas
-multiprocessing
 traits
 tvtk
