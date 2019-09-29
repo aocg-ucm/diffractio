@@ -7,7 +7,6 @@ Pillow
 opencv-python
 numexpr
 mayavi
-copyreg
 pandas
 multiprocessing
 traits
