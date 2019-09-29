@@ -1,9 +1,9 @@
 numpy
 scipy
 matplotlib
-PIL
 nbsphinx
 hickle
+Pillow
 opencv-python
 numexpr
 mayavi
