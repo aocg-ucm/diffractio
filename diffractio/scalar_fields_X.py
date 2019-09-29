@@ -1,18 +1,12 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-# ------------------------------------
-# Authors:    Luis Miguel Sanchez Brea and Jesus del Hoyo
-# Date:       2019/03/24
-# License:    GPL
-# -------------------------------------
 """
 This module generates Scalar_field_X class and several functions for multiprocessing.
 
 It is required also for generating masks and fields.
 
 The main atributes are:
-        * self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly $2^n$.
+        * self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         * self.wavelength (float): wavelength of the incident field.
         * self.u (numpy.array): equal size than x. complex field
         * self.quality (float): quality of RS algorithm
@@ -83,14 +77,14 @@ class Scalar_field_X(object):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
         self.quality (float): quality of RS algorithm
@@ -378,8 +372,9 @@ class Scalar_field_X(object):
             verbose=False):
         """Fast Fourier Transform (fftshift) of the field
 
-        .. math::
-             \mathbf{E}(x,y,z)=\frac{e^{i k (z+\frac{x^{2}+y^{2}}{2z})}}{i\lambda z} \int\mathbf{E}_{0}(\zeta,\eta) e^{-i \frac{k}{f'}(x'\zeta+y'\eta)}d\zeta d\eta.
+        .. math:: \mathbf{E}(x,y,z)=\frac{e^{ik\left[z+\frac{x^{2}+y^{2}}{2z}\right]}}{i\lambda z}\int\mathbf{E}_{0}(\zeta,\eta)e^{-i\frac{k}{f'}(x'\zeta+y'\eta)}d\zeta d\eta$
+
+
 
         Parameters:
             z (float): distance to the observation plane or focal of lens. If None the exit is in radians

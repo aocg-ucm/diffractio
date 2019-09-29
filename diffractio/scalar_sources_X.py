@@ -37,14 +37,14 @@ class Scalar_source_X(Scalar_field_X):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
         self.quality (float): quality of RS algorithm
@@ -56,9 +56,6 @@ class Scalar_source_X(Scalar_field_X):
     def __init__(self, x, wavelength, n_background=1, info=""):
         super(self.__class__, self).__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'
-
-    # ______________________________________________________________________
-    # Sources definition
 
     def plane_wave(self, A=1, theta=0 * degrees, z0=0 * um):
         """Plane wave.
@@ -187,14 +184,13 @@ class Scalar_source_X(Scalar_field_X):
         """Several parallel gauss beams
 
         Parameters:
-            params: list with a dictionary:
-                A (float): maximum amplitude
-                num_beams (int): number of gaussian beams (equidistintan)
-                w0 (float): beam width of the bemas
-                z0 (float): constant value for phase shift
-                x_central (float): central position of rays
-                x_range (float): range of rays
-                theta (float): angle of the parallel beams
+            A (float): maximum amplitude
+            num_beams (int): number of gaussian beams (equidistintan)
+            w0 (float): beam width of the bemas
+            z0 (float): constant value for phase shift
+            x_central (float): central position of rays
+            x_range (float): range of rays
+            theta (float): angle of the parallel beams
         """
 
         t = np.zeros_like(self.u, dtype=complex)

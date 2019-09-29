@@ -35,14 +35,14 @@ class Scalar_mask_X(Scalar_field_X):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
         self.quality (float): quality of RS algorithm
@@ -91,7 +91,7 @@ class Scalar_mask_X(Scalar_field_X):
                            mask=True,
                            x0=0 * um,
                            radius=100 * um):
-        """Phase mask defined between two surfaces f1 and f2: h(x,y)=f2(x,y)-f1(x,y)
+        """Phase mask defined between two surfaces $f_1$ and $f_2$: $h(x,y)=f_2(x,y)-f_1(x,y)$
 
         :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
@@ -212,7 +212,7 @@ class Scalar_mask_X(Scalar_field_X):
         return self.u
 
     def two_levels(self, level1=0, level2=1, xcorte=0):
-        """Divides the image in two levels
+        """Divides the image in two levels.
 
         Parameters:
             level1 (float): value of level1
@@ -234,7 +234,6 @@ class Scalar_mask_X(Scalar_field_X):
             levelMin (float): minimum value of levels
             levelMax (float): maximum value of levels
         """
-        # Definicion de un vector de ceros
         t = np.zeros(self.x.shape, dtype=float)
 
         xpos = np.linspace(self.x[0], self.x[-1], num_levels + 1)
@@ -243,8 +242,7 @@ class Scalar_mask_X(Scalar_field_X):
         ipos[-1] = len(self.x)
         # print(ipos)
 
-        for i in range(num_levels):
-            # print(ipos[i + 1], ipos[i])
+        for i in range(len(num_levels)):
             t[ipos[i]:ipos[i + 1]] = height_levels[i]
 
         self.u = t
@@ -416,7 +414,7 @@ class Scalar_mask_X(Scalar_field_X):
                      phase=np.pi,
                      mask=True,
                      radius=100 * um):
-        """Fresnel lens
+        """Fresnel lens. Amplitude phase, continuous or binary.
 
         Parameters:
             x0 (float): center of lens
@@ -541,7 +539,7 @@ class Scalar_mask_X(Scalar_field_X):
         return positions, sizes, percentaje_real
 
     def dust(self, percentaje, size=0):
-        """ "Mask with dust particles of equal sizes.
+        """ Mask with dust particles of equal sizes.
 
         Parameters:
             percentaje (float): percentaje of area afected by noise

@@ -50,14 +50,14 @@ class Scalar_source_XY(Scalar_field_XY):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         y (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field

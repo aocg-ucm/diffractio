@@ -12,66 +12,6 @@ import numpy as np
 from . import eps, mm
 from .utils_optics import field_parameters
 
-#
-# def get_screen_sizes():
-#     """
-#     screens[i].width,  screens[i].height, screens[i].x, screens[i].y
-#     """
-#     platform = pyglet.window.get_platform()
-#     display = platform.get_default_display()
-#
-#     screens = []
-#     for screen in display.get_screens():
-#         screens.append(screen)
-#
-#     for i in range(len(screens)):
-#         print(screens[i].width, screens[i].height, screens[i].x, screens[i].y)
-#
-#     return screens
-
-#
-# def send_image_to_screen(image1, size, position):
-#     """This is a small script to demonstrate using Tk to show PIL Image objects.
-#     The advantage of this over using Image.show() is that it will reuse the
-#     same window, so you can show multiple images without opening a new
-#     window for each image.
-#
-#     This will simply go through each file in the current directory and
-#     try to display it. If the file is not an image then it will be skipped.
-#     Click on the image display window to go to the next image.
-#
-#     Noah Spurrier 2007
-#     """
-#
-#     root = Tkinter.Tk()
-#     # root.geometry('+%d+%d' % (100,100))
-#     w, h = size
-#     px, py = position
-#     root.overrideredirect(1)
-#     root.geometry("{:d}x{:d}+{:d}+{:d}".format(w, h, px, py))
-#     # root.geometry("%dx%d+0+0" % (w, h))
-#
-#     root.focus_set()  # <-- move focus to this widget
-#
-#     print("w={}, h={}".format(image1.size[0], image1.size[1]))
-#     root.geometry('%dx%d' % (image1.size[0], image1.size[1]))
-#     tkpi = ImageTk.PhotoImage(image1)
-#     # label_image = Tkinter.Label(root, image=tkpi)
-#     # label_image.place(x=0, y=0, width=image.size[0], height=image.size[1])
-#     #
-#     # root.title(f)
-#     # if old_label_image is not None:
-#     #     old_label_image.destroy()
-#     # old_label_image = label_image
-
-
-def get_image():
-    """TODO: lost function"""
-
-    kinds = ('png', 'jpg', 'gif', 'tif', 'xpm')
-    filename = select_file(kinds, nombreGenerico='images')
-    return filename
-
 
 def view_image(filename):
     """reproduces image
@@ -276,67 +216,6 @@ def draw_several_fields(fields,
         IDimage.set_cmap("gist_heat")
 
 
-# def generate_video_proposal(u_s,
-#                             kind,
-#                             filename,
-#                             logarithm,
-#                             normalize,
-#                             dimension='xz',
-#                             wait=0.01 * seconds,
-#                             step=1,
-#                             fps=15,
-#                             title='',
-#                             artist='',
-#                             comment=''):
-#     """
-#     draw profiles in a video fashion
-#     Parameters:
-#         kind = 'intensity', 'amplitude', 'phase'
-#         kind_profile = 'transversal', 'longitudinal'
-#         step: number of frames shown (if 1 shows all, if 2 1/2, ..)
-#               for accelerating proposes in video
-#         wait : (in seconds) time for slow down the video
-#         logartihm, normalize: for normalization of the video
-#         filename: ''         - shown in screen
-#                   'name.avi' - performs a video
-#     """
-#     fig = plt.figure()
-#
-#     plt.ylim(I_drawing.min(), I_drawing.max())
-#
-#     writer = prepare_video(fps, title, artist, comment)
-#
-#     with writer.saving(fig, filename, 300):
-#         if kind_profile == 'transversal':
-#             for i in range(0, len(self.z), step):
-#                 I_drawing = prepare_drawing(u_s[i].u, kind, logarithm,
-#                                             normalize)
-#
-#                 h1.set_ydata(I_drawing[:, i])
-#                 # plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
-#                 plt.draw()
-#                 if filename is '':
-#                     plt.pause(wait)
-#                 else:
-#                     print("{}/{}".format(i, len(self.z)))
-#                     writer.grab_frame()
-#         elif kind_profile == 'xy':
-#             manager = plt.get_current_fig_manager()
-#
-#             for i in range(0, len(self.z), step):
-#                 I_drawing = prepare_drawing(u_s[i].u, kind, logarithm,
-#                                             normalize)
-#                 im.set_array(I_drawing)
-#                 manager.canvas.draw()
-#                 # plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
-#                 plt.draw()
-#                 if filename is '':
-#                     plt.pause(wait)
-#                 else:
-#                     # print("{}/{}".format(i, len(self.z)))
-#                     writer.grab_frame()
-
-
 def change_image_size(image_name,
                       length='800x600',
                       nombre_final='prueba.png',
@@ -375,26 +254,6 @@ def extract_image_from_video(nombre_video=None,
     texto = "convert '%s%s' %s" % (nombre_video, num_frame, nombre_final)
     print(texto)
     os.system(texto)
-
-
-# def convert_video(path):
-#     cmd = "'mencoder \"%s.avi\" -o \"%s.mp4\" -ovc lavc -oac mp3lame' %({},{})"
-#     # %s es el nombre del archivo
-#
-#     folder = os.path.dirname(path)
-#     files = os.listdir(path)
-#
-#     nvideos = 1
-#
-#     for video in files:
-#         if video[-4:] == ".avi":
-#             name = path + video[:-4]
-#             orden_final = eval(cmd.format(name, name))
-#             os.system(orden_final)
-#             print("_____________________llevo %d videos" % nvideos)
-#             nvideos = nvideos + 1
-#         else:
-#             print(video)
 
 
 def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):

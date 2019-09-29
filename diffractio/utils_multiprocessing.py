@@ -1,17 +1,6 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# ----------------------------------------------------------------------
-# Name:        common.py
-# Purpose:     Functions to help multithreading
-#
-# Author:      Jesus del Hoyo
-#
-# Created:     2018
-# Copyright:   AOCG / UCM
-# Licence:     GPL
-# ----------------------------------------------------------------------
-
 import copyreg
 import multiprocessing
 import time

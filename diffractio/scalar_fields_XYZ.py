@@ -79,11 +79,11 @@ class Scalar_field_XYZ(object):
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.z (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.u (numpy.array): equal size than X. complex field
         self.wavelength (float): wavelength of the incident field.
         self.u0 (Scalar_field_XY): Initial XY field

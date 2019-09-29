@@ -1,16 +1,5 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-# ----------------------------------------------------------------------
-# Name:        utils_optics.py
-# Purpose:     General purpose optics functions
-#
-# Author:      Luis Miguel Sanchez Brea
-#
-# Created:     2017
-# Copyright:   AOCG / UCM
-# Licence:     GPL
-# ----------------------------------------------------------------------
 """ General purpose optics functions """
 
 import pandas as pd

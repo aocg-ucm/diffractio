@@ -28,7 +28,6 @@ scalar bidimensional XY fields propagated in Z direction
     * scalar_fields_XYZ  (propagation and general functions)
     * scalar_masks_XYZ (scalar masks)
     * sources are acquired using scalar_sources_XY
-
 """
 
 import numpy as np
@@ -39,7 +38,7 @@ from scipy.constants import speed_of_light, mu_0, epsilon_0, elementary_charge
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 name = 'diffractio'
 

@@ -45,7 +45,6 @@ from scipy.signal import fftconvolve
 from diffractio import degrees, np, plt, sp, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_drawing import get_image
 from diffractio.utils_math import fft_convolution2d, nearest, nearest2
 from diffractio.utils_optics import roughness_2D
 
@@ -55,14 +54,14 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     Parameters:
         x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n`
         x (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
         self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly $2^n$.
+            The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -250,7 +249,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                            radius,
                            v_globals={},
                            mask=True):
-        """ phase mask defined between 2 surfaces f1 and f2:  h(x,y)=f2(x,y)-f1(x,y)
+        """ phase mask defined between 2 surfaces $f_1$ and $f_2$:  $h(x,y)=f_2(x,y)-f_1(x,y)$
 
         Parameters:
             r0 (float, float): center of cross
@@ -302,10 +301,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             str: filename
 
     """
-        # Se carga y se visualiza la image
-        if filename == '' or filename is None:
-            filename = get_image()
-            # view_image(filename)
 
         # Abre image (no la muestra)
         im = Image.open(filename)
@@ -370,7 +365,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Createa a triangle mask. It uses the equation of a straight line:
-                y = -slope * |x - x0| + y0
+                y = -slope * (|x - x0) + y0
 
         Parameters:
             r0 (float, float): Coordinates of the top corner of the triangle
@@ -410,8 +405,11 @@ class Scalar_mask_XY(Scalar_field_XY):
             (int): number of points in the mask
 
         Example:
+
             A = Scalar_mask_XY(x, y, wavelength)
+
             A.ring(r0, radius1, radius2, angle)
+
             insert_array_masks(t1 = A, space = 50 * um, angle = 0 * degrees)
         """
 
@@ -845,9 +843,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             mask (bool): if True, mask with size radius
 
         Example:
-            fresnel_lens( r0=(0 * um, 0 * um), radius=(100 * um, 200 * um),
-             focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True,
-             kind='amplitude',phase=pi)
+            fresnel_lens( r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True, kind='amplitude',phase=pi)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -991,8 +987,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             binaria (bool): if True binary else, scaled
 
         Example:
-            radial_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um,
-                radius=400 * um, binaria=True)
+            radial_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, binaria=True)
         """
 
         # Vector de onda
@@ -1064,8 +1059,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um,
-                radius=400 * um, binaria=True)
+            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, sfradius=400 * um, binaria=True)
         """
 
         x0, y0 = r0
@@ -1100,8 +1094,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-             hammer(r0=(0 * um, 0 * um), size=(250 * um, 120 * um),
-                hammer_width=5 * um, angle=0 * degrees)
+             hammer(r0=(0 * um, 0 * um), size=(250 * um, 120 * um), hammer_width=5 * um, angle=0 * degrees)
         """
         # si solamente hay 1, las posiciones y radius son los mismos para ambos
         # Origen
@@ -1188,8 +1181,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             z (float): propagation distance
 
         Example:
-            laguerre_gauss_spiral(r0=(0 * um, 0 * um), kind='amplitude', l=1,
-                w0=625 * um, z=0.01 * um)
+            laguerre_gauss_spiral(r0=(0 * um, 0 * um), kind='amplitude', l=1, w0=625 * um, z=0.01 * um)
         """
 
         u_ilum = Scalar_source_XY(
@@ -1230,8 +1222,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            forked_grating(r0=(0 * um, 0 * um), period=20 * um, l=2,
-                alpha=1, angle=0 * degrees)
+            forked_grating(r0=(0 * um, 0 * um), period=20 * um, l=2, alpha=1, angle=0 * degrees)
         """
         # R=sqrt((self.X-r0[0])**2+(self.Y-r0[1])**2)
 
@@ -1274,8 +1265,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-             sine_grating(period=40 * um, amp_min=0, amp_max=1, x0=0 * um,
-                 angle=0 * degrees)
+             sine_grating(period=40 * um, amp_min=0, amp_max=1, x0=0 * um, angle=0 * degrees)
         """
         Xrot, Yrot = self.__rotate__(angle)
 
@@ -1364,8 +1354,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            binary_grating(period=40 * um, amin=0, amax=1, phase=0 * degrees,
-                 x0=0, fill_factor=0.5, angle=0 * degrees)
+            binary_grating(period=40 * um, amin=0, amax=1, phase=0 * degrees, x0=0, fill_factor=0.5, angle=0 * degrees)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t.ronchi_grating(period, fill_factor, x0, angle)
@@ -1384,8 +1373,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            blazed_grating(period=40 * um, height=2 * um, index=1.5,
-                               x0, angle=0 * degrees)
+            blazed_grating(period=40 * um, height=2 * um, index=1.5, x0, angle=0 * degrees)
         """
         k = 2 * pi / self.wavelength
         # Inclinacion de las franjas
@@ -1424,8 +1412,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            grating_2D(period=40. * um, amin=0, amax=1., phase=0. * pi / 2,
-                x0=0, fill_factor=0.75, angle=0.0 * degrees)
+            grating_2D(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -1457,8 +1444,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            grating_2D_ajedrez(period=40. * um, amin=0, amax=1.,
-              phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
+            grating_2D_ajedrez(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
 
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -1597,7 +1583,6 @@ class Scalar_mask_XY(Scalar_field_XY):
                         n1 = n2 = 0.5: for a super-ellipse
 
         Example:
-
             hiper_elipse(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
         """
 
@@ -1659,9 +1644,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): Angle to be rotated the sinusoidal slit
 
         Example:
-
-            sinusoidal_slit(y0=(10 * um, -10 * um), amplitude=(10 * um, 20 * um),
-                phase=0 * degrees, angle=0 * degrees, period=(50 * um, 35 * um))
+            sinusoidal_slit(y0=(10 * um, -10 * um), amplitude=(10 * um, 20 * um), phase=0 * degrees, angle=0 * degrees, period=(50 * um, 35 * um))
 
         """
 

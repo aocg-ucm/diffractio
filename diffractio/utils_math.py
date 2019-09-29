@@ -82,54 +82,61 @@ def ndgrid(*args, **kwargs):
                    have a smaller dtype than others.
 
     Typical usage:
-    >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
-    >>> X, Y, Z = ndgrid(x, y, z)
-    # unpacking the returned ndarray into X, Y, Z
 
-    Each of X, Y, Z has shape [len(v) for v in x, y, z].
-    >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
-    True
-    >>> X
-    array([[[0, 0, 0, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0]],
-               [[1, 1, 1, 1],
-                    [1, 1, 1, 1],
-                    [1, 1, 1, 1]]])
-    >>> Y
-    array([[[2, 2, 2, 2],
-                    [3, 3, 3, 3],
-                    [4, 4, 4, 4]],
-               [[2, 2, 2, 2],
-                    [3, 3, 3, 3],
-                    [4, 4, 4, 4]]])
-    >>> Z
-    array([[[5, 6, 7, 8],
-                    [5, 6, 7, 8],
-                    [5, 6, 7, 8]],
-               [[5, 6, 7, 8],
-                    [5, 6, 7, 8],
-                    [5, 6, 7, 8]]])
+        >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
 
-    With an unpacked argument list:
-    >>> V = [[0, 1], [2, 3, 4]]
-    >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
-    array([[[0, 0, 0],
-                    [1, 1, 1]],
-               [[2, 3, 4],
-                    [2, 3, 4]]])
+        >>> X, Y, Z = ndgrid(x, y, z)
+        # unpacking the returned ndarray into X, Y, Z
 
-    For input vectors of different data kinds,
-    same_dtype=False makes ndgrid()
-    return a list of arrays with the respective dtype.
-    >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
-    [array([[0, 0, 0], [1, 1, 1]]),
-     array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
+        Each of X, Y, Z has shape [len(v) for v in x, y, z].
 
-    Default is to return a single array.
-    >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
-    array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
-               [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
+        >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
+        True
+
+        >>> X
+        array([[[0, 0, 0, 0],
+                        [0, 0, 0, 0],
+                        [0, 0, 0, 0]],
+                   [[1, 1, 1, 1],
+                        [1, 1, 1, 1],
+                        [1, 1, 1, 1]]])
+        >>> Y
+        array([[[2, 2, 2, 2],
+                        [3, 3, 3, 3],
+                        [4, 4, 4, 4]],
+                   [[2, 2, 2, 2],
+                        [3, 3, 3, 3],
+                        [4, 4, 4, 4]]])
+        >>> Z
+        array([[[5, 6, 7, 8],
+                        [5, 6, 7, 8],
+                        [5, 6, 7, 8]],
+                   [[5, 6, 7, 8],
+                        [5, 6, 7, 8],
+                        [5, 6, 7, 8]]])
+
+        With an unpacked argument list:
+
+        >>> V = [[0, 1], [2, 3, 4]]
+
+        >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
+        array([[[0, 0, 0],
+                        [1, 1, 1]],
+                   [[2, 3, 4],
+                        [2, 3, 4]]])
+
+        For input vectors of different data kinds,
+        same_dtype=False makes ndgrid()
+        return a list of arrays with the respective dtype.
+        >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
+        [array([[0, 0, 0], [1, 1, 1]]),
+         array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
+
+        Default is to return a single array.
+
+        >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
+        array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
+                   [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
     same_dtype = kwargs.get("same_dtype", True)
     V = [array(v) for v in args]  # ensure all input vectors are arrays
