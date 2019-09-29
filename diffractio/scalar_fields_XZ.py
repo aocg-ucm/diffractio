@@ -424,7 +424,7 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    def load_data(self, filename, method='hickle', verbose=False):
+    def load_data(self, filename, method='savez_comrpessed', verbose=False):
         """Load data from a file to a Scalar_field_XZ.
 
         Parameters:
@@ -432,7 +432,7 @@ class Scalar_field_XZ(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, 'xz', verbose, method)
+        dict0 = load_data_common(self, filename, verbose, method)
 
         if verbose:
             print(dict0)

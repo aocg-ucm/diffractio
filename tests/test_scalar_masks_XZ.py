@@ -123,8 +123,15 @@ class Test_Scalar_masks_XZ(object):
 
         t1 = Scalar_mask_XZ(x, z, wavelength)
 
-        profile1 = loadtxt('profile1.txt')
-        profile2 = loadtxt('profile2.txt')
+        script_dir = os.path.dirname(__file__)
+        rel_path1 = "profile1.txt"
+        abs_file_path1 = os.path.join(script_dir, rel_path1)
+
+        rel_path2 = "profile2.txt"
+        abs_file_path2 = os.path.join(script_dir, rel_path2)
+
+        profile1 = loadtxt(abs_file_path1)
+        profile2 = loadtxt(abs_file_path2)
         profile1[:, 1] = np.abs(profile1[:, 1])
         profile2[:, 1] = np.abs(profile2[:, 1])
         t1.mask_from_array(
@@ -382,10 +389,12 @@ class Test_Scalar_masks_XZ(object):
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
+        script_dir = os.path.dirname(__file__)
+        rel_path1 = "star_hole.png"
+        image_name = os.path.join(script_dir, rel_path1)
 
-        filename = "star_hole.png"
         t1.image(
-            filename=filename,
+            filename=image_name,
             n_max=2,
             n_min=1,
             angle=0 * degrees,

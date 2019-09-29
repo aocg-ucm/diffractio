@@ -325,7 +325,7 @@ class Scalar_field_XYZ(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, 'xy', verbose, method)
+        dict0 = load_data_common(self, filename, verbose, method)
 
         print(dict0)
         if dict0 is not None:
@@ -430,7 +430,7 @@ class Scalar_field_XYZ(object):
             x_new = self.x[i_s]
             y_new = self.y[j_s]
             z_new = self.z[k_s]
-            X_new, Y_new = ndgrid(x_new, y_new, z_new)
+            X_new, Y_new, Z_new = ndgrid(x_new, y_new, z_new)
             u_new = self.u[i_s, j_s]
             n_new = self.n[i_s, j_s]
 
@@ -1225,7 +1225,7 @@ class Scalar_field_XYZ(object):
         """
 
         def f(x):
-            #return x
+            # return x
             return np.log(1 * x + 1)
 
         FFMpegWriter = manimation.writers[encoder]  # ffmpeg mencoder html

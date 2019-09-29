@@ -446,7 +446,7 @@ def prepare_drawing(u, kind='intensity', logarithm=False, normalize=False):
         # plt.title('Intensity')
     elif kind == 'amplitude':
         I_drawing = amplitude
-        I_drawingOutput = normalize_draw(I_drawing, logarithm, normalize)
+        I_drawing = normalize_draw(I_drawing, logarithm, normalize)
         # plt.title('Amplitude')
     elif kind == 'phase':
         I_drawing = phase

@@ -4,12 +4,12 @@
 import datetime
 import os
 import sys
+import time
 
 from diffractio import degrees, eps, mm, no_date, np, plt, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_common import several_propagations
 from diffractio.utils_drawing import draw_several_fields
 from diffractio.utils_tests import comparison, save_figure_test
 
@@ -170,22 +170,28 @@ class Test_Scalar_fields_XY(object):
 
     def test_save_load(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        filename = '{}{}'.format(newpath, func_name)
 
-        t1 = field_gauss
-        t1.info = 'test save load'
-        t1.draw(kind='intensity')
-        plt.title('t1')
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        x = np.linspace(-100, 100, 256)
+        y = np.linspace(-100, 100, 256)
+        wavelength = 0.6328
 
-        save_figure_test(newpath, func_name, add_name='_save')
+        t1 = Scalar_source_XY(x, y, wavelength)
+        t1.gauss_beam(
+            w0=(50 * um, 50 * um),
+            r0=(0, 0),
+            theta=0 * degrees,
+            phi=0 * degrees)
 
-        t2 = Scalar_field_XY(None, None, None)
-        t2.load_data(
-            filename=filename, method='savez_compressed', verbose=False)
-        t2.draw(kind='intensity')
+        t1.draw()
+        save_figure_test(newpath, func_name, add_name='_saved')
+        t1.save_data(filename=filename, method='savez')
 
-        save_figure_test(newpath, func_name, add_name='_load')
+        time.sleep(1)
+        t2 = Scalar_field_XY(x, y, wavelength)
+        t2.load_data(filename=filename, method='savez')
+        t2.draw()
+        save_figure_test(newpath, func_name, add_name='_loaded')
         assert True
 
     def test_cut_resample(self):

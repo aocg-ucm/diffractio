@@ -51,7 +51,7 @@ class Test_utils_math(object):
         # print("{}".format(np.array(sc.result)))
         print("8 processes pool took {} seconds".format(time.time() - start))
         start = time.time()
-        res = range(N)
+        res = np.zeros(N)
         for ind, val in enumerate(variable_process):
             res[ind] = function_to_test(val, 1)
         print(

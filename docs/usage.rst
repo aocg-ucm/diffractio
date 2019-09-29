@@ -36,6 +36,7 @@ X fields
   t0.draw(filename='x_mask.png')
 
   u1=t0*u0
+
   u2 = u1.RS(z=5 * mm, new_field=True)
   u2.draw(filename='x_RS.png')
 
@@ -63,6 +64,7 @@ XZ fields
   x0 = np.linspace(-100 * um, 100 * um, 512)
   z0 = np.linspace(0 * um, 200 * um, 512)
   wavelength = 5 * um
+
   u0 = Scalar_source_X(x=x0, wavelength=wavelength)
   u0.gauss_beam(
       A=1, x0=0 * um, z0=0 * um, w0=75 * um, theta=-5 * degrees)
@@ -75,8 +77,8 @@ XZ fields
       size=(150 * um, 50 * um),
       angle=45 * degrees,
       refraction_index=1.8)
-
   u1.draw_refraction_index(filename='xz_mask.png')
+
   u1.BPM(verbose=False)
   u1.draw(logarithm=True, normalize='maximum', draw_borders=True, filename='xz_BPM.png')
 
@@ -104,14 +106,7 @@ XY fields
   wavelength = 0.6238 * um
 
   u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-  u0.zernike_beam(
-      A=1, r0=(0, 0), radius=length / 2, n=[
-          4,
-      ], m=[
-          3,
-      ], c_nm=[
-          1,
-      ], mask=True)
+  u0.zernike_beam(A=1, r0=(0, 0), radius=length / 2, n=[4,], m=[3,], c_nm=[1,], mask=True)
   u0.draw(kind='phase', filename='xy_source.png')
 
   t0 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
@@ -126,7 +121,9 @@ XY fields
   t0.draw(filename='xy_mask.png')
 
   u1 = u0 * t0
+
   u2 = u1.RS(z=9 * mm, new_field=True)
+
   u2.cut_resample(
       x_limits=(-100 * um, 100 * um),
       y_limits=(-100 * um, 100 * um),
@@ -168,14 +165,12 @@ XYZ fields
   uxyz.incident_field(u0=t1)
 
   uxyz.RS(verbose=True, num_processors=4)
-  uxyz.draw_intensityXYZ(
-      kind='intensity', logarithm=False, normalize='maximum', draw=True)
 
   uxyz.draw_intensityXYZ(y0=0 * mm, logarithm=True, normalize='maximum',filename='xyz_cut.png')
 
 
 .. figure:: xyz_mask.png
-  :width: 30
+  :width: 300
 .. figure:: xyz_RS.png
   :width: 300
 .. figure:: xyz_cut.png

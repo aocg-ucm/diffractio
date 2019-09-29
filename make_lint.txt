@@ -1,19 +1,6 @@
 flake8 diffractio tests
-diffractio/scalar_fields_XZ.py:329:21: W504 line break after binary operator
-diffractio/scalar_fields_XZ.py:338:13: F841 local variable 'i_centerx' is assigned to but never used
-diffractio/scalar_fields_XZ.py:426:9: E722 do not use bare 'except'
-diffractio/scalar_fields_XZ.py:790:25: W504 line break after binary operator
-diffractio/scalar_fields_XZ.py:791:25: W504 line break after binary operator
-diffractio/scalar_fields_XZ.py:1060:9: F841 local variable 'v_medio' is assigned to but never used
-diffractio/scalar_sources_XY.py:88:37: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:130:38: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:132:33: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:222:18: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:247:9: E741 ambiguous variable name 'I'
-diffractio/scalar_sources_XY.py:259:13: E741 ambiguous variable name 'I'
-diffractio/scalar_sources_XY.py:337:13: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:338:13: W504 line break after binary operator
-diffractio/scalar_sources_XY.py:357:17: W504 line break after binary operator
+diffractio/utils_math.py:10:1: F401 'numpy.sqrt' imported but unused
+diffractio/scalar_sources_X.py:158:17: W504 line break after binary operator
 diffractio/__init__.py:34:1: E402 module level import not at top of file
 diffractio/__init__.py:35:1: E402 module level import not at top of file
 diffractio/__init__.py:35:1: F401 'scipy as sp' imported but unused
@@ -22,123 +9,65 @@ diffractio/__init__.py:36:1: F401 'matplotlib.pyplot as plt' imported but unused
 diffractio/__init__.py:37:1: E402 module level import not at top of file
 diffractio/__init__.py:38:1: E402 module level import not at top of file
 diffractio/__init__.py:38:1: F401 'scipy.constants.speed_of_light' imported but unused
-diffractio/__init__.py:38:1: F401 'scipy.constants.mu_0' imported but unused
 diffractio/__init__.py:38:1: F401 'scipy.constants.epsilon_0' imported but unused
 diffractio/__init__.py:38:1: F401 'scipy.constants.elementary_charge' imported but unused
-diffractio/scalar_masks_XY.py:211:19: F821 undefined name 'scalar_fields_XY'
-diffractio/scalar_masks_XY.py:702:18: W504 line break after binary operator
-diffractio/scalar_masks_XY.py:780:22: W504 line break after binary operator
-diffractio/scalar_masks_XY.py:781:22: E126 continuation line over-indented for hanging indent
-diffractio/scalar_masks_XY.py:1197:35: E741 ambiguous variable name 'l'
-diffractio/scalar_masks_XY.py:1512:13: W504 line break after binary operator
-diffractio/scalar_fields_XYZ.py:54:1: F401 'diffractio.num_max_processors' imported but unused
-diffractio/scalar_fields_XYZ.py:59:1: F401 'diffractio.utils_drawing.prepare_drawing' imported but unused
-diffractio/scalar_fields_XYZ.py:59:1: F401 'diffractio.utils_drawing.prepare_video' imported but unused
-diffractio/scalar_fields_XYZ.py:63:1: F401 'diffractio.utils_optics.beam_width_1D' imported but unused
-diffractio/scalar_fields_XYZ.py:316:9: E722 do not use bare 'except'
-diffractio/scalar_fields_XYZ.py:1105:15: E121 continuation line under-indented for hanging indent
-diffractio/scalar_fields_XYZ.py:1228:13: E265 block comment should start with '# '
-diffractio/copyreg.py:157:5: E722 do not use bare 'except'
-diffractio/copyreg.py:187:13: W503 line break before binary operator
-diffractio/copyreg.py:203:13: W503 line break before binary operator
-diffractio/scalar_sources_X.py:158:17: W504 line break after binary operator
-diffractio/scalar_fields_XY.py:73:1: E722 do not use bare 'except'
-diffractio/scalar_fields_XY.py:78:1: E722 do not use bare 'except'
-diffractio/scalar_fields_XY.py:281:9: E722 do not use bare 'except'
-diffractio/scalar_fields_XY.py:564:25: W504 line break after binary operator
-diffractio/scalar_fields_XY.py:866:29: W504 line break after binary operator
-diffractio/scalar_fields_XY.py:886:13: F841 local variable 'frec_x' is assigned to but never used
-diffractio/scalar_fields_XY.py:887:13: F841 local variable 'frec_y' is assigned to but never used
-diffractio/scalar_fields_XY.py:911:9: F841 local variable 'dx' is assigned to but never used
-diffractio/scalar_fields_XY.py:912:9: F841 local variable 'dy' is assigned to but never used
-diffractio/scalar_fields_XY.py:1175:13: F841 local variable 'imageTemporal' is assigned to but never used
-diffractio/scalar_fields_XY.py:1263:9: F841 local variable 'kinds' is assigned to but never used
-diffractio/scalar_fields_XY.py:1496:9: F821 undefined name 'gobject'
-diffractio/scalar_fields_XY.py:1512:22: F823 local variable 'i_prog' (defined in enclosing scope on line 1478) referenced before assignment
-diffractio/scalar_fields_XY.py:1531:9: F821 undefined name 'gobject'
-diffractio/scalar_fields_XY.py:1642:27: W504 line break after binary operator
-diffractio/utils_tests.py:57:9: F841 local variable 'class_name' is assigned to but never used
-diffractio/utils_optics.py:236:5: E741 ambiguous variable name 'I'
-diffractio/utils_optics.py:316:5: E741 ambiguous variable name 'I'
-diffractio/utils_optics.py:321:22: E741 ambiguous variable name 'I'
-diffractio/utils_optics.py:342:5: E741 ambiguous variable name 'I'
-diffractio/utils_optics.py:346:13: E741 ambiguous variable name 'I'
-diffractio/utils_slicer.py:89:9: F841 local variable 'outline' is assigned to but never used
-diffractio/scalar_fields_X.py:215:9: E722 do not use bare 'except'
-diffractio/scalar_fields_X.py:544:25: W504 line break after binary operator
+diffractio/__init__.py:38:1: F401 'scipy.constants.mu_0' imported but unused
+diffractio/scalar_fields_X.py:214:9: E722 do not use bare 'except'
+diffractio/scalar_fields_X.py:542:25: W504 line break after binary operator
 diffractio/scalar_masks_X.py:389:50: W504 line break after binary operator
-diffractio/scalar_masks_X.py:863:57: W504 line break after binary operator
+diffractio/scalar_masks_X.py:866:57: W504 line break after binary operator
+diffractio/utils_optics.py:16:1: F401 'math.factorial' imported but unused
+diffractio/utils_tests.py:57:9: F841 local variable 'class_name' is assigned to but never used
+diffractio/utils_tests.py:108:38: F812 list comprehension redefines 'n_pixels' from line 105
+diffractio/utils_drawing.py:72:16: F821 undefined name 'select_file'
+diffractio/utils_drawing.py:449:9: F841 local variable 'I_drawingOutput' is assigned to but never used
+diffractio/scalar_fields_XZ.py:327:21: W504 line break after binary operator
+diffractio/scalar_fields_XZ.py:424:9: E722 do not use bare 'except'
+diffractio/scalar_fields_XZ.py:788:25: W504 line break after binary operator
+diffractio/scalar_fields_XZ.py:789:25: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:88:37: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:130:38: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:132:33: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:222:18: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:338:13: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:339:13: W504 line break after binary operator
+diffractio/scalar_sources_XY.py:358:17: W504 line break after binary operator
+diffractio/utils_slicer.py:89:9: F841 local variable 'outline' is assigned to but never used
 diffractio/scalar_masks_XZ.py:145:62: W504 line break after binary operator
 diffractio/scalar_masks_XZ.py:258:13: E722 do not use bare 'except'
-diffractio/utils_drawing.py:80:14: F821 undefined name 'select_file'
-tests/test_scalar_fields_X.py:13:1: F401 'diffractio.degrees' imported but unused
-tests/test_scalar_fields_X.py:13:1: F401 'diffractio.mm' imported but unused
-tests/test_scalar_fields_X.py:16:1: F401 'diffractio.utils_tests.save_data_test' imported but unused
-tests/test_scalar_fields_X.py:324:9: F841 local variable 'mtf1' is assigned to but never used
-tests/test_scalar_fields_XZ.py:8:1: F401 'diffractio.sp' imported but unused
-tests/test_scalar_fields_XZ.py:74:5: E265 block comment should start with '# '
-tests/test_scalar_fields_XZ.py:114:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XZ.py:169:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XZ.py:586:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XZ.py:608:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XZ.py:630:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XZ.py:668:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_masks_XY.py:9:1: F401 'diffractio.sp' imported but unused
-tests/test_scalar_masks_XY.py:11:1: F401 'diffractio.utils_tests.comparison' imported but unused
-tests/test_scalar_masks_XY.py:280:9: F841 local variable 'num_points' is assigned to but never used
-tests/test_scalar_masks_XY.py:708:13: E741 ambiguous variable name 'l'
-tests/test_scalar_masks_XY.py:721:27: E741 ambiguous variable name 'l'
-tests/test_scalar_masks_XY.py:743:13: E741 ambiguous variable name 'l'
-tests/test_scalar_sources_XY.py:10:1: F401 'diffractio.nm' imported but unused
-tests/test_scalar_sources_XY.py:10:1: F401 'diffractio.sp' imported but unused
-tests/test_scalar_sources_XY.py:11:1: F401 'diffractio.scalar_fields_XY.Scalar_field_XY' imported but unused
-tests/test_scalar_sources_XY.py:15:1: F401 'diffractio.utils_tests.comparison' imported but unused
-tests/test_scalar_sources_XY.py:206:9: F841 local variable 'ID1' is assigned to but never used
-tests/test_scalar_sources_XY.py:255:18: E741 ambiguous variable name 'l'
-tests/test_scalar_sources_XY.py:297:26: E741 ambiguous variable name 'l'
-tests/test_scalar_sources_XY.py:549:9: F841 local variable 'X_mask' is assigned to but never used
-tests/test_scalar_sources_XY.py:550:9: F841 local variable 'Y_mask' is assigned to but never used
-tests/test_scalar_masks_XYZ.py:13:1: F401 'diffractio.utils_tests.comparison' imported but unused
-tests/test_scalar_masks_XYZ.py:13:1: F401 'diffractio.utils_tests.save_figure_test' imported but unused
-tests/test_scalar_masks_XYZ.py:33:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_sources_X.py:18:1: F401 'functools.wraps' imported but unused
-tests/test_scalar_sources_X.py:22:1: F401 'diffractio.plt' imported but unused
-tests/test_scalar_sources_X.py:24:1: F401 'diffractio.utils_tests.comparison' imported but unused
-tests/test_scalar_masks_XZ.py:10:1: F401 'diffractio.plt' imported but unused
-tests/test_scalar_masks_XZ.py:10:1: F401 'diffractio.sp' imported but unused
-tests/test_scalar_masks_XZ.py:13:1: F401 'diffractio.scalar_sources_X.Scalar_source_X' imported but unused
-tests/test_scalar_masks_XZ.py:14:1: F401 'diffractio.utils_tests.comparison' imported but unused
-tests/test_scalar_masks_XZ.py:399:5: F811 redefinition of unused 'test_convert_mask_simple' from line 353
-tests/test_scalar_fields_XY.py:12:1: F401 'diffractio.utils_common.several_propagations' imported but unused
-tests/test_scalar_fields_XY.py:18:1: E722 do not use bare 'except'
-tests/test_scalar_fields_XY.py:90:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:109:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:128:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:142:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:157:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:193:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:272:18: E741 ambiguous variable name 'l'
-tests/test_scalar_fields_XY.py:283:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:304:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:335:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:346:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:352:9: F841 local variable 'mtf' is assigned to but never used
-tests/test_scalar_fields_XY.py:360:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:369:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XY.py:372:24: E262 inline comment should start with '# '
-tests/test_scalar_fields_XY.py:804:69: E741 ambiguous variable name 'l'
-tests/test_scalar_masks_X.py:11:1: F401 'diffractio.eps' imported but unused
-tests/test_scalar_masks_X.py:11:1: F401 'diffractio.plt' imported but unused
-tests/test_scalar_masks_X.py:11:1: F401 'diffractio.sp' imported but unused
-tests/test_scalar_masks_X.py:13:1: F401 'diffractio.utils_math.nearest2' imported but unused
-tests/test_scalar_masks_X.py:14:1: F401 'diffractio.utils_tests.comparison' imported but unused
+diffractio/scalar_masks_XY.py:703:18: W504 line break after binary operator
+diffractio/scalar_masks_XY.py:781:22: W504 line break after binary operator
+diffractio/scalar_masks_XY.py:782:22: E126 continuation line over-indented for hanging indent
+diffractio/scalar_masks_XY.py:1198:35: E741 ambiguous variable name 'l'
+diffractio/scalar_masks_XY.py:1513:13: W504 line break after binary operator
+diffractio/scalar_fields_XY.py:72:1: E722 do not use bare 'except'
+diffractio/scalar_fields_XY.py:77:1: E722 do not use bare 'except'
+diffractio/scalar_fields_XY.py:280:9: E722 do not use bare 'except'
+diffractio/scalar_fields_XY.py:563:25: W504 line break after binary operator
+diffractio/scalar_fields_XY.py:865:29: W504 line break after binary operator
+diffractio/scalar_fields_XY.py:885:13: F841 local variable 'frec_x' is assigned to but never used
+diffractio/scalar_fields_XY.py:886:13: F841 local variable 'frec_y' is assigned to but never used
+diffractio/scalar_fields_XY.py:910:9: F841 local variable 'dx' is assigned to but never used
+diffractio/scalar_fields_XY.py:911:9: F841 local variable 'dy' is assigned to but never used
+diffractio/scalar_fields_XY.py:1174:13: F841 local variable 'imageTemporal' is assigned to but never used
+diffractio/scalar_fields_XY.py:1495:9: F821 undefined name 'gobject'
+diffractio/scalar_fields_XY.py:1511:22: F823 local variable 'i_prog' (defined in enclosing scope on line 1477) referenced before assignment
+diffractio/scalar_fields_XY.py:1530:9: F821 undefined name 'gobject'
+diffractio/scalar_fields_XY.py:1641:27: W504 line break after binary operator
+diffractio/scalar_fields_XYZ.py:55:1: F401 'diffractio.num_max_processors' imported but unused
+diffractio/scalar_fields_XYZ.py:60:1: F401 'diffractio.utils_drawing.prepare_drawing' imported but unused
+diffractio/scalar_fields_XYZ.py:60:1: F401 'diffractio.utils_drawing.prepare_video' imported but unused
+diffractio/scalar_fields_XYZ.py:64:1: F401 'diffractio.utils_optics.beam_width_1D' imported but unused
+diffractio/scalar_fields_XYZ.py:317:9: E722 do not use bare 'except'
+diffractio/scalar_fields_XYZ.py:1106:15: E121 continuation line under-indented for hanging indent
+diffractio/scalar_fields_XYZ.py:1228:13: E265 block comment should start with '# '
 tests/test_scalar_fields_X_multiprocessing.py:7:1: F401 'multiprocessing' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:12:1: F401 'multiprocessing.Pool' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:16:1: F401 'diffractio.eps' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:25:1: F401 'diffractio.utils_optics.lorentz_spectrum' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:25:1: F401 'diffractio.utils_optics.uniform_spectrum' imported but unused
-tests/test_scalar_fields_X_multiprocessing.py:27:1: F401 'diffractio.utils_tests.comparison' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:27:1: F401 'diffractio.utils_tests.save_data_test' imported but unused
+tests/test_scalar_fields_X_multiprocessing.py:27:1: F401 'diffractio.utils_tests.comparison' imported but unused
 tests/test_scalar_fields_X_multiprocessing.py:147:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_X_multiprocessing.py:194:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_X_multiprocessing.py:232:9: F841 local variable 'filename' is assigned to but never used
@@ -149,8 +78,65 @@ tests/test_scalar_fields_X_multiprocessing.py:439:13: E741 ambiguous variable na
 tests/test_scalar_fields_X_multiprocessing.py:453:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_X_multiprocessing.py:464:9: F841 local variable 'fig' is assigned to but never used
 tests/test_scalar_fields_X_multiprocessing.py:487:9: F841 local variable 'filename' is assigned to but never used
+tests/test_utils_multiprocessing.py:45:9: F841 local variable 'dict_constants' is assigned to but never used
+tests/test_scalar_fields_XZ.py:9:1: F401 'diffractio.sp' imported but unused
+tests/test_scalar_fields_XZ.py:75:5: E265 block comment should start with '# '
+tests/test_scalar_fields_XZ.py:115:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XZ.py:170:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XZ.py:591:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XZ.py:613:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XZ.py:635:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XZ.py:673:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_masks_XZ.py:10:1: F401 'diffractio.sp' imported but unused
+tests/test_scalar_masks_XZ.py:10:1: F401 'diffractio.plt' imported but unused
+tests/test_scalar_masks_XZ.py:13:1: F401 'diffractio.scalar_sources_X.Scalar_source_X' imported but unused
+tests/test_scalar_masks_XZ.py:14:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_masks_XZ.py:408:5: F811 redefinition of unused 'test_convert_mask_simple' from line 360
+tests/test_scalar_masks_X.py:11:1: F401 'diffractio.sp' imported but unused
+tests/test_scalar_masks_X.py:11:1: F401 'diffractio.plt' imported but unused
+tests/test_scalar_masks_X.py:11:1: F401 'diffractio.eps' imported but unused
+tests/test_scalar_masks_X.py:13:1: F401 'diffractio.utils_math.nearest2' imported but unused
+tests/test_scalar_masks_X.py:14:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_masks_XYZ.py:13:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_masks_XYZ.py:13:1: F401 'diffractio.utils_tests.save_figure_test' imported but unused
+tests/test_scalar_masks_XYZ.py:33:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_XYZ.py:62:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_XYZ.py:110:9: F841 local variable 'filename' is assigned to but never used
 tests/test_scalar_fields_XYZ.py:186:9: F841 local variable 'filename' is assigned to but never used
-tests/test_scalar_fields_XYZ.py:370:22: E251 unexpected spaces around keyword / parameter equals
+tests/test_scalar_fields_XYZ.py:363:22: E251 unexpected spaces around keyword / parameter equals
+tests/test_scalar_fields_XY.py:18:1: E722 do not use bare 'except'
+tests/test_scalar_fields_XY.py:90:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:109:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:128:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:142:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:157:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:199:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:278:18: E741 ambiguous variable name 'l'
+tests/test_scalar_fields_XY.py:289:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:310:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:341:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:352:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:358:9: F841 local variable 'mtf' is assigned to but never used
+tests/test_scalar_fields_XY.py:366:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:375:9: F841 local variable 'filename' is assigned to but never used
+tests/test_scalar_fields_XY.py:378:24: E262 inline comment should start with '# '
+tests/test_scalar_fields_XY.py:810:69: E741 ambiguous variable name 'l'
+tests/test_scalar_sources_X.py:18:1: F401 'functools.wraps' imported but unused
+tests/test_scalar_sources_X.py:22:1: F401 'diffractio.plt' imported but unused
+tests/test_scalar_sources_X.py:24:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_masks_XY.py:9:1: F401 'diffractio.sp' imported but unused
+tests/test_scalar_masks_XY.py:11:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_masks_XY.py:280:9: F841 local variable 'num_points' is assigned to but never used
+tests/test_scalar_masks_XY.py:708:13: E741 ambiguous variable name 'l'
+tests/test_scalar_masks_XY.py:721:27: E741 ambiguous variable name 'l'
+tests/test_scalar_masks_XY.py:743:13: E741 ambiguous variable name 'l'
+tests/test_scalar_sources_XY.py:10:1: F401 'diffractio.sp' imported but unused
+tests/test_scalar_sources_XY.py:10:1: F401 'diffractio.nm' imported but unused
+tests/test_scalar_sources_XY.py:11:1: F401 'diffractio.scalar_fields_XY.Scalar_field_XY' imported but unused
+tests/test_scalar_sources_XY.py:15:1: F401 'diffractio.utils_tests.comparison' imported but unused
+tests/test_scalar_sources_XY.py:206:9: F841 local variable 'ID1' is assigned to but never used
+tests/test_scalar_sources_XY.py:255:18: E741 ambiguous variable name 'l'
+tests/test_scalar_sources_XY.py:297:26: E741 ambiguous variable name 'l'
+tests/test_scalar_sources_XY.py:549:9: F841 local variable 'X_mask' is assigned to but never used
+tests/test_scalar_sources_XY.py:550:9: F841 local variable 'Y_mask' is assigned to but never used
 Makefile:54: recipe for target 'lint' failed

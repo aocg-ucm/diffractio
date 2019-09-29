@@ -4,6 +4,7 @@
 import datetime
 import os
 import sys
+import time
 
 from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
                         sp, um)
@@ -182,9 +183,15 @@ class Test_Scalar_fields_XZ(object):
 
     def test_save_load(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.hkl'.format(newpath, func_name)
+        filename = '{}{}'.format(newpath, func_name)
 
-        u1 = u_focus
+        x0 = np.linspace(-25 * um, 25 * um, 512)
+        z0 = np.linspace(0 * um, 75 * um, 256)
+        wavelength = .5 * um
+
+        u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
+        u1.sphere(
+            r0=(0 * um, 0 * um), radius=(25 * um, 25 * um), refraction_index=2)
 
         u1.info = """info:
             test_save_load():
@@ -194,15 +201,13 @@ class Test_Scalar_fields_XZ(object):
             date: 170731
             purpose: check testing
             """
-        u1.save_data(filename=filename)
+        u1.save_data(filename=filename, method='savez', add_name='')
+        time.sleep(0.5)
 
-        u2 = Scalar_field_XZ(None, None, None)
-        u2.load_data(filename=filename, verbose=False)
-        u2.draw_refraction_index()
+        u2 = Scalar_field_XZ(x0, z0, wavelength)
+        u2.load_data(filename=filename, method='savez')
         u2.draw(logarithm=True, normalize='maximum', draw_borders=True)
-
-        u2.save_data(filename=filename, method='savez_compressed', add_name='')
-        save_figure_test(newpath, func_name, add_name='')
+        save_figure_test(newpath, func_name, add_name='_loaded')
         assert True
 
     def test_surface_detection(self):

@@ -156,9 +156,9 @@ class Test_Scalar_fields_XYZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-25 * um, 25 * um, 64)
-        y0 = np.linspace(-25 * um, 25 * um, 64)
-        z0 = np.linspace(100 * um, 500 * um, 64)
+        x0 = np.linspace(-25 * um, 25 * um, 32)
+        y0 = np.linspace(-25 * um, 25 * um, 32)
+        z0 = np.linspace(100 * um, 500 * um, 32)
         wavelength = .6328 * um
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
@@ -186,8 +186,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 500 * um
-        x0 = np.linspace(-length / 2, length / 2, 64)
-        y0 = np.linspace(-length / 2, length / 2, 64)
+        x0 = np.linspace(-length / 2, length / 2, 32)
+        y0 = np.linspace(-length / 2, length / 2, 32)
         z0 = np.linspace(2 * mm, 7 * mm, 32)
         wavelength = 0.6328 * um
 
@@ -231,15 +231,14 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        numdata = 64
-        x0 = np.linspace(-length / 2, length / 2, numdata)
-        y0 = np.linspace(-length / 2, length / 2, numdata)
+        x0 = np.linspace(-length / 2, length / 2, 32)
+        y0 = np.linspace(-length / 2, length / 2, 32)
         wavelength = 0.5 * um
 
         period = 10 * um
         z_talbot = 2 * period**2 / wavelength
 
-        z0 = np.linspace(2 * z_talbot, 6 * z_talbot, numdata / 2)
+        z0 = np.linspace(2 * z_talbot, 6 * z_talbot, 32)
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
         u1.gauss_beam(A=1, r0=(0, 0), z0=0, w0=(150 * um, 150 * um))
@@ -281,8 +280,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 80 * um
-        numdataX = 64
-        numdataZ = 64
+        numdataX = 32
+        numdataZ = 32
         longitud = 400 * um
         radiusFibra = 10 * um
         x0 = np.linspace(-length / 2, length / 2, numdataX)
@@ -335,8 +334,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 80 * um
-        numdataX = 64
-        numdataZ = 64
+        numdataX = 32
+        numdataZ = 32
         longitud = 50 * um
         radiusFibra = 10 * um
         x0 = np.linspace(-length / 2, length / 2, numdataX)
@@ -345,12 +344,6 @@ class Test_Scalar_fields_XYZ(object):
         wavelength = 2 * um
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        # u1.gauss_beam(
-        #     A=1,
-        #     r0=(0 * um, 0 * um),
-        #     w0=(.5 * radiusFibra, .5 * radiusFibra),
-        #     theta=0. * degrees,
-        #     phi=0 * degrees)
         u1.plane_wave()
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
@@ -380,7 +373,7 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        numdata = 64
+        numdata = 32
         x0 = np.linspace(-length / 2, length / 2, numdata)
         y0 = np.linspace(-length / 2, length / 2, numdata)
         z0 = np.linspace(.1 * mm, .2 * mm, 64)
@@ -420,8 +413,8 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 50 * um
-        numdataX = 64
-        numdataZ = 64
+        numdataX = 32
+        numdataZ = 32
         longitud = 512 * um
         radiusFibra = 25 * um
         x0 = np.linspace(-length, length, numdataX)
@@ -460,40 +453,5 @@ class Test_Scalar_fields_XYZ(object):
         uxyz2.draw_intensityXYZ()
         # uxyz2.draw_refraction_index3D()
         uxyz2.save_data(filename=filename, method='savez_compressed')
-        save_figure_test(newpath, func_name)
-        assert True
-
-    def benchmark_RS_multiprocessing(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
-
-        x0 = np.linspace(-25 * um, 25 * um, 64)
-        y0 = np.linspace(-25 * um, 25 * um, 64)
-        z0 = np.linspace(100 * um, 500 * um, 64)
-        wavelength = 0.55 * um
-
-        t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        t1.circle(
-            r0=(0 * um, 0 * um), radius=(20 * um, 20 * um), angle=0 * degrees)
-
-        uxyz = Scalar_mask_XYZ(
-            x=x0, y=y0, z=z0, wavelength=wavelength, n_background=1., info='')
-        uxyz.incident_field(t1)
-        uxyz.sphere(
-            r0=(0 * um, 0 * um, 0 * um),
-            radius=(10 * um, 30 * um, 50 * um),
-            refraction_index=2,
-            angles=(0 * degrees, 0 * degrees, 45 * degrees))
-        uxyz.u0 = t1
-
-        nums_processors = range(1, 9)
-        nums_processors = (1, 4, 8)
-        for num_processors in nums_processors:
-            time = uxyz.RS(num_processors=num_processors, verbose=False)
-            print("time in RS_multiprocessing {}: {} seconds".format(
-                num_processors, time))
-        uxyz.draw_intensityXYZ(
-            kind='intensity', logarithm=False, normalize='maximum', draw=True)
-        uxyz.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
         assert True

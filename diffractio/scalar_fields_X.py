@@ -222,7 +222,7 @@ class Scalar_field_X(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, 'x', verbose, method)
+        dict0 = load_data_common(self, filename, verbose, method)
 
         if dict0 is not None:
             if isinstance(dict0, dict):

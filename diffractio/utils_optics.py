@@ -13,8 +13,6 @@
 # ----------------------------------------------------------------------
 """ General purpose optics functions """
 
-from math import factorial
-
 import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)

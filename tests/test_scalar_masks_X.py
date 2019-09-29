@@ -378,8 +378,16 @@ class Test_Scalar_masks_X(object):
 
         t1 = Scalar_mask_X(x, wavelength)
 
-        profile1 = loadtxt('profile1.txt')
-        profile2 = loadtxt('profile2.txt')
+        script_dir = os.path.dirname(__file__)
+        rel_path1 = "profile1.txt"
+        abs_file_path1 = os.path.join(script_dir, rel_path1)
+
+        script_dir = os.path.dirname(__file__)
+        rel_path2 = "profile2.txt"
+        abs_file_path2 = os.path.join(script_dir, rel_path2)
+
+        profile1 = loadtxt(abs_file_path1)
+        profile2 = loadtxt(abs_file_path2)
         t1.mask_from_array(
             x0=0,
             index=1.25,

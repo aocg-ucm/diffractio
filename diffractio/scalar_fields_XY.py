@@ -288,7 +288,7 @@ class Scalar_field_XY(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, 'xy', verbose, method)
+        dict0 = load_data_common(self, filename, verbose, method)
 
         if verbose:
             print(dict0)
@@ -1171,7 +1171,7 @@ class Scalar_field_XY(object):
             # cortes = heights + anchuras / 2
             dist = factor * (heights[1] - heights[0])
 
-            imageTemporal = exp(1j * (ang - pi))
+            #imageTemporal = exp(1j * (ang - pi))
             discretized_image = exp(1j * (ang))
 
             for i in range(num_levels + 1):
@@ -1458,78 +1458,6 @@ class Scalar_field_XY(object):
             reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
-
-    def progresion(self, zs, kind='intensity', generarTemporales=True):
-        global files
-
-        plt.figure()
-        a = plt.subplot(111)
-
-        t2 = self.RS(z=zs[0], new_field=True)
-        intensity = np.abs(t2.u)**2
-        im = a.imshow(intensity, cmap=cm.gist_heat)
-        manager = plt.get_current_fig_manager()
-        i_prog = 0
-        imax = len(zs)
-
-        def updatefig(*args):
-            # parametros globales definidos fuera de la function
-            global i_prog, files
-            t2 = self.RS(z=zs[i_prog], new_field=True)
-            intensity = np.abs(t2.u)**2
-            im.set_array(intensity)
-            plt.title("z=%4.0f $\mu m$" % zs[i_prog])
-            manager.canvas.draw()
-            if generarTemporales is True:
-                fname = '_tmp%03d.png' % i_prog
-                print('Saving frame', fname)
-                plt.savefig(fname)
-                files.append(fname)
-
-            i_prog = i_prog + 1
-            if i_prog == imax:
-                plt.close()
-                return False
-            return True
-
-        gobject.idle_add(updatefig)
-
-        plt.show()
-        return files
-
-        def update_progresion(*args):
-            t2 = self.RS(z=zs[i_prog], new_field=True)
-            intensity = np.abs(t2.u)**2
-            im.set_array(intensity)
-            plt.title("z=%4.0f $\mu m$" % zs[i_prog], fontsize=24)
-            manager.canvas.draw()
-            if generarTemporales is True:
-                fname = '_tmp%03d.png' % i_prog
-                print('Saving frame', fname)
-                plt.savefig(fname)
-                files.append(fname)
-            i_prog = i_prog + 1
-            print(i_prog)
-            if i_prog == imax:
-                plt.close()
-                return False
-            return True
-
-        plt.figure()
-        a = plt.subplot(111)
-
-        t2 = self.RS(z=zs[0], new_field=True)
-        intensity = np.abs(t2.u)**2
-        im = a.imshow(intensity, cmap=cm.gist_heat)
-        manager = plt.get_current_fig_manager()
-        i_prog = 0
-        imax = len(zs)
-        files = []
-
-        print(i_prog, imax, files)
-        gobject.idle_add(update_progresion)
-        plt.show()
-        return files
 
     def video(self,
               kind,

@@ -7,7 +7,7 @@ from math import factorial
 
 import numpy as np
 import scipy.ndimage as ndimage
-from numpy import angle, array, exp, linspace, ones_like, pi, sqrt, zeros
+from numpy import angle, array, exp, linspace, ones_like, pi, zeros
 from scipy.signal import fftconvolve
 
 from diffractio import mm

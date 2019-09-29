@@ -39,7 +39,7 @@ from scipy.constants import speed_of_light, mu_0, epsilon_0, elementary_charge
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 name = 'diffractio'
 

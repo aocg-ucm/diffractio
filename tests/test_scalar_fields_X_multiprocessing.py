@@ -4,16 +4,14 @@
 
 import copyreg
 import datetime
-import multiprocessing
 import os
 import sys
 import time
 import types
-from multiprocessing import Pool
 
 import numpy as np
 
-from diffractio import degrees, eps, num_max_processors, mm, no_date, plt, um
+from diffractio import degrees, mm, no_date, num_max_processors, plt, um
 from diffractio.scalar_fields_X import (Scalar_field_X,
                                         extended_polychromatic_source,
                                         extended_source_multiprocessing,
@@ -223,11 +221,10 @@ class Test_Scalar_fields_X(object):
         assert True
 
     def test_extended_source_multiprocessing(self):
-        """
-            tomamos una red de difraccion y analizamos el efecto Lau con fuente extensa
+        """Tomamos una red de difraccion y analizamos el efecto Lau con fuente extensa
             La fuente extensa la definimos como suma de fuentes puntuales esfericas
             Esquema: Fuente extensa, red, lens, vista en plano focal
-            """
+        """
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
@@ -434,13 +431,14 @@ class Test_Scalar_fields_X_multiprocessing(object):
 
         print("num_proc= {}, time={}".format(num_processors, time_proc))
 
-        I = np.zeros_like(I_wavelengths[0].x)
+        intensity = np.zeros_like(I_wavelengths[0].x)
         for i in range(len(wavelengths)):
-            I = I + spectrum_gauss[i] * abs(I_wavelengths[i].u)**2
+            intensity = intensity + spectrum_gauss[i] * abs(
+                I_wavelengths[i].u)**2
 
         plt.figure()
         plt.plot(x0, abs(I0.u)**2, 'k', lw=2, label='monochromatic')
-        plt.plot(x0, I, 'r', lw=2, label='polychromatic')
+        plt.plot(x0, intensity, 'r', lw=2, label='polychromatic')
         plt.title('polychromatic')
         plt.legend()
 
@@ -461,7 +459,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
             num_processors,
             verbose=True)
 
-        fig = plt.figure()
+        plt.figure()
         ax = plt.subplot(111)
         for i, slit_size in enumerate(slit_sizes):
             ax.plot(
@@ -513,3 +511,38 @@ class Test_Scalar_fields_X_multiprocessing(object):
 
         save_figure_test(newpath, func_name)
         assert True
+
+    # def benchmark_RS_multiprocessing(self):
+    #     func_name = sys._getframe().f_code.co_name
+    #     filename = '{}{}'.format(newpath, func_name)
+    #
+    #     x0 = np.linspace(-25 * um, 25 * um, 32)
+    #     y0 = np.linspace(-25 * um, 25 * um, 32)
+    #     z0 = np.linspace(100 * um, 500 * um, 32)
+    #     wavelength = 0.55 * um
+    #
+    #     t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
+    #     t1.circle(
+    #         r0=(0 * um, 0 * um), radius=(20 * um, 20 * um), angle=0 * degrees)
+    #
+    #     uxyz = Scalar_mask_XYZ(
+    #         x=x0, y=y0, z=z0, wavelength=wavelength, n_background=1., info='')
+    #     uxyz.incident_field(t1)
+    #     uxyz.sphere(
+    #         r0=(0 * um, 0 * um, 0 * um),
+    #         radius=(10 * um, 30 * um, 50 * um),
+    #         refraction_index=2,
+    #         angles=(0 * degrees, 0 * degrees, 45 * degrees))
+    #     uxyz.u0 = t1
+    #
+    #     nums_processors = range(1, 9)
+    #     nums_processors = (1, 4, 8)
+    #     for num_processors in nums_processors:
+    #         time = uxyz.RS(num_processors=num_processors, verbose=False)
+    #         print("time in RS_multiprocessing {}: {} seconds".format(
+    #             num_processors, time))
+    #     uxyz.draw_intensityXYZ(
+    #         kind='intensity', logarithm=False, normalize='maximum', draw=True)
+    #     uxyz.save_data(filename=filename, method='savez_compressed')
+    #     save_figure_test(newpath, func_name)
+    #     assert True
