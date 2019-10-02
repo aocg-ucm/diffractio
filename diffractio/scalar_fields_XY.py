@@ -53,6 +53,7 @@ The magnitude is related to microns: `micron = 1.`
 
 import matplotlib.animation as animation
 import scipy.ndimage
+from matplotlib import rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
 from scipy.fftpack import fft2, fftshift, ifft2
@@ -1101,15 +1102,15 @@ class Scalar_field_XY(object):
 
         if new_field is False and matrix is False:
             self.u = fieldDiscretizado
-            return
+            return self.u
+
+        if new_field is False and matrix is True:
+            return fieldDiscretizado
 
         if new_field is True:
             cn = Scalar_field_XY(self.x, self.y, self.wavelength)
             cn.u = fieldDiscretizado
             return cn
-
-        if matrix is True:
-            return fieldDiscretizado
 
     def discretize(self,
                    kind='amplitude',
@@ -1280,7 +1281,6 @@ class Scalar_field_XY(object):
             print("not in kinds")
 
         if has_colorbar in ('horizontal', 'vertical'):
-            print(has_colorbar)
             plt.colorbar(orientation=has_colorbar)
 
         if not filename == '':
@@ -1384,7 +1384,9 @@ class Scalar_field_XY(object):
         angle_i = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
                                      angle(self.u))
 
-        plt.figure(figsize=(18, 9))
+        xsize, ysize = rcParams['figure.figsize']
+
+        plt.figure(figsize=(2 * xsize, ysize))
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
 
@@ -1468,7 +1470,7 @@ class Scalar_field_XY(object):
               filename='video.avi',
               dpi=300):
 
-        fig = plt.figure(figsize=(4, 4))
+        fig = plt.figure()
         ax = fig.add_subplot(111, autoscale_on=False)
         ax.grid()
         plt.xlim(self.x[0], self.x[-1])

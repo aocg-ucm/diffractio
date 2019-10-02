@@ -1560,7 +1560,8 @@ class Scalar_field_XZ(object):
         # busca el máximo de una matrix bidimensional
         ix, iz = np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
-            print(("x = {} um, z = {} um".format(self.x[ix], self.z[iz])))
+            print(("x = {:2.3f} um, z = {:2.3f} um".format(
+                self.x[ix], self.z[iz])))
         return self.x[ix], self.z[iz]
 
     def beam_widths(self):

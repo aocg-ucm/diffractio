@@ -786,7 +786,7 @@ def draw_fresnel_coefficients(theta_i,
     """
 
     # Generacion de la figura
-    plt.figure(figsize=(12, 6))
+    plt.figure()
 
     # Amplitud
     plt.subplot(1, 2, 1)

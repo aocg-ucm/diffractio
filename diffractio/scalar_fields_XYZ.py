@@ -1243,7 +1243,7 @@ class Scalar_field_XYZ(object):
             ax = plt.gca()
             plt.axis('auto')
         else:
-            fig = plt.figure(figsize=(6, 6), dpi=100)
+            fig = plt.figure()
             ax = fig.add_axes([0, 0, 1, 1])
 
         frame = self.to_scalar_fields_XY(

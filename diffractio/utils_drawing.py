@@ -124,7 +124,7 @@ def draw2D(
     if verbose is True:
         print(("image size {}".format(image.shape)))
 
-    id_fig = plt.figure(figsize=(5, 4.5))
+    id_fig = plt.figure()
     IDax = id_fig.add_subplot(111)
 
     if range_scale == 'um':
@@ -275,9 +275,6 @@ def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
         u = u / (np.abs(u).max() + eps)
     elif normalize == 'mean':
         u = u / u.mean()
-
-    else:
-        print("no normalization: not False, 'maximum, 'mean'")
 
     if cut_value not in ([], '', 0, None):
         u[u > cut_value] = cut_value

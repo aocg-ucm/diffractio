@@ -492,28 +492,28 @@ class Test_Scalar_masks_X(object):
         x = np.linspace(0, anchura_bit * len(i0), num_data)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.I0(kind='normal', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t1.binary_code(kind='normal', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t1.draw()
 
         t1.save_data(filename=filename + '-normal', method='savez_compressed')
         save_figure_test(newpath, func_name + '-normal')
 
         t2 = Scalar_mask_X(x, wavelength)
-        t2.I0(kind='zeros', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t2.binary_code(kind='zeros', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t2.draw()
 
         t2.save_data(filename=filename + '-zeros', method='savez_compressed')
         save_figure_test(newpath, func_name + '-zeros')
 
         t3 = Scalar_mask_X(x, wavelength)
-        t3.I0(kind='ones', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t3.binary_code(kind='ones', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t3.draw()
 
         t3.save_data(filename=filename + '-ones', method='savez_compressed')
         save_figure_test(newpath, func_name + '-ones')
 
         t4 = Scalar_mask_X(x, wavelength)
-        t4.I0(kind='abs_fag', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t4.binary_code(kind='abs_fag', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t4.draw()
 
         t4.save_data(filename=filename + '-fag', method='savez_compressed')

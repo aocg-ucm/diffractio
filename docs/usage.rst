@@ -42,11 +42,11 @@ X fields
 
 
 .. figure:: x_source.png
-  :width: 300
+  :width: 600
 .. figure:: x_mask.png
-  :width: 300
+  :width: 600
 .. figure:: x_RS.png
-  :width: 300
+  :width: 600
 
 
 
@@ -83,11 +83,11 @@ XZ fields
   u1.draw(logarithm=True, normalize='maximum', draw_borders=True, filename='xz_BPM.png')
 
 .. figure:: xz_source.png
-  :width: 300
+  :width: 600
 .. figure:: xz_mask.png
-  :width: 300
+  :width: 600
 .. figure:: xz_BPM.png
-  :width: 300
+  :width: 600
 
 XY fields
 =================
@@ -134,11 +134,11 @@ XY fields
 
 
 .. figure:: xy_source.png
-  :width: 300
+  :width: 600
 .. figure:: xy_mask.png
-  :width: 300
+  :width: 600
 .. figure:: xy_RS.png
-  :width: 300
+  :width: 600
 
 XYZ fields
 =================
@@ -170,8 +170,8 @@ XYZ fields
 
 
 .. figure:: xyz_mask.png
-  :width: 300
+  :width: 600
 .. figure:: xyz_RS.png
-  :width: 300
+  :width: 600
 .. figure:: xyz_cut.png
-  :width: 300
+  :width: 600

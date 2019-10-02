@@ -771,7 +771,7 @@ class Scalar_field_X(object):
             text_x = "$f_x (cycles/deg - not yet)$"
 
         if has_draw is True:
-            plt.figure(figsize=(12, 6))
+            plt.figure()
             plt.plot(frec, mtf_norm, 'k')
             plt.xlabel(text_x, fontsize=18)
             plt.ylabel("MTF", fontsize=18)
@@ -1058,7 +1058,6 @@ def extended_source_multiprocessing(function_process,
     if type(x0s) in (list, np.ndarray):
         u_s, time_proc = execute_multiprocessing(function_process, x0s,
                                                  num_processors, verbose)
-        print(len(u_s))
         intensity = np.zeros_like(u_s[0].u, dtype=float)
         for i in range(len(x0s)):
             intensity = intensity + np.abs(u_s[i].u)**2

@@ -227,7 +227,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u[self.x > xcorte] = level2
 
     def gray_scale(self, num_levels=4, levelMin=0, levelMax=1):
-        """Divides the image in n levels.
+        """Divides the mask in n, vertical levels.
 
         Parameters:
             num_levels (int): number of levels
@@ -240,10 +240,9 @@ class Scalar_mask_X(Scalar_field_X):
         height_levels = np.linspace(levelMin, levelMax, num_levels)
         ipos, _, _ = nearest2(self.x, xpos)
         ipos[-1] = len(self.x)
-        # print(ipos)
 
-        for i in range(len(num_levels)):
-            t[ipos[i]:ipos[i + 1]] = height_levels[i]
+        for i, h_level in enumerate(height_levels):
+            t[ipos[i]:ipos[i + 1]] = h_level
 
         self.u = t
 
@@ -916,7 +915,6 @@ class Scalar_mask_X(Scalar_field_X):
         Returns:
             numpy.array: p(x)
 
-        Todo: check function
         """
 
         if length == 0 or length == []:
@@ -950,13 +948,12 @@ class Scalar_mask_X(Scalar_field_X):
         # plt.plot(t)
         return t
 
-    def I0(self,
-           kind='standard',
-           i0=[1, 1, 0, 0, 1, 0, 1],
-           bit_width=20 * um,
-           x0=0 * um):
-        """I0 o absolute encoding for a encoder or similar. Uses an array of
-         data and generates a mask
+    def binary_code(self,
+                    kind='standard',
+                    i0=[1, 1, 0, 0, 1, 0, 1],
+                    bit_width=20 * um,
+                    x0=0 * um):
+        """Binary code in form of 1's and 0's.
 
         Parameters:
             kind (str): there are serveral types of IO

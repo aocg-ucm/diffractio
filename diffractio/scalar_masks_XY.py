@@ -152,7 +152,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         nombreTxt = name[0] + ".txt"
 
         # creo image
-        plt.figure(figsize=(11, 6), dpi=300)
+        plt.figure()
         plt.imsave(filename, self.u, cmap='gray', dpi=300, origin='lower')
         plt.close()
 
@@ -229,9 +229,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         filtrado = np.abs(filtro.u) / np.abs(filtro.u.sum())
 
         covolved_image = fft_convolution2d(image, filtrado)
+        average = (covolved_image.max()) / 2
         if binarize is True:
-            covolved_image[covolved_image > 0.5] = 1
-            covolved_image[covolved_image <= 0.5] = 0
+            covolved_image[covolved_image > average] = 1
+            covolved_image[covolved_image <= average] = 0
 
         if new_field is True:
             filtro.u = covolved_image
@@ -1210,7 +1211,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t1.u * mask
 
-    def forked_grating(self, r0, period, l, alpha, angle=0 * degrees):
+    def forked_grating(self, r0, period, l, alpha, kind, angle=0 * degrees):
         """Forked grating
             exp(1.j * alpha *
                 cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
@@ -1219,6 +1220,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             period (float): basic period of teh grating
             l (int): *
             alpha (int): *
+            kind (str): 'amplitude' or 'phase'
             angle (float): angle of the grating in radians
 
         Example:
@@ -1232,21 +1234,16 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = exp(
             1.j * alpha * cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
-        self.set_amplitude(q=1, positivo=0, amp_min=0, amp_max=1)
-        self.set_amplitude(q=1, positivo=1, amp_min=0, amp_max=1)
 
-        amplitude = np.abs(self.u)
         phase = np.angle(self.u)
 
-        self.u = np.sign(phase) * amplitude
+        phase[phase < 0] = 0
+        phase[phase > 0] = 1
 
-        self.binarize(
-            kind="amplitude",
-            corte=None,
-            level0=1,
-            level1=0,
-            new_field=False,
-            matrix=False)
+        if kind == 'amplitude':
+            self.u = phase
+        elif kind == 'phase':
+            self.u = exp(1.j * pi * phase)
 
     def sine_grating(self,
                      period,

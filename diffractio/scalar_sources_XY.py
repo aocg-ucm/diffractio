@@ -252,9 +252,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 -pi * (self.Y - y0)**2 / w0**2))**2
             f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) * sqrt(
                 2**n[s] * factorial(n[s])))
-            # f =  sqrt(2) / (sqrt(2**m[s]*factorial(m[s]))*sqrt(2**n[s]*factorial(n[s])))
-            # el de arriba normaliza en intensity y está dividido entre 1/w0
-            print(Ix.max())
+
             intesity = intesity + f * c_mn[s] * Ix * Iy
 
         self.u = A * intesity
