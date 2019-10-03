@@ -11,7 +11,7 @@ The main atributes are:
 *Class for unidimensional scalar masks*
 
 *Functions*
-    * mask_from_function, mask_from_array
+    * mask_from_function, mask_from_array.
     * slit, double slit
     * two_levels, gray_scale
     * prism, biprism_fresnel, biprism_fresnel_nh
@@ -383,8 +383,8 @@ class Scalar_mask_X(Scalar_field_X):
 
         """
         k = 2 * np.pi / self.wavelength
-        t1 = c * (self.x - x0)**2 / (1 - np.sqrt(1 - (1 + k) * c**2 *
-                                                 (self.x - x0)**2))
+        t1 = c * (self.x - x0)**2 / (
+            1 - np.sqrt(1 - (1 + k) * c**2 * (self.x - x0)**2))
 
         t2 = 0
         for i, ai in enumerate(a):
@@ -968,8 +968,8 @@ class Scalar_mask_X(Scalar_field_X):
         if kind == 'abs_fag':
             i0_ones = np.ones_like(i0)
             i0_zeros = np.zeros_like(i0)
-            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape((-1, ),
-                                                                     order='F')
+            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape(
+                (-1, ), order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)
