@@ -35,6 +35,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import multiprocessing
 from scipy.constants import speed_of_light, mu_0, epsilon_0, elementary_charge
+from matplotlib import rcParams
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -56,3 +57,6 @@ num_decimals = 4
 num_max_processors = multiprocessing.cpu_count()
 
 no_date = True  # for test folder
+
+rcParams['figure.figsize'] = 5, 5
+rcParams['font.size'] = 14
