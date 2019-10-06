@@ -28,9 +28,18 @@ Alpha state
 
   First release on PyPI in pre-alpha state.
 
-    * Modules	= 9/10.
-    * Functions 	= 9/10.
-    * Tutorial 	= 7/10.
-    * Examples 	= 4/10.
-    * Tests 	= 8/10.
-    * Drawing 	= 8/10.
+
+
+0.0.5 (2019-10-06)
+------------------------
+Alpha state
+
+ * Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
+
+
+ * Modules	= 9/10.
+ * Functions 	= 9/10.
+ * Tutorial 	= 7/10.
+ * Examples 	= 4/10.
+ * Tests 	= 9/10.
+ * Drawing 	= 8/10.
