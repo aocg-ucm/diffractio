@@ -1200,7 +1200,8 @@ class Scalar_field_XZ(object):
              reduce_matrix='standard',
              colorbar_kind=False,
              colormap_kind="gist_heat",
-             z_scale='um'):
+             z_scale='um',
+             edge_matrix=None):
         """Draws  XZ field.
 
         Parameters:
@@ -1220,6 +1221,7 @@ class Scalar_field_XZ(object):
             min_incr: incrimum increment in refraction index for detecting edges
             reduce_matrix (int, int), 'standard' or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             z_scale (str): 'mm', 'um'
+            edge_matrix (numpy.array): positions of borders
 
         """
 
@@ -1290,9 +1292,13 @@ class Scalar_field_XZ(object):
             plt.axis(scale)
 
         if draw_borders is True:
-            if self.borders is None:
+            if self.borders is None or edge_matrix is None:
                 self.surface_detection(1, min_incr, reduce_matrix)
-            plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
+                border0 = self.borders[0]
+                border1 = self.borders[1]
+            if edge_matrix is not None:
+                border0, border1 = edge_matrix
+            plt.plot(border0, border1, 'w.', ms=1)
 
         if not filename == '':
             plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)

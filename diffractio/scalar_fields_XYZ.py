@@ -20,7 +20,7 @@ The magnitude is related to microns: `micron = 1.`
 
 *Definition of a scalar field*
     * load and save data
-    * to_scalar_fields_XY
+    * to_scalar_field_XY
     * xy_2_xyz
     * cut_function
     * __rotate__
@@ -40,8 +40,8 @@ The magnitude is related to microns: `micron = 1.`
     * video
 
 """
-
 import copyreg
+import os
 import time
 import types
 from multiprocessing import Pool
@@ -301,7 +301,7 @@ class Scalar_field_XYZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-    def save_data(self, filename='', method='hickle', add_name=''):
+    def save_data(self, filename, method, add_name=''):
         """Save data of Scalar_field_XZ class to a dictionary.
 
         Parameters:
@@ -317,7 +317,7 @@ class Scalar_field_XYZ(object):
         except:
             return False
 
-    def load_data(self, filename, method='hickle', verbose=False):
+    def load_data(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
 
         Parameters:
@@ -325,9 +325,8 @@ class Scalar_field_XYZ(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, verbose, method)
+        dict0 = load_data_common(self, filename, method, verbose)
 
-        print(dict0)
         if dict0 is not None:
             if isinstance(dict0, dict):
                 self.__dict__ = dict0
@@ -635,11 +634,11 @@ class Scalar_field_XYZ(object):
             field[:, :, k] = modo
             self.u = field
 
-    def to_scalar_fields_XY(self,
-                            iz0=None,
-                            z0=None,
-                            is_class=True,
-                            matrix=False):
+    def to_scalar_field_XY(self,
+                           iz0=None,
+                           z0=None,
+                           is_class=True,
+                           matrix=False):
         """pass results to Scalar_field_XY. Only one of the first two variables
          (iz0,z0) should be used
 
@@ -1039,7 +1038,7 @@ class Scalar_field_XYZ(object):
             has_colorbar (bool): if True draws the colorbar
         """
 
-        ufield = self.to_scalar_fields_XY(
+        ufield = self.to_scalar_field_XY(
             iz0=None, z0=z0, is_class=True, matrix=False)
         ufield.draw(
             kind=kind,
@@ -1068,7 +1067,7 @@ class Scalar_field_XYZ(object):
             draw_borders (bool): check
 
         Todo:
-            Simplify, since we get to_scalar_fields_XY, draw with Scalar_field_XY.draw
+            Simplify, since we get to_scalar_field_XY, draw with Scalar_field_XY.draw
             include kind and other parameters of draw
         """
         plt.figure()
@@ -1095,8 +1094,8 @@ class Scalar_field_XYZ(object):
                 self.z[0] / 1000, self.z[-1] / 1000, self.y[0], self.y[-1]
             ])
         plt.xlabel('z (mm)', fontsize=16)
-        plt.ylabel('y $(um)$', fontsize=16)
-        plt.title('intensity YZ', fontsize=20)
+        plt.ylabel('x $(um)$', fontsize=16)
+        plt.title('intensity XZ', fontsize=20)
         h1.set_cmap("gist_heat")  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
@@ -1207,7 +1206,12 @@ class Scalar_field_XYZ(object):
         elif kind == 'abs':
             slicerLM(np.abs(self.n))
 
-    def video(self, filename='', kind='intensity', frame=True, encoder='html'):
+    def video(self,
+              filename='',
+              kind='intensity',
+              frame=True,
+              encoder='html',
+              verbose=False):
         """Makes a vidoe in the range given by self.z.
 
         Parameters:
@@ -1217,6 +1221,8 @@ class Scalar_field_XYZ(object):
                 intensity = np.abs(self.u)**2
                 phase = angle(u)
             frame (bool): figure with or without axis.
+            encoder (str): 'html'
+            verbose (bool): If True prints
 
         Todo:
             Implement kind, now only intensity
@@ -1229,7 +1235,8 @@ class Scalar_field_XYZ(object):
             return np.log(1 * x + 1)
 
         FFMpegWriter = manimation.writers[encoder]  # ffmpeg mencoder html
-        metadata = dict(title='video', artist='Sanchez-Brea', comment='lenses')
+        metadata = dict(
+            title='video', artist='Sanchez-Brea', comment='tutorial_xyz')
         writer = FFMpegWriter(fps=15, metadata=metadata)
 
         xmin, xmax, ymin, ymax = self.x[0], self.x[-1], self.y[0], self.y[-1]
@@ -1246,13 +1253,12 @@ class Scalar_field_XYZ(object):
             fig = plt.figure()
             ax = fig.add_axes([0, 0, 1, 1])
 
-        frame = self.to_scalar_fields_XY(
+        frame = self.to_scalar_field_XY(
             iz0=0, z0=None, is_class=True, matrix=False)
 
         intensity_global = f(np.abs(self.u)**2)
         Imax = intensity_global.max()
         Imin = intensity_global.min()
-        print(Imin, Imax)
 
         intensity = f(np.abs(frame.u)**2)
         intensity = intensity / Imax
@@ -1271,7 +1277,7 @@ class Scalar_field_XYZ(object):
         n_frames = len(self.z)
         with writer.saving(fig, filename, 300):
             for i_prog in range(n_frames):
-                frame = self.to_scalar_fields_XY(
+                frame = self.to_scalar_field_XY(
                     iz0=i_prog, z0=None, is_class=True, matrix=False)
                 intensity = f(np.abs(frame.u)**2)
                 intensity = (intensity - Imin) / (Imax + Imin)
@@ -1283,8 +1289,11 @@ class Scalar_field_XYZ(object):
                 plt.title(texto)
                 plt.draw()
                 writer.grab_frame()
-                print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
-                    i_prog, n_frames, self.z[i_prog] / mm, intensity.max(),
-                    intensity.min()))
+                if verbose:
+                    print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
+                        i_prog, n_frames, self.z[i_prog] / mm, intensity.max(),
+                        intensity.min()))
+
+        os.system()
 
         plt.close()

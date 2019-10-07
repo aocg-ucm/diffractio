@@ -753,7 +753,6 @@ class Scalar_field_XY(object):
             image = angle(self.u)  # / pi
             image[image == 1] = -1
         # Extract the values along the line, using cubic interpolation
-        print(ix1, ix2, iy1, iy2)
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
                      npixels)

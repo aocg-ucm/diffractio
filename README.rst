@@ -29,7 +29,7 @@ Features
 
 Diffratio is a Python library for Diffraction and Interference Optics.
 
-It implements Scalar Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Beam Propagation Method (BPM) and Fast Fourier Transform (FFT). When possible, multiprocessing is implemented for a faster computation.
+It implements Scalar and paraxial vector Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Beam Propagation Method (BPM) and Fast Fourier Transform (FFT). When possible, multiprocessing is implemented for a faster computation.
 
 The scalar propagations techniques are implemented to:
 
@@ -38,13 +38,15 @@ The scalar propagations techniques are implemented to:
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
 
-
-
 Each technique present three modules:
 
 * sources: Generation of light.
 * masks: Masks and Diffractive Optical elements.
 * fields:  Propagation techniques, parameters and general functions.
+
+The paraxial vector propagation techniques are implemented to:
+
+* XY - fields are defined in the xy transversal plane.
 
 
 Sources
@@ -126,6 +128,20 @@ Other features
 
 * Polychromatic and extended source problems can also be analyzed using multiprocessing.
 
+
+Paraxial vector beams
+==================================
+
+Here, we implement new classes where the fields $E_x$ and $E_y$ are generated and propagted using Rayleigh-Sommerfeld approach.
+Also, simple and complex polarizing masks can be created.
+
+.. image:: vector_gauss_radial_fields.png
+   :width: 700
+
+.. image:: vector_gauss_radial_stokes.png
+  :width: 700
+
+
 Authors
 ---------------------------
 
@@ -153,15 +169,15 @@ L.M. Sanchez Brea, "Diffratio, python module for diffraction and interference op
 References
 ---------------------------
 
-* F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
-
-* Engineering optics with matlab"
-
-* Fast Bessel and Hankle functions: https://dlmf.nist.gov/10.2#E5
-
+* J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
+* F. Shen y A. Wang, «Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula», Applied Optics, vol. 45, n.º 6, pp. 1102–1110, 2006.
+* Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
+* B. E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
+* J. A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
+* "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
 * Beam width: https://en.wikipedia.org/wiki/Beam_diameter
 
-* JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger 
+
 
 
 Credits

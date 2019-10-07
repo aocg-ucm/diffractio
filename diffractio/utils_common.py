@@ -55,10 +55,7 @@ def get_date():
     return date
 
 
-def save_data_common(cls,
-                     filename='',
-                     method='savez_compressed',
-                     description=''):
+def save_data_common(cls, filename='', method='', description=''):
     """Common save data function to be used in all the modules.
 
     Parameters:
@@ -92,7 +89,7 @@ def save_data_common(cls,
     #         f.attrs['date'] = date
 
 
-def load_data_common(cls, filename, method='', verbose=False):
+def load_data_common(cls, filename, method, verbose=False):
     """Common load data function to be used in all the modules.
 
     Parameters:
@@ -107,7 +104,6 @@ def load_data_common(cls, filename, method='', verbose=False):
         print("\nnumber of data = {}".format(len(dict0['x'])))
 
     try:
-
         if method == 'hickle':
             dict0 = hickle.load(filename)
 
