@@ -280,7 +280,7 @@ class Scalar_field_XY(object):
         except:
             return False
 
-    def load_data(self, filename, method='hickle', verbose=False):
+    def load_data(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_X.
 
         Parameters:
@@ -288,7 +288,7 @@ class Scalar_field_XY(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, verbose, method)
+        dict0 = load_data_common(self, filename, method, verbose)
 
         if verbose:
             print(dict0)
@@ -860,9 +860,8 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(
-            MTF_field.u[int(num_data_x /
-                            2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
+            num_data_x / 2), int(num_data_y / 2)])
 
         # Image plane spacing
         delta_x = x[1] - x[0]
@@ -1566,5 +1565,5 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z +
-                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z + (X**2 + Y**2) /
+                          (2 * z))) / (1.j * wavelength * z)

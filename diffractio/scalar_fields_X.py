@@ -208,7 +208,7 @@ class Scalar_field_X(object):
         except:
             return False
 
-    def load_data(self, filename, method='hickle', verbose=False):
+    def load_data(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_X.
 
         Parameters:
@@ -216,7 +216,7 @@ class Scalar_field_X(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, verbose, method)
+        dict0 = load_data_common(self, filename, method, verbose)
 
         if dict0 is not None:
             if isinstance(dict0, dict):

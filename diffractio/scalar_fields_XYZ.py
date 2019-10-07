@@ -1212,7 +1212,7 @@ class Scalar_field_XYZ(object):
               frame=True,
               encoder='html',
               verbose=False):
-        """Makes a vidoe in the range given by self.z.
+        """Makes a video in the range given by self.z.
 
         Parameters:
             filename (str): if not '' stores drawing in file,

@@ -253,7 +253,7 @@ class Scalar_field_XZ(object):
             n_rotate = n_real_rotate + 1j * n_imag_rotate
             n_rotate[n_rotate < n_background] = n_background
             self.n = n_rotate
-            self.n[self.n == 0] = self.n_background
+            self.n[self.n < 1.2] = self.n_background
 
         self.surface_detection(mode=1, min_incr=0.1, reduce_matrix='standard')
 
@@ -324,8 +324,8 @@ class Scalar_field_XZ(object):
             filtro1 = np.zeros_like(self.n)
             sizex, sizez = self.n.shape
             centerx, centerz = int(sizex / 2), int(sizez / 2)
-            filtro1[centerx - pixels_filtering:centerx +
-                    pixels_filtering, centerz - 1:centerz + 1] = 1
+            filtro1[centerx - pixels_filtering:centerx + pixels_filtering,
+                    centerz - 1:centerz + 1] = 1
             filtro1 = filtro1 / sum(sum(filtro1))
             self.n = fftshift(ifft2(fft2(self.n) * fft2(filtro1)))
         elif type_filter == 2:
@@ -336,8 +336,8 @@ class Scalar_field_XZ(object):
             centerx = (self.x[-1] + self.x[0]) / 2
             # i_centerx = int(sizex / 2)
             # filtro1[i_centerx - pixels_filtering:i_centerx + pixels_filtering] = 1
-            filtro1 = np.exp(
-                -(self.x - centerx)**2 / (2 * pixels_filtering**2))
+            filtro1 = np.exp(-(self.x - centerx)**2 /
+                             (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
                 max_diff = np.abs(np.diff(self.n[:, i])).max()
@@ -424,7 +424,7 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    def load_data(self, filename, method='savez_comrpessed', verbose=False):
+    def load_data(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
 
         Parameters:
@@ -432,7 +432,7 @@ class Scalar_field_XZ(object):
             method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, verbose, method)
+        dict0 = load_data_common(self, filename, method, verbose)
 
         if verbose:
             print(dict0)
@@ -785,9 +785,10 @@ class Scalar_field_XZ(object):
         # parametro de quality
         dr_real = sqrt(dx**2)
         rmax = sqrt((xout**2).max())
-        dr_ideal = sqrt((self.wavelength / self.n_background)**2 + rmax**2 +
-                        2 * (self.wavelength / self.n_background) *
-                        sqrt(rmax**2 + self.z.min()**2)) - rmax
+        dr_ideal = sqrt(
+            (self.wavelength / self.n_background)**2 + rmax**2 + 2 *
+            (self.wavelength / self.n_background
+             ) * sqrt(rmax**2 + self.z.min()**2)) - rmax
         self.quality = dr_ideal / dr_real
 
         # when computation is performed: quality is determined
@@ -1103,8 +1104,7 @@ class Scalar_field_XZ(object):
             #   algorithm.append('RS')
             #   refr_index_RS.append(self.n[0,i])
 
-            elif algorithm[
-                    num_transition] == 'RS' and variation[i] > min_variation:
+            elif algorithm[num_transition] == 'RS' and variation[i] > min_variation:
                 # create new transition
                 # print(("c {} - {} -> BPM".format(variation[i], self.z[i])))
                 num_transition = num_transition + 1
@@ -1112,8 +1112,7 @@ class Scalar_field_XZ(object):
                 algorithm.append('BPM')
                 refr_index_RS.append(-1)
 
-            elif algorithm[
-                    num_transition] == 'BPM' and variation[i] < min_variation:
+            elif algorithm[num_transition] == 'BPM' and variation[i] < min_variation:
                 # create new transition
                 # print(("d {} - {} -> RS".format(variation[i], self.z[i])))
                 num_transition = num_transition + 1
@@ -1292,12 +1291,14 @@ class Scalar_field_XZ(object):
             plt.axis(scale)
 
         if draw_borders is True:
-            if self.borders is None or edge_matrix is None:
-                self.surface_detection(1, min_incr, reduce_matrix)
-                border0 = self.borders[0]
-                border1 = self.borders[1]
             if edge_matrix is not None:
                 border0, border1 = edge_matrix
+            else:
+                if self.borders is None:
+                    self.surface_detection(1, min_incr, reduce_matrix)
+                border0 = self.borders[0]
+                border1 = self.borders[1]
+
             plt.plot(border0, border1, 'w.', ms=1)
 
         if not filename == '':
@@ -1313,7 +1314,8 @@ class Scalar_field_XZ(object):
                               min_incr=0.01,
                               reduce_matrix='standard',
                               colorbar_kind=None,
-                              colormap_kind='Reds_r'):
+                              colormap_kind='Reds_r',
+                              edge_matrix=None):
         """Draws refraction index.
 
         Parameters:
@@ -1324,6 +1326,7 @@ class Scalar_field_XZ(object):
             scale (str): '', 'scaled', 'equal', scales the XY drawing
             min_incr: minimum increment in refraction index for detecting edges
             reduce_matrix (int, int), 'standard' or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
+            edge_matrix (numpy.array): positions of borders
         """
 
         plt.figure()
@@ -1376,10 +1379,13 @@ class Scalar_field_XZ(object):
             plt.axis(scale)
 
         if draw_borders is True:
-            if self.borders is None:
+            if self.borders is None or edge_matrix is None:
                 self.surface_detection(1, min_incr, reduce_matrix)
-
-            plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
+                border0 = self.borders[0]
+                border1 = self.borders[1]
+            if edge_matrix is not None:
+                border0, border1 = edge_matrix
+            plt.plot(border0, border1, 'w.', ms=1)
 
         if not filename == '':
             plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
@@ -1729,9 +1735,8 @@ class Scalar_field_XZ(object):
 
         global l2a, zZ, I_drawing, z, h1, x, log1, norm1
         plt.figure()
-        h1, = plt.plot([self.z[0], self.z[0]], [self.x[0], self.x[-1]],
-                       lw=2,
-                       color='w')
+        h1, = plt.plot(
+            [self.z[0], self.z[0]], [self.x[0], self.x[-1]], lw=2, color='w')
 
         I_drawing = prepare_drawing(self.u, kind, logarithm, normalize)
 
