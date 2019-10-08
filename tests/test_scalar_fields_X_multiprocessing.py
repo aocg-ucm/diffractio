@@ -511,38 +511,3 @@ class Test_Scalar_fields_X_multiprocessing(object):
 
         save_figure_test(newpath, func_name)
         assert True
-
-    # def benchmark_RS_multiprocessing(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}'.format(newpath, func_name)
-    #
-    #     x0 = np.linspace(-25 * um, 25 * um, 32)
-    #     y0 = np.linspace(-25 * um, 25 * um, 32)
-    #     z0 = np.linspace(100 * um, 500 * um, 32)
-    #     wavelength = 0.55 * um
-    #
-    #     t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-    #     t1.circle(
-    #         r0=(0 * um, 0 * um), radius=(20 * um, 20 * um), angle=0 * degrees)
-    #
-    #     uxyz = Scalar_mask_XYZ(
-    #         x=x0, y=y0, z=z0, wavelength=wavelength, n_background=1., info='')
-    #     uxyz.incident_field(t1)
-    #     uxyz.sphere(
-    #         r0=(0 * um, 0 * um, 0 * um),
-    #         radius=(10 * um, 30 * um, 50 * um),
-    #         refraction_index=2,
-    #         angles=(0 * degrees, 0 * degrees, 45 * degrees))
-    #     uxyz.u0 = t1
-    #
-    #     nums_processors = range(1, 9)
-    #     nums_processors = (1, 4, 8)
-    #     for num_processors in nums_processors:
-    #         time = uxyz.RS(num_processors=num_processors, verbose=False)
-    #         print("time in RS_multiprocessing {}: {} seconds".format(
-    #             num_processors, time))
-    #     uxyz.draw_intensityXYZ(
-    #         kind='intensity', logarithm=False, normalize='maximum', draw=True)
-    #     uxyz.save_data(filename=filename, method='savez_compressed')
-    #     save_figure_test(newpath, func_name)
-    #     assert True
