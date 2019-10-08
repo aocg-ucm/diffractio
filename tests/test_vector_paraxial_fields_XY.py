@@ -66,11 +66,11 @@ class Test_Vector_paraxial_fields_XY(object):
         vp.polarizer_linear(angle=0 * degrees)
 
         EM = vp
-        EM.draw(kind='Scalar_field_XY')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_vc')
 
         EM2 = vc * vp
-        EM2.draw(kind='Scalar_field_XY')
+        EM2.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_vp')
         assert True
 
@@ -91,12 +91,10 @@ class Test_Vector_paraxial_fields_XY(object):
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
         EM.radial_wave(A=1000, x_center=(0 * um, 0 * um), radius=length / 5)
 
-        EM.draw(kind='intensityEH')
+        EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
 
-        EM.draw(field='S', kind='field')
-        save_figure_test(newpath, func_name, add_name='_1')
-        EM.draw(field='S', kind='intensities')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_2')
 
         assert True
@@ -122,15 +120,10 @@ class Test_Vector_paraxial_fields_XY(object):
             w0=(25 * um, 25 * um),
             kind='polarization',
             v=[1, 0])
-        EM.draw(kind='intensityEH')
+        EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
-        EM.__vectorize__(z0=-1 * mm, n=1)
-        EM.draw(kind='intensityEH')
-        save_figure_test(newpath, func_name, add_name='_00')
-        EM.draw(field='S', kind='field')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_1')
-        EM.draw(field='S', kind='intensities')
-        save_figure_test(newpath, func_name, add_name='_2')
         assert True
 
     def test_get(self):
@@ -156,9 +149,9 @@ class Test_Vector_paraxial_fields_XY(object):
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
         EM.plane_wave(A=1, v=[1, 0, 0], theta=0 * degrees, phi=0 * degrees)
 
-        EM.draw(kind='intensityEH')
+        EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
-        EM.draw(field='S', kind='intensities')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_1')
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
@@ -172,9 +165,9 @@ class Test_Vector_paraxial_fields_XY(object):
 
         EM.apply_mask(t1)
 
-        EM.draw(kind='intensityEH')
+        EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_2')
-        EM.draw(field='S', kind='intensities')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_3')
 
         assert True
@@ -200,27 +193,20 @@ class Test_Vector_paraxial_fields_XY(object):
 
         EM = Vector_paraxial_mask_XY(x0, y0, wavelength)
         EM.unique_mask(u1, v=v_lineal)
-        EMdeltaz = EM.__vectorize__(
-            z0=-.25 * mm, n=1, Vector_paraxial_normal=np.array([0, 0, 1]))
 
-        EM.draw(kind='intensityEH')
+        EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_1EH')
 
-        EM.draw(field='S', kind='intensities')
+        EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_2S')
 
-        EM.check_validity_EH(EMdeltaz)
-
         EMz = EM.RS(z=.5 * mm)
-        EMz.draw(kind='intensityEH')
+        EMz.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_3EH_p')
 
-        EMz.draw(field='S', kind='intensities')
+        EMz.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_4S_p')
 
-        EMz.check_validity_EH('')
-        EMz.draw(field='S', kind='intensity', numElipses=15, amplification=1)
-        save_figure_test(newpath, func_name, add_name='_5I')
         return True
 
     def test_polarization_states(self):

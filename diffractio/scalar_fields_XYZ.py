@@ -1294,6 +1294,4 @@ class Scalar_field_XYZ(object):
                         i_prog, n_frames, self.z[i_prog] / mm, intensity.max(),
                         intensity.min()))
 
-        os.system()
-
         plt.close()

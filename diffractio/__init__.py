@@ -30,12 +30,13 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
+import multiprocessing
+
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import matplotlib.pyplot as plt
-import multiprocessing
-from scipy.constants import speed_of_light, mu_0, epsilon_0, elementary_charge
 from matplotlib import rcParams
+from scipy.constants import elementary_charge, epsilon_0, mu_0, speed_of_light
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -56,7 +57,7 @@ eps = 1e-6
 num_decimals = 4
 num_max_processors = multiprocessing.cpu_count()
 
-no_date = True  # for test folder
+no_date = False  # for test folder
 
 rcParams['figure.figsize'] = 5, 5
 rcParams['font.size'] = 14

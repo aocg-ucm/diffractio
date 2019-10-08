@@ -186,9 +186,9 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 500 * um
-        x0 = np.linspace(-length / 2, length / 2, 32)
-        y0 = np.linspace(-length / 2, length / 2, 32)
-        z0 = np.linspace(2 * mm, 7 * mm, 32)
+        x0 = np.linspace(-length / 2, length / 2, 16)
+        y0 = np.linspace(-length / 2, length / 2, 16)
+        z0 = np.linspace(2 * mm, 7 * mm, 16)
         wavelength = 0.6328 * um
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -231,14 +231,14 @@ class Test_Scalar_fields_XYZ(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 200 * um
-        x0 = np.linspace(-length / 2, length / 2, 32)
-        y0 = np.linspace(-length / 2, length / 2, 32)
+        x0 = np.linspace(-length / 2, length / 2, 16)
+        y0 = np.linspace(-length / 2, length / 2, 16)
         wavelength = 0.5 * um
 
         period = 10 * um
         z_talbot = 2 * period**2 / wavelength
 
-        z0 = np.linspace(2 * z_talbot, 6 * z_talbot, 32)
+        z0 = np.linspace(2 * z_talbot, 6 * z_talbot, 16)
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
         u1.gauss_beam(A=1, r0=(0, 0), z0=0, w0=(150 * um, 150 * um))

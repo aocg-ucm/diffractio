@@ -185,8 +185,6 @@ class Vector_paraxial_field_XY(object):
 
         return Ex, Ey
 
-        return self.irradiance
-
     def apply_mask(self, u):
         """Multiply field by binary scalar mask
             for example: self.Ex = self.Ex * u.u
@@ -454,20 +452,23 @@ class Vector_paraxial_field_XY(object):
             if kind == 'intensity':
                 id_fig = self.__draw_intensity__(logarithm, normalize,
                                                  cut_value)
-            if kind == 'intensities':
+            elif kind == 'intensities':
                 id_fig = self.__draw_intensities__(logarithm, normalize,
                                                    cut_value)
 
-            if kind == 'phases':
+            elif kind == 'phases':
                 id_fig = self.__draw_phases__()
-            if kind == 'fields':
+            elif kind == 'fields':
                 id_fig = self.__draw_fields__(logarithm, normalize, cut_value)
 
-            if kind == 'stokes':
+            elif kind == 'stokes':
                 id_fig = self.__draw_stokes__()
 
-            if kind == 'param_ellipse':
+            elif kind == 'param_ellipse':
                 id_fig = self.__draw_param_ellipse__()
+
+            else:
+                id_fig = None
 
             if not filename == '':
                 plt.savefig(

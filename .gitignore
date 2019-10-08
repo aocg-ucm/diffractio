@@ -6,7 +6,7 @@
 # Temporal files
 *~
 
-
+tests/tests_results_0/*
 
 
 # Byte-compiled / optimized / DLL files

@@ -742,6 +742,7 @@ class Test_Scalar_masks_XY(object):
             period=20 * um,
             l=3,
             alpha=2,
+            kind='amplitude',
             angle=0 * degrees)
         t.draw(kind='intensity')
 

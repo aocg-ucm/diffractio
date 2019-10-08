@@ -98,8 +98,7 @@ def save_figure_test(newpath, func_name, add_name=''):
     plt.suptitle(title)
     filename = '{}{}{}.{}'.format(newpath, func_name, add_name, 'png')
     plt.savefig(filename)
-    print('closing')
-    plt.close()
+    plt.close('all')
 
 
 def ejecute_multiprocessing(num_cores, n_pixels):
