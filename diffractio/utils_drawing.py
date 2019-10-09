@@ -78,7 +78,7 @@ def draw2D(
         xlabel="$x  (\mu m)$",
         ylabel="$y  (\mu m)$",
         title="",
-        color="YlGnBu",  # YlGnBu  RdBu
+        color="YlGnBu",  # YlGnBu  seismic
         interpolation='bilinear',  # 'bilinear', 'nearest'
         scale='scaled',
         reduce_matrix='standard',

@@ -545,7 +545,7 @@ class Vector_paraxial_field_XY(object):
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
 
-        color_phase = "RdBu"
+        color_phase = "seismic"
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
         tx, ty = rcParams['figure.figsize']
@@ -579,7 +579,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         color_amplitude = "gist_heat"
-        color_phase = "RdBu"
+        color_phase = "seismic"
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -631,15 +631,15 @@ class Vector_paraxial_field_XY(object):
         plt.clim(0, intensity_max)
 
         plt.subplot(2, 2, 2)
-        h2 = __draw1__(self, S1, "RdBu", "$S_1$")
+        h2 = __draw1__(self, S1, "seismic", "$S_1$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplot(2, 2, 3)
-        h3 = __draw1__(self, S2, "RdBu", "$S_2$")
+        h3 = __draw1__(self, S2, "seismic", "$S_2$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplot(2, 2, 4)
-        h4 = __draw1__(self, S3, "RdBu", "$S_3$")
+        h4 = __draw1__(self, S3, "seismic", "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplots_adjust(
@@ -666,7 +666,7 @@ class Vector_paraxial_field_XY(object):
         plt.subplot(2, 2, 2)
         h2 = __draw1__(self, B, "gist_heat", "$B$")
         plt.subplot(2, 2, 3)
-        h3 = __draw1__(self, theta / degrees, "RdBu", "$\phi$")
+        h3 = __draw1__(self, theta / degrees, "seismic", "$\phi$")
         plt.clim(-180, 180)
         plt.subplot(2, 2, 4)
         h4 = __draw1__(self, h, "gist_heat", "$h$")

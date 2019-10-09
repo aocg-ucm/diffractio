@@ -1271,7 +1271,7 @@ class Scalar_field_XYZ(object):
             aspect='equal',
             origin='lower',
             extent=[xmin, xmax, ymin, ymax])
-        image.set_cmap("gist_heat")  # RdBu coolwarm gist_heat
+        image.set_cmap("gist_heat")  # seismic coolwarm gist_heat
         fig.canvas.draw()
 
         n_frames = len(self.z)

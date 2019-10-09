@@ -61,3 +61,5 @@ no_date = False  # for test folder
 
 rcParams['figure.figsize'] = 5, 5
 rcParams['font.size'] = 14
+
+print("number of processors: {}".format(num_max_processors))

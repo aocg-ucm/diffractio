@@ -224,7 +224,7 @@ class Test_Scalar_sources_XY(object):
             plt.subplot(2, M, m + M + 1)
             plt.axis('off')
             h2 = plt.imshow(np.angle(u.u))
-            h2.set_cmap("RdBu")
+            h2.set_cmap("seismic")
 
         u.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
@@ -310,7 +310,7 @@ class Test_Scalar_sources_XY(object):
                 plt.axis('off')
                 plt.title(title, fontsize=14)
                 h2 = plt.imshow(np.angle(u.u))
-                h2.set_cmap("RdBu")
+                h2.set_cmap("seismic")
 
         plt.figure(ID1.number)
         plt.figure(ID2.number)
@@ -414,7 +414,7 @@ class Test_Scalar_sources_XY(object):
                 plt.title(title, fontsize=14)
                 h2 = plt.imshow(np.angle(u.u))
                 plt.clim(vmin=-np.pi, vmax=np.pi)
-                h2.set_cmap("RdBu")
+                h2.set_cmap("seismic")
 
         u.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)

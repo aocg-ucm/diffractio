@@ -893,7 +893,7 @@ class Scalar_field_XY(object):
                 xlabel=text_x,
                 ylabel=text_y,
                 title="",
-                color="gist_heat",  # YlGnBu  RdBu
+                color="gist_heat",  # YlGnBu  seismic
                 interpolation='bilinear',  # 'bilinear', 'nearest'
                 scale='scaled')
             plt.colorbar(orientation='vertical')
@@ -1336,7 +1336,7 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="RdBu",
+            color="seismic",
             reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
@@ -1356,8 +1356,8 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="RdBu",
-            reduce_matrix=self.reduce_matrix)  # RdBu gist_heat
+            color="seismic",
+            reduce_matrix=self.reduce_matrix)  # seismic gist_heat
         plt.clim(vmin=-pi, vmax=pi)
 
         return id_fig, IDax, IDimage
@@ -1403,7 +1403,7 @@ class Scalar_field_XY(object):
         plt.title("$amplitude$")
         plt.axis('scaled')
         plt.axis(extension)
-        h1.set_cmap("gist_heat")  # RdBu
+        h1.set_cmap("gist_heat")  # seismic
         plt.colorbar(orientation='horizontal')
         plt.axis(extension)
 
@@ -1424,7 +1424,7 @@ class Scalar_field_XY(object):
         plt.axis(extension)
         plt.title("$phase$")
 
-        h2.set_cmap("RdBu")
+        h2.set_cmap("seismic")
 
         return (h1, h2)
 
@@ -1453,7 +1453,7 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="RdBu",
+            color="seismic",
             reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
