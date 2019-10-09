@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
     * slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
     * mask_from_function
     * prism, lens, fresnel_lens, lens_billet,
-    * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_ajedrez
+    * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
     * axicon, biprism_fresnel,
     * radial_grating, angular_grating, hyperbolic_grating, archimedes_spiral, laguerre_gauss_spiral
     * hammer
@@ -1421,14 +1421,14 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Red binaria
         self.u = t1.u * t2.u
 
-    def grating_2D_ajedrez(self,
-                           period=40 * um,
-                           amin=0,
-                           amax=1,
-                           phase=0 * pi / 2,
-                           x0=0,
-                           fill_factor=0.75,
-                           angle=0 * degrees):
+    def grating_2D_chess(self,
+                         period=40 * um,
+                         amin=0,
+                         amax=1,
+                         phase=0 * pi / 2,
+                         x0=0,
+                         fill_factor=0.75,
+                         angle=0 * degrees):
         """2D binary grating as chess
 
          Parameters:
@@ -1441,7 +1441,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            grating_2D_ajedrez(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
+            grating_2D_chess(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
 
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -1449,7 +1449,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         t1.binary_grating(period, amin, amax, phase, x0, fill_factor, angle)
         t2.binary_grating(period, amin, amax, phase, x0, fill_factor,
                           angle + 90. * degrees)
-        self.u = np.logical_xor(t1.u, t2.u)
+        u = np.logical_xor(t1.u, t2.u)
+        self.u = u.astype(float)
 
     def roughness(self, t, s):
         """Generation of a rough surface. According to Ogilvy p.224

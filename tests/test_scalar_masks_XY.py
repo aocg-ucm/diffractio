@@ -894,7 +894,7 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6238 * um
         period = 125 * um
         red = Scalar_mask_XY(x, y, wavelength)
-        red.grating_2D_ajedrez(
+        red.grating_2D_chess(
             period=period,
             amin=0,
             amax=1.,

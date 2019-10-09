@@ -837,7 +837,8 @@ class Scalar_field_XY(object):
         # busca el máximo de una matrix bidimensional
         ix, iy = np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
-            print(("x = {} um, y = {} um".format(self.x[ix], self.y[iy])))
+            print(("x = {:2.3f} um, y = {:2.3f} um".format(
+                self.x[ix], self.y[iy])))
         return self.x[ix], self.y[iy]
 
     def MTF(self, kind='mm', has_draw=True):
@@ -860,8 +861,9 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
-            num_data_x / 2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(
+            MTF_field.u[int(num_data_x /
+                            2), int(num_data_y / 2)])
 
         # Image plane spacing
         delta_x = x[1] - x[0]
@@ -1300,7 +1302,8 @@ class Scalar_field_XY(object):
             title (str): title for the drawing
             cut_value (float): if provided, maximum value to show
         """
-        intensity = np.abs(self.u)**2
+        amplitude, intensity, phase = field_parameters(
+            self.u, has_amplitude_sign=True)
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
         id_fig, IDax, IDimage = draw2D(
             intensity,
@@ -1327,10 +1330,11 @@ class Scalar_field_XY(object):
             title (str): title for the drawing
             cut_value (float): if provided, maximum value to show
         """
-        intensity = np.abs(self.u)
-        intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
+        amplitude, intensity, phase = field_parameters(
+            self.u, has_amplitude_sign=True)
+        amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
         id_fig, IDax, IDimage = draw2D(
-            intensity,
+            amplitude,
             self.x,
             self.y,
             xlabel="$x  (\mu m)$",
@@ -1347,10 +1351,14 @@ class Scalar_field_XY(object):
         Parameters:
             title (str): title for the drawing
         """
-        ang = angle(self.u)  # / pi
-        ang[ang == 1] = -1
+        amplitude, intensity, phase = field_parameters(
+            self.u, has_amplitude_sign=True)
+        phase[phase == 1] = -1
+        phase = phase / degrees
+        phase[intensity < 0.01 * (intensity.max())] = 0
+
         id_fig, IDax, IDimage = draw2D(
-            ang,
+            phase,
             self.x,
             self.y,
             xlabel="$x  (\mu m)$",
@@ -1358,7 +1366,7 @@ class Scalar_field_XY(object):
             title=title,
             color="seismic",
             reduce_matrix=self.reduce_matrix)  # seismic gist_heat
-        plt.clim(vmin=-pi, vmax=pi)
+        plt.clim(vmin=-180, vmax=180)
 
         return id_fig, IDax, IDimage
 
@@ -1376,11 +1384,13 @@ class Scalar_field_XY(object):
             cut_value (float): if provided, maximum value to show
         """
 
-        u_reduced = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
-                                       self.u)
+        amplitude, intensity, phase = field_parameters(
+            self.u, has_amplitude_sign=True)
 
-        angle_i = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
-                                     angle(self.u))
+        intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
+                                       intensity)
+
+        phase = reduce_matrix_size(self.reduce_matrix, self.x, self.y, phase)
 
         xsize, ysize = rcParams['figure.figsize']
 
@@ -1388,19 +1398,18 @@ class Scalar_field_XY(object):
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
 
-        amplitude = np.abs(u_reduced)
-        amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
+        intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
         plt.subplot(1, 2, 1)
         h1 = plt.imshow(
-            amplitude,
+            intensity,
             interpolation='bilinear',
             aspect='auto',
             origin='lower',
             extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.title("$amplitude$")
+        plt.title("$intensity$")
         plt.axis('scaled')
         plt.axis(extension)
         h1.set_cmap("gist_heat")  # seismic
@@ -1408,11 +1417,13 @@ class Scalar_field_XY(object):
         plt.axis(extension)
 
         plt.subplot(1, 2, 2)
-        angle_i[angle_i == 1] = -1
+        phase[phase == 1] = -1
+        phase = phase / degrees
+
         # elimino la fase en la visualicion cuando no hay campo
-        angle_i[np.abs(amplitude)**2 < 0.01 * (np.abs(amplitude)**2).max()] = 0
+        phase[intensity < 0.01 * (intensity.max())] = 0
         h2 = plt.imshow(
-            angle_i,
+            phase,
             interpolation='bilinear',
             aspect='auto',
             origin='lower',
@@ -1423,6 +1434,7 @@ class Scalar_field_XY(object):
         plt.axis('scaled')
         plt.axis(extension)
         plt.title("$phase$")
+        plt.clim(-180, 180)
 
         h2.set_cmap("seismic")
 
@@ -1565,5 +1577,5 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z + (X**2 + Y**2) /
-                          (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z +
+                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
