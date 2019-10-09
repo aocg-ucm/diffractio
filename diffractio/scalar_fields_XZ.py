@@ -1225,7 +1225,7 @@ class Scalar_field_XZ(object):
         """
 
         if reduce_matrix is False:
-            amplitude, intensity, phase = field_parameters(self.u)
+            amplitude, intensity, phase = field_parameters(self.u, True)
 
         elif reduce_matrix is 'standard':
             num_x = len(self.x)
@@ -1238,10 +1238,10 @@ class Scalar_field_XZ(object):
             if reduction_z == 0:
                 reduction_z = 1
             u_new = self.u[::reduction_x, ::reduction_z]
-            amplitude, intensity, phase = field_parameters(u_new)
+            amplitude, intensity, phase = field_parameters(u_new, True)
         else:
             u_new = self.u[::reduce_matrix[0], ::reduce_matrix[1]]
-            amplitude, intensity, phase = field_parameters(u_new)
+            amplitude, intensity, phase = field_parameters(u_new, True)
 
         if z_scale == 'um':
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
@@ -1286,7 +1286,7 @@ class Scalar_field_XZ(object):
             if kind == 'intensity':
                 colormap_kind = cm.gist_heat
             if kind == 'amplitude':
-                colormap_kind = cm.jet
+                colormap_kind = cm.seismic
             if kind == 'phase':
                 colormap_kind = cm.hsv
             if kind == 'real':
@@ -1295,7 +1295,7 @@ class Scalar_field_XZ(object):
         if kind == 'intensity':
             climits = I_drawing.min(), I_drawing.max()
         if kind == 'amplitude':
-            climits = I_drawing.min(), I_drawing.max()
+            climits = -I_drawing.max(), I_drawing.max()
         if kind == 'phase':
             climits = -180, 180
         if kind == 'real':

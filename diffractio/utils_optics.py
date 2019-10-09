@@ -632,11 +632,12 @@ def normalize(u, kind='intensity'):
     return u
 
 
-def field_parameters(u):
+def field_parameters(u, has_amplitude_sign=False):
     """Determines main parameters of field: amplitude intensity phase. All this parameters have the same dimension as u.
 
     Parameters:
         u (numpy.array): optical field (comes usually form field.u)
+        has_amplitude_sign (bool): If True - amplitude = np.sign(u) * np.abs(u), Else: amplitude =  np.abs(u)
 
     Returns:
         amplitude (numpy.array): np.abs(u)
@@ -645,9 +646,16 @@ def field_parameters(u):
 
     """
 
-    amplitude = np.abs(u)
     intensity = np.abs(u)**2
     phase = np.angle(u)
+    if has_amplitude_sign is True:
+        amplitude = np.sign(u) * np.abs(u)
+    else:
+        amplitude = np.abs(u)
+
+    # amplitude = np.abs(u)
+    # amplitude = u * np.exp(-1j * phase)
+    amplitude = np.real(amplitude)
 
     return amplitude, intensity, phase
 
