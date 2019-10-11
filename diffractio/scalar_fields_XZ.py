@@ -68,7 +68,8 @@ from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, num_max_processors, plt, seconds, um
+from diffractio import (degrees, mm, np, num_max_processors, params_drawing,
+                        plt, seconds, um)
 from diffractio.scalar_fields_X import (Scalar_field_X, kernelRS,
                                         kernelRSinverse)
 from diffractio.scalar_masks_X import Scalar_mask_X
@@ -1244,7 +1245,7 @@ class Scalar_field_XZ(object):
             u_new = self.u[::reduce_matrix[0], ::reduce_matrix[1]]
             amplitude, intensity, phase = field_parameters(u_new, True)
 
-        phase[intensity < 0.01 * (intensity.max())] = 0
+        phase[intensity < 0.005 * (intensity.max())] = 0
 
         if z_scale == 'um':
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
@@ -1287,13 +1288,13 @@ class Scalar_field_XZ(object):
 
         if colormap_kind in ('', [], None, True):
             if kind == 'intensity':
-                colormap_kind = cm.gist_heat
+                colormap_kind = params_drawing["color_intensity"]
             if kind == 'amplitude':
-                colormap_kind = cm.seismic
+                colormap_kind = params_drawing["color_amplitude"]
             if kind == 'phase':
-                colormap_kind = cm.hsv
+                colormap_kind = params_drawing["color_phase"]
             if kind == 'real':
-                colormap_kind = cm.seismic
+                colormap_kind = params_drawing["color_real"]
 
         if kind == 'intensity':
             climits = I_drawing.min(), I_drawing.max()

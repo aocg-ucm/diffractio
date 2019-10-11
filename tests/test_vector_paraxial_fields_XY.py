@@ -5,8 +5,7 @@ import datetime
 import os
 import sys
 
-from diffractio import (degrees, epsilon_0, mm, mu_0, nm, np, plt, sp,
-                        speed_of_light, um)
+from diffractio import degrees, mm, nm, np, plt, sp, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
