@@ -35,8 +35,7 @@ import multiprocessing
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-from matplotlib import rcParams
-from scipy.constants import elementary_charge, epsilon_0, mu_0, speed_of_light
+from matplotlib import rcParams, cm
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -58,5 +57,11 @@ num_decimals = 4
 num_max_processors = multiprocessing.cpu_count()
 
 no_date = False  # for test folder
+
+params_drawing = dict()
+params_drawing['color_intensity'] = cm.hot
+params_drawing['color_amplitude'] = cm.magma
+params_drawing['color_phase'] = cm.seismic  #cm.hsv
+params_drawing['color_real'] = cm.seismic
 
 print("number of processors: {}".format(num_max_processors))

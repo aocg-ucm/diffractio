@@ -53,13 +53,13 @@ The magnitude is related to microns: `micron = 1.`
 
 import matplotlib.animation as animation
 import scipy.ndimage
-from matplotlib import rcParams
+from matplotlib import cm, rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, plt, seconds, um
+from diffractio import degrees, mm, np, params_drawing, plt, seconds, um
 from diffractio.utils_common import (get_date, load_data_common,
                                      save_data_common)
 from diffractio.utils_drawing import (draw2D, normalize_draw, prepare_drawing,
@@ -698,7 +698,10 @@ class Scalar_field_XY(object):
         if matrix is True:
             return U_final.u
         else:
-            return U_final
+            if new_field is True:
+                return U_final
+            else:
+                self.u = U_final.u
 
     def profile(self,
                 point1='',
@@ -1232,6 +1235,7 @@ class Scalar_field_XY(object):
              filename='',
              cut_value=None,
              has_colorbar='',
+             colormap_kind='',
              reduce_matrix='standard'):
         """Draws  XY field.
 
@@ -1252,8 +1256,6 @@ class Scalar_field_XY(object):
             reduce_matrix (str): 'standard'
         """
 
-        # TODO: FFT
-
         if reduce_matrix in ([], None, ''):
             pass
         else:
@@ -1263,15 +1265,15 @@ class Scalar_field_XY(object):
 
         if kind == 'intensity':
             id_fig, IDax, IDimage = self.__draw_intensity__(
-                logarithm, normalize, title, cut_value)
+                logarithm, normalize, title, cut_value, colormap_kind)
         elif kind == 'amplitude':
             id_fig, IDax, IDimage = self.__drawAmplitude__(
-                logarithm, normalize, title, cut_value)
+                logarithm, normalize, title, cut_value, colormap_kind)
         elif kind == 'phase':
-            id_fig, IDax, IDimage = self.__draw_phase__(title)
+            id_fig, IDax, IDimage = self.__draw_phase__(title, colormap_kind)
         elif kind == 'field':
             id_fig = self.__draw_field__(logarithm, normalize, title,
-                                         cut_value)
+                                         cut_value, colormap_kind)
             IDax = None
             IDimage = None
         elif kind == 'fieldReal':
@@ -1281,7 +1283,7 @@ class Scalar_field_XY(object):
             print("not in kinds")
 
         if has_colorbar in ('horizontal', 'vertical'):
-            plt.colorbar(orientation=has_colorbar)
+            plt.colorbar(orientation=has_colorbar, shrink=0.75)
 
         if not filename == '':
             plt.savefig(
@@ -1293,7 +1295,8 @@ class Scalar_field_XY(object):
                            logarithm=False,
                            normalize='maximum',
                            title="",
-                           cut_value=None):
+                           cut_value=None,
+                           colormap_kind=''):
         """Draws intensity  XY field.
 
         Parameters:
@@ -1304,6 +1307,8 @@ class Scalar_field_XY(object):
         """
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
+        if colormap_kind in ['', None, []]:
+            colormap_kind = params_drawing["color_intensity"]
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
         id_fig, IDax, IDimage = draw2D(
             intensity,
@@ -1312,7 +1317,7 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="gist_heat",
+            color=colormap_kind,
             reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
@@ -1321,7 +1326,8 @@ class Scalar_field_XY(object):
                           logarithm=False,
                           normalize='maximum',
                           title='intensity',
-                          cut_value=1):
+                          cut_value=1,
+                          colormap_kind=''):
         """Draws amplitude  XY field.
 
         Parameters:
@@ -1333,6 +1339,9 @@ class Scalar_field_XY(object):
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
         amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
+        max_amplitude = np.abs(amplitude).max()
+        if colormap_kind in ['', None, []]:
+            colormap_kind = params_drawing["color_amplitude"]
         id_fig, IDax, IDimage = draw2D(
             amplitude,
             self.x,
@@ -1340,12 +1349,13 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="seismic",
+            color=colormap_kind,
             reduce_matrix=self.reduce_matrix)
+        plt.clim(-max_amplitude, max_amplitude)
 
         return id_fig, IDax, IDimage
 
-    def __draw_phase__(self, title=r'phase/pi'):
+    def __draw_phase__(self, title=r'phase/pi', colormap_kind=''):
         """Draws phase of  XY field
 
         Parameters:
@@ -1355,7 +1365,10 @@ class Scalar_field_XY(object):
             self.u, has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase / degrees
-        phase[intensity < 0.01 * (intensity.max())] = 0
+        phase[intensity < 0.005 * (intensity.max())] = 0
+
+        if colormap_kind in ['', None, []]:
+            colormap_kind = params_drawing["color_phase"]
 
         id_fig, IDax, IDimage = draw2D(
             phase,
@@ -1364,7 +1377,7 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="seismic",
+            color=colormap_kind,
             reduce_matrix=self.reduce_matrix)  # seismic gist_heat
         plt.clim(vmin=-180, vmax=180)
 
@@ -1374,7 +1387,8 @@ class Scalar_field_XY(object):
                        logarithm=False,
                        normalize='maximum',
                        title="",
-                       cut_value=None):
+                       cut_value=None,
+                       colormap_kind=''):
         """Draws field  XY field.
 
         Parameters:
@@ -1400,7 +1414,8 @@ class Scalar_field_XY(object):
 
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
-        plt.subplot(1, 2, 1)
+        ax = plt.subplot(1, 2, 1)
+
         h1 = plt.imshow(
             intensity,
             interpolation='bilinear',
@@ -1412,16 +1427,16 @@ class Scalar_field_XY(object):
         plt.title("$intensity$")
         plt.axis('scaled')
         plt.axis(extension)
-        h1.set_cmap("gist_heat")  # seismic
-        plt.colorbar(orientation='horizontal')
+        h1.set_cmap(cm.hot)  # params_drawing["color_intensity"])  # seismic
+        plt.colorbar(orientation='horizontal', shrink=0.66)
         plt.axis(extension)
+        h1.set_cmap(cm.hot)
 
-        plt.subplot(1, 2, 2)
+        ax = plt.subplot(1, 2, 2)
         phase[phase == 1] = -1
         phase = phase / degrees
 
         # elimino la fase en la visualicion cuando no hay campo
-        phase[intensity < 0.01 * (intensity.max())] = 0
         h2 = plt.imshow(
             phase,
             interpolation='bilinear',
@@ -1430,13 +1445,13 @@ class Scalar_field_XY(object):
             extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.colorbar(orientation='horizontal')
+        plt.colorbar(orientation='horizontal', shrink=0.66)
         plt.axis('scaled')
         plt.axis(extension)
         plt.title("$phase$")
         plt.clim(-180, 180)
-
-        h2.set_cmap("seismic")
+        h2.set_cmap(cm.seismic)  # params_drawing["color_phase"]
+        plt.subplots_adjust(0, 0, 1, 1, 0, 0)
 
         return (h1, h2)
 
@@ -1444,7 +1459,8 @@ class Scalar_field_XY(object):
                             logarithm=False,
                             normalize='maximum',
                             cut_value=1,
-                            title=""):
+                            title="",
+                            colormap_kind=''):
         """Draws real field  XY field.
 
         Parameters:
@@ -1458,6 +1474,9 @@ class Scalar_field_XY(object):
         real_field = normalize_draw(real_field, logarithm, normalize,
                                     cut_value)
 
+        if colormap_kind in ['', None, []]:
+            colormap_kind = params_drawing["color_real"]
+
         id_fig, IDax, IDimage = draw2D(
             real_field,
             self.x,
@@ -1465,7 +1484,7 @@ class Scalar_field_XY(object):
             xlabel="$x  (\mu m)$",
             ylabel="$y  (\mu m)$",
             title=title,
-            color="seismic",
+            color=colormap_kind,
             reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
