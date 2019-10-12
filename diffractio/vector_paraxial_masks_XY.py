@@ -94,6 +94,8 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         t = np.abs(mask.u)**2
         t = t / t.max()
+        t[t < 0.5] = 0
+        t[t >= 0.5] = 1
 
         self.Ex = v1[0] * t + v2[0] * (1 - t)
         self.Ey = v1[1] * t + v2[1] * (1 - t)

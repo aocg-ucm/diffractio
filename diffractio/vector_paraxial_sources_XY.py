@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
     * local_polarized_vector_beam_hybrid
 """
 
-from diffractio import (degrees, mm, nm, np, plt, sp, um)
+from diffractio import degrees, mm, nm, np, plt, sp, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_math import vector_product
@@ -290,7 +290,6 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
-        angle = np.arctan2(vy, vx)
         r = np.sqrt(vx**2 + vy**2)
         radius = self.x[-1]
         delta = 2 * n * np.pi * r / radius + fi0
