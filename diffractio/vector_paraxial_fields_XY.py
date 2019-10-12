@@ -769,16 +769,57 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
     A = A * amplification
     B = B * amplification
 
-    cos = np.cos
-    sin = np.sin
-
     fi = np.linspace(0, 2 * np.pi, 64)
-    cf = cos(fi - theta)
-    sf = sin(fi - theta)
+    cf = np.cos(fi - theta)
+    sf = np.sin(fi - theta)
 
     r = 1 / np.sqrt(np.abs(cf / (A + eps)**2 + sf**2 / (B + eps)**2))
 
-    x = r * cos(fi) + x0
-    y = r * sin(fi) + y0
+    x = r * np.cos(fi) + x0
+    y = r * np.sin(fi) + y0
 
     return x, y
+
+
+def polarization_ellipse(self, pol_state=None, matrix=False):
+    """returns A, B, theta, h polarization parameter of elipses
+
+    Parameters:
+        pol_state (None or (I, Q, U, V) ): Polarization state previously computed
+        Matrix (bool): if True returns Matrix, else Scalar_field_XY
+
+    Returns:
+        A, B, theta, h for Matrix=True
+        CA, CB, Ctheta, Ch for Matrix=False
+    """
+    if pol_state is None:
+        I, Q, U, V = self.polarization_states(matrix=True)
+    else:
+        I, Q, U, V = pol_state
+        I = I.u
+        Q = Q.u
+        U = U.u
+        V = V.u
+
+    Ip = np.sqrt(Q**2 + U**2 + V**2)
+    L = Q + 1.j * U
+
+    A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
+    B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
+    theta = 0.5 * np.angle(L)
+    h = np.sign(V)
+
+    if matrix is True:
+        return A, B, theta, h
+    else:
+        CA = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        CB = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        Ctheta = Scalar_field_XY(
+            x=self.x, y=self.y, wavelength=self.wavelength)
+        Ch = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+
+        CA.u = A
+        CB.u = B
+        Ctheta.u = theta
+        Ch.u = h
+        return (CA, CB, Ctheta, Ch)
