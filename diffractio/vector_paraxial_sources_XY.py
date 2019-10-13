@@ -89,10 +89,53 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             x_center (float, float): center of radiality
             radius (float): mask for circle if radius>0.
 
-        Todo:
-            no cuadra S y vectores v complejos para los productos
+        """
 
-            check perpendicularity between v and k vector
+        # normalizamos v
+        vx = (self.X - x_center[0])
+        vy = (self.Y - x_center[1])
+        angle = np.arctan2(vy, vx)
+
+        self.Ex = A * np.sin(angle)
+        self.Ey = -A * np.cos(angle)
+
+        if radius > 0:
+            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
+            self.Ex = t1.u * self.Ex
+            self.Ey = t1.u * self.Ey
+
+    def transversal_wave(self, A=1, x_center=(0 * um, 0 * um), radius=0):
+        """Transversal wave.
+
+        Parameters:
+            A (float): maximum amplitude
+            x_center (float, float): center of radiality
+            radius (float): mask for circle if radius >0.
+        """
+        # normalizamos v
+        vx = (self.X - x_center[0])
+        vy = (self.Y - x_center[1])
+
+        theta = np.arctan2(vy, vx)
+
+        self.Ex = A * np.cos(theta)
+        self.Ey = A * np.sin(theta)
+
+        if radius > 0:
+            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
+            self.Ex = t1.u * self.Ex
+            self.Ey = t1.u * self.Ey
+
+    def radial_wave_inverse(self, A=1, x_center=(0 * um, 0 * um), radius=0):
+        """Radial wave.
+
+        Parameters:
+            A (float): maximum amplitude
+            x_center (float, float): center of radiality
+            radius (float): mask for circle if radius>0.
+
         """
 
         # normalizamos v
@@ -109,7 +152,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             self.Ex = t1.u * self.Ex
             self.Ey = t1.u * self.Ey
 
-    def transversal_wave(self, A=1, x_center=(0 * um, 0 * um), radius=0):
+    def transversal_wave_inverse(self,
+                                 A=1,
+                                 x_center=(0 * um, 0 * um),
+                                 radius=0):
         """Transversal wave.
 
         Parameters:
@@ -152,7 +198,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             z (float): position of beam waist
             theta (float): angle in radians
             phi (float): angle in radians
-            kind (str): 'polarization', 'radial', 'transversal' (polarization uses v)
+            kind (str): 'polarization', 'radial', 'transversal' 'radial_inverse', 'transvesa_inverse'
             v (float, float): polarization vector when 'polarization' is chosen
         """
 
@@ -200,9 +246,15 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             self.Ex = self.u * v[0]
             self.Ey = self.u * v[1]
         elif kind == 'radial':
+            self.Ex = self.u * np.sin(angle)
+            self.Ey = -self.u * np.cos(angle)
+        elif kind == 'transversal':
+            self.Ex = self.u * np.cos(angle)
+            self.Ey = self.u * np.sin(angle)
+        elif kind == 'radial_inverse':
             self.Ex = self.u * np.cos(angle)
             self.Ey = -self.u * np.sin(angle)
-        elif kind == 'transversal':
+        elif kind == 'transversal_inverse':
             self.Ex = self.u * np.sin(angle)
             self.Ey = self.u * np.cos(angle)
 
@@ -235,16 +287,22 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         field = Scalar_source_XY(
             x=self.x, y=self.y, wavelength=self.wavelength)
         field.hermite_gauss_beam(A, r0, w, m, n, c_mn)
-
+        self.u = field.u
         if kind == 'polarization':
-            self.Ex = field.u * v[1]
-            self.Ey = field.u * v[0]
+            self.Ex = self.u * v[0]
+            self.Ey = self.u * v[1]
         elif kind == 'radial':
-            self.Ex = field.u * np.cos(angle)
-            self.Ey = -field.u * np.sin(angle)
+            self.Ex = self.u * np.sin(angle)
+            self.Ey = -self.u * np.cos(angle)
         elif kind == 'transversal':
-            self.Ex = field.u * np.sin(angle)
-            self.Ey = field.u * np.cos(angle)
+            self.Ex = self.u * np.cos(angle)
+            self.Ey = self.u * np.sin(angle)
+        elif kind == 'radial_inverse':
+            self.Ex = self.u * np.cos(angle)
+            self.Ey = -self.u * np.sin(angle)
+        elif kind == 'transversal_inverse':
+            self.Ex = self.u * np.sin(angle)
+            self.Ey = self.u * np.cos(angle)
 
     def local_polarized_vector_beam(self, A=1, r0=(0 * um, 0 * um), m=1,
                                     fi0=0):
