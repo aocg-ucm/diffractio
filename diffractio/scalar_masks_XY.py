@@ -1480,22 +1480,14 @@ class Scalar_mask_XY(Scalar_field_XY):
             correlation_length (float): correlation length of roughness
         """
 
-        # Radios mayor y menor
         x0, y0 = r0
-        # Radiusx, Radiusy = radius
-
-        # r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-        # theta = arctan((self.Y - y0) / (self.X - x0))
-
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle)
 
-        # Definicion de la transmitancia
         u = zeros(shape(self.X))
-        # ipasa = (Xrot - x0)**2 / Radiusx**2 + (Yrot - y0)**2 / Radiusy**2 < 1
+
+        random_part = np.random.randn(Yrot.shape[0], Yrot.shape[1])
         ipasa = (Xrot - x0)**2 + (Yrot - y0)**2 - (
-            radius +
-            sigma * np.random.randn(Yrot.shape[0], Yrot.shape[1]))**2 < 0
+            radius + sigma * random_part)**2 < 0
         u[ipasa] = 1
         self.u = u
 

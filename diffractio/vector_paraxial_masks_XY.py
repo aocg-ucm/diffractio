@@ -115,7 +115,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """
 
         uno = np.ones_like(self.X, dtype=complex)
-        zero = np.zeros_like(self.X, dtype=complex)
         polarizer = np.asarray(polarizer.M)
 
         Ex_new = uno * polarizer[0, 0] + uno * polarizer[0, 1]

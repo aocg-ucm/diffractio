@@ -26,10 +26,9 @@ The magnitude is related to microns: `micron = 1.`
     * local_polarized_vector_beam_hybrid
 """
 
-from diffractio import degrees, mm, nm, np, plt, sp, um
+from diffractio import degrees, np, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_math import vector_product
 from diffractio.utils_optics import normalize
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
 
@@ -73,10 +72,6 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         k = 2 * np.pi / self.wavelength
         sx = np.sin(theta) * np.cos(phi)
         sy = np.sin(theta) * np.sin(phi)
-        sz = np.cos(theta)
-        v2 = (-sx * v[0] - sy * v[1]) / sz
-        v = np.append(v, v2)
-        s = [sx, sy, sz]
 
         self.Ex = v[0] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
         self.Ey = v[1] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
@@ -91,7 +86,6 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         """
 
-        # normalizamos v
         vx = (self.X - x_center[0])
         vy = (self.Y - x_center[1])
         angle = np.arctan2(vy, vx)
@@ -113,7 +107,6 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             x_center (float, float): center of radiality
             radius (float): mask for circle if radius >0.
         """
-        # normalizamos v
         vx = (self.X - x_center[0])
         vy = (self.Y - x_center[1])
 
@@ -138,7 +131,6 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         """
 
-        # normalizamos v
         vx = (self.X - x_center[0])
         vy = (self.Y - x_center[1])
         theta = np.arctan2(vy, vx)
@@ -163,14 +155,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             x_center (float, float): center of radiality
             radius (float): mask for circle if radius >0.
         """
-        # normalizamos v
         vx = (self.X - x_center[0])
         vy = (self.Y - x_center[1])
 
         theta = np.arctan2(vy, vx)
-
-        # Vx = vx / np.sqrt(vx**2 + vy**2)
-        # Vy = vy / np.sqrt(vx**2 + vy**2)
 
         self.Ex = A * np.sin(theta)
         self.Ey = A * np.cos(theta)
@@ -233,10 +221,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         sx = np.sin(theta) * np.cos(phi)
         sy = np.sin(theta) * np.sin(phi)
-        sz = np.cos(theta)
-        #  = [sx, sy, sz]
-        phase1 = np.exp(
-            1.j * k * ((self.X - x0) * sx + (self.Y - y0) * sy))  # rotation
+        phase1 = np.exp(1.j * k * ((self.X - x0) * sx + (self.Y - y0) * sy))
         phase2 = np.exp(1j * (k * z - phaseGouy + k * (
             (self.X - x0)**2 + (self.Y - y0)**2) / (2 * R)))
 
@@ -385,6 +370,38 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         t1.circle(r0=r0, radius=(self.x[-1], self.y[-1]), angle=0 * degrees)
         self.Ex = t1.u * A * np.cos(delta)
         self.Ey = t1.u * A * np.sin(delta)
+
+    def spiral_polarized_beam(self,
+                              A=1,
+                              x_center=(0 * um, 0 * um),
+                              alpha=0,
+                              radius=0):
+        """Define spiral polarized beams:
+
+        Parameters:
+            A (float): maximum amplitude
+            x_center (float, float): center of radiality
+            radius (float): mask for circle if radius >0.
+            alpha (float): angle of spiral.
+
+
+        Reference:
+            V. Ramirez-Sanchez, G. Piquero, and M. Santarsiero,“Generation and characterization of spirally polarized fields,” J. Opt. A11,085708 (2009)
+        """
+
+        vx = (self.X - x_center[0])
+        vy = (self.Y - x_center[1])
+
+        theta = np.arctan2(vy, vx)
+
+        self.Ex = -A * np.sin(theta + alpha)
+        self.Ey = A * np.cos(theta + alpha)
+
+        if radius > 0:
+            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
+            self.Ex = t1.u * self.Ex
+            self.Ey = t1.u * self.Ey
 
     # def Vector_paraxial_dipole(self,
     #                            A=1,

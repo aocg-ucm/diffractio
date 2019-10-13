@@ -82,9 +82,7 @@ class Scalar_source_XY(Scalar_field_XY):
             phi (float): angle in radians
             z0 (float): constant value for phase shift
         """
-        # Definicion del vector de onda
         k = 2 * pi / self.wavelength
-        # Definicion de la onda plana (coordenadas esfericas)
         self.u = A * exp(1.j * k * (self.X * sin(theta) * sin(phi) + self.Y *
                                     cos(theta) * sin(phi)) + z0 * cos(phi))
 
@@ -113,7 +111,7 @@ class Scalar_source_XY(Scalar_field_XY):
         x0, y0 = r0
         k = 2 * pi / self.wavelength
 
-        # distance de Rayleigh solo para una direccion.
+        # only for x axis.
         z_rayleigh = k * w0x**2 / 2
 
         phaseGouy = arctan2(z0, z_rayleigh)

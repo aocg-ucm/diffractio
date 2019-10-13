@@ -32,10 +32,10 @@ scalar bidimensional XY fields propagated in Z direction
 
 import multiprocessing
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from matplotlib import rcParams, cm
+import matplotlib.pyplot as plt
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -50,8 +50,6 @@ degrees = np.pi / 180.
 s = 1.
 seconds = 1.
 
-verbose = True
-
 eps = 1e-6
 num_decimals = 4
 num_max_processors = multiprocessing.cpu_count()
@@ -61,7 +59,7 @@ no_date = False  # for test folder
 params_drawing = dict()
 params_drawing['color_intensity'] = cm.hot  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.magma
-params_drawing['color_phase'] = cm.seismic  #cm.hsv
+params_drawing['color_phase'] = cm.seismic  # cm.hsv
 params_drawing['color_real'] = cm.seismic
 
 print("number of processors: {}".format(num_max_processors))

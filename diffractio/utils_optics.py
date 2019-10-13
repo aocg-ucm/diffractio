@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
-import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
+
+import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, nearest
@@ -36,19 +37,13 @@ def roughness_1D(x, t, s, kind='normal'):
 
     N_ancho = int(np.floor(L_ancho + M))
 
-    # GENERACION DE LA SUPERFICIE
-    # Desplazamientos para correlacionar
     desp_ancho = np.arange(-M, M + 1)
 
-    # (dominio del kernel de la correlacion)
     desp_ancho = desp_ancho * dx
     pesos = np.exp(-2 * (desp_ancho**2 / t**2))
 
-    # print np.sqrt((pesos**2).sum())
-    pesos = np.abs(pesos / np.sqrt(
-        (pesos**2).sum()))  # p' q' la suma de sus squares de 1
+    pesos = np.abs(pesos / np.sqrt((pesos**2).sum()))
 
-    # Alturas no correlacionadas # con distribucion N(0,s)
     if kind == 'normal':
         h_no_corr = s * np.random.randn(2 * N_ancho + 1)
         h_corr = fft_convolution1d(h_no_corr, pesos)
@@ -61,9 +56,6 @@ def roughness_1D(x, t, s, kind='normal'):
 def roughness_2D(x, y, t, s):
     """Rough surface, 2D
 
-    References:
-        JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
-
     Parameters:
         x (numpy.array): x positions
         y (numpy.array): y positions
@@ -75,6 +67,9 @@ def roughness_2D(x, y, t, s):
 
     Example:
         roughness(t=(50 * um, 25 * um), s=1 * um)
+
+    References:
+        JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
     """
 
     if isinstance(t, (float, int, complex)):
@@ -85,35 +80,22 @@ def roughness_2D(x, y, t, s):
     ancho = x[-1] - x[0]
     largo = y[-1] - y[0]
     dx = x[1] - x[0]
-    # PARAMETROS DE LA SUPERFICIE
     L_ancho = ancho / (2 * dx)
     L_largo = largo / (2 * dx)
     M = round(4 * tx / (sqrt(2) * dx))
     N_ancho = int(np.floor(L_ancho + M))
     N_largo = int(np.floor(L_largo + M))
 
-    # GENERACION DE LA SUPERFICIE
-    # Desplazamientos para correlacionar
     desp_ancho, desp_largo = meshgrid(
         np.arange(-M, M + 1), np.arange(-M, M + 1))
-    # (dominio del kernel de la correlacion)
     desp_ancho = desp_ancho * dx
     desp_largo = desp_largo * dx
 
     pesos = exp(-2 * (desp_ancho**2 / tx**2 + desp_largo**2 / ty**2))
-    # print sqrt((pesos**2).sum())
     pesos = np.abs(pesos / sqrt((pesos**2).sum()))
-    # p' q' la suma de sus squares de 1
 
-    # Alturas no correlacionadas # con distribucion N(0,s)
     h_no_corr = s * np.random.randn(2 * N_ancho + 1, 2 * N_largo + 1)
-    # Alturas correlacionadas en el plano:
-    # Las heights salen de correlacionar entre si las h no corr
-    # reemplazando una de ellas por el promedio ponderado con sus vecinas
-
     h_corr = fft_convolution2d(h_no_corr, pesos)
-
-    # En en la conv 2D los pesos deben ir 2 dos en el argumentos
     h_corr = h_corr[0:len(x), 0:len(y)]
     return h_corr
 
@@ -135,12 +117,9 @@ def beam_width_1D(u, x):
     intensity = np.abs(u)**4
 
     P = (intensity).sum()
-
     x_mean = (intensity * x).sum() / P
     x2_mean = (intensity * (x - x_mean)**2).sum() / P
-
     width_x = 4 * sqrt(x2_mean)
-
     return width_x, x_mean
 
 

@@ -1168,13 +1168,9 @@ class Scalar_field_XY(object):
             amplitude = self.get_amplitude(matrix=True, new_field=False)
 
             heights = linspace(0, 2 * pi, num_levels + 1)
-            # no hay tantos levels, pero es para buscar los centros
-            # heights=heights[0:-1]
-            # anchuras = 2 * pi / num_levels
-            # cortes = heights + anchuras / 2
+
             dist = factor * (heights[1] - heights[0])
 
-            #imageTemporal = exp(1j * (ang - pi))
             discretized_image = exp(1j * (ang))
 
             for i in range(num_levels + 1):

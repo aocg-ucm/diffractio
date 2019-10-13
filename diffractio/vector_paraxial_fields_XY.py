@@ -44,7 +44,7 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 
-from matplotlib import cm, rcParams
+from matplotlib import rcParams
 from scipy.interpolate import RectBivariateSpline
 
 from diffractio import degrees, eps, mm, np, params_drawing, plt
@@ -430,8 +430,8 @@ class Vector_paraxial_field_XY(object):
     def draw(self,
              kind='intensity',
              logarithm=False,
-             normalize='',
-             cut_value=1,
+             normalize=False,
+             cut_value=None,
              num_ellipses=(11, 11),
              amplification=0.5,
              filename='',
@@ -486,7 +486,10 @@ class Vector_paraxial_field_XY(object):
 
             return id_fig
 
-    def __draw_intensity__(self, logarithm=False, normalize='', cut_value=''):
+    def __draw_intensity__(self,
+                           logarithm=False,
+                           normalize=False,
+                           cut_value=None):
         """Draws the intensity
 
         Parameters:
@@ -496,22 +499,24 @@ class Vector_paraxial_field_XY(object):
         """
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
-
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
 
         intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
         plt.figure()
-        h1 = __draw1__(self, intensity, params_drawing['color_intensity'],
-                       "$I$")
+        h1 = plt.subplot(1, 1, 1)
+        __draw1__(self, intensity, params_drawing['color_intensity'],
+                  "$Intensity$")
         plt.subplots_adjust(
             left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
         return h1
 
-    def __draw_intensities__(self, logarithm=False, normalize='',
-                             cut_value=''):
+    def __draw_intensities__(self,
+                             logarithm=False,
+                             normalize=False,
+                             cut_value=None):
         """internal funcion: draws intensity X,Y,Z frames for E and H
 
         Parameters:
@@ -521,8 +526,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         color_intensity = params_drawing['color_intensity']
-        Ex_r = reduce_matrix_size(
-            self.reduce_matrix, self.x, self.y, self.Ex, verbose=True)
+        Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
 
         intensity_max = max((np.abs(Ex_r)**2).max(), (np.abs(Ey_r)**2).max())
@@ -537,10 +541,10 @@ class Vector_paraxial_field_XY(object):
         __draw1__(self, intensity, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
-        plt.subplot(1, 2, 2)
+        h2 = plt.subplot(1, 2, 2)
         intensity = np.abs(Ey_r)**2
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
-        h2 = __draw1__(self, intensity, color_intensity, "$I_y$")
+        __draw1__(self, intensity, color_intensity, "$I_y$")
         plt.clim(0, intensity_max)
 
         plt.subplots_adjust(
@@ -566,14 +570,14 @@ class Vector_paraxial_field_XY(object):
 
         plt.figure(figsize=(2 * tx, ty))
 
-        plt.subplot(1, 2, 1)
+        h1 = plt.subplot(1, 2, 1)
         phase = np.angle(Ex_r)
-        h1 = __draw1__(self, phase / degrees, color_phase, "$E_x$")
+        __draw1__(self, phase / degrees, color_phase, "$E_x$")
         plt.clim(-180, 180)
 
-        plt.subplot(1, 2, 2)
+        h2 = plt.subplot(1, 2, 2)
         phase = np.angle(Ey_r)
-        h2 = __draw1__(self, phase / degrees, color_phase, "$E_y$")
+        __draw1__(self, phase / degrees, color_phase, "$E_y$")
         plt.clim(-180, 180)
 
         plt.subplots_adjust(
@@ -582,7 +586,8 @@ class Vector_paraxial_field_XY(object):
 
         return h1, h2
 
-    def __draw_fields__(self, logarithm=False, normalize='', cut_value=''):
+    def __draw_fields__(self, logarithm=False, normalize=False,
+                        cut_value=None):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Parameters:
@@ -605,34 +610,30 @@ class Vector_paraxial_field_XY(object):
 
         plt.figure(figsize=(2 * tx, 2 * ty))
 
-        plt.subplot(2, 2, 1)
+        h1 = plt.subplot(2, 2, 1)
         intensity_x = np.abs(self.Ex)**2
         __draw1__(self, intensity_x, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
-        h1 = plt.gca()
 
-        plt.subplot(2, 2, 2)
+        h2 = plt.subplot(2, 2, 2)
         intensity_y = np.abs(self.Ey)**2
         __draw1__(self, intensity_y, color_intensity, "$I_y$")
         plt.clim(0, intensity_max)
-        h2 = plt.gca()
 
-        plt.subplot(2, 2, 3)
+        h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
         __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
-        h3 = plt.gca()
 
-        plt.subplot(2, 2, 4)
+        h4 = plt.subplot(2, 2, 4)
         phase = np.angle(self.Ey)
         __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
         h4 = plt.gca()
-
         plt.subplots_adjust(
             left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
-        return (h1, h2)
+        return h1, h2, h3, h4
 
     def __draw_stokes__(self):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
@@ -648,20 +649,20 @@ class Vector_paraxial_field_XY(object):
         intensity_max = S0.max()
 
         plt.figure(figsize=(2 * tx, 2 * ty))
-        plt.subplot(2, 2, 1)
-        h1 = __draw1__(self, S0, color_intensity, "$S_0$")
+        h1 = plt.subplot(2, 2, 1)
+        __draw1__(self, S0, color_intensity, "$S_0$")
         plt.clim(0, intensity_max)
 
-        plt.subplot(2, 2, 2)
-        h2 = __draw1__(self, S1, color_phase, "$S_1$")
+        h2 = plt.subplot(2, 2, 2)
+        __draw1__(self, S1, color_phase, "$S_1$")
         plt.clim(-intensity_max, intensity_max)
 
-        plt.subplot(2, 2, 3)
-        h3 = __draw1__(self, S2, color_phase, "$S_2$")
+        h3 = plt.subplot(2, 2, 3)
+        __draw1__(self, S2, color_phase, "$S_2$")
         plt.clim(-intensity_max, intensity_max)
 
-        plt.subplot(2, 2, 4)
-        h4 = __draw1__(self, S3, color_phase, "$S_3$")
+        h4 = plt.subplot(2, 2, 4)
+        __draw1__(self, S3, color_phase, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplots_adjust(
@@ -687,17 +688,107 @@ class Vector_paraxial_field_XY(object):
 
         plt.figure(figsize=(2 * tx, 2 * ty))
 
-        plt.subplot(2, 2, 1)
-        h1 = __draw1__(self, A, color_intensity, "$A$")
-        plt.subplot(2, 2, 2)
-        h2 = __draw1__(self, B, color_intensity, "$B$")
-        plt.subplot(2, 2, 3)
-        h3 = __draw1__(self, theta / degrees, color_phase, "$\phi$")
+        max_intensity = max(A.max(), B.max())
+
+        h1 = plt.subplot(2, 2, 1)
+        __draw1__(self, A, color_intensity, "$A$")
+        plt.clim(0, max_intensity)
+        h2 = plt.subplot(2, 2, 2)
+        __draw1__(self, B, color_intensity, "$B$")
+        plt.clim(0, max_intensity)
+
+        h3 = plt.subplot(2, 2, 3)
+        __draw1__(self, theta / degrees, color_phase, "$\phi$")
         plt.clim(-180, 180)
-        plt.subplot(2, 2, 4)
-        h4 = __draw1__(self, h, "gist_heat", "$h$")
+        h4 = plt.subplot(2, 2, 4)
+        __draw1__(self, h, "gist_heat", "$h$")
         plt.tight_layout()
         return (h1, h2, h3, h4)
+
+    def __draw_ellipses__(self,
+                          num_ellipses=(11, 11),
+                          amplification=0.5,
+                          max_size=100,
+                          color_line='w',
+                          line_width=1,
+                          draw_arrow=True,
+                          head_width=5,
+                          ax=False,
+                          percentaje_intensity=0):
+        """__internal__: draw ellipses
+
+        Parameters:
+            num_ellipses (int): number of ellipses for parameters_ellipse
+        """
+
+        intensity_max = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
+
+        Dx = self.x[-1] - self.x[0]
+        Dy = self.y[-1] - self.y[0]
+        size_x = Dx / (num_ellipses[0])
+        size_y = Dy / (num_ellipses[1])
+        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
+        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
+
+        num_x, num_y = len(self.x), len(self.y)
+        ix_centers = num_x / (num_ellipses[0])
+        iy_centers = num_y / (num_ellipses[1])
+
+        ix_centers = (np.round(
+            ix_centers / 2 +
+            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
+        iy_centers = (np.round(
+            iy_centers / 2 +
+            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
+
+        Ix_centers, Iy_centers = np.meshgrid(
+            ix_centers.astype('int'), iy_centers.astype('int'))
+
+        verbose = False
+        if verbose is True:
+            print(num_x, num_y, ix_centers, iy_centers)
+            print(Dx, Dy, size_x, size_y)
+            print(x_centers, y_centers)
+            print(Ix_centers, Iy_centers)
+
+        E0x = self.Ex[Iy_centers, Ix_centers]
+        E0y = self.Ey[Iy_centers, Ix_centers]
+
+        angles = np.linspace(0, 360 * degrees, 64)
+
+        if ax is False:
+            self.draw('intensity', logarithm=False)
+            ax = plt.gca()
+
+        for i, xi in enumerate(ix_centers):
+            for j, yj in enumerate(iy_centers):
+                Ex = np.real(E0x[j, i] * np.exp(1j * angles))
+                Ey = np.real(E0y[j, i] * np.exp(1j * angles))
+
+                max_r = np.sqrt(np.abs(Ex)**2 + np.abs(Ey)**2).max()
+                size_dim = min(size_x, size_y)
+
+                if max_r > 0 and max_r**2 > percentaje_intensity * intensity_max:
+
+                    Ex = Ex / max_r * size_dim * amplification / 2 + (
+                        +self.x[int(xi)])
+                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
+                        int(yj)]
+
+                    ax.plot(Ex, Ey, color_line, lw=line_width)
+                    ax.arrow(
+                        Ex[0],
+                        Ey[0],
+                        Ex[0] - Ex[1],
+                        Ey[0] - Ey[1],
+                        width=0,
+                        head_width=head_width,
+                        fc=color_line,
+                        ec=color_line,
+                        length_includes_head=False)
+                # else:
+                #     print(max_r, intensity_max,
+                #           percentaje_intensity * intensity_max)
 
     def __draw_ellipses__deprecated(self,
                                     num_ellipses=(11, 11),
@@ -780,86 +871,6 @@ class Vector_paraxial_field_XY(object):
                 # else:
                 #     plt.plot(yt_ellipse, xt_ellipse, 'r')
 
-    def __draw_ellipses__(self,
-                          num_ellipses=(11, 11),
-                          amplification=0.5,
-                          max_size=100,
-                          color_line='w',
-                          line_width=1,
-                          draw_arrow=True,
-                          head_width=5,
-                          ax=False):
-        """__internal__: draw ellipses
-
-        Parameters:
-            num_ellipses (int): number of ellipses for parameters_ellipse
-        """
-        verbose = False
-
-        Dx = self.x[-1] - self.x[0]
-        Dy = self.y[-1] - self.y[0]
-        size_x = Dx / (num_ellipses[0])
-        size_y = Dy / (num_ellipses[1])
-        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
-
-        num_x, num_y = len(self.x), len(self.y)
-        ix_centers = num_x / (num_ellipses[0])
-        iy_centers = num_y / (num_ellipses[1])
-
-        ix_centers = (np.round(
-            ix_centers / 2 +
-            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
-        iy_centers = (np.round(
-            iy_centers / 2 +
-            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
-
-        Ix_centers, Iy_centers = np.meshgrid(
-            ix_centers.astype('int'), iy_centers.astype('int'))
-
-        if verbose is True:
-            print(num_x, num_y, ix_centers, iy_centers)
-            print(Dx, Dy, size_x, size_y)
-            print(x_centers, y_centers)
-            print(Ix_centers, Iy_centers)
-
-        E0x = self.Ex[Iy_centers, Ix_centers]
-        E0y = self.Ey[Iy_centers, Ix_centers]
-
-        angles = np.linspace(0, 360 * degrees, 64)
-
-        if ax is False:
-            self.draw('intensity', logarithm=False)
-            fig = plt.gcf()
-            ax = plt.gca()
-
-        for i, xi in enumerate(ix_centers):
-            for j, yj in enumerate(iy_centers):
-                Ex = np.real(E0x[j, i] * np.exp(1j * angles))
-                Ey = np.real(E0y[j, i] * np.exp(1j * angles))
-
-                max_r = np.sqrt(np.abs(Ex)**2 + np.abs(Ey)**2).max()
-                size_dim = min(size_x, size_y)
-
-                if max_r > 0:
-
-                    Ex = Ex / max_r * size_dim * amplification / 2 + (
-                        +self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
-                        int(yj)]
-
-                    ax.plot(Ex, Ey, color_line, lw=line_width)
-                    ax.arrow(
-                        Ex[0],
-                        Ey[0],
-                        Ex[0] - Ex[1],
-                        Ey[0] - Ey[1],
-                        width=0,
-                        head_width=head_width,  #25
-                        fc=color_line,
-                        ec=color_line,
-                        length_includes_head=False)
-
     def __draw_ellipses__backup(self,
                                 num_ellipses=(11, 11),
                                 amplification=0.5,
@@ -935,7 +946,7 @@ class Vector_paraxial_field_XY(object):
                         Ex[0] - Ex[1],
                         Ey[0] - Ey[1],
                         width=0,
-                        head_width=head_width,  #25
+                        head_width=head_width,
                         fc=color_line,
                         ec=color_line,
                         length_includes_head=False)

@@ -41,7 +41,6 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 import copyreg
-import os
 import time
 import types
 from multiprocessing import Pool
@@ -52,7 +51,7 @@ from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, num_max_processors, plt
+from diffractio import degrees, mm, np, plt
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
@@ -61,8 +60,7 @@ from diffractio.utils_drawing import (normalize_draw, prepare_drawing,
                                       prepare_video)
 from diffractio.utils_math import ndgrid, nearest
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
-from diffractio.utils_optics import (FWHM2D, beam_width_1D, beam_width_2D,
-                                     field_parameters)
+from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
 from diffractio.utils_slicer import slicerLM
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
@@ -1066,10 +1064,12 @@ class Scalar_field_XYZ(object):
             normalize (str):  False, 'maximum', 'intensity', 'area'
             draw_borders (bool): check
 
-        Todo:
-            Simplify, since we get to_scalar_field_XY, draw with Scalar_field_XY.draw
-            include kind and other parameters of draw
         """
+
+        # Todo:
+        #     Simplify, since we get to_scalar_field_XY, draw with Scalar_field_XY.draw
+        #     include kind and other parameters of draw
+
         plt.figure()
         ufield = self.to_Scalar_field_XZ(y0=y0)
         intensity = np.abs(ufield.u)**2
@@ -1101,9 +1101,8 @@ class Scalar_field_XYZ(object):
 
         # -----------------     no functiona de momento -----------------
         if draw_borders is True:
-            x_surface, y_surface, z_surface, x_draw_intensity, \
-              y_draw_intensity, z_draw_intensity = self.surface_detection()
-            print((len(intensity), len(z_draw_intensity)))
+            x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
+            )
             plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
         if not filename == '':

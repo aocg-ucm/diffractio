@@ -29,7 +29,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "utils_math"
@@ -54,7 +54,7 @@ def run_benchmark(num_pixels):
 
     def test_pixels(self):
         func_name = sys._getframe().f_code.co_name
-        class_name = self.__class__.__name__
+        # class_name = self.__class__.__name__
 
         num_pixeles = 256
         time_array = benchmark_processors_n_pixels(num_pixeles) / NUM_PROCESSES
@@ -104,7 +104,7 @@ def save_figure_test(newpath, func_name, add_name=''):
 def ejecute_multiprocessing(num_cores, n_pixels):
     num_pixeles = n_pixels * np.ones(NUM_PROCESSES)
     if num_cores == 1:
-        [run_benchmark(n_pixels) for n_pixels in num_pixeles]
+        [run_benchmark(i_pixels) for i_pixels in num_pixeles]
     else:
         pool = multiprocessing.Pool(processes=num_cores, )
         pool.map(run_benchmark, num_pixeles)
@@ -129,13 +129,10 @@ def benchmark_num_pixels(function, n_max=10):
         t2 = time.clock()
         time_array[i] = (t2 - t1) * 1000
         print(n[i], n_pixels, t1, t2, time_array[i])
-    # plt.figure()
-    # plt.plot(NUM_PIXELS,time_array,'ko',ms=12)
+
     plt.figure()
-    # plt.plot(n, np.log10(time_array), 'ko', ms=12)
     plt.plot(n, time_array, 'ko', ms=12)
     plt.figure()
-    # plt.plot(NUM_PIXELS, np.log(time_array), 'ko', ms=12)
     plt.plot(NUM_PIXELS, time_array / NUM_PIXELS, 'ko', ms=12)
 
 

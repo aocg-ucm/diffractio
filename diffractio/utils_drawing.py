@@ -265,6 +265,9 @@ def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
         logarithm (bool): If True applies logarithm to image: np.log(u + 1)
         normalize (str or bool): False, 'mean', 'intensity'
     """
+    u = np.real(u)
+    u[u < 0] = 0
+
     if logarithm == 1:
         u = np.log(u + 1)
         # u = np.log(10 * u + 1)
@@ -359,12 +362,11 @@ def reduce_matrix_size(reduce_matrix, x, y, image, verbose=False):
         reduction_x = int(num_x / 500)
         reduction_y = int(num_y / 500)
 
-        if reduction_x == 0:
-            reduction_x = 1
-        if reduction_y == 0:
-            reduction_y = 1
-
-        image = image[::reduction_x, ::reduction_y]
+        if reduction_x > 2 and reduction_y > 2:
+            image = image[::reduction_x, ::reduction_y]
+            # print("reduction = {}, {}".format(reduction_x, reduction_y))
+        else:
+            pass
     else:
         image = image[::reduce_matrix[0], ::reduce_matrix[1]]
 
