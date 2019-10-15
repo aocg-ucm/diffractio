@@ -54,243 +54,114 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
 
-    def plane_wave(self, A=1, v=[1, 0], theta=0 * degrees, phi=0 * degrees):
-        """Plane wave.
+    def constant_wave(self,
+                      u=None,
+                      v=(1, 0),
+                      has_normalization=True,
+                      radius=(0, 0)):
+        """Provides a constant polarization to a scalar_source_xy
 
-        self.Ex = v[0] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
-        self.Ey = v[1] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
-
-
-        Parameters:
-            A (float): maximum amplitude
-            v (float, float): vector of polarization (normalized, if not is normalized)
-            theta (float): angle in radians
-            phi (float): angle in radians
+        u (Scalar_source_XY): field to apply a constant polarization.
+        v (float, float): polarization vector
+        normalize (bool): If True, normalize polarization vector
         """
 
-        v = normalize(v)
-        k = 2 * np.pi / self.wavelength
-        sx = np.sin(theta) * np.cos(phi)
-        sy = np.sin(theta) * np.sin(phi)
+        self = define_initial_field(self, u)
 
-        self.Ex = v[0] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
-        self.Ey = v[1] * A * np.exp(1j * k * (self.X * sx + self.Y * sy))
+        if has_normalization:
+            v = normalize(v)
 
-    def radial_wave(self, A=1, x_center=(0 * um, 0 * um), radius=0):
-        """Radial wave.
+        self.Ex = v[0] * self.Ex
+        self.Ey = v[1] * self.Ey
 
-        Parameters:
-            A (float): maximum amplitude
-            x_center (float, float): center of radiality
-            radius (float): mask for circle if radius>0.
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(radius=radius)
 
+    def radial_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+        """Provides a constant polarization to a scalar_source_xy
+
+        u (Scalar_source_XY): field to apply a constant polarization.
+        r0(float, float): center of rotation
+        ce (bool): If True, normalize polarization vector
         """
 
-        vx = (self.X - x_center[0])
-        vy = (self.Y - x_center[1])
-        angle = np.arctan2(vy, vx)
-
-        self.Ex = A * np.sin(angle)
-        self.Ey = -A * np.cos(angle)
-
-        if radius > 0:
-            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
-            self.Ex = t1.u * self.Ex
-            self.Ey = t1.u * self.Ey
-
-    def transversal_wave(self, A=1, x_center=(0 * um, 0 * um), radius=0):
-        """Transversal wave.
-
-        Parameters:
-            A (float): maximum amplitude
-            x_center (float, float): center of radiality
-            radius (float): mask for circle if radius >0.
-        """
-        vx = (self.X - x_center[0])
-        vy = (self.Y - x_center[1])
-
-        theta = np.arctan2(vy, vx)
-
-        self.Ex = A * np.cos(theta)
-        self.Ey = A * np.sin(theta)
-
-        if radius > 0:
-            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
-            self.Ex = t1.u * self.Ex
-            self.Ey = t1.u * self.Ey
-
-    def radial_wave_inverse(self, A=1, x_center=(0 * um, 0 * um), radius=0):
-        """Radial wave.
-
-        Parameters:
-            A (float): maximum amplitude
-            x_center (float, float): center of radiality
-            radius (float): mask for circle if radius>0.
-
-        """
-
-        vx = (self.X - x_center[0])
-        vy = (self.Y - x_center[1])
-        theta = np.arctan2(vy, vx)
-
-        self.Ex = A * np.cos(theta)
-        self.Ey = -A * np.sin(theta)
-
-        if radius > 0:
-            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
-            self.Ex = t1.u * self.Ex
-            self.Ey = t1.u * self.Ey
-
-    def transversal_wave_inverse(self,
-                                 A=1,
-                                 x_center=(0 * um, 0 * um),
-                                 radius=0):
-        """Transversal wave.
-
-        Parameters:
-            A (float): maximum amplitude
-            x_center (float, float): center of radiality
-            radius (float): mask for circle if radius >0.
-        """
-        vx = (self.X - x_center[0])
-        vy = (self.Y - x_center[1])
-
-        theta = np.arctan2(vy, vx)
-
-        self.Ex = A * np.sin(theta)
-        self.Ey = A * np.cos(theta)
-
-        if radius > 0:
-            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
-            self.Ex = t1.u * self.Ex
-            self.Ey = t1.u * self.Ey
-
-    def gauss(self,
-              A=1,
-              r0=(0 * um, 0 * um),
-              z=0 * um,
-              w0=(100 * um, 100 * um),
-              theta=0. * degrees,
-              phi=0 * degrees,
-              kind='polarization',
-              v=[1, 0]):
-        """Electromagnetic gauss beam.
-
-        Parameters:
-            A (float): maximum amplitude
-            r0 (float, float): center of gauss beam
-            z (float): position of beam waist
-            theta (float): angle in radians
-            phi (float): angle in radians
-            kind (str): 'polarization', 'radial', 'transversal' 'radial_inverse', 'transvesa_inverse'
-            v (float, float): polarization vector when 'polarization' is chosen
-        """
+        self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
         angle = np.arctan2(vy, vx)
 
-        if isinstance(r0, (float, int, complex)):
-            r0 = (r0[0], r0[0])
-        if isinstance(w0, (float, int, complex)):
-            w0 = (w0, w0)
+        self.Ex = np.sin(angle) * self.Ex
+        self.Ey = -np.cos(angle) * self.Ey
 
-        w0x, w0y = w0
-        x0, y0 = r0
-        w0 = np.sqrt(w0x * w0y)
-        k = 2 * np.pi / self.wavelength
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
-        z0 = k * w0x**2 / 2  # distance de Rayleigh\ solo para una direccion.
+    def transversal_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+        """Provides a constant polarization to a scalar_source_xy
 
-        phaseGouy = np.arctan2(z, z0)
-
-        wx = w0x * np.sqrt(1 + (z / z0)**2)
-        wy = w0y * np.sqrt(1 + (z / z0)**2)
-        w = np.sqrt(wx * wy)
-        if z == 0:
-            R = 1e10
-        else:
-            R = z * (1 + (z0 / z)**2)
-
-        amplitude = A * w0 / w * np.exp(-((self.X - x0) / wx)**2 - (
-            (self.Y - y0) / wy)**2)
-
-        sx = np.sin(theta) * np.cos(phi)
-        sy = np.sin(theta) * np.sin(phi)
-        phase1 = np.exp(1.j * k * ((self.X - x0) * sx + (self.Y - y0) * sy))
-        phase2 = np.exp(1j * (k * z - phaseGouy + k * (
-            (self.X - x0)**2 + (self.Y - y0)**2) / (2 * R)))
-
-        self.u = amplitude * phase1 * phase2
-
-        if kind == 'polarization':
-            self.Ex = self.u * v[0]
-            self.Ey = self.u * v[1]
-        elif kind == 'radial':
-            self.Ex = self.u * np.sin(angle)
-            self.Ey = -self.u * np.cos(angle)
-        elif kind == 'transversal':
-            self.Ex = self.u * np.cos(angle)
-            self.Ey = self.u * np.sin(angle)
-        elif kind == 'radial_inverse':
-            self.Ex = self.u * np.cos(angle)
-            self.Ey = -self.u * np.sin(angle)
-        elif kind == 'transversal_inverse':
-            self.Ex = self.u * np.sin(angle)
-            self.Ey = self.u * np.cos(angle)
-
-    def hermite_gauss_wave(self,
-                           A=1,
-                           r0=(0 * um, 0 * um),
-                           w=100 * um,
-                           m=[1, 3, 3, 5, 5, 5],
-                           n=[1, 1, 3, 1, 3, 5],
-                           c_mn=[.25, 1, 1, 1, 1, 1],
-                           kind='polarization',
-                           v=[1, 0]):
-        """Electromagnetic hermite_gauss_wave.
-
-        Parameters:
-            A (float): maximum amplitude
-            r0 (float, float): center of beam
-            w (float): width of beam waist
-            m (list): list with components m
-            n (list): list with components m
-            c_mn (list): amplitude for component (m,n)
-            kind (str): 'polarization', 'radial', 'transversal' (polarization uses v)
-            v (float, float): polarization vector when 'polarization' is chosen
+        u (Scalar_source_XY): field to apply a constant polarization.
+        r0(float, float): center of rotation
         """
+
+        self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
         angle = np.arctan2(vy, vx)
 
-        field = Scalar_source_XY(
-            x=self.x, y=self.y, wavelength=self.wavelength)
-        field.hermite_gauss_beam(A, r0, w, m, n, c_mn)
-        self.u = field.u
-        if kind == 'polarization':
-            self.Ex = self.u * v[0]
-            self.Ey = self.u * v[1]
-        elif kind == 'radial':
-            self.Ex = self.u * np.sin(angle)
-            self.Ey = -self.u * np.cos(angle)
-        elif kind == 'transversal':
-            self.Ex = self.u * np.cos(angle)
-            self.Ey = self.u * np.sin(angle)
-        elif kind == 'radial_inverse':
-            self.Ex = self.u * np.cos(angle)
-            self.Ey = -self.u * np.sin(angle)
-        elif kind == 'transversal_inverse':
-            self.Ex = self.u * np.sin(angle)
-            self.Ey = self.u * np.cos(angle)
+        self.Ex = np.cos(angle) * self.Ex
+        self.Ey = np.sin(angle) * self.Ey
 
-    def local_polarized_vector_beam(self, A=1, r0=(0 * um, 0 * um), m=1,
-                                    fi0=0):
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
+
+    def radial_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+        """Provides a constant polarization to a scalar_source_xy
+
+        u (Scalar_source_XY): field to apply a constant polarization.
+        r0(float, float): center of rotation
+        ce (bool): If True, normalize polarization vector
+        """
+
+        self = define_initial_field(self, u)
+
+        vx = (self.X - r0[0])
+        vy = (self.Y - r0[1])
+        angle = np.arctan2(vy, vx)
+
+        self.Ex = np.cos(angle) * self.Ex
+        self.Ey = -np.sin(angle) * self.Ey
+
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
+
+    def transversal_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+        """Provides a constant polarization to a scalar_source_xy
+
+        u (Scalar_source_XY): field to apply a constant polarization.
+        r0(float, float): center of rotation
+        ce (bool): If True, normalize polarization vector
+        """
+
+        self = define_initial_field(self, u)
+
+        vx = (self.X - r0[0])
+        vy = (self.Y - r0[1])
+        angle = np.arctan2(vy, vx)
+
+        self.Ex = np.sin(angle) * self.Ex
+        self.Ey = np.cos(angle) * self.Ey
+
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
+
+    def local_polarized_vector_wave(self,
+                                    u,
+                                    r0=(0, 0),
+                                    m=1,
+                                    fi0=0,
+                                    radius=(0, 0)):
         """"local radial polarized vector wave.
 
         References:
@@ -298,27 +169,31 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         Parameters:
             A (float): maximum amplitude
-            r0 (float, float): center of beam
+            r0 (float, float): r0 of beam
             m (integer): integer with order
             fi0 (float): initial phase
+            has_mask
         """
+
+        self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
         angle = np.arctan2(vy, vx)
-
         delta = m * angle + fi0
 
-        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        t1.circle(r0=r0, radius=(self.x[-1], self.y[-1]), angle=0 * degrees)
-        self.Ex = t1.u * A * np.cos(delta)
-        self.Ey = t1.u * A * np.sin(delta)
+        self.Ex = self.Ex * np.cos(delta)
+        self.Ey = self.Ey * np.sin(delta)
+
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_beam_radial(self,
-                                           A=1,
+                                           u,
                                            r0=(0 * um, 0 * um),
-                                           n=1,
-                                           fi0=0):
+                                           m=1,
+                                           fi0=0,
+                                           radius=(0, 0)):
         """local radial polarized vector wave.
 
         References:
@@ -331,23 +206,27 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             fi0 (float): initial phase
         """
 
+        self = define_initial_field(self, u)
+
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
         r = np.sqrt(vx**2 + vy**2)
-        radius = self.x[-1]
-        delta = 2 * n * np.pi * r / radius + fi0
+        radius_0 = min(radius[0], radius[1])
+        delta = 2 * m * np.pi * r / radius_0 + fi0
 
-        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        t1.circle(r0=r0, radius=(self.x[-1], self.y[-1]), angle=0 * degrees)
-        self.Ex = t1.u * A * np.cos(delta)
-        self.Ey = t1.u * A * np.sin(delta)
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
+
+        self.Ex = self.Ex * np.cos(delta)
+        self.Ey = self.Ey * np.sin(delta)
 
     def local_polarized_vector_beam_hybrid(self,
-                                           A=1,
+                                           u,
                                            r0=(0 * um, 0 * um),
                                            m=1,
                                            n=1,
-                                           fi0=0):
+                                           fi0=0,
+                                           radius=(0, 0)):
         """local hibrid polarized vector wave.
             Qwien Zhan 'Vectorial Optial Fields' page 36
 
@@ -359,28 +238,31 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             fi0 (float): initial phase
         """
 
+        self = define_initial_field(self, u)
+
         vx = (self.X - r0[0])
         vy = (self.Y - r0[1])
         angle = np.arctan2(vy, vx)
         r = np.sqrt(vx**2 + vy**2)
-        radius = self.x[-1]
-        delta = m * angle + 2 * n * np.pi * r / radius + fi0
+        radius_0 = min(radius[0], radius[1])
+        delta = m * angle + 2 * n * np.pi * r / radius_0 + fi0
 
-        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        t1.circle(r0=r0, radius=(self.x[-1], self.y[-1]), angle=0 * degrees)
-        self.Ex = t1.u * A * np.cos(delta)
-        self.Ey = t1.u * A * np.sin(delta)
+        self.Ex = self.Ex * np.cos(delta)
+        self.Ey = self.Ey * np.sin(delta)
+
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def spiral_polarized_beam(self,
-                              A=1,
-                              x_center=(0 * um, 0 * um),
+                              u,
+                              r0=(0 * um, 0 * um),
                               alpha=0,
-                              radius=0):
+                              radius=(0, 0)):
         """Define spiral polarized beams:
 
         Parameters:
             A (float): maximum amplitude
-            x_center (float, float): center of radiality
+            r0 (float, float): center of radiality
             radius (float): mask for circle if radius >0.
             alpha (float): angle of spiral.
 
@@ -389,19 +271,60 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             V. Ramirez-Sanchez, G. Piquero, and M. Santarsiero,“Generation and characterization of spirally polarized fields,” J. Opt. A11,085708 (2009)
         """
 
-        vx = (self.X - x_center[0])
-        vy = (self.Y - x_center[1])
+        self = define_initial_field(self, u)
+
+        vx = (self.X - r0[0])
+        vy = (self.Y - r0[1])
 
         theta = np.arctan2(vy, vx)
 
-        self.Ex = -A * np.sin(theta + alpha)
-        self.Ey = A * np.cos(theta + alpha)
+        self.Ex = -self.Ex * np.sin(theta + alpha)
+        self.Ey = self.Ey * np.cos(theta + alpha)
 
-        if radius > 0:
+        if radius[0] * radius[1] > 0:
+            self.mask_circle(r0=r0, radius=radius)
+
+    def mask_circle(self, r0=(0, 0), radius=(0, 0)):
+        """Mask vector field using a circular mask.
+
+        Parameters:
+            r0 (float, float): center of mask.
+            radius (float, float): radius of mask
+        """
+
+        if radius in (0, None, '', []):
+            radius_x = (self.x[-1] - self.x[0]) / 2
+            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius = (radius_x, radius_y)
+
+        if r0 in (0, None, '', []):
+            r0_x = (self.x[-1] + self.x[0]) / 2
+            r0_y = (self.y[-1] + self.y[0]) / 2
+            r0 = (r0_x, r0_y)
+
+        if radius[0] * radius[1] > 0:
             t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=x_center, radius=(radius, radius), angle=0 * degrees)
+            t1.circle(r0=r0, radius=radius, angle=0 * degrees)
             self.Ex = t1.u * self.Ex
             self.Ey = t1.u * self.Ey
+
+
+def define_initial_field(EM, u):
+    """Rewrites the initial field of EM in terms of u.
+
+    EM (vector_paraxial_source_XY):
+    u (scalar_source_XY, or None, or 1): if scalar_source it is written in Ex and Ey, is 1 Ex=1, Ey=1, if None, does nothing,
+    """
+
+    # check data size
+    if u == 1:
+        EM.Ex = np.ones_like(EM.Ex)
+        EM.Ey = np.ones_like(EM.Ey)
+    elif u not in ('', None, [], 0):
+        EM.Ex = u.u
+        EM.Ey = u.u
+
+    return EM
 
     # def Vector_paraxial_dipole(self,
     #                            A=1,

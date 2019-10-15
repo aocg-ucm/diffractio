@@ -34,7 +34,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
 
-    def equal_masks(self, mask):
+    def equal_mask(self, mask):
         """The same mask is applied to all the fields.
 
         Parameters:
@@ -45,43 +45,55 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         self.Ex = mask.u
         self.Ey = mask.u
 
-    def unique_mask(self, mask, v=(1, 0)):
-        """The same mask is applied to all the fields. Each field can have a different polarization, given in v.
+    def unique_mask(self, mask, v=(1, 1)):
+        """The same mask is applied to all the fields. Each field can have a different amplitude-phase, given in v.
 
         Parameters:
             masks (scalar_mask_XY): mask to apply.
-            v (3x1 numpy.array): complex array with polarizations for each field.
-                When v=(1,1,1) the field is not affected by polarization.
-
-        Todo:
-            Nothing is applied to H (everything is set to 0 Hx=Hy=Hz=0)
+            v (2x1 numpy.array): complex array with polarizations for each field.
+                When v=(1,1) the field is not affected
         """
 
         # cargo el field en las components
         self.Ex = v[0] * mask.u
         self.Ey = v[1] * mask.u
 
-    def global_mask(self):
-        """Applies a global circular/elliptical mask to all the fields. Data are obtained from self.x and self.y.
+    def global_mask(self, mask=None, r0=(0, 0), radius=(0, 0)):
+        """Applies a global mask u to Ex and Ey fields.
+
+        Parameters:
+            u (Scalar_mask_xy): If u=None, it draws a circle with the rest for parameters.
+            r0 (float, float): center of circle
+            radius (float, float): radius of circle
+
+
         """
 
-        x_center = (self.x.max() + self.x.min()) / 2
-        y_center = (self.y.max() + self.y.min()) / 2
-        x_radius = (self.x.max() - self.x.min()) / 2
-        y_radius = (self.y.max() - self.y.min()) / 2
-        c = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        c.circle(
-            r0=(x_center, y_center),
-            radius=(x_radius, y_radius),
-            angle=0 * degrees)
-        self.Ex = self.Ex * c.u
-        self.Ey = self.Ey * c.u
+        if mask not in (None, '', [], 0):
+            self.Ex = self.Ex * mask.u
+            self.Ey = self.Ey * mask.u
+
+        else:
+            if r0 is None:
+                x_center = (self.x.max() + self.x.min()) / 2
+                y_center = (self.y.max() + self.y.min()) / 2
+                r0 = (x_center, y_center)
+            if radius[0] * radius[1] == 0:
+                x_radius = (self.x.max() - self.x.min()) / 2
+                y_radius = (self.y.max() - self.y.min()) / 2
+                radius = (x_radius, y_radius)
+
+            c = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+            c.circle(r0=r0, radius=radius, angle=0 * degrees)
+
+            self.Ex = self.Ex * c.u
+            self.Ey = self.Ey * c.u
 
     def complementary_masks(self, mask, v1=(1, 0), v2=(0, 1)):
         """Creates two different fields Ex and Ey from a mask and its complementary.
 
         Parameters:
-            mask (scalar_mask_XY): Mask preferently binary
+            mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
             v1 (2x1 numpy.array): vector polarization of clear part of mask.
             v2 (2x1 numpy.array): vector polarization of dark part of mask.
 
@@ -106,19 +118,16 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         Parameters:
             polarizer (2x2 numpy.matrix): Jones_matrix
-
-        Warning:
-            Todo: Nothing is performed on H, only Ex, Ey.
-
-        Todo:
-            Check function. I do not understand well.
         """
 
-        uno = np.ones_like(self.X, dtype=complex)
-        polarizer = np.asarray(polarizer.M)
+        if isinstance(polarizer, Jones_matrix):
+            M = polarizer.M
 
-        Ex_new = uno * polarizer[0, 0] + uno * polarizer[0, 1]
-        Ey_new = uno * polarizer[1, 0] + uno * polarizer[1, 1]
+        uno = np.ones_like(self.X, dtype=complex)
+        M = np.asarray(M)
+
+        Ex_new = uno * M[0, 0] + uno * M[0, 1]
+        Ey_new = uno * M[1, 0] + uno * M[1, 1]
         self.Ex = Ex_new
         self.Ey = Ey_new
 

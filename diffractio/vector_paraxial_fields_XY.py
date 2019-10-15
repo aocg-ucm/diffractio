@@ -471,9 +471,6 @@ class Vector_paraxial_field_XY(object):
             elif kind == 'ellipses':
                 id_fig = self.__draw_ellipses__(num_ellipses, amplification)
 
-            elif kind == 'ellipses2':
-                id_fig = self.__draw_ellipses2__(num_ellipses, amplification)
-
             else:
                 print(
                     "not good kind parameter in vector_paraxial_fields_XY.draw()"

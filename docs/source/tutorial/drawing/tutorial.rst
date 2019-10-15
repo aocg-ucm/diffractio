@@ -1,11 +1,9 @@
-Scalar_X
-=============
+Some info about drawing and videos
+=======================================
 
 .. toctree::
    :maxdepth: 4
    :numbered:
    :glob:
 
-   tutorial_x.ipynb
-   sources_x.ipynb
-   masks_x.ipynb
+   *
