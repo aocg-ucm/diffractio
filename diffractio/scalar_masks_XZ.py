@@ -504,7 +504,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         ipasa = self.object_by_surfaces(
             rotation_point, refraction_index, Fs, angle, v_globals={})
 
-        # self.n[ipasa] = refraction_index
         return ipasa
 
     def slit(self,
@@ -525,7 +524,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             refraction_index_center (float, str?): refraction index of center
                 if refraction_index_center='', [], 0 then we copy what it was previously at aperture
             angle (float): angle of rotation of the semi-plane, in radians
-        rotation_point (float, float). Rotation point
+            rotation_point (float, float). Rotation point
         """
 
         x0, z0 = r0

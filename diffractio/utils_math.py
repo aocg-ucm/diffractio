@@ -649,7 +649,7 @@ def rotate_image(x, z, img, angle, pivot_point):
     ipivotz, _, _ = nearest(z, pivot_point[0])
     ipivotx, _, _ = nearest(x, pivot_point[1])
 
-    ipivot = [ipivotz, ipivotx]
+    ipivot = [ipivotx, ipivotz]
 
     # rotates
     padX = [img.shape[1] - ipivot[0], ipivot[0]]

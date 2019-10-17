@@ -865,9 +865,7 @@ class Scalar_field_XZ(object):
     def RS_polychromatic(self,
                          initial_field,
                          wavelengths,
-                         spectrum,
-                         xout=None,
-                         yout=None,
+                         spectrum='',
                          verbose=False,
                          num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light.
@@ -876,27 +874,31 @@ class Scalar_field_XZ(object):
             initial_field (Scalar_field_X): function with only input variable wavelength
             wavelengths (numpy.array): array with wavelengths
             spectrum (numpy.array): array with spectrum. if '' then uniform_spectrum
-            xout: TODO
-            yout: TODO
             verbose (bool): shows the quality of algorithm (>1 good)
             num_processors (int): number of processors for multiprocessing
 
         Returns:
             Scalar_field_XZ: self.u=sqrt(Intensities) - no phase is stored, only intensity
         """
-        if spectrum == '':
+        if isinstance(spectrum, np.ndarray):
+            pass
+        elif spectrum in ('', None, [], 0):
             spectrum = np.ones_like(wavelengths)
 
         I_final = np.zeros_like(self.u, dtype=float)
         u_temp = Scalar_field_XZ(self.x, self.z, self.wavelength,
                                  self.n_background)
         for i, wavelength in enumerate(wavelengths):
+            if verbose:
+                print(i, sep=' ', end=' ')
+            u_temp.wavelength = wavelength
             self.u = np.zeros_like(self.X, dtype=complex)
-            self.fast = True
             u_ini = initial_field(wavelength)
-            self.incident_field(u_ini)
-            u_temp.RS(xout, yout, verbose, num_processors)
+            u_temp.clear_field()
+            u_temp.incident_field(u_ini)
+            u_temp.RS(verbose=verbose, num_processors=num_processors)
             I_final = I_final + spectrum[i] * np.abs(u_temp.u)**2
+
         u_temp.u = np.sqrt(I_final)
         return u_temp
 
@@ -904,8 +906,6 @@ class Scalar_field_XZ(object):
                           initial_field,
                           wavelengths,
                           spectrum,
-                          xout=None,
-                          yout=None,
                           verbose=False,
                           num_processors=4):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light
@@ -914,8 +914,7 @@ class Scalar_field_XZ(object):
             initial_field (Scalar_field_X): function with only input variable wavelength
             wavelengths (numpy.array): array with wavelengths
             spectrum (numpy.array): array with spectrum. if '' then uniform_spectrum
-            xout: TODO
-            yout: TODO
+
             verbose (bool): shows the quality of algorithm (>1 good)
             num_processors (int): number of processors for multiprocessing
 
@@ -923,8 +922,9 @@ class Scalar_field_XZ(object):
             Scalar_field_XZ: self.u=sqrt(Intensities) - no phase is stored, only intensity
         """
 
-        # TODO: Paralelize function
-        if spectrum == '':
+        if isinstance(spectrum, np.ndarray):
+            pass
+        elif spectrum in ('', None, [], 0):
             spectrum = np.ones_like(wavelengths)
 
         I_final = np.zeros_like(self.u, dtype=float)
@@ -1682,6 +1682,7 @@ class Scalar_field_XZ(object):
                         if verbose:
                             print(("{}/{}".format(i, len(self.z))))
                         writer.grab_frame()
+        plt.close('')
 
     def video(self,
               kind='intensity',

@@ -220,7 +220,7 @@ def change_image_size(image_name,
                       length='800x600',
                       nombre_final='prueba.png',
                       dpi=300):
-    """cambia el tamaño con imageMagick
+    """change the size with imageMagick
     convert image_name -resize '1000' -units 300 nombre_final.png
         - anchura 1000 - mantiene forma
     convert image_name -resize 'x200' nombre_final.png
@@ -242,7 +242,7 @@ def change_image_size(image_name,
 def extract_image_from_video(nombre_video=None,
                              num_frame="[0, ]",
                              nombre_final='prueba.png'):
-    """saca images del video con imageMagick
+    """Extract images form a video using imageMagick
     convert 'animacion.avi[15,]' animacion_frame.png
         - saca el frame 15 (solo el 15)
     convert 'animacion.avi[15]' animacion_frame.png
@@ -258,7 +258,7 @@ def extract_image_from_video(nombre_video=None,
 
 def normalize_draw(u, logarithm=False, normalize=False, cut_value=None):
     """
-    Gets a filed and changes its caracteristics for drawing
+    Gets a field and changes its caracteristics for drawing
 
     Parameters:
         u (field): field

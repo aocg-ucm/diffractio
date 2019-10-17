@@ -6,4 +6,5 @@ Some info about drawing and videos
    :numbered:
    :glob:
 
-   *
+   creating_video.ipynb
+   use_interact_visualize_profiles.ipynb
