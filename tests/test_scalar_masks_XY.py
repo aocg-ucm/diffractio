@@ -668,7 +668,7 @@ class Test_Scalar_masks_XY(object):
 
         t1 = Scalar_mask_XY(x, y, wavelength)
         t1.biprism_fresnel(
-            r0=(0 * um, 0 * um), ancho=100 * um, height=5 * um, n=1.5)
+            r0=(0 * um, 0 * um), width=100 * um, height=5 * um, n=1.5)
         t1.draw(kind='field')
         save_figure_test(newpath, func_name)
         t1.save_data(filename=filename, method='savez_compressed')

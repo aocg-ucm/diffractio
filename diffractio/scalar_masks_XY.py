@@ -940,17 +940,17 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * exp(1.j * k * (n - 1) * h)
 
-    def biprism_fresnel(self, r0, ancho, height, n):
+    def biprism_fresnel(self, r0, width, height, n):
         """Fresnel biprism.
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            ancho (float): width
+            width (float): width
             height (float): height of axicon
             n (float): refraction index
 
         Example:
-            biprism_fresnel(r0=(0 * um, 0 * um), ancho=100 * um, height=5 * um, n=1.5)
+            biprism_fresnel(r0=(0 * um, 0 * um), width=100 * um, height=5 * um, n=1.5)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
         # Origen
@@ -964,15 +964,15 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Altura desde la base a la surface
         h = zeros_like(self.X)
-        h[xp] = -2 * height / ancho * (self.X[xp] - x0) + 2 * height
-        h[xn] = 2 * height / ancho * (self.X[xn] - x0) + 2 * height
+        h[xp] = -2 * height / width * (self.X[xp] - x0) + 2 * height
+        h[xn] = 2 * height / width * (self.X[xn] - x0) + 2 * height
         # No existencia de heights negativas
         iremove = h < 0
         h[iremove] = 0
 
         # Region de transmitancia
         u = zeros(shape(self.X))
-        ipasa = np.abs(self.X - x0) < ancho
+        ipasa = np.abs(self.X - x0) < width
         u[ipasa] = 1
 
         self.u = u * exp(1.j * k * (n - 1) * h)

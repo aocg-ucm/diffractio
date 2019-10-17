@@ -296,12 +296,12 @@ class Vector_paraxial_field_XY(object):
             V = V.u
 
         Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.j * U
+        L = Q + 1.j * U + eps
 
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
+        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L) + eps)))
+        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
         theta = 0.5 * np.angle(L)
-        h = np.sign(V)
+        h = np.sign(V + eps)
 
         if matrix is True:
             return A, B, theta, h
@@ -786,167 +786,6 @@ class Vector_paraxial_field_XY(object):
                 # else:
                 #     print(max_r, intensity_max,
                 #           percentaje_intensity * intensity_max)
-
-    def __draw_ellipses__deprecated(self,
-                                    num_ellipses=(11, 11),
-                                    amplification=0.5):
-        """__internal__: draw ellipses
-
-        Parameters:
-            num_ellipses (int): number of ellipses for parameters_ellipse
-        """
-        verbose = False
-
-        Dx = self.x[-1] - self.x[0]
-        Dy = self.y[-1] - self.y[0]
-        size_x = Dx / (num_ellipses[0])
-        size_y = Dy / (num_ellipses[1])
-        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
-
-        num_x, num_y = len(self.x), len(self.y)
-        ix_centers = num_x / (num_ellipses[0])
-        iy_centers = num_y / (num_ellipses[1])
-
-        ix_centers = (np.round(
-            ix_centers / 2 +
-            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
-        iy_centers = (np.round(
-            iy_centers / 2 +
-            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
-
-        Ix_centers, Iy_centers = np.meshgrid(
-            ix_centers.astype('int'), iy_centers.astype('int'))
-
-        if verbose is True:
-            print(num_x, num_y, ix_centers, iy_centers)
-            print(Dx, Dy, size_x, size_y)
-            print(x_centers, y_centers)
-            print(Ix_centers, Iy_centers)
-
-        I = np.abs(self.Ex[Ix_centers, Iy_centers])**2 + np.abs(
-            self.Ey[[Ix_centers, Iy_centers]])**2
-        Q = np.abs(self.Ex[Ix_centers, Iy_centers])**2 - np.abs(
-            self.Ey[Ix_centers, Iy_centers])**2
-        U = 2 * np.real(self.Ex[Ix_centers, Iy_centers] * np.conjugate(
-            self.Ey[Ix_centers, Iy_centers]))
-        V = 2 * np.imag(self.Ex[Ix_centers, Iy_centers] * np.conjugate(
-            self.Ey[Ix_centers, Iy_centers]))
-
-        Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.j * U
-
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
-        theta = 0.5 * np.angle(L)
-        h = np.sign(V)
-
-        self.draw('intensity')
-
-        fi = np.linspace(0, 2 * np.pi, 16)
-
-        for i, xi in enumerate(ix_centers):
-            for j, yj in enumerate(iy_centers):
-
-                a = A[j, i]
-                b = B[j, i]
-
-                xt_ellipse = a * np.cos(fi) * np.sin(
-                    theta[j, i]) + b * np.cos(fi) * np.sin(theta[j, i])
-                yt_ellipse = -a * np.cos(fi) * np.cos(
-                    theta[j, i]) + b * np.cos(fi) * np.cos(theta[j, i])
-
-                max_r = np.sqrt(xt_ellipse**2 +
-                                yt_ellipse**2).max() / amplification
-                xt_ellipse = xt_ellipse / max_r * size_y / 2 + self.x[int(xi)]
-                yt_ellipse = yt_ellipse / max_r * size_x / 2 + self.y[int(yj)]
-
-                plt.plot(yt_ellipse, xt_ellipse, 'w')
-
-                # if h[j, i] == 1:
-                #     plt.plot(yt_ellipse, xt_ellipse, 'b')
-                # else:
-                #     plt.plot(yt_ellipse, xt_ellipse, 'r')
-
-    def __draw_ellipses__backup(self,
-                                num_ellipses=(11, 11),
-                                amplification=0.5,
-                                max_size=100,
-                                color_line='w',
-                                line_width=1,
-                                draw_arrow=True,
-                                head_width=5,
-                                ax=False):
-        """__internal__: draw ellipses
-
-        Parameters:
-            num_ellipses (int): number of ellipses for parameters_ellipse
-        """
-        verbose = False
-
-        Dx = self.x[-1] - self.x[0]
-        Dy = self.y[-1] - self.y[0]
-        size_x = Dx / (num_ellipses[0])
-        size_y = Dy / (num_ellipses[1])
-        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
-
-        num_x, num_y = len(self.x), len(self.y)
-        ix_centers = num_x / (num_ellipses[0])
-        iy_centers = num_y / (num_ellipses[1])
-
-        ix_centers = (np.round(
-            ix_centers / 2 +
-            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
-        iy_centers = (np.round(
-            iy_centers / 2 +
-            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
-
-        Ix_centers, Iy_centers = np.meshgrid(
-            ix_centers.astype('int'), iy_centers.astype('int'))
-
-        if verbose is True:
-            print(num_x, num_y, ix_centers, iy_centers)
-            print(Dx, Dy, size_x, size_y)
-            print(x_centers, y_centers)
-            print(Ix_centers, Iy_centers)
-
-        E0x = self.Ex[Ix_centers, Iy_centers]
-        E0y = self.Ey[Ix_centers, Iy_centers]
-
-        angles = np.linspace(0, 360 * degrees, 64)
-
-        if ax is False:
-            self.draw('intensity', logarithm=False)
-            fig = plt.gcf()
-            ax = plt.gca()
-
-        for i, xi in enumerate(ix_centers):
-            for j, yj in enumerate(iy_centers):
-                Ex = np.real(E0y[j, i] * np.exp(1j * angles))
-                Ey = np.real(E0x[j, i] * np.exp(1j * angles))
-
-                max_r = np.sqrt(np.abs(Ex)**2 + np.abs(Ey)**2).max()
-                size_dim = min(size_x, size_y)
-
-                if max_r > 0:
-
-                    Ex = Ex / max_r * size_dim * amplification / 2 + (
-                        +self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
-                        int(yj)]
-
-                    ax.plot(Ex, Ey, color_line, lw=line_width)
-                    ax.arrow(
-                        Ex[0],
-                        Ey[0],
-                        Ex[0] - Ex[1],
-                        Ey[0] - Ey[1],
-                        width=0,
-                        head_width=head_width,
-                        fc=color_line,
-                        ec=color_line,
-                        length_includes_head=False)
 
 
 def __draw1__(hdl, image, colormap, title='', has_max=False):

@@ -27,12 +27,12 @@ def roughness_1D(x, t, s, kind='normal'):
         (numpy.array) Topography of roughnness in microns.
     """
 
-    ancho = x[-1] - x[0]
+    width = x[-1] - x[0]
     dx = x[1] - x[0]
 
     # Surface parameters
 
-    L_ancho = ancho / (2 * dx)
+    L_ancho = width / (2 * dx)
     M = round(4 * t / (np.sqrt(2) * dx))
 
     N_ancho = int(np.floor(L_ancho + M))
@@ -77,10 +77,10 @@ def roughness_2D(x, y, t, s):
 
     tx, ty = t
 
-    ancho = x[-1] - x[0]
+    width = x[-1] - x[0]
     largo = y[-1] - y[0]
     dx = x[1] - x[0]
-    L_ancho = ancho / (2 * dx)
+    L_ancho = width / (2 * dx)
     L_largo = largo / (2 * dx)
     M = round(4 * tx / (sqrt(2) * dx))
     N_ancho = int(np.floor(L_ancho + M))
