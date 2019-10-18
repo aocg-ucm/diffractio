@@ -37,6 +37,7 @@ The scalar propagations techniques are implemented to:
 * XZ - fields are defined in the xz plane, being z the propagation direction.
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
+* vector_paraxial_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
 
 Each technique present three modules:
 
