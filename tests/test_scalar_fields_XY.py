@@ -411,13 +411,13 @@ class Test_Scalar_fields_XY(object):
         field.spherical_wave()
         field.draw(kind='field')
 
-        fieldReal = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        fieldReal.u = field.get_amplitude(matrix=True)
-        fieldReal.draw(kind='field')
+        real_field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
+        real_field.u = field.get_amplitude(matrix=True)
+        real_field.draw(kind='field')
 
         # Generando fields news
-        fieldRealNuevo = field.get_amplitude(new_field=True)
-        fieldRealNuevo.draw(kind='field')
+        real_fieldNuevo = field.get_amplitude(new_field=True)
+        real_fieldNuevo.draw(kind='field')
 
         # en el mismo field de entrada
         field.get_amplitude()

@@ -1022,7 +1022,7 @@ class Scalar_field_XYZ(object):
         Parameters:
             z0 (float): value of z for interpolation
             kind (str): type of drawing:
-                'amplitude', 'intensity', 'phase', ' 'field', 'fieldReal', 'contour'
+                'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
 
                 amplitude:   np.abs(self.u)
                 intensity = np.abs(self.u)**2

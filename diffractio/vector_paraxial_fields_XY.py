@@ -53,6 +53,8 @@ from diffractio.utils_common import load_data_common, save_data_common
 from diffractio.utils_drawing import normalize_draw, reduce_matrix_size
 from diffractio.utils_math import nearest
 
+percentaje_intensity = params_drawing['percentaje_intensity']
+
 
 class Vector_paraxial_field_XY(object):
     """Class for vectorial fields.
@@ -569,11 +571,18 @@ class Vector_paraxial_field_XY(object):
 
         h1 = plt.subplot(1, 2, 1)
         phase = np.angle(Ex_r)
+        intensity = np.abs(Ex_r)**2
+
+        phase[intensity < percentaje_intensity * (intensity.max())] = 0
+
         __draw1__(self, phase / degrees, color_phase, "$E_x$")
         plt.clim(-180, 180)
 
         h2 = plt.subplot(1, 2, 2)
         phase = np.angle(Ey_r)
+        intensity = np.abs(Ey_r)**2
+        phase[intensity < percentaje_intensity * (intensity.max())] = 0
+
         __draw1__(self, phase / degrees, color_phase, "$E_y$")
         plt.clim(-180, 180)
 
@@ -619,11 +628,15 @@ class Vector_paraxial_field_XY(object):
 
         h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
+        phase[intensity_x < percentaje_intensity * (intensity_x.max())] = 0
+
         __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)
         phase = np.angle(self.Ey)
+        phase[intensity_y < percentaje_intensity * (intensity_y.max())] = 0
+
         __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
         h4 = plt.gca()
@@ -710,14 +723,13 @@ class Vector_paraxial_field_XY(object):
                           line_width=1,
                           draw_arrow=True,
                           head_width=5,
-                          ax=False,
-                          percentaje_intensity=0):
+                          ax=False):
         """__internal__: draw ellipses
 
         Parameters:
             num_ellipses (int): number of ellipses for parameters_ellipse
         """
-
+        percentaje_intensity = params_drawing['percentaje_intensity']
         intensity_max = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
 
         Dx = self.x[-1] - self.x[0]

@@ -77,6 +77,8 @@ try:
 except:
     print("cv2 not imported. Function send_image_screen cannot be used")
 
+percentaje_intensity = params_drawing['percentaje_intensity']
+
 
 class Scalar_field_XY(object):
     """Class for working with XY scalar fields.
@@ -1237,7 +1239,7 @@ class Scalar_field_XY(object):
 
         Parameters:
             kind (str): type of drawing:
-                'amplitude', 'intensity', 'phase', ' 'field', 'fieldReal', 'contour'
+                'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
 
                 amplitude:   np.abs(self.u)
                 intensity = np.abs(self.u)**2
@@ -1257,7 +1259,7 @@ class Scalar_field_XY(object):
         else:
             self.reduce_matrix = reduce_matrix
 
-        # kinds = ('intensity', 'amplitude', 'phase', 'field', 'fieldReal')
+        # kinds = ('intensity', 'amplitude', 'phase', 'field', 'real_field')
 
         if kind == 'intensity':
             id_fig, IDax, IDimage = self.__draw_intensity__(
@@ -1272,7 +1274,7 @@ class Scalar_field_XY(object):
                                          cut_value, colormap_kind)
             IDax = None
             IDimage = None
-        elif kind == 'fieldReal':
+        elif kind == 'real_field':
             id_fig, IDax, IDimage = self.__draw_real_field__(
                 logarithm, normalize, title, cut_value)
         else:
@@ -1361,7 +1363,7 @@ class Scalar_field_XY(object):
             self.u, has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase / degrees
-        phase[intensity < 0.005 * (intensity.max())] = 0
+        phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
             colormap_kind = params_drawing["color_phase"]
@@ -1401,6 +1403,7 @@ class Scalar_field_XY(object):
                                        intensity)
 
         phase = reduce_matrix_size(self.reduce_matrix, self.x, self.y, phase)
+        phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
         xsize, ysize = rcParams['figure.figsize']
 
@@ -1466,15 +1469,19 @@ class Scalar_field_XY(object):
             cut_value (float): if provided, maximum value to show
         """
 
-        real_field = real(self.u)
-        real_field = normalize_draw(real_field, logarithm, normalize,
-                                    cut_value)
+        #real_field = np.real(self.u)
+        #real_field = normalize_draw(real_field, logarithm, normalize,
+        #                            cut_value)
+
+        rf = np.real(self.u)
+        intensity = np.abs(self.u)**2
+        rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
             colormap_kind = params_drawing["color_real"]
 
         id_fig, IDax, IDimage = draw2D(
-            real_field,
+            rf,
             self.x,
             self.y,
             xlabel="$x  (\mu m)$",
