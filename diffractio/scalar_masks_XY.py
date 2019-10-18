@@ -445,67 +445,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return num_points
 
-    #
-    # def insert_array_masks_deprecated(self,
-    #                                   t1,
-    #                                   space=50 * um,
-    #                                   margin=50 * um,
-    #                                   tol=.5,
-    #                                   angle=0 * degrees):
-    #     """Generates a matrix of shapes given in t1.
-    #
-    #     Parameters:
-    #         t1 (Scalar_mask_XY): Mask of the desired figure to be drawn
-    #         space (float, float): spaces between figures. space = (space in x, space in y)
-    #         margin (float, float): extra space outside the mask
-    #         tol (float): difference between the points selected to draw the figures and the points of the meshgrid
-    #         angle (float): Angle to rotate the matrix of circles
-    #
-    #     Example:
-    #         A = Scalar_mask_XY(x, y, wavelength)
-    #         A.ring(r0, radius1, radius2, angle)
-    #         muchas_formas2(D = A, space = 50 * um, angle = 0 * degrees)
-    #     """
-    #
-    #     if isinstance(space, (int, float)):
-    #         space_x, space_y = (space, space)
-    #     else:
-    #         space_x, space_y = space
-    #
-    #     if isinstance(margin, (float, int)):
-    #         margin_x, margin_y = (margin, margin)
-    #     else:
-    #         margin_x, margin_y = margin
-    #
-    #     assert space_x > 0 and space_y > 0 and margin_x >= 0 and margin_y >= 0
-    #
-    #     # Rotation of the mask
-    #     Xrot, Yrot = self.__rotate__(angle)
-    #
-    #     X0 = Xrot.min() - margin_x
-    #     Y0 = Yrot.min() - margin_y
-    #
-    #     u = np.zeros_like(self.X)
-    #     u1 = np.zeros_like(self.X)
-    #
-    #     for i in range(50):  # The number 50 could be changed for bigger masks
-    #         X = X0 + i * space_x
-    #         j = 0
-    #         Y = Y0
-    #         if (X > self.x.max() + margin_x):
-    #             break
-    #         else:
-    #             while (Y <= self.y.max() + margin_y):
-    #                 ipasa = (np.abs(Xrot - X) < tol) & (np.abs(Yrot - Y) < tol)
-    #                 u1[ipasa] = 1
-    #                 j += 1
-    #                 Y = Y0 + j * space_y
-    #                 u = u + u1
-    #
-    #     u = fftconvolve(u, t1.u, mode='same')
-    #     u[u > 1] = 1
-    #     self.u = u
-
     def slit(self, x0, size, angle=0 * degrees):
         """Slit: 1 inside, 0 outside
 
@@ -1653,11 +1592,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         Xrot, Yrot = self.__rotate__(angle)
 
         u = np.zeros_like(self.X)
-        Y_sin1 = x0 + size / 2 + amplitude1 * np.sin(
-            2 * np.pi * Xrot / period1)
-        Y_sin2 = x0 - size / 2 + amplitude2 * np.sin(
-            2 * np.pi * Xrot / period2 + phase)
-        ipasa_1 = (Yrot < Y_sin1) & (Yrot > Y_sin2)
+        X_sin1 = x0 + size / 2 + amplitude1 * np.sin(
+            2 * np.pi * Yrot / period1)
+        X_sin2 = x0 - size / 2 + amplitude2 * np.sin(
+            2 * np.pi * Yrot / period2 + phase)
+        ipasa_1 = (X_sin1 > Xrot) & (X_sin2 < Xrot)
         u[ipasa_1] = 1
         self.u = u
 

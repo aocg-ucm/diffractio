@@ -41,17 +41,18 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 import copyreg
+import os
 import time
 import types
 from multiprocessing import Pool
 
-import matplotlib.animation as manimation
+import matplotlib.animation as anim
 from mayavi import mlab
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, plt
+from diffractio import degrees, mm, np, params_drawing, plt
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
@@ -1208,19 +1209,18 @@ class Scalar_field_XYZ(object):
     def video(self,
               filename='',
               kind='intensity',
+              fps=15,
               frame=True,
-              encoder='html',
               verbose=False):
         """Makes a video in the range given by self.z.
 
         Parameters:
-            filename (str): if not '' stores drawing in file,
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase'.
-                amplitude:   np.abs(self.u)
+            filename (str): filename (.avi, .mp4)
+            kind (str): type of drawing:  'intensity', 'phase'.
                 intensity = np.abs(self.u)**2
                 phase = angle(u)
+            fps (int): frames per second
             frame (bool): figure with or without axis.
-            encoder (str): 'html'
             verbose (bool): If True prints
 
         Todo:
@@ -1229,23 +1229,46 @@ class Scalar_field_XYZ(object):
             check
         """
 
-        def f(x):
+        def f(x, kind):
             # return x
-            return np.log(1 * x + 1)
+            amplitude, intensity, phase = field_parameters(
+                x, has_amplitude_sign=True)
+            if kind == 'intensity':
+                return np.log(1 * intensity + 1)
+            elif kind == 'phase':
+                return phase
 
-        FFMpegWriter = manimation.writers[encoder]  # ffmpeg mencoder html
-        metadata = dict(
-            title='video', artist='Sanchez-Brea', comment='tutorial_xyz')
-        writer = FFMpegWriter(fps=15, metadata=metadata)
+            elif kind == 'real':
+                return np.real(x)
 
+            else:
+                return "no correct kind in video"
+
+        if kind == 'intensity':
+            cmap1 = params_drawing['color_intensity']
+        elif kind == 'phase':
+            cmap1 = params_drawing['color_phase']
+
+        elif kind == 'real':
+            cmap1 = params_drawing['color_real']
+
+        else:
+            return "no correct kind in video"
+
+        file, extension = os.path.splitext(filename)
+
+        Writer = anim.writers['ffmpeg']
+        if extension == '.avi':
+            writer = Writer(fps=fps, codec='ffv1')
+        elif extension == '.mp4':
+            writer = Writer(fps=fps, codec='mpeg4', bitrate=1e6)
+        else:
+            print("file needs to be .avi or .mp4")
         xmin, xmax, ymin, ymax = self.x[0], self.x[-1], self.y[0], self.y[-1]
 
         if frame is True:
             plt.ion()
             fig, axes = plt.subplots(nrows=1)
-            # ax = fig.add_subplot(111, sharex=None, sharey=None)
-            # fig.colorbar("horizontal")
-            # plt.axis('off')
             ax = plt.gca()
             plt.axis('auto')
         else:
@@ -1255,14 +1278,8 @@ class Scalar_field_XYZ(object):
         frame = self.to_scalar_field_XY(
             iz0=0, z0=None, is_class=True, matrix=False)
 
-        intensity_global = f(np.abs(self.u)**2)
-        Imax = intensity_global.max()
-        Imin = intensity_global.min()
-
-        intensity = f(np.abs(frame.u)**2)
-        intensity = intensity / Imax
-
-        Iclim = (Imax - Imin) / (Imax + Imin)
+        intensity_global = f(self.u, kind).max()
+        intensity = f(frame.u, kind)
 
         image = ax.imshow(
             intensity,
@@ -1270,7 +1287,7 @@ class Scalar_field_XYZ(object):
             aspect='equal',
             origin='lower',
             extent=[xmin, xmax, ymin, ymax])
-        image.set_cmap("gist_heat")  # seismic coolwarm gist_heat
+        image.set_cmap(cmap1)  # seismic coolwarm gist_heat
         fig.canvas.draw()
 
         n_frames = len(self.z)
@@ -1278,16 +1295,18 @@ class Scalar_field_XYZ(object):
             for i_prog in range(n_frames):
                 frame = self.to_scalar_field_XY(
                     iz0=i_prog, z0=None, is_class=True, matrix=False)
-                intensity = f(np.abs(frame.u)**2)
-                intensity = (intensity - Imin) / (Imax + Imin)
+                intensity = f(frame.u, kind)
                 image.set_array(intensity)
-                image.set_clim(0, 1 * Iclim)
+                if kind == 'intensity':
+                    image.set_clim(0, intensity_global)
+                elif kind == 'phase':
+                    image.set_clim(-np.pi, np.pi)
                 texto = "z = {:2.3f} mm".format(self.z[i_prog] / mm)
                 plt.xlabel("x (microns)")
                 plt.ylabel("y (microns)")
                 plt.title(texto)
                 plt.draw()
-                writer.grab_frame()
+                writer.grab_frame(facecolor='k')
                 if verbose:
                     print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
                         i_prog, n_frames, self.z[i_prog] / mm, intensity.max(),
