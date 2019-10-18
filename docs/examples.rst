@@ -6,10 +6,14 @@ Examples
    :numbered:
    :glob:
 
-   source/examples/introductory/example.rst
-   source/examples/advanced/example.rst
-   source/examples/scalar_X/example.rst
-   source/examples/scalar_XY/example.rst
-   source/examples/scalar_XZ/example.rst
-   source/examples/scalar_XYZ/example.rst
-   source/examples/vector_XY/example.rst
+   artifacts_BPM.ipynb
+   multiprocessing.ipynb
+   diffraction_slit.ipynb
+   diffraction_objects.ipynb
+   fresnel_biprism.ipynb
+   lenses.ipynb
+   talbot_effect.ipynb
+   fresnel_lens.ipynb
+   lens_gradient.ipynb
+
+
