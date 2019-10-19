@@ -17,7 +17,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "scalar_masks_X"
@@ -411,7 +411,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6238 * um
         red = Scalar_mask_X(x, wavelength)
         conds = {
-            'kind': 'amplitude_binaria',
+            'kind': 'amplitude_binary',
             'p0': 20 * um,
             'p1': 4 * um,
             'amp_min': 0,
@@ -429,7 +429,7 @@ class Test_Scalar_masks_X(object):
 
     def test_chirped_grating_q(self):
         """chirped gratings with new definition
-        'amplitude', 'phase', 'amplitude_binaria', 'phase_binaria'
+        'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
         """
 
         func_name = sys._getframe().f_code.co_name
@@ -439,7 +439,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6238 * um
         red = Scalar_mask_X(x, wavelength)
         conds = {
-            'kind': 'amplitude_binaria',
+            'kind': 'amplitude_binary',
             'p0': 20 * um,
             'p1': 4 * um,
             'amp_min': 0,
@@ -466,7 +466,7 @@ class Test_Scalar_masks_X(object):
 
         red = Scalar_mask_X(x, wavelength)
         red.chirped_grating(
-            kind='amplitude_binaria',
+            kind='amplitude_binary',
             p_x=fx,
             length=500 * um,
             x0=0 * um,

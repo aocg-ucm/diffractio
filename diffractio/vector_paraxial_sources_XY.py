@@ -21,9 +21,9 @@ The magnitude is related to microns: `micron = 1.`
     * transversal_wave
     * gauss_wave
     * hermite_gauss_wave
-    * local_polarized_vector_beam
-    * local_polarized_vector_beam_radial
-    * local_polarized_vector_beam_hybrid
+    * local_polarized_vector_wave
+    * local_polarized_vector_wave_radial
+    * local_polarized_vector_wave_hybrid
 """
 
 from diffractio import degrees, np, um
@@ -188,7 +188,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         if radius[0] * radius[1] > 0:
             self.mask_circle(r0=r0, radius=radius)
 
-    def local_polarized_vector_beam_radial(self,
+    def local_polarized_vector_wave_radial(self,
                                            u,
                                            r0=(0 * um, 0 * um),
                                            m=1,
@@ -212,7 +212,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         vy = (self.Y - r0[1])
         r = np.sqrt(vx**2 + vy**2)
         radius_0 = min(radius[0], radius[1])
-        delta = 2 * m * np.pi * r / radius_0 + fi0
+        delta = 2 * m * np.pi * r / (radius_0 + eps) + fi0
 
         if radius[0] * radius[1] > 0:
             self.mask_circle(r0=r0, radius=radius)
@@ -220,7 +220,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-    def local_polarized_vector_beam_hybrid(self,
+    def local_polarized_vector_wave_hybrid(self,
                                            u,
                                            r0=(0 * um, 0 * um),
                                            m=1,
@@ -245,7 +245,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         angle = np.arctan2(vy, vx)
         r = np.sqrt(vx**2 + vy**2)
         radius_0 = min(radius[0], radius[1])
-        delta = m * angle + 2 * n * np.pi * r / radius_0 + fi0
+        delta = m * angle + 2 * n * np.pi * r / (radius_0 + eps) + fi0
 
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)

@@ -1142,7 +1142,8 @@ class Scalar_field_XYZ(object):
                 drawing = np.log(drawing**0.5 + 1)
 
             if normalize == 'maximum':
-                drawing = drawing / drawing.max()
+                factor = max(0, drawing.max())
+                drawing = drawing / factor
 
             slicerLM(drawing)
 

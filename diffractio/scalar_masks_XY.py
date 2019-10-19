@@ -365,8 +365,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = 1 - u
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
-        """Createa a triangle mask. It uses the equation of a straight line:
-                y = -slope * (|x - x0) + y0
+        """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
 
         Parameters:
             r0 (float, float): Coordinates of the top corner of the triangle
@@ -1151,9 +1150,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t1.u * mask
 
     def forked_grating(self, r0, period, l, alpha, kind, angle=0 * degrees):
-        """Forked grating
-            exp(1.j * alpha *
-                cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
+        """Forked grating: exp(1.j * alpha * cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
+
         Parameters:
             r0 (float, float): (x0,y0) - center of forked grating
             period (float): basic period of teh grating
@@ -1165,7 +1163,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
             forked_grating(r0=(0 * um, 0 * um), period=20 * um, l=2, alpha=1, angle=0 * degrees)
         """
-        # R=sqrt((self.X-r0[0])**2+(self.Y-r0[1])**2)
 
         Xrot, Yrot = self.__rotate__(angle)
 
@@ -1191,8 +1188,8 @@ class Scalar_mask_XY(Scalar_field_XY):
                      x0=0 * um,
                      angle=0 * degrees):
         """Sinusoidal grating
-            self.u = amp_min + (amp_max - amp_min) * (
-                1 + cos(2 * pi * (Xrot - phase) / period)) / 2
+            self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
+
         Parameters:
             period (float): period of the grating
             amp_min (float): minimum amplitude
@@ -1245,12 +1242,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u * t
 
     def ronchi_grating(self, period, fill_factor=0.5, x0=0 * um, angle=0):
-        """Ampliutde binary grating with fill factor.
+        """Ampliutde binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
+
            Ronchi grating when fill_factor = 0.5.
            It is obtained from a sinusoidal, instead as a sum of slits, for speed.
            The equation to determine the position y0 is: y0=cos(pi*fill_factor)
-            self.u = amp_min + (amp_max - amp_min) * (
-                1 + cos(2 * pi * (Xrot - phase) / period)) / 2
+
         Parameters:
             period (float): period of the grating
             fill_factor (float): fill_factor
@@ -1489,30 +1486,30 @@ class Scalar_mask_XY(Scalar_field_XY):
             lens.u = lens.u + ring.u
         self.u = lens.u
 
-    def hiper_ellipse(self,
+    def super_ellipse(self,
                       r0=(0 * um, 0 * um),
                       radius=(50 * um, 50 * um),
                       angle=0 * degrees,
                       n=(2, 2)):
-        """This module will create a hiper_ellipse .
-
-        References:
-            https://en.wikipedia.org/wiki/Superellipse
+        """This module will create a super_ellipse. |(Xrot - x0) / radiusx|^n1 + |(Yrot - y0) / radiusy|=n2
 
         Parameters:
             r0 (float, float): center of super_ellipse
             radius (float, float): radius of the super_ellipse
             angle (float): angle of rotation in radians
             n (float, float) =  degrees of freedom of the next equation, n = (n1, n2)
-                    |(Xrot - x0) / radiusx|^n1 + |(Yrot - y0) / radiusy|=n2
 
-                    i.e.:
-                        n1 = n2 = 1: for a square
-                        n1 = n2 = 2: for a circle
-                        n1 = n2 = 0.5: for a super-ellipse
+
+        Note:
+            n1 = n2 = 1: for a square
+            n1 = n2 = 2: for a circle
+            n1 = n2 = 0.5: for a superellipse
+
+        References:
+            https://en.wikipedia.org/wiki/Superellipse
 
         Example:
-            hiper_elipse(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
+            super_ellipse(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
         """
 
         if isinstance(r0, (float, int)):

@@ -1,5 +1,5 @@
 Welcome to Diffractio: Python diffraction and interference's  documentation!
-===========================================================================
+===================================================================================
 
 .. toctree::
    :maxdepth: 4

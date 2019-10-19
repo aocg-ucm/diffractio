@@ -9,8 +9,7 @@ For the case of Rayleigh sommefeld it is not necessary to compute all z position
 
 Nevertheless, for BPM method, intermediate computations are required. In this class, intermediate results are stored.
 
-X,Y fields are defined using ndgrid (not with meshgrid, it is different)
-
+X,Y fields are defined using ndgrid (not with meshgrid, it is different).
 It is required also for generating masks and fields.
 The main atributes are:
     * self.x - x positions of the field
@@ -308,8 +307,7 @@ class Scalar_field_XY(object):
                      interp_kind=(3, 1)):
         """it cut the field to the range (x0,x1).
         if one of this x0,x1 positions is out of the self.x range it do nothing
-        It is also valid for resampling the field, just write x0,x1 as
-           the limits of self.x
+        It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Parameters:
             x_limits (float,float): (x0,x1) starting and final points to cut
@@ -406,12 +404,10 @@ class Scalar_field_XY(object):
         """Fast Fourier Transform (FFT) of the field.
 
         Parameters:
-            TODO: No tengo claro lo del z. En otros sitios * self.wavelength en kx, ky
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned
-                       if False, returns Scalar_field_X
+            matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X
             new_field (bool): if True returns Scalar_field_X, else it puts in self
 
         Returns:
@@ -461,8 +457,7 @@ class Scalar_field_XY(object):
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned
-                       if False, returns Scalar_field_X
+            matrix (bool):  if True only matrix is returned. If False, returns Scalar_field_X
             new_field (bool): if True returns Scalar_field_X, else puts in self
 
         Returns:

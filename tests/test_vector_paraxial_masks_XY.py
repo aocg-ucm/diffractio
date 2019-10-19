@@ -5,7 +5,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, np, um
+from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_tests import save_figure_test
@@ -15,9 +15,12 @@ from py_pol.jones_matrix import Jones_matrix
 
 path_base = "tests_results"
 path_class = "vector_paraxial_masks_XY"
-now = datetime.datetime.now()
-date = now.strftime("%Y-%m-%d_%H_%M_%S")
-date = '0'
+
+if no_date is True:
+    date = '0'
+else:
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d_%H")
 
 newpath = "{}_{}/{}/".format(path_base, date, path_class)
 
@@ -81,7 +84,7 @@ class Test_vector_masks_XY(object):
 
         # mask vectorial
         EM = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        EM.equal_masks(mask=mask)
+        EM.equal_mask(mask=mask)
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
 

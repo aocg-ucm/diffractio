@@ -11,7 +11,7 @@ For the case of Rayleigh sommefeld it is not necessary to compute all z position
 
 Nevertheless, for BPM method, intermediate computations are required. In this class, intermediate results are stored.
 
-X,Z fields are defined using ndgrid (not with meshgrid, it is different)
+X,Z fields are defined using ndgrid (not with meshgrid, it is different).
 
 It is required also for generating masks and fields.
 The main atributes are:
@@ -20,7 +20,6 @@ The main atributes are:
     * self.u - field XZ
     * self.n - refraction index XZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
-
 
 The magnitude is related to microns: `micron = 1.`
 
@@ -890,7 +889,7 @@ class Scalar_field_XZ(object):
                                  self.n_background)
         for i, wavelength in enumerate(wavelengths):
             if verbose:
-                print(i, sep=' ', end=' ')
+                print(i)
             u_temp.wavelength = wavelength
             self.u = np.zeros_like(self.X, dtype=complex)
             u_ini = initial_field(wavelength)

@@ -14,7 +14,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "scalar_masks_XY"
@@ -197,7 +197,7 @@ class Test_Scalar_masks_XY(object):
 
         t1 = Scalar_mask_XY(x, y, wavelength)
 
-        t1.hiper_ellipse(
+        t1.super_ellipse(
             r0=(0, 0),
             radius=(20 * um, 40 * um),
             angle=0 * degrees,
@@ -218,7 +218,7 @@ class Test_Scalar_masks_XY(object):
 
         t1 = Scalar_mask_XY(x, y, wavelength)
 
-        t1.hiper_ellipse(
+        t1.super_ellipse(
             r0=(0, 0),
             radius=(20 * um, 40 * um),
             angle=0 * degrees,

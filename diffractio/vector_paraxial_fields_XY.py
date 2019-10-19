@@ -335,10 +335,10 @@ class Vector_paraxial_field_XY(object):
                      num_points=[],
                      new_field=False,
                      interp_kind=(3, 1)):
-        """it cut the field to the range (x0,x1).
-        if one of this x0,x1 positions is out of the self.x range it do nothing
-        It is also valid for resampling the field, just write x0,x1 as
-           the limits of self.x
+        """Cuts the field to the range (x0,x1). (y0,y1).
+            if one of this x0,x1 positions is out of the self.x range it do nothing
+            It is also valid for resampling the field, just write x0,x1 as
+               the limits of self.x
 
         Parameters:
             x_limits (float,float): (x0,x1) starting and final points to cut
@@ -348,7 +348,7 @@ class Vector_paraxial_field_XY(object):
             num_points (int): it resamples x, y and u
                 [],'',0,None -> it leave the points as it is
             new_field (bool): it returns a new Scalar_field_XY
-            interp_kind: numbers between 1 and 5
+            interp_kind (int): numbers between 1 and 5
         """
         if x_limits == '':
             # used only for resampling
