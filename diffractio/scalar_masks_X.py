@@ -91,10 +91,7 @@ class Scalar_mask_X(Scalar_field_X):
                            mask=True,
                            x0=0 * um,
                            radius=100 * um):
-        """Phase mask defined between two surfaces $f_1$ and $f_2$: $h(x,y)=f_2(x,y)-f_1(x,y)$
-
-        :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
-
+        """Phase mask defined between two surfaces :math:`f_1` and :math:`f_2`: :math:`h(x,y)=f_2(x,y)-f_1(x,y)`, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
         Parameters:
             index (float): refraction index of the mask
@@ -130,9 +127,7 @@ class Scalar_mask_X(Scalar_field_X):
                         mask=True,
                         radius=100 * um,
                         x0=0 * um):
-        """Phase mask defined between two surfaces defined by arrays: array1 and array2
-
-        :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
+        """Phase mask defined between two surfaces defined by arrays: array1 and array2, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
 
         Parameters:
             index (float): refraction index of the mask
@@ -247,7 +242,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = t
 
     def prism(self, x0, n, anglex):
-        """prism.
+        """Prism.
 
         Parameters:
             x0 (float): vertex of prism
@@ -312,7 +307,6 @@ class Scalar_mask_X(Scalar_field_X):
             width (float): size of biprism
             height (float): height of biprism
             n (float): refraction_index
-
         """
 
         k = 2 * np.pi / self.wavelength
@@ -338,7 +332,7 @@ class Scalar_mask_X(Scalar_field_X):
         return h
 
     def lens(self, x0=0 * um, radius=100 * um, focal=5 * mm, mask=True):
-        """Transparent lens
+        """Transparent lens.
 
         Parameters:
             x0 (float): center of lens
@@ -369,7 +363,8 @@ class Scalar_mask_X(Scalar_field_X):
         return t * h
 
     def aspheric(self, c, k, a, n0=1, n1=1.5, x0=0 * um, radius=None):
-        """asferic surface
+        """asferic surface.
+
         Parameters:
             c (float):
             k (float):
@@ -427,22 +422,15 @@ class Scalar_mask_X(Scalar_field_X):
         # Vector de onda
         k = 2 * np.pi / self.wavelength
 
-        # rotation de la lens
-
         # Definicion de la amplitude y la phase
         if mask is True:
-            # amplitude = Scalar_mask_X(self.x, self.wavelength)
-            # amplitude.slit(x0, 2 * radius)
+
             t1 = np.zeros_like(self.x)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t1[ix] = 1
         else:
             t1 = np.ones_like(self.x)
 
-        # t2 = Scalar_mask_X(self.x, self.wavelength)
-        # t2.u = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
-        # t2.u[t2.u > 0] = 1
-        # t2.u[t2.u <= 0] = 0
         if kind == 'amplitude' and binary is True:
             u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
@@ -484,9 +472,6 @@ class Scalar_mask_X(Scalar_field_X):
         """
 
         h_corr = roughness_1D(self.x, t, s)
-        # Como la function pesos es par, las
-        # En en la conv 2D los pesos deben ir 2 dos en el argumentos
-
         k = 2 * np.pi / self.wavelength
         u = np.exp(-1.j * k * 2 * h_corr)
         u = u[0:len(self.x)]
@@ -590,11 +575,7 @@ class Scalar_mask_X(Scalar_field_X):
         return self.u
 
     def ronchi_grating(self, period, x0=0 * um, fill_factor=0.5):
-        """Amplitude binary grating, fill-factor can be defined.
-
-        It is obtained as a sine_grating that after is binarized.
-
-        Fill factor is determined as  y0=cos(pi*fill_factor)
+        """Amplitude binary grating, fill-factor can be defined. It is obtained as a sine_grating that after is binarized. Fill factor is determined as  y0=cos(pi*fill_factor)
 
         Parameters:
             period (float): period of the grating

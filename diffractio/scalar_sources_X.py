@@ -36,15 +36,13 @@ class Scalar_source_X(Scalar_field_X):
     """Class for unidimensional scalar sources.
 
     Parameters:
-        x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
         n_background (float): refraction index of backgroudn
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): equal size than x. complex field
         self.quality (float): quality of RS algorithm
@@ -58,9 +56,7 @@ class Scalar_source_X(Scalar_field_X):
         self.type = 'Scalar_source_X'
 
     def plane_wave(self, A=1, theta=0 * degrees, z0=0 * um):
-        """Plane wave.
-
-        self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
+        """Plane wave. self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
 
         Parameters:
             A (float): maximum amplitude
@@ -106,9 +102,7 @@ class Scalar_source_X(Scalar_field_X):
                        mask=True,
                        radius=100 * um,
                        normalize=False):
-        """Spherical wave.
-
-        self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
+        """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         Parameters:
             A (float): maximum amplitude
@@ -156,7 +150,7 @@ class Scalar_source_X(Scalar_field_X):
                 (self.x * sin(p['theta']) + p['z0'] * cos(p['theta'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle):
-        """Several paralel plane waves
+        """Several paralel plane waves.
 
         Parameters:
             A (float): maximum amplitude

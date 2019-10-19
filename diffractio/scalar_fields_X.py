@@ -166,7 +166,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        # Todo:
+        Todo:
             It can be improved for maks (not having less than 1)
         """
 
@@ -189,7 +189,7 @@ class Scalar_field_X(object):
         return new_field
 
     def clear_field(self):
-        """Removes the field `self.u = 0` """
+        """Removes the field: `self.u = 0` """
         self.u = np.zeros_like(self.u, dtype=complex)
 
     def save_data(self, filename='', method='hickle', add_name=''):
@@ -232,15 +232,11 @@ class Scalar_field_X(object):
                      num_points=[],
                      new_field=False,
                      interp_kind='quadratic'):
-        """Cuts the field to the range (x0,x1).
-        If one of this x0,x1 positions is out of the self.x range it do nothing
-        It is also valid for resampling the field, just write x0,x1 as the limits of self.x
+        """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Parameters:
-            x_limits (numpy.array): (x0,x1) - starting and final points to cut
-                    if '' - takes the current limit x[0] and x[-1]
-            num_points (int): it resamples x, and u
-                [],'',0,None -> it leave the points as it is
+            x_limits (numpy.array): (x0,x1) - starting and final points to cut, if '' - takes the current limit x[0] and x[-1]
+            num_points (int): it resamples x, and u [],'',0,None -> it leave the points as it is
             new_field (bool): if True it returns a new Scalar_field_X
             interp_kind (str): 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
 
@@ -300,12 +296,11 @@ class Scalar_field_X(object):
 
         Parameters:
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
-
         """
         self.u = u0.u
 
     def insert_mask(self, t1, x0_mask1, clean=True, kind_position='left'):
-        """"insert mask t1 in mask self. It is performed using interpolation.
+        """Insert mask t1 in mask self. It is performed using interpolation.
 
         Parameters:
             t1 (Scalar_field_X): field X (shorter)
@@ -427,7 +422,8 @@ class Scalar_field_X(object):
              matrix=False,
              new_field=False,
              verbose=False):
-        """Fast Fourier Transform (fft) of the field
+        """Fast Fourier Transform (fft) of the field.
+
         Parameters:
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
@@ -484,26 +480,22 @@ class Scalar_field_X(object):
              kind='z',
              xout=None,
              verbose=True):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula.         `Thin Element Approximation` is considered for determining the field just after the mask:
+        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask:
 
         :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
 
-        The near field approach is performed according to
-
-        :math:`\mathbf{E}(x,y,z) = \frac{1}{i\lambda z}e^{i k z}\iint\mathbf{E}_{0}(\zeta,\eta)e^{i\frac{k}{2z}\left[\left(x-\zeta\right)^{2}+\left(y-\eta\right)^{2}\right]}d\zeta d\eta`
+        The near field approach is performed according to  :math:`\mathbf{E}(x,y,z) = \frac{1}{i\lambda z}e^{i k z}\iint\mathbf{E}_{0}(\zeta,\eta)e^{i\frac{k}{2z}\left[\left(x-\zeta\right)^{2}+\left(y-\eta\right)^{2}\right]}d\zeta d\eta`
 
         If we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
         Parameters:
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
+            z (float): distance to observation plane. I z<0 inverse propagation is executed
             n (float): refraction index
             matrix (bool): if True returns a matrix with result. It is much faster than new_field=True
-            new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
-            fast (bool): Instead of using Hankle function for RS kernel uses expotential
+            new_field (bool): if False the computation goes to self.u. If True a new instance is produced
+            fast (bool): Instead of using Hankle function for RS kernel uses exponential
             xout (numpy.array): for amplification
             verbose (bool): if True it writes to shell
 
@@ -586,28 +578,21 @@ class Scalar_field_X(object):
            amplification=1,
            kind='z',
            verbose=True):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula.
-
-        From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
-
-        Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
+        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
         Parameters:
             amplification (int, int): number of frames in x and y direction
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
+            z (float): distance to observation plane. if z<0 inverse propagation is executed
             n (float): refraction index
-            new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
+            new_field (bool): if False the computation goes to self.u, if True a new instance is produced
             fast (bool): Instead of using Hankle function for RS kernel uses expotential
-            kind (str):
+            kind (str): 'z'
             verbose (bool): if True it writes to shell
 
         Returns:
-            if New_field is True: Scalar_field_X
-            else None
+            if New_field is True: Scalar_field_X, else None
         """
 
         ancho_x = self.x[-1] - self.x[0]
@@ -680,27 +665,14 @@ class Scalar_field_X(object):
         kx2 = linspace(-numx / 2, -1, numx / 2)
         # Número de ondas del material en una dimensión
         kx = (2 * pi / rangox) * np.concatenate((kx1, kx2))
-        # Función de transferencia para la propagación que es identica
-        # a la respuesta de frecuencia espacial en óptica de Fourier
-        # incorporando el termino (-j k0 z).
-        # phase1 = exp((1j * deltaz * kx**2) / (2 * k0))
-        phase1 = exp((-1j * deltaz * kx**2) / (2 * k0))
-        # Campo en el índice de refracción
-        # Función supergausiana para eliminar rebotes en los edges
-        filtroBorde = exp(-((pixelx) / (0.98 * 0.5 * numx))**90)
-        # --------------- Ciclo principal del programa ------------------------
 
-        # Función de transferencia para la propagación que es identica a la
-        # respuesta de frecuencia espacial en óptica de Fourier
-        # incorporando el termino (-j k0 z) para cada sampling.
-        # phase2 = exp(-1j * self.n[:, k] * k0 * deltaz)
+        phase1 = exp((-1j * deltaz * kx**2) / (2 * k0))
+
+        filtroBorde = exp(-((pixelx) / (0.98 * 0.5 * numx))**90)
+
         phase2 = exp(1j * n * k0 * deltaz)
-        # Calculo field en la nueva posición y vuelvo al espacio temporal
         field_z = ifft((fft(field_z) * phase1)) * phase2
-        # Aplico el filtro para removeme los efectos del edge
-        # field_z = field_z * filtroBorde
-        # Identifico el new field para reiniciar el bucle.
-        # el ultimo es por si pongo la fuente al final
+
         if matrix is True:
             return field_z * filtroBorde
         else:
@@ -711,8 +683,7 @@ class Scalar_field_X(object):
 
         Parameters:
             kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
-            new_field (bool): If False the computation goes to self.u
-                              If True a new instance is produced
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
         """
@@ -726,7 +697,7 @@ class Scalar_field_X(object):
             return field_output
 
     def MTF(self, kind='mm', has_draw=True):
-        """Computes the MTF of a field, If this field is near to focal point, the MTF will be wide
+        """Computes the MTF of a field, If this field is near to focal point, the MTF will be wide.
 
         Parameters:
             kind (str): 'mm', 'degrees'
@@ -778,7 +749,6 @@ class Scalar_field_X(object):
             (numpy.array): Intensity
         """
 
-        # dx = self.x[1] - self.x[0]
         intensity = (np.abs(self.u)**2)
         return intensity
 
@@ -800,8 +770,7 @@ class Scalar_field_X(object):
                   min_step=0,
                   verbose=False,
                   filename=''):
-        """Determine locations of edges for a binary mask.
-        valid for litography engraving of gratings.
+        """Determine locations of edges for a binary mask. valid for litography engraving of gratings.
 
         Parameters:
             kind_transition:'amplitude' 'phase'
@@ -829,14 +798,7 @@ class Scalar_field_X(object):
         """Draws X field:
 
         Parameters:
-            kind (str): type of drawing:
-                'amplitude', 'intensity', 'field', 'phase', 'fill', 'fft'
-
-                amplitude:   np.abs(self.u)
-                intensity = np.abs(self.u)**2
-                field = (amplitude, phase) - two subplots in 1
-                fill is for binary maks, as gratings and I0s.
-
+            kind (str): type of drawing: 'amplitude', 'intensity', 'field', 'phase', 'fill', 'fft'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -908,9 +870,7 @@ class Scalar_field_X(object):
 
 
 def kernelRS(x, wavelength, z, n=1, kind='z', fast=False):
-    """Kernel for RS propagation.  The approximation is much faster: comes in  https://dlmf.nist.gov/10.2#E5
-
-    :math:`hk_1 = \sqrt{2/(\pi \, k \, R)}  e^{i  (k \, R - 3  \pi / 4)}`
+    """Kernel for RS propagation. :math:`hk_1 = \sqrt{2/(\pi \, k \, R)}  e^{i  (k \, R - 3  \pi / 4)}`
 
     Parameters:
         x (numpy.array): positions x
@@ -918,11 +878,14 @@ def kernelRS(x, wavelength, z, n=1, kind='z', fast=False):
         z (float): distance for propagation
         n (float): refraction index of background
         kind (str): 'z', 'x', '0': for simplifying vector propagation
+        fast (bool): If True  The approximation is much faster: comes in https://dlmf.nist.gov/10.2#E5
 
     Returns:
         (complex array): kernel
 
     References:
+        https://dlmf.nist.gov/10.2#E5
+
         F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
     """
     k = 2 * pi * n / wavelength
@@ -950,6 +913,7 @@ def kernelRSinverse(x, wavelength, z, n=1, kind='z', fast=False):
         z (float): distance for propagation
         n (float): refraction index of background
         kind (str): 'z', 'x', '0': for simplifying vector propagation
+        fast (bool): If True  The approximation is much faster: comes in https://dlmf.nist.gov/10.2#E5
 
     Returns:
         complex array: kernel
@@ -976,18 +940,12 @@ def polychromatic_multiprocessing(function_process,
                                   num_processors=num_max_processors,
                                   verbose=False):
     """
-    It performs an analysis of polychromatic light.
-
-    it needs a function with only an input parameter, that is wavelength.
-
-    it determines the intensity for each wavelength and it is added.
+    It performs an analysis of polychromatic light. It needs a function with only an input parameter, that is wavelength. It determines the intensity for each wavelength and it is added.
 
     Parameters:
         function_process (function): function with accepts params as input parameters:
         wavelengths (array): wavelengths in the spectrum
-        spectrum (array): weights for the spectrum.
-                       if None: uniform spectrum
-                       else array with the same dimension as wavelengths
+        spectrum (array): weights for the spectrum. if None: uniform spectrum, else array with the same dimension as wavelengths
         num_processors (int): number of processors for the computation
         verbose (bool): if True send information to shell
 
@@ -1023,11 +981,7 @@ def extended_source_multiprocessing(function_process,
                                     num_processors=num_max_processors,
                                     verbose=False):
     """
-    It performs an analysis of extendes source light.
-
-    It needs a function with only an input parameter, that is x0s positions of sources.
-
-    It determines the intensity for each wavelength and it is added.
+    It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
     Parameters:
         function_process (function): function with accepts params as input Parameters:
@@ -1066,8 +1020,7 @@ def extended_polychromatic_source(function_process,
                                   spectrum,
                                   num_processors=num_max_processors,
                                   verbose=False):
-    """
-    It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
+    """ It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
     Parameters:
         function_process (function): function with accepts params as input Parameters:

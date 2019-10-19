@@ -115,10 +115,8 @@ class Vector_paraxial_field_XY(object):
         return EM
 
     def __mul__(self, other):
-        """Multiply two fields.
+        """Multiply two fields. :math:`E_1(x)= E_0(x)*t(x)`
 
-        Example:
-            :math:`E_1(x)= E_0(x)*t(x)`
 
         Parameters:
             other (Vector_paraxial_field_XY): field to multiply
@@ -175,7 +173,6 @@ class Vector_paraxial_field_XY(object):
     def get(self):
         """Takes the vector field and divide in Scalar_field_XY
 
-
         Returns:
             Scalar_field_XY: (Ex, Ey),
         """
@@ -188,8 +185,7 @@ class Vector_paraxial_field_XY(object):
         return Ex, Ey
 
     def apply_mask(self, u):
-        """Multiply field by binary scalar mask
-            for example: self.Ex = self.Ex * u.u
+        """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
         Parameters:
            u (Scalar_mask_XY): mask
@@ -198,15 +194,8 @@ class Vector_paraxial_field_XY(object):
         self.Ey = self.Ey * u.u
 
     def RS(self, z=10 * mm, n=1, new_field=True):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula.
+        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
-
-        `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
-
-        Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
-
-        One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
         Parameters:
             z (float): distance to observation plane.
@@ -220,6 +209,13 @@ class Vector_paraxial_field_XY(object):
         Returns:
             if New_field is True: Scalar_field_X
             else None
+
+
+        Note:
+            One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+
+        References:
+            From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
 
         Todo:
             check amplification
@@ -324,6 +320,7 @@ class Vector_paraxial_field_XY(object):
             return (CA, CB, Ctheta, Ch)
 
     def normalize(self):
+        """Normalizes the field"""
         max_amplitude = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2) + eps
 
         self.Ex = self.Ex / max_amplitude
@@ -335,18 +332,12 @@ class Vector_paraxial_field_XY(object):
                      num_points=[],
                      new_field=False,
                      interp_kind=(3, 1)):
-        """Cuts the field to the range (x0,x1). (y0,y1).
-            if one of this x0,x1 positions is out of the self.x range it do nothing
-            It is also valid for resampling the field, just write x0,x1 as
-               the limits of self.x
+        """Cuts the field to the range (x0,x1). (y0,y1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Parameters:
-            x_limits (float,float): (x0,x1) starting and final points to cut
-              if '' - takes the current limit x[0] and x[-1]
-            y_limits (float,float): (y0,y1) - starting and final points to cut
-              if '' - takes the current limit y[0] and y[-1]
-            num_points (int): it resamples x, y and u
-                [],'',0,None -> it leave the points as it is
+            x_limits (float,float): (x0,x1) starting and final points to cut. if '' - takes the current limit x[0] and x[-1]
+            y_limits (float,float): (y0,y1) - starting and final points to cut. if '' - takes the current limit y[0] and y[-1]
+            num_points (int): it resamples x, y and u. [],'',0,None -> it leave the points as it is
             new_field (bool): it returns a new Scalar_field_XY
             interp_kind (int): numbers between 1 and 5
         """
@@ -516,7 +507,7 @@ class Vector_paraxial_field_XY(object):
                              logarithm=False,
                              normalize=False,
                              cut_value=None):
-        """internal funcion: draws intensity X,Y,Z frames for E and H
+        """internal funcion: draws intensity X,Y.
 
         Parameters:
             logarithm (bool): If True, intensity is scaled in logarithm
@@ -553,7 +544,7 @@ class Vector_paraxial_field_XY(object):
         return h1, h2
 
     def __draw_phases__(self):
-        """internal funcion: draws intensity X,Y,Z frames for E and H
+        """internal funcion: draws phases X,Y
 
         Parameters:
             logarithm (bool): If True, intensity is scaled in logarithm
@@ -652,7 +643,7 @@ class Vector_paraxial_field_XY(object):
         tx, ty = rcParams['figure.figsize']
 
         color_intensity = params_drawing['color_intensity']
-        color_phase = params_drawing['color_phase']
+        color_stokes = params_drawing['color_stokes']
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
 
@@ -664,15 +655,15 @@ class Vector_paraxial_field_XY(object):
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
-        __draw1__(self, S1, color_phase, "$S_1$")
+        __draw1__(self, S1, color_stokes, "$S_1$")
         plt.clim(-intensity_max, intensity_max)
 
         h3 = plt.subplot(2, 2, 3)
-        __draw1__(self, S2, color_phase, "$S_2$")
+        __draw1__(self, S2, color_stokes, "$S_2$")
         plt.clim(-intensity_max, intensity_max)
 
         h4 = plt.subplot(2, 2, 4)
-        __draw1__(self, S3, color_phase, "$S_3$")
+        __draw1__(self, S3, color_stokes, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplots_adjust(
@@ -716,13 +707,12 @@ class Vector_paraxial_field_XY(object):
         return (h1, h2, h3, h4)
 
     def __draw_ellipses__(self,
-                          num_ellipses=(11, 11),
-                          amplification=0.5,
-                          max_size=100,
+                          num_ellipses=(21, 21),
+                          amplification=0.75,
                           color_line='w',
                           line_width=1,
                           draw_arrow=True,
-                          head_width=5,
+                          head_width=2,
                           ax=False):
         """__internal__: draw ellipses
 

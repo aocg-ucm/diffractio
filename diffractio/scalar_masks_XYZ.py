@@ -40,8 +40,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                            Fs,
                            angles,
                            v_globals={}):
-        """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
-        h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
+        """Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
 
 
         Parameters:
@@ -82,8 +81,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
     def sphere(self, r0, radius, refraction_index, angles):
-        """ Insert a sphere in background. If it is something else previous,
-            it is removed.
+        """ Insert a sphere in background. If it is something else previous, it is removed.
 
             Parameters:
                 r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
@@ -147,7 +145,16 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                  refraction_index=2,
                  eje=(1, 1, 1),
                  angle=45 * degrees):
+        """ Insert a cylinder in background. If something previous, is removed.
 
+        Parameters:
+            r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
+            radius (float,float): x,y, size of the circular part of cylinder
+            length (float): length of cylidner
+            refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
+            eje (float float, float): axis direction
+            angle (float): angle of rotation of the semi-plane, in radians
+        """
         # si solamente hay un numero, es que las posiciones y radius
         # son los mismos para ambos
         if isinstance(r0, (float, int, complex)):

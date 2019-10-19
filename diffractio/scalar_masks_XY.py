@@ -53,15 +53,13 @@ class Scalar_mask_XY(Scalar_field_XY):
     """Class for working with XY scalar masks.
 
     Parameters:
-        x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n`
-        x (numpy.array): linear array wit equidistant positions for y values
+        x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n`
+        x (numpy.array): linear array with equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -77,11 +75,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         """makes that the mask has only maplitude
 
         Parameters:
-            q (int): 0 - amplitude as it is and phase is removed
-                     1 - take phase and convert to amplitude
+            q (int): 0 - amplitude as it is and phase is removed. 1 - take phase and convert to amplitude
 
-            positivo (int): 0 - value may be positivo or negative
-                            1 - value is only positive
+            positivo (int): 0 - value may be positivo or negative. 1 - value is only positive
         """
 
         amplitude = np.abs(self.u)
@@ -105,6 +101,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         """Obliga a la mask a ser de phase,
             q=0: toma la phase que hay y hace la amplitude=1
             q=1: la amplitude la pasa a phase"""
+
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
@@ -120,11 +117,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         Parameters:
             percentaje_maximum (float): percentaje from maximum intensity to compute
 
-        Example:
-            area(percentaje=0.001)
-
         Returns:
             float: area (in um**2)
+
+        Example:
+            area(percentaje=0.001)
         """
 
         intensity = np.abs(self.u)**2
@@ -219,14 +216,16 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             radius (float): radius of convolution
+            new_field (bool): returns a new XY field
+            binarize (bool): binarizes result.
         """
 
-        filtro = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        filtro.circle(
+        filter = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        filter.circle(
             r0=(0 * um, 0 * um), radius=(radius, radius), angle=0 * degrees)
 
         image = np.abs(self.u)
-        filtrado = np.abs(filtro.u) / np.abs(filtro.u.sum())
+        filtrado = np.abs(filter.u) / np.abs(filter.u.sum())
 
         covolved_image = fft_convolution2d(image, filtrado)
         average = (covolved_image.max()) / 2
@@ -235,8 +234,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             covolved_image[covolved_image <= average] = 0
 
         if new_field is True:
-            filtro.u = covolved_image
-            return filtro
+            filter.u = covolved_image
+            return filter
         else:
             self.u = covolved_image
 
@@ -288,8 +287,7 @@ class Scalar_mask_XY(Scalar_field_XY):
               lengthImage=False,
               invert=False,
               angle=0):
-        """Converts an image file XY mask.
-        If the image is color, we get the first Red frame
+        """Converts an image file XY mask. If the image is color, we get the first Red frame
 
         Parameters:
             filename (str): filename of the image
@@ -298,9 +296,9 @@ class Scalar_mask_XY(Scalar_field_XY):
             lengthImage (bool, int): If False does nothing, if number resize image
             invert (bool): if True the image is inverted
             angle (float): rotates image a certain angle
+
         Returns
             str: filename
-
     """
 
         # Abre image (no la muestra)
@@ -493,6 +491,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
 
         Example:
+
             m.square(r0=(0 * um, 0 * um), size=(250 * um, 120 * um), angle=0 * degrees)
         """
 
@@ -521,11 +520,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
 
     def one_level(self, level=0):
-        """sets one level for all the image
+        """Sets one level for all the image.
 
         Parameters:
             level (float): value
-
         """
         self.u = level * ones(self.X.shape)
 
@@ -573,6 +571,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
 
         Example:
+
             circle(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
@@ -593,7 +592,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
 
     def super_gauss(self, r0, radius, potencia=2, angle=0 * degrees):
-        """Supergauss intensity distribution
+        """Supergauss mask.
 
         Parameters:
             r0 (float, float): center of circle
@@ -602,6 +601,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
 
         Example:
+
             super_gauss(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees, potencia=2)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
@@ -621,7 +621,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def square_circle(self, r0, R1, R2, s, angle=0 * degrees):
         """ Between circle and square, depending on fill factor s
-        after: M. Fernandez Guasti, M. De la Cruz Heredia "diffraction pattern of a circle/square aperture" J.Mod.Opt. 40(6) 1073-1080 (1993)
 
         s=0 circle, s=1 square
 
@@ -631,6 +630,10 @@ class Scalar_mask_XY(Scalar_field_XY):
             R2 (float): radius of first axis
             s (float): [0-1] shape parameter: s=0 circle, s=1 square
             angle (float): angle of rotation in radians
+
+        Reference:
+            M. Fernandez Guasti, M. De la Cruz Heredia "diffraction pattern of a circle/square aperture" J.Mod.Opt. 40(6) 1073-1080 (1993)
+
         """
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t1.square(r0=r0, size=(2 * R1, 2 * R2), angle=angle)
@@ -699,7 +702,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def prism(self, r0, index, angle_wedge_x, angle_wedge_y,
               angle=0 * degrees):
-        """prism with angles x and y
+        """prism with angles angle_wedge_x, angle_wedge_y
 
         Parameters:
             r0 (float, float): center wedge
@@ -731,8 +734,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
             lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
         """
-        # si solamente un numero, posiciones y radius son los mismos para ambos
-        # Definicion del origen, el radius y la focal
 
         if isinstance(radius, (float, int, complex)):
             radius = (radius, radius)
@@ -855,9 +856,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
             axicon(r0=(0 * um, 0 * um), radius=200 * um, height=5 * um,  n=1.5)
         """
-        # si solamente un numero, posiciones y radius son los mismos para ambos
-        # Origen
-
         # Vector de onda
         k = 2 * pi / self.wavelength
         x0, y0 = r0
@@ -890,8 +888,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
             biprism_fresnel(r0=(0 * um, 0 * um), width=100 * um, height=5 * um, n=1.5)
         """
-        # si solamente un numero, posiciones y radius son los mismos para ambos
-        # Origen
 
         # Vector de onda
         k = 2 * pi / self.wavelength
@@ -957,8 +953,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             binaria (bool): if True binary else, scaled
 
         Example:
-            angular_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um,
-                radius=400 * um, binaria=True)
+            angular_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, binaria=True)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
 
@@ -1187,8 +1182,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                      amp_max=1,
                      x0=0 * um,
                      angle=0 * degrees):
-        """Sinusoidal grating
-            self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
+        """Sinusoidal grating:  self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
         Parameters:
             period (float): period of the grating
@@ -1242,17 +1236,20 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u * t
 
     def ronchi_grating(self, period, fill_factor=0.5, x0=0 * um, angle=0):
-        """Ampliutde binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
-
-           Ronchi grating when fill_factor = 0.5.
-           It is obtained from a sinusoidal, instead as a sum of slits, for speed.
-           The equation to determine the position y0 is: y0=cos(pi*fill_factor)
+        """Amplitude binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
         Parameters:
             period (float): period of the grating
             fill_factor (float): fill_factor
             x0 (float):  phase shift
             angle (float): angle of the grating in radians
+
+        Notes:
+            Ronchi grating when fill_factor = 0.5.
+
+            It is obtained from a sinusoidal, instead as a sum of slits, for speed.
+
+            The equation to determine the position y0 is: y0=cos(pi*fill_factor)
 
         Example:
             ronchi_grating(period=40*um, fill_factor=0.5, x0=0 * um, angle=0)
@@ -1274,8 +1271,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                        x0=0,
                        fill_factor=0.5,
                        angle=0 * degrees):
-        """Binary grating (amplitude and/or phase).
-           The minimum and maximum value of amplitude and phase can be controlled.
+        """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
 
          Parameters:
             period (float): period of the grating
@@ -1295,8 +1291,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amplitud * np.exp(1j * phase * t.u)
 
     def blazed_grating(self, period, height, index, x0, angle=0 * degrees):
-        """Binary grating (amplitude and/or phase).
-           The minimum and maximum value of amplitude and phase can be controlled.
+        """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
 
          Parameters:
             period (float): period of the grating
@@ -1491,14 +1486,13 @@ class Scalar_mask_XY(Scalar_field_XY):
                       radius=(50 * um, 50 * um),
                       angle=0 * degrees,
                       n=(2, 2)):
-        """This module will create a super_ellipse. |(Xrot - x0) / radiusx|^n1 + |(Yrot - y0) / radiusy|=n2
+        """Super_ellipse. |(Xrot - x0) / radiusx|^n1 + |(Yrot - y0) / radiusy|=n2
 
         Parameters:
             r0 (float, float): center of super_ellipse
             radius (float, float): radius of the super_ellipse
             angle (float): angle of rotation in radians
             n (float, float) =  degrees of freedom of the next equation, n = (n1, n2)
-
 
         Note:
             n1 = n2 = 1: for a square
@@ -1571,7 +1565,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Example:
             sinusoidal_slit(y0=(10 * um, -10 * um), amplitude=(10 * um, 20 * um), phase=0 * degrees, angle=0 * degrees, period=(50 * um, 35 * um))
-
         """
 
         if isinstance(amplitude, (int, float)):

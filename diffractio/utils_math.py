@@ -14,8 +14,7 @@ from diffractio import mm
 
 
 def distance(x1, x2):
-    """
-    Compute distance between two vectors.
+    """Compute distance between two vectors.
 
     Parameters:
         x1 (numpy.array): vector 1
@@ -33,14 +32,14 @@ def distance(x1, x2):
 def nearest(vector, number):
     """Computes the nearest element in vector to number.
 
-        Parameters:
-            vector (numpy.array): array with numbers
-            number (float):  number to determine position
+    Parameters:
+        vector (numpy.array): array with numbers
+        number (float):  number to determine position
 
-        Returns:
-            (int): index - index of vector which is closest to number.
-            (float): value  - value of vector[index].
-            (float): distance - difference between number and chosen element.
+    Returns:
+        (int): index - index of vector which is closest to number.
+        (float): value  - value of vector[index].
+        (float): distance - difference between number and chosen element.
     """
     indexes = np.abs(vector - number).argmin()
     values = vector.flat[indexes]
@@ -51,16 +50,16 @@ def nearest(vector, number):
 def nearest2(vector, numbers):
     """Computes the nearest element in vector to numbers.
 
-        Parameters:
-            vector (numpy.array): array with numbers
-            number (numpy.array):  numbers to determine position
+    Parameters:
+        vector (numpy.array): array with numbers
+        number (numpy.array):  numbers to determine position
 
-        Returns:
-            (numpy.array): index - indexes of vector which is closest to number.
-            (numpy.array): value  - values of vector[indexes].
-            (numpy.array): distance - difference between numbers and chosen elements.
-
+    Returns:
+        (numpy.array): index - indexes of vector which is closest to number.
+        (numpy.array): value  - values of vector[indexes].
+        (numpy.array): distance - difference between numbers and chosen elements.
     """
+
     indexes = np.abs(np.subtract.outer(vector, numbers)).argmin(0)
     values = vector[indexes]
     distances = values - numbers
@@ -70,67 +69,67 @@ def nearest2(vector, numbers):
 def ndgrid(*args, **kwargs):
     """n-dimensional gridding like Matlab's NDGRID
 
-        Arguments:
-            The input *args are an arbitrary number of numerical sequences, e.g. lists, arrays, or tuples.
-            The i-th dimension of the i-th output argument
-            has copies of the i-th input argument.
+    Arguments:
+        The input *args are an arbitrary number of numerical sequences, e.g. lists, arrays, or tuples.
+        The i-th dimension of the i-th output argument
+        has copies of the i-th input argument.
 
-        Example:
+    Example:
 
-            >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
+        >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
 
-            >>> X, Y, Z = ndgrid(x, y, z)
-            # unpacking the returned ndarray into X, Y, Z
+        >>> X, Y, Z = ndgrid(x, y, z)
+        # unpacking the returned ndarray into X, Y, Z
 
-            Each of X, Y, Z has shape [len(v) for v in x, y, z].
+        Each of X, Y, Z has shape [len(v) for v in x, y, z].
 
-            >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
-            True
+        >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
+        True
 
-            >>> X
-            array([[[0, 0, 0, 0],
-                            [0, 0, 0, 0],
-                            [0, 0, 0, 0]],
-                       [[1, 1, 1, 1],
-                            [1, 1, 1, 1],
-                            [1, 1, 1, 1]]])
-            >>> Y
-            array([[[2, 2, 2, 2],
-                            [3, 3, 3, 3],
-                            [4, 4, 4, 4]],
-                       [[2, 2, 2, 2],
-                            [3, 3, 3, 3],
-                            [4, 4, 4, 4]]])
-            >>> Z
-            array([[[5, 6, 7, 8],
-                            [5, 6, 7, 8],
-                            [5, 6, 7, 8]],
-                       [[5, 6, 7, 8],
-                            [5, 6, 7, 8],
-                            [5, 6, 7, 8]]])
+        >>> X
+        array([[[0, 0, 0, 0],
+                        [0, 0, 0, 0],
+                        [0, 0, 0, 0]],
+                   [[1, 1, 1, 1],
+                        [1, 1, 1, 1],
+                        [1, 1, 1, 1]]])
+        >>> Y
+        array([[[2, 2, 2, 2],
+                        [3, 3, 3, 3],
+                        [4, 4, 4, 4]],
+                   [[2, 2, 2, 2],
+                        [3, 3, 3, 3],
+                        [4, 4, 4, 4]]])
+        >>> Z
+        array([[[5, 6, 7, 8],
+                        [5, 6, 7, 8],
+                        [5, 6, 7, 8]],
+                   [[5, 6, 7, 8],
+                        [5, 6, 7, 8],
+                        [5, 6, 7, 8]]])
 
-            With an unpacked argument list:
+        With an unpacked argument list:
 
-            >>> V = [[0, 1], [2, 3, 4]]
+        >>> V = [[0, 1], [2, 3, 4]]
 
-            >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
-            array([[[0, 0, 0],
-                            [1, 1, 1]],
-                       [[2, 3, 4],
-                            [2, 3, 4]]])
+        >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
+        array([[[0, 0, 0],
+                        [1, 1, 1]],
+                   [[2, 3, 4],
+                        [2, 3, 4]]])
 
-            For input vectors of different data kinds,
-            same_dtype=False makes ndgrid()
-            return a list of arrays with the respective dtype.
-            >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
-            [array([[0, 0, 0], [1, 1, 1]]),
-             array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
+        For input vectors of different data kinds,
+        same_dtype=False makes ndgrid()
+        return a list of arrays with the respective dtype.
+        >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
+        [array([[0, 0, 0], [1, 1, 1]]),
+         array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
 
-            Default is to return a single array.
+        Default is to return a single array.
 
-            >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
-            array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
-                       [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
+        >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
+        array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
+                   [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
     same_dtype = kwargs.get("same_dtype", True)
     V = [array(v) for v in args]  # ensure all input vectors are arrays
@@ -205,8 +204,7 @@ def get_phase(u):
 
 
 def amplitude2phase(u):
-    """Passes the amplitude of a complex field to phase. Previous phase is removed.
-    :math:`u = A e^{i \phi}  -> e^(i abs(A))`
+    """Passes the amplitude of a complex field to phase. Previous phase is removed. :math:`u = A e^{i \phi}  -> e^(i abs(A))`
 
     Parameters:
         u (numpy.array, dtype=complex): complex field
@@ -280,8 +278,7 @@ def normalize(v, order=2):
 
 
 def binarize(vector, min_value=0, max_value=1):
-    """Binarizes vector between two levels, min and max.
-    The central value is (min_value+max_value)/2
+    """Binarizes vector between two levels, min and max. The central value is (min_value+max_value)/2
 
     Parameters:
         vector: (numpy.array) array with values to binarize
@@ -312,15 +309,13 @@ def discretize(u,
     Parameters:
         kind (str): "amplitude" o "phase"
         num_levels (int): number of levels for the discretization
-        factor (float): from the level, how area is binarized
-            if 1 everything is binarized,
+        factor (float): from the level, how area is binarized. if 1 everything is binarized,
         phase0 (float): *
         new_field (bool): if True returns new field
         matrix (bool): if True it returs a matrix
 
     Returns:
         scalar_fields_XY: if new_field is True returns scalar_fields_XY
-
     """
 
     if kind == 'amplitude':
@@ -339,8 +334,6 @@ def discretize(u,
             arriba = amplitude * 256 <= centro + dist / 2
             Trues = abajo * arriba
             discretized_image[Trues] = centro / 256
-            # heights[i]+posX/(256*2)
-            # falta compute el porcentaje de height
 
         fieldDiscretizado = discretized_image * phase
 
@@ -427,7 +420,8 @@ def dot_product(A, B):
 
 
 def divergence(E, r):
-    """Returns the divergence of a field a given point (x0,y0,z0)
+    """Returns the divergence of a field a given point (x0,y0,z0).
+
     Parameters:
         E (numpy.array): complex field
         r (numpy.array): 3x1 array with position r=(x,y,z).
@@ -484,7 +478,6 @@ def get_edges(x,
         pos_transition (numpy.array): positions x of transitions
         raising (numpy.array): positions of raising
         falling (numpy.array): positions of falling
-
     """
 
     incr_x = x[1] - x[0]
@@ -553,28 +546,6 @@ def cut_function(x, y, length, x_center=''):
     return y
 
 
-# def sampling(u, x0=0, x1=1, num_data=1000):
-#     """
-#     Esta function pone 1 donde hay un dato y 0 en el resto
-#     tambien manda una function identica para los values de x
-#     """
-#
-#     xMuestreo = np.linspace(x0, x1, num_data)  # array con el value de x
-#     xComb = np.zeros(len(xMuestreo))      # array con 1 en posiciones
-#     yComb = np.zeros(len(xMuestreo))      # array con y(i) en posiciones
-#
-# for idato in range(len(self.x)):
-# #             imenor, value, distance = nearest(xMuestreo, self.x[idato])
-# #             xComb[imenor] = 1
-# #             yComb[imenor] = self.y[idato]
-#
-#     imenores, values, distances = nearest2(xMuestreo, self.x)
-#     xComb[imenores] = np.ones(imenores.shape)
-#     yComb[imenores] = self.y
-#
-#     return xMuestreo, xComb, yComb
-
-
 def fft_convolution2d(x, y):
     """ 2D convolution, using FFT
 
@@ -629,7 +600,6 @@ def fft_correlation2d(x, y):
 def rotate_image(x, z, img, angle, pivot_point):
     """similar to rotate image, but not from the center but from the given
 
-    https://stackoverflow.com/questions/25458442/rotate-a-2d-image-around-specified-origin-in-python point
     Parameters:
         img (np.array): image to rotate
         angle (float): angle to rotate
@@ -637,6 +607,10 @@ def rotate_image(x, z, img, angle, pivot_point):
 
     Returns:
         rotated image
+
+    Reference:
+        https://stackoverflow.com/questions/25458442/rotate-a-2d-image-around-specified-origin-in-python point
+
     """
 
     # first get (i,j) pixel of rotation
@@ -691,35 +665,36 @@ def pol2cart(rho, phi):
 def fZernike(X, Y, n, m, radius=5 * mm):
     """Zernike function for aberration computation.
 
-    R. Navarro, J. Arines, R. Rivera "Direct and inverse discrete Zernike transform" Opt. Express 17(26) 24269
-
-    ANSI
-
     Note:
         k>=l
 
         if k is even then l is even.
         if k is  odd then l is  odd.
 
-    The first polinomial is the real part ant the second de imaginary part.
+        The first polinomial is the real part ant the second de imaginary part.
 
 
-    * n     m        aberración
-    * 0     0        piston
-    * 1    -1        vertical tilt
-    * 1     1        horizontal tilt
-    * 2    -2        astigmatismo oblicuo
-    * 2     0        desenfoque miopía si c>0 o desenfoque hipermetropía si c<0
-    * 2     2        astigmatismo anormal si c>0 o astigmatismo normal si c<0
-    * 3    -3        trebol oblicuo
-    * 3    -1        coma vertical, c>0 empinamiento superior, c<0 emp. inferior
-    * 3     1        como horizontal
-    * 3     3        trebol horizontal
-    * 4    -4        trebol de cuatro hojas oblicuo
-    * 4    -2        astigmatismo secundario oblicuo
-    * 4     0        esférica c>0 periferia más miópica que centro, c<0 periferia más hipertrópica que el centro
-    * 4     2        astigmatismo secundario a favor o en contra de la regla
-    * 4     4        trebol de cuatro hojas horizontal
+        * n     m        aberración
+        * 0     0        piston
+        * 1    -1        vertical tilt
+        * 1     1        horizontal tilt
+        * 2    -2        astigmatismo oblicuo
+        * 2     0        desenfoque miopía si c>0 o desenfoque hipermetropía si c<0
+        * 2     2        astigmatismo anormal si c>0 o astigmatismo normal si c<0
+        * 3    -3        trebol oblicuo
+        * 3    -1        coma vertical, c>0 empinamiento superior, c<0 emp. inferior
+        * 3     1        como horizontal
+        * 3     3        trebol horizontal
+        * 4    -4        trebol de cuatro hojas oblicuo
+        * 4    -2        astigmatismo secundario oblicuo
+        * 4     0        esférica c>0 periferia más miópica que centro, c<0 periferia más hipertrópica que el centro
+        * 4     2        astigmatismo secundario a favor o en contra de la regla
+        * 4     4        trebol de cuatro hojas horizontal
+
+    Reference:
+
+        R. Navarro, J. Arines, R. Rivera "Direct and inverse discrete Zernike transform" Opt. Express 17(26) 24269
+
     """
 
     R = np.sqrt(X**2 + Y**2) / (radius)
@@ -751,8 +726,6 @@ def laguerre_polynomial_nk(x, n=4, k=5):
         If no alpha is supplied, alpha is set to zero and this function
         calculates the "normal" Laguerre polynomial.
 
-        References:
-            Szeg: "Orthogonal Polynomials" 1958, formula (5.1.10)
 
         Parameters:
         - n = nonnegative integer as degree level
@@ -771,7 +744,12 @@ def laguerre_polynomial_nk(x, n=4, k=5):
 
         Author: Matthias.Trampisch@rub.de
         Date: 16.08.2007
-        Version 1.2"""
+        Version 1.2
+
+        References:
+            Szeg: "Orthogonal Polynomials" 1958, formula (5.1.10)
+
+        """
 
     f = factorial
     summation = np.zeros_like(x, dtype=float)

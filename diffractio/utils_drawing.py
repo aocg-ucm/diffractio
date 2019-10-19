@@ -24,25 +24,6 @@ def view_image(filename):
         plt.show()
 
 
-def convert_drawings(kind1='jpg',
-                     kind2='png',
-                     densidad=300,
-                     escala=100,
-                     quality=100,
-                     directorio="/home/luismiguel/Escritorio/prueba"):
-
-    listaArchivos = os.listdir(directorio)
-
-    for fichero in listaArchivos:
-        if fichero[-3:] == kind1:
-            print(fichero)
-            texto1 = "convert -density %dx%d -scale %d%%  -quality %d%% " % (
-                densidad, densidad, escala, quality)
-            texto2 = texto1 + fichero + " " + fichero[:-3] + kind2
-            print(texto2)
-            os.system(texto2)
-
-
 def concatenate_drawings(kind1='png',
                          kind2='png',
                          nx=5,
@@ -361,7 +342,6 @@ def reduce_matrix_size(reduce_matrix, x, y, image, verbose=False):
 
     Returns:
         (np.array): reduced image
-
     """
     image_ini = image.shape
     if reduce_matrix in (None, '', []):

@@ -49,15 +49,13 @@ class Scalar_source_XY(Scalar_field_XY):
     """Class for XY scalar sources.
 
     Parameters:
-        x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         y (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -72,9 +70,7 @@ class Scalar_source_XY(Scalar_field_XY):
     # pasamos a definir fuentes
 
     def plane_wave(self, A=1, theta=0 * degrees, phi=0 * degrees, z0=0 * um):
-        """Plane wave.
-
-        self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
+        """Plane wave. self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
 
         Parameters:
             A (float): maximum amplitude
@@ -237,8 +233,7 @@ class Scalar_source_XY(Scalar_field_XY):
             c_mn (list): list of integers with coefficients
 
         Example:
-             hermite_gauss_beam(A=1, r0, w0=100 * um, m=[1, 3, 3, 5, 5, 5],
-                n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
+             hermite_gauss_beam(A=1, r0, w0=100 * um, m=[1, 3, 3, 5, 5, 5], n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
         """
         x0, y0 = r0
         intesity = zeros(self.X.shape, dtype=np.float)
@@ -257,10 +252,6 @@ class Scalar_source_XY(Scalar_field_XY):
 
     def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
         """Zernike beam.
-
-            n=1,2,3,...
-            m=-n:-n+2, ...., n-2, n
-            # n,m,c_nm are lists with coefficients
 
         Parameters:
             A (float): amplitude of the Hermite Gauss beam
@@ -300,13 +291,7 @@ class Scalar_source_XY(Scalar_field_XY):
                     theta=0 * degrees,
                     phi=0 * degrees,
                     z0=0):
-        """Bessel beam produced by an axicon.
-
-        F. Courvoisier, P.-A. Lacourt, M. Jacquot, M. K. Bhuyan, L. Furfaro,
-        and J. M. Dudley  "Surface nanoprocessing with nondiffracting femtosecond Bessel beams"
-        OPTICS LETTERS  Vol. 34, No. 20 3163 (2009)
-
-        Bessel-beams are generated using 2D axicons.
+        """Bessel beam produced by an axicon. Bessel-beams are generated using 2D axicons.
 
         Parameters:
             A (float): amplitude of the Hermite Gauss beam
@@ -316,6 +301,9 @@ class Scalar_source_XY(Scalar_field_XY):
             theta (float): angle in radians
             phi (float): angle in radians
             z0 (float): constant value for phase shift
+
+        References:
+            F. Courvoisier, et al. "Surface nanoprocessing with nondiffracting femtosecond Bessel beams" Optics Letters Vol. 34, No. 20 3163 (2009)
         """
 
         x0, y0 = r0
@@ -440,46 +428,3 @@ class Scalar_source_XY(Scalar_field_XY):
                 self.gauss_beam(
                     r0=r0, w0=w0, z0=z0, A=A, theta=thetai, phi=phii)
                 t = t + self.u
-
-
-"""
-def __funcLaguerre__(X, Y, m = 4, n = 5, w0 = 50 * um):
-    functionAuxiliar
-    function y = LaguerreGen(varargin)
-    LaguerreGen calculates the utilsized Laguerre polynomial L{n, alpha}
-    If no alpha is supplied, alpha=0: "normal" Laguerre polynomial.
-
-    Input:
-    - n = nonnegative integer as degree level
-    - alpha >= -1 real number (input is optional)
-
-    Output: polynomial vector of degree (n+1)
-
-    Possible usage:
-    - polyval(LaguerreGen(n, alpha), x) evaluates L{n, alpha}(x)
-    - roots(LaguerreGen(n, alpha)) calculates roots of L{n, alpha}
-
-    Calculation is done recursively using matrix operations for very fast execution time.
-    The formula is taken from "Orthogonal Polynomials" 1958, formula (5.1.10)
-
-
-    alpha = n
-    n = m
-
-     # Se reserva memoria para más rapidez
-    L = zeros(n)
-    if n == 0:
-        L[0, :] = 1
-    else:  # n>1 so we need to do recursion
-        L[0, :] = np.concatenate(zeros((1, n)), 1)
-        L[1, :] = np.concatenate(zeros((1, n - 1)), -1, (alpha + 1))
-        for i in range(2, n + 1):
-            A1 = 1 / (i - 1) * (np.convolve([zeros(1, n - 1), -1, (2 * (i - 1) + alpha - 1)], L[i - 1, :]))
-            A2 = 1 / (i - 1) * (np.convolve([zeros(1, n), ((i - 1) + alpha - 1)], L[i - 2, :]))
-            B1 = A1[len(A1) - n:1:len(A1)]
-            B2 = A2[len(A2) - n:1:len(A2)]
-            L[i, :] = B1 - B2    # i-th row corresponds to L{i-1, alpha}
-
-    # La última fila es el polinomio de Laguerre L{n, alpha}
-    return L[n + 1, :]
-"""

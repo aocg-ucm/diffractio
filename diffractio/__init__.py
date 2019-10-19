@@ -62,6 +62,7 @@ params_drawing['color_intensity'] = cm.hot  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.magma
 params_drawing['color_phase'] = cm.hsv  # cm.hsv
 params_drawing['color_real'] = cm.seismic
+params_drawing['color_stokes'] = cm.seismic
 params_drawing['percentaje_intensity'] = 0.05
 
 print("number of processors: {}".format(num_max_processors))

@@ -61,9 +61,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
                       radius=(0, 0)):
         """Provides a constant polarization to a scalar_source_xy
 
-        u (Scalar_source_XY): field to apply a constant polarization.
-        v (float, float): polarization vector
-        normalize (bool): If True, normalize polarization vector
+        Parameters:
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
+            v (float, float): polarization vector
+            normalize (bool): If True, normalize polarization vector
         """
 
         self = define_initial_field(self, u)
@@ -80,9 +81,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
     def radial_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
         """Provides a constant polarization to a scalar_source_xy
 
-        u (Scalar_source_XY): field to apply a constant polarization.
-        r0(float, float): center of rotation
-        ce (bool): If True, normalize polarization vector
+        Parameters:
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
+            r0(float, float): center of rotation
+            radius (float, float): Radius of a circular mask
         """
 
         self = define_initial_field(self, u)
@@ -100,8 +102,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
     def transversal_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
         """Provides a constant polarization to a scalar_source_xy
 
-        u (Scalar_source_XY): field to apply a constant polarization.
-        r0(float, float): center of rotation
+        Parameters:
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
+            r0(float, float): center of rotation
+            radius (float, float): Radius of a circular mask
         """
 
         self = define_initial_field(self, u)
@@ -119,9 +123,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
     def radial_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
         """Provides a constant polarization to a scalar_source_xy
 
-        u (Scalar_source_XY): field to apply a constant polarization.
-        r0(float, float): center of rotation
-        ce (bool): If True, normalize polarization vector
+        Parameters:
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
+            r0(float, float): center of rotation
+            radius (float, float): Radius of a circular mask
         """
 
         self = define_initial_field(self, u)
@@ -139,9 +144,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
     def transversal_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
         """Provides a constant polarization to a scalar_source_xy
 
-        u (Scalar_source_XY): field to apply a constant polarization.
-        r0(float, float): center of rotation
-        ce (bool): If True, normalize polarization vector
+        Parameters:
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
+            r0(float, float): center of rotation
+            radius (float, float): Radius of a circular mask
         """
 
         self = define_initial_field(self, u)
@@ -164,15 +170,16 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
                                     radius=(0, 0)):
         """"local radial polarized vector wave.
 
-        References:
-            Qwien Zhan 'Vectorial Optical Fields' page 33
 
         Parameters:
-            A (float): maximum amplitude
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): r0 of beam
             m (integer): integer with order
             fi0 (float): initial phase
-            has_mask
+            radius (float, float): Radius of a circular mask
+
+        References:
+            Qwien Zhan 'Vectorial Optical Fields' page 33
         """
 
         self = define_initial_field(self, u)
@@ -196,14 +203,16 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
                                            radius=(0, 0)):
         """local radial polarized vector wave.
 
-        References:
-            Qwien Zhan 'Vectorial Optial Fields' page 36
 
         Parameters:
-            A (float): maximum amplitude
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
             fi0 (float): initial phase
+            radius (float, float): Radius of a circular mask
+
+        References:
+            Qwien Zhan 'Vectorial Optial Fields' page 36
         """
 
         self = define_initial_field(self, u)
@@ -231,11 +240,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             Qwien Zhan 'Vectorial Optial Fields' page 36
 
         Parameters:
-            A (float): maximum amplitude
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
             n (integer): integer with order
             fi0 (float): initial phase
+            radius (float, float): Radius of a circular mask
         """
 
         self = define_initial_field(self, u)
@@ -261,7 +271,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         """Define spiral polarized beams:
 
         Parameters:
-            A (float): maximum amplitude
+            u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of radiality
             radius (float): mask for circle if radius >0.
             alpha (float): angle of spiral.
@@ -325,40 +335,3 @@ def define_initial_field(EM, u):
         EM.Ey = u.u
 
     return EM
-
-    # def Vector_paraxial_dipole(self,
-    #                            A=1,
-    #                            r0=(0, 0, 0),
-    #                            phase=0 * degrees,
-    #                            p0=[0, 0, 1],
-    #                            z=1 * mm):
-    #     """Dipole, according to electric dipole approximation.
-    #
-    #     Parameters:
-    #         A (float): maximum amplitude
-    #         r0 (float, float, float): position of dipole
-    #         phase (float): initial phase of dipole
-    #         p0 (float): vector polarization
-    #         z (float): z distance from the dipole to the plane
-    #     """
-    #
-    #     p0 = normalize(p0)
-    #     x0, y0, z0 = r0
-    #
-    #     Z = z * np.ones_like(self.X)
-    #     S = [self.X, self.Y, Z]
-    #     w = 2 * np.pi * speed_of_light / self.wavelength
-    #
-    #     # distance al dipolo
-    #     R = np.sqrt((self.X - x0)**2 + (self.Y - y0)**2 + (Z - z0)**2)
-    #
-    #     Px = p0[0] * np.ones_like(self.X)
-    #     Py = p0[1] * np.ones_like(self.X)
-    #     Pz = p0[2] * np.ones_like(self.X)
-    #     P = [Px, Py, Pz]
-    #
-    #     E = A * (mu_0 * (4 * np.pi * R)) * (-w**2) * vector_product(
-    #         vector_product(P, S), S) * np.exp(1j * phase)
-    #
-    #     self.Ex = E[0]
-    #     self.Ey = E[1]
