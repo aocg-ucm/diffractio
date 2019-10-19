@@ -24,7 +24,7 @@ The main atributes are:
     * half_wave
     * polarizer_retarder
 """
-from diffractio import degrees, np
+from diffractio import degrees, eps, np
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from py_pol.jones_matrix import Jones_matrix

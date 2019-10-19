@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
     * local_polarized_vector_wave_hybrid
 """
 
-from diffractio import degrees, np, um
+from diffractio import degrees, eps, np, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_optics import normalize
