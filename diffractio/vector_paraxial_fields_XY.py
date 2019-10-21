@@ -734,11 +734,11 @@ class Vector_paraxial_field_XY(object):
         iy_centers = num_y / (num_ellipses[1])
 
         ix_centers = (np.round(
-            ix_centers / 2 +
-            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
+            ix_centers / 2 + ix_centers * np.array(range(0, num_ellipses[0])))
+                      ).astype('int')
         iy_centers = (np.round(
-            iy_centers / 2 +
-            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
+            iy_centers / 2 + iy_centers * np.array(range(0, num_ellipses[1])))
+                      ).astype('int')
 
         Ix_centers, Iy_centers = np.meshgrid(
             ix_centers.astype('int'), iy_centers.astype('int'))
@@ -771,8 +771,8 @@ class Vector_paraxial_field_XY(object):
 
                     Ex = Ex / max_r * size_dim * amplification / 2 + (
                         +self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
-                        int(yj)]
+                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[int(
+                        yj)]
 
                     ax.plot(Ex, Ey, color_line, lw=line_width)
                     ax.arrow(

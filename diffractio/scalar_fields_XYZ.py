@@ -52,7 +52,7 @@ from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, params_drawing, plt
+from diffractio import degrees, mm, np, num_max_processors, params_drawing, plt
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
@@ -474,7 +474,7 @@ class Scalar_field_XYZ(object):
             verbose=False)
         return self.u[:, :, i]
 
-    def RS(self, verbose=False, num_processors=4):
+    def RS(self, verbose=False, num_processors=num_max_processors - 2):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
