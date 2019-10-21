@@ -21,8 +21,7 @@ import scipy as sp
 
 
 def several_propagations(iluminacion, masks, distances):
-    '''
-    performs RS propagation through several masks
+    '''performs RS propagation through several masks
 
     Parameters:
         iluminacion (Scalar_source_XY): illumination
@@ -144,7 +143,7 @@ def print_axis_info(cls, axis):
 
 
 def date_in_name(filename):
-    """introduces a date in the filename""
+    """introduces a date in the filename.
 
     Parameters:
         filename (str): filename

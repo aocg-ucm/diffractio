@@ -175,3 +175,55 @@ XYZ fields
   :width: 600
 .. figure:: xyz_cut.png
   :width: 600
+
+
+XY Vector paraxial fields
+==================================
+
+.. code-block:: python
+
+  from diffractio import degrees, mm, nm, np, plt, sp, um
+
+  from diffractio.scalar_sources_XY import Scalar_source_XY
+  from diffractio.scalar_masks_XY import Scalar_mask_XY
+  from diffractio.scalar_fields_XY import Scalar_field_XY
+
+  from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
+  from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+  from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
+
+  x0 = np.linspace(-125 * um, 125 * um, 512)
+  y0 = np.linspace(-125 * um, 125 * um, 512)
+
+  wavelength = 0.6328 * um
+
+  u0 = Scalar_source_XY(x0, y0, wavelength)
+  u0.gauss_beam(
+      r0=(0, 0),
+      w0=(100 * um, 100 * um),
+      z0=0 * um,
+      A=1,
+      theta=0. * degrees,
+      phi=0 * degrees)
+
+  EM0 = Vector_paraxial_source_XY(x0, y0, wavelength)
+  EM0.radial_wave(u=u0, r0=(0, 0), radius=(200, 200))
+
+  t0 = Scalar_mask_XY(x0, y0, wavelength)
+  t0.two_levels(level1=0, level2=1, xcorte=0, angle=0)
+
+  M0 = Vector_paraxial_mask_XY(x=x0, y=y0, wavelength=wavelength)
+  M0.complementary_masks(t0, v1=(1, 1j), v2=(1, -1j))
+
+  EM1 = EM0 * M0
+
+  EM2 = EM1.RS(z=10 * mm)
+
+  EM2.draw(kind='ellipses', filename='vector_ellipses.png')
+
+  EM2.draw(kind='stokes', filename='vector_stokes.png');
+
+.. figure:: vector_ellipses.png
+    :width: 600
+.. figure:: vector_stokes.png
+    :width: 600

@@ -18,7 +18,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "scalar_fields_XZ"
@@ -855,20 +855,31 @@ class Test_Scalar_fields_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        wavelengths = np.linspace(0.4, 0.8, 11)
-        spectrum = ''
-        initial_field = _func_polychromatic_BPM_(wavelengths[0])
-        z0 = initial_field.z
+        wavelengths = np.linspace(0.4, 0.8, 5)
+        w_central = 0.6
+        Dw = 0.15 * um
+        spectrum = np.exp(-(wavelengths - w_central)**2 / (2 * Dw**2))
+        initial_field = _func_polychromatic_RS_(wavelengths[0])
         x0 = initial_field.x
+
+        z0 = np.linspace(250 * um, 1000 * um, 512)
+
+        u1 = Scalar_mask_XZ(x0, z0, wavelengths[0], n_background=1)
+        initial_field = _func_polychromatic_RS_(wavelengths[0])
+        u1.incident_field(initial_field)
+        u1.RS()
+        u1.draw(logarithm=True, normalize='intensity')
 
         u1 = Scalar_mask_XZ(x0, z0, wavelengths[0], n_background=1)
         u_poly = u1.RS_polychromatic(
-            _func_polychromatic_BPM_,
+            _func_polychromatic_RS_,
             wavelengths,
-            spectrum,
-            verbose=True,
+            spectrum=spectrum,
+            verbose=False,
             num_processors=num_max_processors)
+
         u_poly.draw(logarithm=True, normalize='intensity', draw_borders=True)
+
         save_figure_test(newpath, func_name, add_name='_int')
 
         u_poly.save_data(

@@ -24,25 +24,6 @@ def view_image(filename):
         plt.show()
 
 
-def convert_drawings(kind1='jpg',
-                     kind2='png',
-                     densidad=300,
-                     escala=100,
-                     quality=100,
-                     directorio="/home/luismiguel/Escritorio/prueba"):
-
-    listaArchivos = os.listdir(directorio)
-
-    for fichero in listaArchivos:
-        if fichero[-3:] == kind1:
-            print(fichero)
-            texto1 = "convert -density %dx%d -scale %d%%  -quality %d%% " % (
-                densidad, densidad, escala, quality)
-            texto2 = texto1 + fichero + " " + fichero[:-3] + kind2
-            print(texto2)
-            os.system(texto2)
-
-
 def concatenate_drawings(kind1='png',
                          kind2='png',
                          nx=5,
@@ -218,30 +199,40 @@ def draw_several_fields(fields,
 
 def change_image_size(image_name,
                       length='800x600',
-                      nombre_final='prueba.png',
+                      final_filename='prueba.png',
                       dpi=300):
     """change the size with imageMagick
-    convert image_name -resize '1000' -units 300 nombre_final.png
-        - anchura 1000 - mantiene forma
-    convert image_name -resize 'x200' nombre_final.png
-        - height  200  - mantiene forma
-    convert image_name -resize '100x200>' nombre_final.png
-        - mantiene forma, lo que sea mayor
-    convert image_name -resize '100x200<' nombre_final.png
-        - mantiene forma, lo que sea menor
-    convert image_name -resize '@1000000' nombre_final.png
-        - mantiene la forma, con 1Mpixel
-    convert image_name -resize '100x200!' nombre_final.png
-        - obliga a tener el tamaño, no mantiene escala
-    """
-    texto = "convert {} -resize {} {}".format(image_name, length, nombre_final)
+
+        Parameters:
+            image_name (str): name of file
+            length (str): size of image
+            final_filename (str): final filename
+            dpi (int): dpi
+
+        Examples:
+
+        convert image_name -resize '1000' -units 300 final_filename.png
+            - anchura 1000 - mantiene forma
+        convert image_name -resize 'x200' final_filename.png
+            - height  200  - mantiene forma
+        convert image_name -resize '100x200>' final_filename.png
+            - mantiene forma, lo que sea mayor
+        convert image_name -resize '100x200<' final_filename.png
+            - mantiene forma, lo que sea menor
+        convert image_name -resize '@1000000' final_filename.png
+            - mantiene la forma, con 1Mpixel
+        convert image_name -resize '100x200!' final_filename.png
+            - obliga a tener el tamaño, no mantiene escala
+        """
+    texto = "convert {} -resize {} {}".format(image_name, length,
+                                              final_filename)
     print(texto)
     os.system(texto)
 
 
 def extract_image_from_video(nombre_video=None,
                              num_frame="[0, ]",
-                             nombre_final='prueba.png'):
+                             final_filename='prueba.png'):
     """Extract images form a video using imageMagick
     convert 'animacion.avi[15,]' animacion_frame.png
         - saca el frame 15 (solo el 15)
@@ -251,7 +242,7 @@ def extract_image_from_video(nombre_video=None,
         - saca el frame 5 y el 10
     """
 
-    texto = "convert '%s%s' %s" % (nombre_video, num_frame, nombre_final)
+    texto = "convert '%s%s' %s" % (nombre_video, num_frame, final_filename)
     print(texto)
     os.system(texto)
 
@@ -351,7 +342,6 @@ def reduce_matrix_size(reduce_matrix, x, y, image, verbose=False):
 
     Returns:
         (np.array): reduced image
-
     """
     image_ini = image.shape
     if reduce_matrix in (None, '', []):

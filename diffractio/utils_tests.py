@@ -153,8 +153,7 @@ def save_data_test(cls, newpath, func_name, add_name=''):
 
 
 def compare_npz_folders(folder1, folder2):
-    """
-    look for identical files, open and verifies that all the dicts are equal
+    """look for identical files, open and verifies that all the dicts are equal
     """
     pass
 

@@ -5,16 +5,19 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, np, plt, sp, um
+from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
 from diffractio.utils_tests import save_figure_test
 from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
 from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
 path_class = "Vector_paraxial_draw_XY"
-now = datetime.datetime.now()
-date = now.strftime("%Y-%m-%d_%H_%M_%S")
-date = '0'
+
+if no_date is True:
+    date = '0'
+else:
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d_%H")
 
 newpath = "{}_{}/{}/".format(path_base, date, path_class)
 
@@ -32,7 +35,7 @@ x0 = np.linspace(-length / 2, length / 2, num_data)
 y0 = np.linspace(-length / 2, length / 2, num_data)
 
 EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-EM.radial_wave(A=1, x_center=(0 * um, 0 * um), radius=length / 5)
+EM.radial_wave(u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
 EM.RS(z=30 * mm, new_field=False)
 
 Ex, Ey = EM.get()

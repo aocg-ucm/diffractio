@@ -9,8 +9,7 @@ For the case of Rayleigh sommefeld it is not necessary to compute all z position
 
 Nevertheless, for BPM method, intermediate computations are required. In this class, intermediate results are stored.
 
-X,Y fields are defined using ndgrid (not with meshgrid, it is different)
-
+X,Y fields are defined using ndgrid (not with meshgrid, it is different).
 It is required also for generating masks and fields.
 The main atributes are:
     * self.x - x positions of the field
@@ -140,7 +139,7 @@ class Scalar_field_XY(object):
         return ""
 
     def __add__(self, other):
-        """adds two Scalar_field_x. For example two light sources or two masks
+        """Adds two Scalar_field_x. For example two light sources or two masks
 
         Parameters:
             other (Scalar_field_X): 2 field to add
@@ -160,7 +159,6 @@ class Scalar_field_XY(object):
 
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
-
 
         Todo:
             It can be improved for maks (not having less than 1)
@@ -182,14 +180,7 @@ class Scalar_field_XY(object):
         """
         new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         new_field.u = self.u * other.u
-        # new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
-        # t1 = np.abs(self.u)
-        # t2 = np.abs(other.u)
-        # f1 = angle(self.u)
-        # f2 = angle(other.u)
-        # t3 = t1 + t2
-        # # t3[t3 > 0] = 1.
-        # new_field.u = t3 * exp(1j * (f1 + f2))
+
         return new_field
 
     def __rotate__(self, angle, position=None):
@@ -206,7 +197,6 @@ class Scalar_field_XY(object):
         else:
             x0, y0 = position
 
-        # Definicion de la rotation
         Xrot = (self.X - x0) * cos(angle) + (self.Y - y0) * sin(angle)
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
@@ -216,9 +206,7 @@ class Scalar_field_XY(object):
 
         Parameters:
             other (Scalar_field_X): 2 field to add
-            kind (str): instruction how to add the fields:
-                - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
-                - 'standard': add fields u3=u1+u2 and does nothing.
+            kind (str): instruction how to add the fields: - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1. - 'standard': add fields u3=u1+u2 and does nothing.
 
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
@@ -262,7 +250,7 @@ class Scalar_field_XY(object):
         self.u = u_rotate
 
     def clear_field(self):
-        """simple - removes the field: self.u=0.
+        """Removes the field: self.u=0.
         """
         self.u = np.zeros_like(self.u, dtype=complex)
 
@@ -306,18 +294,12 @@ class Scalar_field_XY(object):
                      num_points=[],
                      new_field=False,
                      interp_kind=(3, 1)):
-        """it cut the field to the range (x0,x1).
-        if one of this x0,x1 positions is out of the self.x range it do nothing
-        It is also valid for resampling the field, just write x0,x1 as
-           the limits of self.x
+        """it cut the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Parameters:
-            x_limits (float,float): (x0,x1) starting and final points to cut
-              if '' - takes the current limit x[0] and x[-1]
-            y_limits (float,float): (y0,y1) - starting and final points to cut
-              if '' - takes the current limit y[0] and y[-1]
-            num_points (int): it resamples x, y and u
-                [],'',0,None -> it leave the points as it is
+            x_limits (float,float): (x0,x1) starting and final points to cut. if '' - takes the current limit x[0] and x[-1]
+            y_limits (float,float): (y0,y1) - starting and final points to cut. if '' - takes the current limit y[0] and y[-1]
+            num_points (int): it resamples x, y and u. [],'',,None -> it leave the points as it is
             new_field (bool): it returns a new Scalar_field_XY
             interp_kind: numbers between 1 and 5
         """
@@ -389,11 +371,9 @@ class Scalar_field_XY(object):
 
     def incident_field(self, u0):
         """Incident field for the experiment. It takes a Scalar_source_X field.
-        TODO: test
 
         Parameters:
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
-
         """
         self.u = u0.u
 
@@ -406,12 +386,10 @@ class Scalar_field_XY(object):
         """Fast Fourier Transform (FFT) of the field.
 
         Parameters:
-            TODO: No tengo claro lo del z. En otros sitios * self.wavelength en kx, ky
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned
-                       if False, returns Scalar_field_X
+            matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X
             new_field (bool): if True returns Scalar_field_X, else it puts in self
 
         Returns:
@@ -456,13 +434,13 @@ class Scalar_field_XY(object):
             self.X, self.Y = ndgrid(self.x, self.y)
 
     def ifft(self, z=10 * mm, shift=True, remove0=True, matrix=False):
-        """Fast Fourier Transform (fft) of the field
+        """Fast Fourier Transform (fft) of the field.
+
         Parameters:
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned
-                       if False, returns Scalar_field_X
+            matrix (bool):  if True only matrix is returned. If False, returns Scalar_field_X
             new_field (bool): if True returns Scalar_field_X, else puts in self
 
         Returns:
@@ -517,17 +495,7 @@ class Scalar_field_XY(object):
              xout=None,
              yout=None,
              verbose=False):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula.
-
-        `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
-
-        Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
-
-        One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
-
-        References:
-             Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
-
+        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         Parameters:
             z (float): distance to observation plane.
@@ -544,6 +512,12 @@ class Scalar_field_XY(object):
             if New_field is True: Scalar_field_X
             else None
 
+        Note:
+            One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+
+
+        References:
+             Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
         """
 
         if xout is None:
@@ -638,27 +612,26 @@ class Scalar_field_XY(object):
            matrix=False,
            kind='z',
            verbose=False):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula.
+        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
-
-        One advantage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
-
-        References:
-            Applied Optics vol 45 num 6 pp. 1102-1110 (2006).
 
         Parameters:
             amplification (int, int): number of frames in x and y direction
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
+            z (float): distance to observation plane. if z<0 inverse propagation is executed
             n (float): refraction index
-            new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
+            new_field (bool): if False the computation goes to self.u, if True a new instance is produced
             kind (str):
             verbose (bool): if True it writes to shell
 
         Returns:
             if New_field is True: Scalar_field_X, else None.
+
+
+        Note:
+            One advantage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+
+        References:
+            Applied Optics vol 45 num 6 pp. 1102-1110 (2006).
         """
 
         ancho_x = self.x[-1] - self.x[0]
@@ -717,12 +690,7 @@ class Scalar_field_XY(object):
             point1 (float): initial point. if '' get from click
             point2 (float): final point. if '' get from click
             npixels (int): number of pixels for interpolation
-            kind (str): type of drawing:
-                'amplitude', 'intensity', 'phase'
-                amplitude:   np.abs(self.u)
-                intensity = np.abs(self.u)**2
-                phase = angle(self.u)
-
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase'
             order (int): order for interpolation
 
         Returns:
@@ -740,8 +708,6 @@ class Scalar_field_XY(object):
         x1, y1 = point1
         x2, y2 = point2
 
-        # extraer los data de la image
-        # en pixeles, no en posicion real
         ix1, value, distance = nearest(self.x, x1)
         ix2, value, distance = nearest(self.x, x2)
         iy1, value, distance = nearest(self.y, y1)
@@ -779,12 +745,7 @@ class Scalar_field_XY(object):
             point1 (float): initial point. if '' get from click
             point2 (float): final point. if '' get from click
             npixels (int): number of pixels for interpolation
-            kind (str): type of drawing:
-                'amplitude', 'intensity', 'phase'
-                amplitude:   np.abs(self.u)
-                intensity = np.abs(self.u)**2
-                phase = angle(self.u)
-
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase'
             order (int): order for interpolation
 
         Returns:
@@ -810,12 +771,10 @@ class Scalar_field_XY(object):
                   verbose=False,
                   filename=''):
         """
-        Determine locations of edges for a binary mask.
-        valid for litography engraving of gratings.
+        Determine locations of edges for a binary mask. Valid for litography engraving of gratings.
 
         Parameters:
-            kind_transition:'amplitude' 'phase'
-                if we see the amplitude or phase of the field
+            kind_transition:'amplitude' 'phase'.
             min_step: minimum step for consider a transition
 
         Returns:
@@ -830,7 +789,7 @@ class Scalar_field_XY(object):
         return pos_transitions, type_transitions, raising, falling
 
     def search_focus(self, verbose=True):
-        """Search for location of maximum
+        """Search for location of .
 
         Parameters:
             verbose (bool): If True prints information.
@@ -931,8 +890,7 @@ class Scalar_field_XY(object):
         return average_intensity
 
     def send_image_screen(self, id_screen, kind='amplitude'):
-        """
-        takes the images and sends the images to a screen in full size.
+        """Takes the images and sends the images to a screen in full size.
 
         Parameters:
             id_screen (hdl): handle to screen
@@ -1129,8 +1087,7 @@ class Scalar_field_XY(object):
         Parameters:
             kind (str): "amplitude" o "phase"
             num_levels (int): number of levels for the discretization
-            factor (float): from the level, how area is binarized
-                if 1 everything is binarized,
+            factor (float): from the level, how area is binarized. if 1 everything is binarized,
             phaseInicial (float): *
             new_field (bool): if True returns new field
             matrix (bool): if True it returs a matrix
@@ -1158,8 +1115,6 @@ class Scalar_field_XY(object):
                 arriba = amplitude * 256 <= centro + dist / 2
                 Trues = abajo * arriba
                 discretized_image[Trues] = centro / 256
-                # heights[i]+posX/(256*2)
-                # falta compute el porcentaje de height
 
             fieldDiscretizado = discretized_image * phase
 
@@ -1185,11 +1140,9 @@ class Scalar_field_XY(object):
             Trues = (ang) > (centro + dist / 2)
             discretized_image[Trues] = exp(1j * (heights[0]))  # - pi
 
-            # esto no haría falta, pero es para tener tantos levels
-            # como decimos, no n+1 (-pi,pi)
             phase = angle(discretized_image) / pi
             phase[phase == 1] = -1
-            phase = phase - phase.min()  # esto lo he puesto a última hora
+            phase = phase - phase.min()
             discretized_image = exp(1j * pi * phase)
 
             fieldDiscretizado = amplitude * discretized_image
@@ -1213,7 +1166,7 @@ class Scalar_field_XY(object):
             kind (str): 'intensity' 'area'
 
         Todo:
-            pass to utils
+            pass to utils # esto lo he puesto a última hora
         """
 
         if kind == 'intensity':
@@ -1238,13 +1191,7 @@ class Scalar_field_XY(object):
         """Draws  XY field.
 
         Parameters:
-            kind (str): type of drawing:
-                'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
-
-                amplitude:   np.abs(self.u)
-                intensity = np.abs(self.u)**2
-                phase = angle(u)
-
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
             title (str): title for the drawing
@@ -1258,8 +1205,6 @@ class Scalar_field_XY(object):
             pass
         else:
             self.reduce_matrix = reduce_matrix
-
-        # kinds = ('intensity', 'amplitude', 'phase', 'field', 'real_field')
 
         if kind == 'intensity':
             id_fig, IDax, IDimage = self.__draw_intensity__(
@@ -1469,10 +1414,6 @@ class Scalar_field_XY(object):
             cut_value (float): if provided, maximum value to show
         """
 
-        #real_field = np.real(self.u)
-        #real_field = normalize_draw(real_field, logarithm, normalize,
-        #                            cut_value)
-
         rf = np.real(self.u)
         intensity = np.abs(self.u)**2
         rf[intensity < percentaje_intensity * (intensity.max())] = 0
@@ -1501,6 +1442,11 @@ class Scalar_field_XY(object):
               frames_reduction=5,
               filename='video.avi',
               dpi=300):
+        """Makes a video
+
+        Parameters:
+            kind (str): 'intensity', 'phase', 'amplitude'
+        """
 
         fig = plt.figure()
         ax = fig.add_subplot(111, autoscale_on=False)

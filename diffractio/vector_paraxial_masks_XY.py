@@ -24,7 +24,7 @@ The main atributes are:
     * half_wave
     * polarizer_retarder
 """
-from diffractio import degrees, np
+from diffractio import degrees, eps, np
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from py_pol.jones_matrix import Jones_matrix
@@ -50,11 +50,9 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         Parameters:
             masks (scalar_mask_XY): mask to apply.
-            v (2x1 numpy.array): complex array with polarizations for each field.
-                When v=(1,1) the field is not affected
+            v (2x1 numpy.array): complex array with polarizations for each field. When v=(1,1) the field is not affected
         """
 
-        # cargo el field en las components
         self.Ex = v[0] * mask.u
         self.Ey = v[1] * mask.u
 
@@ -65,8 +63,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             u (Scalar_mask_xy): If u=None, it draws a circle with the rest for parameters.
             r0 (float, float): center of circle
             radius (float, float): radius of circle
-
-
         """
 
         if mask not in (None, '', [], 0):
@@ -136,7 +132,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         Parameters:
             angle (float): linear polarizer angle
-
         """
         PL = Jones_matrix('m0')
         PL.diattenuator_perfect(angle=angle)
@@ -147,7 +142,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         Parameters:
             angle (float): polarizer angle
-
         """
         PL = Jones_matrix('m0')
         PL.quarter_waveplate(angle=angle)
@@ -158,7 +152,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         Parameters:
             angle (float): polarizer angle
-
         """
         PL = Jones_matrix('m0')
         PL.half_waveplate(angle=angle)

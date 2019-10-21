@@ -11,8 +11,10 @@ import numpy as np
 
 
 def _pickle_method(method):
-    """
-    function for multiprocessing in class
+    """function for multiprocessing in class
+
+    References:
+        method (class): Method
     """
     func_name = method.im_func.__name__
     obj = method.im_self
@@ -43,9 +45,7 @@ copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 # Funcion inversa a la anterior
 def separate_from_iterable(iterable, shape=0):
-    """This function does somehow the opposite of the previous one, it takes an
-    iterable made of lists and separates each one in a different variable,
-    reshaped with the desired shape
+    """This function does somehow the opposite of the previous one, it takes an iterable made of lists and separates each one in a different variable, reshaped with the desired shape
     """
     # Averiguar el numero de variables diferentes que habra
     N_var = len(iterable[0])
@@ -78,16 +78,16 @@ class auxiliar_multiprocessing(object):
         # Start multiprocessing if more than one core is required
         if Ncores > 1:
             pool = Pool(Ncores)
-            print('Iniciando multiprocessing')
+            print('Starting multiprocessing')
             result = pool.map(self.method_single_proc, var_iterable)
-            print('Multiprocessing finalizado')
+            print('Multiprocessing finished')
             pool.close()
             pool.join()
         # When only one core is asked, don't go to multiprocessing
         else:
             N = len(var_iterable)
             result = range(N)
-            print('Iniciando el procesado con un solo nucleo')
+            print('Starting process in only 1 core')
             for ind, elem in enumerate(var_iterable):
                 result[ind] = function(elem, dict_constants)
 
@@ -105,8 +105,8 @@ def execute_multiprocessing(__function_process__,
                             dict_Parameters,
                             num_processors,
                             verbose=False):
-    """
-    executes multiprocessing reading a dictionary
+    """Executes multiprocessing reading a dictionary.
+    
     Parameters:
         __function_process__ function tu process, it only accepts a dictionary
         dict_Parameters, dictionary / array with Parameters:

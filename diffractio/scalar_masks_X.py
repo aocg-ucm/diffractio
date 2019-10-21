@@ -91,10 +91,7 @@ class Scalar_mask_X(Scalar_field_X):
                            mask=True,
                            x0=0 * um,
                            radius=100 * um):
-        """Phase mask defined between two surfaces $f_1$ and $f_2$: $h(x,y)=f_2(x,y)-f_1(x,y)$
-
-        :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
-
+        """Phase mask defined between two surfaces :math:`f_1` and :math:`f_2`: :math:`h(x,y)=f_2(x,y)-f_1(x,y)`, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
         Parameters:
             index (float): refraction index of the mask
@@ -130,9 +127,7 @@ class Scalar_mask_X(Scalar_field_X):
                         mask=True,
                         radius=100 * um,
                         x0=0 * um):
-        """Phase mask defined between two surfaces defined by arrays: array1 and array2
-
-        :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
+        """Phase mask defined between two surfaces defined by arrays: array1 and array2, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
 
         Parameters:
             index (float): refraction index of the mask
@@ -247,7 +242,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = t
 
     def prism(self, x0, n, anglex):
-        """prism.
+        """Prism.
 
         Parameters:
             x0 (float): vertex of prism
@@ -312,7 +307,6 @@ class Scalar_mask_X(Scalar_field_X):
             width (float): size of biprism
             height (float): height of biprism
             n (float): refraction_index
-
         """
 
         k = 2 * np.pi / self.wavelength
@@ -338,7 +332,7 @@ class Scalar_mask_X(Scalar_field_X):
         return h
 
     def lens(self, x0=0 * um, radius=100 * um, focal=5 * mm, mask=True):
-        """Transparent lens
+        """Transparent lens.
 
         Parameters:
             x0 (float): center of lens
@@ -369,8 +363,7 @@ class Scalar_mask_X(Scalar_field_X):
         return t * h
 
     def aspheric(self, c, k, a, n0=1, n1=1.5, x0=0 * um, radius=None):
-        """asferic surface
-        according to *** (TFM)
+        """asferic surface.
 
         Parameters:
             c (float):
@@ -380,11 +373,10 @@ class Scalar_mask_X(Scalar_field_X):
             n1 (flaot): refraction index of second medium
             x0 (float): position of center
             radius (float): radius of aspheric surface
-
         """
         k = 2 * np.pi / self.wavelength
-        t1 = c * (self.x - x0)**2 / (
-            1 - np.sqrt(1 - (1 + k) * c**2 * (self.x - x0)**2))
+        t1 = c * (self.x - x0)**2 / (1 - np.sqrt(1 - (1 + k) * c**2 *
+                                                 (self.x - x0)**2))
 
         t2 = 0
         for i, ai in enumerate(a):
@@ -430,22 +422,15 @@ class Scalar_mask_X(Scalar_field_X):
         # Vector de onda
         k = 2 * np.pi / self.wavelength
 
-        # rotation de la lens
-
         # Definicion de la amplitude y la phase
         if mask is True:
-            # amplitude = Scalar_mask_X(self.x, self.wavelength)
-            # amplitude.slit(x0, 2 * radius)
+
             t1 = np.zeros_like(self.x)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t1[ix] = 1
         else:
             t1 = np.ones_like(self.x)
 
-        # t2 = Scalar_mask_X(self.x, self.wavelength)
-        # t2.u = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
-        # t2.u[t2.u > 0] = 1
-        # t2.u[t2.u <= 0] = 0
         if kind == 'amplitude' and binary is True:
             u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
@@ -487,9 +472,6 @@ class Scalar_mask_X(Scalar_field_X):
         """
 
         h_corr = roughness_1D(self.x, t, s)
-        # Como la function pesos es par, las
-        # En en la conv 2D los pesos deben ir 2 dos en el argumentos
-
         k = 2 * np.pi / self.wavelength
         u = np.exp(-1.j * k * 2 * h_corr)
         u = u[0:len(self.x)]
@@ -593,11 +575,7 @@ class Scalar_mask_X(Scalar_field_X):
         return self.u
 
     def ronchi_grating(self, period, x0=0 * um, fill_factor=0.5):
-        """Amplitude binary grating, fill-factor can be defined.
-
-        It is obtained as a sine_grating that after is binarized.
-
-        Fill factor is determined as  y0=cos(pi*fill_factor)
+        """Amplitude binary grating, fill-factor can be defined. It is obtained as a sine_grating that after is binarized. Fill factor is determined as  y0=cos(pi*fill_factor)
 
         Parameters:
             period (float): period of the grating
@@ -680,7 +658,7 @@ class Scalar_mask_X(Scalar_field_X):
         """Chirped grating with linear p(x) variation.
 
         Parameters:
-            kind (str): 'amplitude', 'phase', 'amplitude_binaria', 'phase_binaria'
+            kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p0 (float): initial period of the grating
             p1 (float): final period of the grating
             amp_min (float): minimum  transmittance
@@ -688,20 +666,18 @@ class Scalar_mask_X(Scalar_field_X):
             phase_max (float): maximum modulation for phase gratings
             delta_x (float): x shifting for movement of grating
             x0 (float): ***TODO
-            length (float): length of the grating
-                    0: length is equal to size of x l=(x[-1]-x[0])
-                    <l: it can be shorter than l
+            length (float): length of the grating.  0: length is equal to size of x l=(x[-1]-x[0]),  <l: it can be shorter than l
             x_center (float): x-position of center of grating
 
         Returns
             numpy.array: px
         """
 
-        mascara = Scalar_mask_X(self.x, self.wavelength)
+        mask = Scalar_mask_X(self.x, self.wavelength)
 
         if length == 0 or length == self.x[-1] - self.x[0]:
             size = self.x[-1] - self.x[0]
-            mascara.u = np.ones_like(self.x)
+            mask.u = np.ones_like(self.x)
             x0 = self.x[0] - delta_x
         elif length < self.x[-1] - self.x[0]:
             """
@@ -730,7 +706,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         else:
             size = self.x[-1] - self.x[0]
-            mascara.u = np.ones_like(self.x)
+            mask.u = np.ones_like(self.x)
             print("possible error in chriped_grating_q: length > x[-1]-x[0]")
             x0 = self.x[0] - delta_x
 
@@ -739,7 +715,7 @@ class Scalar_mask_X(Scalar_field_X):
         px = 2. * np.pi * np.log(p0 + pa * (self.x - x0)) / pa
         t = amp_min + (amp_max - amp_min) * (1 + np.cos(px)) / 2
 
-        if kind == 'amplitude_binaria' or kind == 'phase_binaria':
+        if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
             corte = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
@@ -752,17 +728,17 @@ class Scalar_mask_X(Scalar_field_X):
         elif kind == 'phase':
             self.u = np.exp(1.j * phase_max * t)
             print(np.angle(self.u))
-        elif kind == 'amplitude_binaria':
+        elif kind == 'amplitude_binary':
             self.u = t_binaria
-        elif kind == 'phase_binaria':
+        elif kind == 'phase_binary':
             self.u = np.exp(1.j * phase_max * t_binaria)
         else:
             print("kind of chirped_grating_q not well defined")
 
-        amplitud = self.u * mascara.u
-        fase = np.angle(self.u) * (1 - mascara.u)
+        amplitud = self.u * mask.u
+        fase = np.angle(self.u) * (1 - mask.u)
         self.u = amplitud * np.exp(1j * fase)
-        px = (p0 + pa * (self.x - x0)) * mascara.u
+        px = (p0 + pa * (self.x - x0)) * mask.u
 
         return px, t
 
@@ -776,41 +752,17 @@ class Scalar_mask_X(Scalar_field_X):
                           delta_x=0,
                           length=0,
                           x_center=0):
-        """
-        Chirped grating with linear q(x) variation.
-        This function has been changed 01/06/2017, since the previous equation
-        (Opt. Letter paper 2016) does not provide correct chirped frequency.
-
-        Here I define the the fundamental values of the chirped grating.
-         The grating will have an
-        initial lattice of $p_0 = 50 \mu$m, and a  final lattice of
-         $p_1 = 10\mu$m, with a
-        total length $L=x_0-x_1=500\mu$m.
-        We define $q_0 = 1/p_0$ and $q_1 = 1/ p_1$ as the spatial frequencies
-        associated with the
-        unit lattices defined. To generate the chirped grating,
-        we introduce $q_a$ as :
-        \begin{equation}
-        q_a =\frac{q_1 - q_0} {x_1 - x_0},
-        \end{equation}
-        And the spatial frequencies along the grating will be
-        \begin{equation}
-        q = q_0 + q_a (x - x_0).
-        \end{equation}
-
-        The transmitance is: t = np.cos(np.pi*q*(x-x0) + np.pi*q0*(x-x0))
+        """Chirped grating with linear q(x) variation. The transmitance is: t = np.cos(np.pi*q*(x-x0) + np.pi*q0*(x-x0))
 
         Parameters:
-            kind (str): 'amplitude', 'phase', 'amplitude_binaria', 'phase_binaria'
+            kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p0 (float): initial period of the grating
             p1 (float): final period of the grating
             amp_min (float): minimum  transmittance
             amp_max (float): maximum transmittance
             phase_max (float): maximum modulation for phase gratings
             delta_x (float): x shifting for movement of grating
-            length (float): length of the grating
-                    0: length is equal to size of x l=(x[-1]-x[0])
-                    <l: it can be shorter than l
+            length (float): length of the grating,  0: length is equal to size of x l=(x[-1]-x[0]). <l: it can be shorter than l
             x_center (float): x-position of center of grating
 
         Returns
@@ -824,10 +776,6 @@ class Scalar_mask_X(Scalar_field_X):
             mascara.u = np.ones_like(self.x)
             x0 = self.x[0] - delta_x
         elif length < self.x[-1] - self.x[0]:
-            """
-            es sencillo. se hace una red del tamaño l nueva (como si fuera 0)
-            y luego se añade a la que hay
-            """
             size = length
             x0 = self.x[0] - delta_x
             x1 = np.linspace(0, length, len(self.x))
@@ -847,7 +795,6 @@ class Scalar_mask_X(Scalar_field_X):
             qx = np.zeros_like(qx, dtype=float)  # sale mal en este formato
             self.insert_mask(red1, x_center, kind_position='center')
             return qx
-
         else:
             size = self.x[-1] - self.x[0]
             mascara.u = np.ones_like(self.x)
@@ -863,7 +810,7 @@ class Scalar_mask_X(Scalar_field_X):
         t = amp_min + (amp_max - amp_min) * (1 + np.cos(qx *
                                                         (self.x - x0))) / 2
 
-        if kind == 'amplitude_binaria' or kind == 'phase_binaria':
+        if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
             corte = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
@@ -876,9 +823,9 @@ class Scalar_mask_X(Scalar_field_X):
         elif kind == 'phase':
             self.u = np.exp(1.j * phase_max * t)
             print(np.angle(self.u))
-        elif kind == 'amplitude_binaria':
+        elif kind == 'amplitude_binary':
             self.u = t_binaria
-        elif kind == 'phase_binaria':
+        elif kind == 'phase_binary':
             self.u = np.exp(1.j * phase_max * t_binaria)
         else:
             print("kind of chirped_grating_q not well defined")
@@ -902,19 +849,16 @@ class Scalar_mask_X(Scalar_field_X):
         """General chirped grating with variation given by function p(x).
 
         Parameters:
-            kind (str): 'amplitude', 'phase', 'amplitude_binaria', 'phase_binaria'
+            kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p_x (str): function with variation of periods
             amp_min (float): minimum  transmittance
             amp_max (float): maximum transmittance
             phase_max (float): maximum modulation for phase gratings
             delta_x (float): x shifting for movement of grating
-            length (float): length of the grating
-                    0: length is equal to size of x l=(x[-1]-x[0])
-                    <l: it can be shorter than l
+            length (float): length of the grating. 0: length is equal to size of x l=(x[-1]-x[0]).  <l: it can be shorter than l
 
         Returns:
             numpy.array: p(x)
-
         """
 
         if length == 0 or length == []:
@@ -927,7 +871,7 @@ class Scalar_mask_X(Scalar_field_X):
         # plt.figure()
         # plt.plot(t)
 
-        if kind == 'amplitude_binaria' or kind == 'phase_binaria':
+        if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
             corte = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
@@ -939,13 +883,12 @@ class Scalar_mask_X(Scalar_field_X):
             self.u = t
         elif kind == 'phase':
             self.u = np.exp(1.j * phase_max * t)
-        elif kind == 'amplitude_binaria':
+        elif kind == 'amplitude_binary':
             self.u = t_binaria
-        elif kind == 'phase_binaria':
+        elif kind == 'phase_binary':
             self.u = np.exp(1.j * phase_max * t_binaria)
         self.u = cut_function(self.x, self.u, length, '')
-        # plt.figure()
-        # plt.plot(t)
+
         return t
 
     def binary_code(self,
@@ -962,14 +905,13 @@ class Scalar_mask_X(Scalar_field_X):
             i0 (numpy.array): array with values of i0
             bit_width (float): size of each data of i0
             x0 (float): Initial position
-
         """
 
         if kind == 'abs_fag':
             i0_ones = np.ones_like(i0)
             i0_zeros = np.zeros_like(i0)
-            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape(
-                (-1, ), order='F')
+            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape((-1, ),
+                                                                     order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)

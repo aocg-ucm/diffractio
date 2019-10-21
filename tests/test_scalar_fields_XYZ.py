@@ -19,7 +19,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "scalar_fields_XYZ"
@@ -107,7 +107,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.info = """info:
             test_other(self):
             """
-        filename = uxyz.save_data(filename='# ', method='savez_compressed')
+        filename = uxyz.save_data(filename=filename, method='savez_compressed')
         del uxyz
 
         # u2 = scalar_fields_XYZ(None, None, None)
@@ -268,7 +268,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.save_data(
             filename=filename, method='savez_compressed', add_name='')
 
-        uxyz.video(filename=filename + '.html', kind='intensity', frame=True)
+        uxyz.video(filename=filename + '.avi', kind='intensity', frame=True)
 
         return uxyz
 
@@ -330,9 +330,6 @@ class Test_Scalar_fields_XYZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
-
         length = 80 * um
         numdataX = 32
         numdataZ = 32
@@ -359,11 +356,7 @@ class Test_Scalar_fields_XYZ(object):
 
         uxyz.BPM()
 
-        uxyz.video(
-            filename=
-            '../tests/tests_results_0/scalar_fields_XYZ/test_video.html',
-            kind='intensity',
-            frame=False)
+        uxyz.video(filename=filename + '.avi', kind='intensity', frame=False)
         uxyz.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
         assert True
@@ -400,10 +393,8 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.xy_2_xyz(fields_XY, z0)
 
         # uxyz.drawVolumen3D()
-        uxyz.video(
-            '../tests/tests_results_0/scalar_fields_XYZ/test_xy_2_xyz.html',
-            kind='intensity',
-            frame=True)
+
+        uxyz.video(filename=filename + '.avi', kind='intensity', frame=True)
         u3.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
         assert True

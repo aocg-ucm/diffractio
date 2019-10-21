@@ -31,6 +31,7 @@ scalar bidimensional XY fields propagated in Z direction
 """
 
 import multiprocessing
+import datetime
 
 import numpy as np
 import scipy as sp
@@ -39,7 +40,7 @@ import matplotlib.pyplot as plt
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 name = 'diffractio'
 
@@ -59,9 +60,12 @@ no_date = False  # for test folder
 params_drawing = dict()
 params_drawing['color_intensity'] = cm.hot  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.magma
-params_drawing['color_phase'] = cm.seismic  # cm.hsv
+params_drawing['color_phase'] = cm.hsv  # cm.hsv
 params_drawing['color_real'] = cm.seismic
-params_drawing[
-    'percentaje_intensity'] = 0.05  #percentaje for drawing intensity
+params_drawing['color_stokes'] = cm.seismic
+params_drawing['percentaje_intensity'] = 0.05
 
 print("number of processors: {}".format(num_max_processors))
+
+now = datetime.datetime.now()
+date_test = now.strftime("%Y-%m-%d_%H")

@@ -64,7 +64,7 @@ author = u"Luis Miguel Sanchez Brea"
 #
 # The short X.Y version.
 # version = diffractio.__version__
-version = '0.0.5'
+version = '0.0.6'
 # The full version, including alpha/beta/rc tags.
 # release = diffractio.__version__
 release = version
@@ -79,8 +79,10 @@ language = 'English'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+exclude_patterns = [
+    '_build', 'Thumbs.db', '.DS_Store', '_build', '**.ipynb_checkpoints'
+]
+# LM: exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 

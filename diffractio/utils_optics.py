@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
+import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
-
-import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, nearest
@@ -13,9 +12,6 @@ from .utils_math import fft_convolution1d, fft_convolution2d, nearest
 
 def roughness_1D(x, t, s, kind='normal'):
     """Rough surface, 1D
-
-    References:
-        JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
 
     Parameters:
         x (numpy.array): array with x positions
@@ -25,6 +21,10 @@ def roughness_1D(x, t, s, kind='normal'):
 
     Returns:
         (numpy.array) Topography of roughnness in microns.
+
+    References:
+        JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
+
     """
 
     width = x[-1] - x[0]
@@ -102,8 +102,6 @@ def roughness_2D(x, y, t, s):
 
 def beam_width_1D(u, x):
     """One dimensional beam width, according to D4σ or second moment width.
-    References:
-        https://en.wikipedia.org/wiki/Beam_diameter
 
     Parameters:
         u (np.array): field (not intensity).
@@ -112,6 +110,9 @@ def beam_width_1D(u, x):
     Returns:
         (float): width
         (float): x_mean
+
+    References:
+        https://en.wikipedia.org/wiki/Beam_diameter
     """
 
     intensity = np.abs(u)**4
@@ -126,10 +127,6 @@ def beam_width_1D(u, x):
 def width_percentaje(x, y, percentaje=0.5, verbose=False):
     """ beam width (2*sigma) given at a certain height from maximum
 
-    y=np.exp(-x**2/(s**2))  percentaje=1/e -> width = 2*s
-    y=np.exp(-x**2/(s**2))  percentaje=1/e**4 -> width = 4*s
-    y=np.exp(-x**2/(2*s**2))  percentaje=1/e**2 =  -> width = 4*s
-
     Parameters:
         x (np.array): x
         y (np.array): y
@@ -139,6 +136,12 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
         (float): width, width of at given %
         (list): x_list: (x[i_left], x[i_max], x[i_right])
         (list): x_list: (i_left, i_max, i_right)
+
+    Notes:
+        y=np.exp(-x**2/(s**2))  percentaje=1/e -> width = 2*s
+        y=np.exp(-x**2/(s**2))  percentaje=1/e**4 -> width = 4*s
+        y=np.exp(-x**2/(2*s**2))  percentaje=1/e**2 =  -> width = 4*s
+
     """
 
     maximum = y.max()
@@ -170,12 +173,8 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
 
 
 def beam_width_2D(x, y, intensity):
-    """2D beam width
-    ISO11146 width
-    References:
-        * https://en.wikipedia.org/wiki/Beam_diameter
+    """2D beam width, ISO11146 width
 
-        * http://www.auniontech.com/ueditor/file/20170921/1505982360689799.pdf
 
     Parameters:
         x (np.array): 1d x
@@ -187,6 +186,13 @@ def beam_width_2D(x, y, intensity):
         (float): dy width y
         (float): principal_axis, angle
         (str): (x_mean, y_mean, x2_mean, y2_mean, xy_mean), Moments
+
+    References:
+
+        * https://en.wikipedia.org/wiki/Beam_diameter
+
+        * http://www.auniontech.com/ueditor/file/20170921/1505982360689799.pdf
+
 
     """
     X, Y = np.meshgrid(x, y)

@@ -22,7 +22,7 @@ if no_date is True:
     date = '0'
 else:
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+    date = now.strftime("%Y-%m-%d_%H")
 
 path_base = "tests_results"
 path_class = "scalar_fields_XY"
@@ -325,16 +325,6 @@ class Test_Scalar_fields_XY(object):
 
         save_figure_test(newpath, func_name, add_name='_prof')
         assert True
-
-    # def test_get_edges(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}.npz'.format(newpath, func_name)
-    #
-    #     t = square_test()
-    #
-    #     output = t.get_edges()
-    #     print(output)
-    #     assert True
 
     def test_search_focus(self):
         func_name = sys._getframe().f_code.co_name

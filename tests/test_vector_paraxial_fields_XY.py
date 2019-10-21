@@ -5,7 +5,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, np, plt, sp, um
+from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
@@ -15,9 +15,12 @@ from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
 path_class = "Vector_paraxial_fields_XY"
-now = datetime.datetime.now()
-date = now.strftime("%Y-%m-%d_%H_%M_%S")
-date = '0'
+
+if no_date is True:
+    date = '0'
+else:
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d_%H")
 
 newpath = "{}_{}/{}/".format(path_base, date, path_class)
 
@@ -59,7 +62,7 @@ class Test_Vector_paraxial_fields_XY(object):
             kind='amplitude')
 
         vc = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        vc.equal_masks(mask=mask)
+        vc.equal_mask(mask=mask)
 
         vp = Vector_paraxial_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(angle=0 * degrees)
@@ -88,7 +91,8 @@ class Test_Vector_paraxial_fields_XY(object):
         wavelength = 0.6328
 
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.radial_wave(A=1000, x_center=(0 * um, 0 * um), radius=length / 5)
+        EM.radial_wave(
+            u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
@@ -112,13 +116,12 @@ class Test_Vector_paraxial_fields_XY(object):
         y0 = np.linspace(-length / 2, length / 2, num_data)
         wavelength = 2
 
+        u0 = Scalar_source_XY(x0, y0, wavelength)
+        u0.gauss_beam(A=1, z0=0 * um, r0=(0, 0), w0=(25 * um, 25 * um))
+
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.gauss(
-            A=1000,
-            z=0 * um,
-            w0=(25 * um, 25 * um),
-            kind='polarization',
-            v=[1, 0])
+        EM.constant_wave(u0, v=[1, 1])
+
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
         EM.draw(kind='intensities')
@@ -146,7 +149,7 @@ class Test_Vector_paraxial_fields_XY(object):
 
         # con esto definimos el field E
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.plane_wave(A=1, v=[1, 0, 0], theta=0 * degrees, phi=0 * degrees)
+        EM.constant_wave(u=1, v=[1, 0])
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')

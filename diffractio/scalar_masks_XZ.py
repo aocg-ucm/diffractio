@@ -701,18 +701,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Inserts a convergent lens in background.
 
         Parameters:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um)
-              for plane-convergent z0 is the location of the plane
-              for convergent-plane (angle =180*degrees) the thickness has to be
-                  added to z0
+            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float, float): (radius1,radius2) radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float): rotation point.
-            mask (array, str):  (mask_depth, refraction_index) or False.
-                It masks the field outer the lens using a slit with depth = mask_depth
+            mask (array, str):  (mask_depth, refraction_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
 
         Returns:
             (float): geometrical focal distance
@@ -776,17 +772,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a plane-divergent lens in background.
 
         Parameters:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um)
-              for plane-convergent z0 is the location of the plane
-              for convergent-plane (angle =180*degrees) the thickness has to be
-                  added to z0
+            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float): radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
-            mask (array, str):  (mask_depth, refraction_index) or False.
-                It masks the field outer the lens using a slit with depth = mask_depth
+            mask (array, str):  (mask_depth, refraction_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
 
         Returns:
             (float): geometrical focal distance
@@ -845,18 +837,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a  divergent lens in background.
 
         Parameters:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um)
-              for plane-convergent z0 is the location of the plane
-              for convergent-plane (angle =180*degrees) the thickness has to be
-                  added to z0
+            r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float, float): (radius1, radius2) radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float): rotation point
-            mask (array, str):  (mask_depth, refraction_index) or False.
-                It masks the field outer the lens using a slit with depth = mask_depth
+            mask (array, str):  (mask_depth, refraction_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
 
         Returns:
             (float): geometrical focal distance
@@ -870,9 +858,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         radius1, radius2 = radius
         z_center_lens1 = z0 + radius1
         z_center_lens2 = z0 + radius2 + thickness
-
-        # print(("z={},{}".format(z_center_lens1, z_center_lens2)))
-        # print(("r={},{}".format(radius1, radius2)))
 
         if mask is False:
             mask_depth = 0
@@ -916,8 +901,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def aspheric_surface_z(self, r0, refraction_index, cx, Qx, a2, a3, a4,
                            side, angle):
-        """TODO: sin terminar
-        Define an aspheric surface of each part of eye
+        """Define an aspheric surface
 
         Parameters:
             r0 (float, float): (x0,z0) position of apex
@@ -927,7 +911,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             side (str): 'left', 'right'
 
         Returns:
-            numpy.   : Bool array with positions inside the surface
+            numpy.array   : Bool array with positions inside the surface
         """
 
         x0, z0 = r0
@@ -968,7 +952,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                       a2=(0, 0),
                       a3=(0, 0),
                       a4=(0, 0)):
-        """Define an aspheric surface as defined in Gomez-Pedrero
+        """Define an aspheric surface as defined in Gomez-Pedrero.
 
         Parameters:
             r0 (float, float): position x,z of lens
@@ -979,7 +963,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             size (float): diameter of lens
 
         Returns:
-            numpy.   : Bool array with positions inside the surface
+            numpy.array   : Bool array with positions inside the surface
         """
         x0, z0 = r0
         if isinstance(angle, (float, int, complex)):
@@ -1033,8 +1017,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         cond5 = "Zrot > {}".format(z0 - depth)
         cond6 = "Zrot < {}".format(z0 + depth)
 
-        # Transmitancia de los points interiores
-
         Fs = [cond1, cond2, cond3, cond4, cond5, cond6]
         v_globals = {'self': self, 'np': np, 'degrees': degrees}
 
@@ -1081,8 +1063,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
               angle_prism,
               angle,
               rotation_point=None):
-        """Similar to wedge but the use is different. Also the angle is usually different.
-        One of the sides is paralel to x=x0
+        """Similar to wedge but the use is different. Also the angle is usually different. One of the sides is paralel to x=x0
 
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
@@ -1198,7 +1179,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                      Dx,
                      refraction_index,
                      angle=0):
-        """Insert a sine grating in background
+        """Insert a sine grating in background.
 
         Parameters:
             period (float): period of the grating
@@ -1225,7 +1206,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return ipasa
 
     def probe(self, r0, base, length, refraction_index, angle):
-        """Probe with a sinusoidal shape
+        """Probe with a sinusoidal shape.
 
         Parameters:
             r0 (float, float): (x0,z0) position of the center of base, for example (0 * um, 20 * um)
@@ -1263,9 +1244,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                     rotation_point=None):
         """Sheet with one of the surface rough.
 
-        References:
-            According to Ogilvy p.224
-
         Parameters:
             r0 (float, float):(x0,z0) Location of sphere, for example (0 * um, 20 * um)
             size (float, float): (sizex, sizez) size of the sheet
@@ -1274,9 +1252,12 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             refraction_index (float, str): refraction index
             angle (float): angle
             rotation_point (float, float): rotation point
+
         Returns:
             (numpy.array): ipasa, indexes [iz,ix] of lens
 
+        References:
+            According to Ogilvy p.224
         """
 
         x0, z0 = r0
@@ -1320,9 +1301,11 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def wessenplatten(self, n_layers, sigma, correlation_length):
         """Make a surface rough.
-            t_roughness=25*um
-            s_roughness=100*um
-            TODO: no correlation length is used. By the moment we use rand.
+
+            Parameters:
+            n_layers (int): number of layers
+            sigma (float): standard deviation in heights
+            correlation_length (float): correlation length
         """
         t1 = Scalar_mask_XZ(
             x=self.x,
