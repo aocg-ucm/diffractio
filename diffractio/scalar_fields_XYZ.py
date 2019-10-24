@@ -211,7 +211,7 @@ class Scalar_field_XYZ(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        # Todo:
+        # TODO:
             It can be improved for maks (not having less than 1)
         """
 
@@ -460,9 +460,6 @@ class Scalar_field_XYZ(object):
 
         Parameters:
             i (int): Number for for loop.
-
-        Todo:
-            It can be using a dict as input
         """
         self.u[:, :, i] = self.u0.RS(
             amplification=(1, 1),
@@ -628,7 +625,7 @@ class Scalar_field_XYZ(object):
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        Todo:
+        TODO:
             Simplify and change variable name clase
         """
         if is_class is True:
@@ -661,7 +658,7 @@ class Scalar_field_XYZ(object):
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        Todo:
+        TODO:
             Simplify and change variable name clase
         """
         if is_class is True:
@@ -946,7 +943,7 @@ class Scalar_field_XYZ(object):
             self,
             y0=0 * mm,
             logarithm=0,
-            normalize='maximum',
+            normalize='',
             draw_borders=False,
             filename='',
     ):
@@ -1043,7 +1040,7 @@ class Scalar_field_XYZ(object):
             normalize (bool): If True, max(intensity)=1
             maxintensity (float): maximum value of intensity
 
-        Todo:
+        TODO:
             Simplify, drawing
             include kind and other parameters of draw
         """
@@ -1075,7 +1072,7 @@ class Scalar_field_XYZ(object):
             vmin=intMin + 0.1 * (intMax - intMin),
             vmax=intMin + 0.9 * (intMax - intMin))
         mlab.view(azimuth=185, elevation=0, distance='auto')
-        print("vea y cierre la ventana abierta para continuar")
+        print("Close the window to continue.")
         mlab.show()
 
     def draw_refraction_index3D(self, kind='real'):
@@ -1107,7 +1104,7 @@ class Scalar_field_XYZ(object):
             frame (bool): figure with or without axis.
             verbose (bool): If True prints
 
-        Todo:
+        TODO:
             Implement kind, now only intensity
             include logarithm and normalize
             check

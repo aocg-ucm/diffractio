@@ -160,7 +160,7 @@ class Scalar_field_XY(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        Todo:
+        TODO:
             It can be improved for maks (not having less than 1)
         """
         # Se llama a la clase Scalar_field_XY
@@ -541,9 +541,10 @@ class Scalar_field_XY(object):
         self.quality = dr_ideal / dr_real
         if verbose is True:
             if (self.quality.min() > 1):
-                print('Good result: factor ', self.quality)
+                print('Good result: factor {:2.2f}'.format(self.quality))
             else:
-                print('- Needs denser sampling: factor', self.quality)
+                print('Needs denser sampling: factor {:2.2f}'.format(
+                    self.quality))
 
         # matrix W para integración simpson
         # he tenido problemas porque en shen viene para matrices cuadradas
@@ -605,8 +606,8 @@ class Scalar_field_XY(object):
             self.u = Usalida / z
 
     def RS(self,
+           z,
            amplification=(1, 1),
-           z=10 * mm,
            n=1,
            new_field=True,
            matrix=False,
@@ -634,49 +635,78 @@ class Scalar_field_XY(object):
             Applied Optics vol 45 num 6 pp. 1102-1110 (2006).
         """
 
-        ancho_x = self.x[-1] - self.x[0]
-        ancho_y = self.y[-1] - self.y[0]
-        num_pixels_x = len(self.x)
-        num_pixels_y = len(self.y)
-
         amplification_x, amplification_y = amplification
 
-        posiciones_x = -amplification_x * ancho_x / 2 + array(
-            list(range(amplification_x))) * ancho_x
-        posiciones_y = -amplification_y * ancho_y / 2 + array(
-            list(range(amplification_y))) * ancho_y
+        if amplification_x * amplification_y > 1:
 
-        X0 = linspace(-amplification_x * ancho_x / 2,
-                      amplification_x * ancho_x / 2,
-                      num_pixels_x * amplification_x)
-        Y0 = linspace(-amplification_y * ancho_y / 2,
-                      amplification_y * ancho_y / 2,
-                      num_pixels_y * amplification_y)
+            ancho_x = self.x[-1] - self.x[0]
+            ancho_y = self.y[-1] - self.y[0]
+            num_pixels_x = len(self.x)
+            num_pixels_y = len(self.y)
 
-        U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
+            posiciones_x = -amplification_x * ancho_x / 2 + array(
+                list(range(amplification_x))) * ancho_x
+            posiciones_y = -amplification_y * ancho_y / 2 + array(
+                list(range(amplification_y))) * ancho_y
 
-        for i, xi in zip(list(range(len(posiciones_x))), flipud(posiciones_x)):
-            for j, yi in zip(
-                    list(range(len(posiciones_y))), flipud(posiciones_y)):
-                # num_ventana = j * amplification_x + i + 1
-                u3 = self._RS_(
-                    z=z,
-                    n=n,
-                    new_field=True,
-                    kind=kind,
-                    xout=xi,
-                    yout=yi,
-                    verbose=verbose)
-                xshape = slice(i * num_pixels_x, (i + 1) * num_pixels_x)
-                yshape = slice(j * num_pixels_y, (j + 1) * num_pixels_y)
-                U_final.u[yshape, xshape] = u3.u
-        if matrix is True:
-            return U_final.u
-        else:
-            if new_field is True:
-                return U_final
+            X0 = linspace(-amplification_x * ancho_x / 2,
+                          amplification_x * ancho_x / 2,
+                          num_pixels_x * amplification_x)
+            Y0 = linspace(-amplification_y * ancho_y / 2,
+                          amplification_y * ancho_y / 2,
+                          num_pixels_y * amplification_y)
+
+            U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
+
+            # TODO: pass to multiprocessing
+            for i, xi in zip(
+                    list(range(len(posiciones_x))), flipud(posiciones_x)):
+                for j, yi in zip(
+                        list(range(len(posiciones_y))), flipud(posiciones_y)):
+                    # num_ventana = j * amplification_x + i + 1
+                    u3 = self._RS_(
+                        z=z,
+                        n=n,
+                        new_field=False,
+                        kind=kind,
+                        xout=xi,
+                        yout=yi,
+                        out_matrix=True,
+                        verbose=verbose)
+                    xshape = slice(i * num_pixels_x, (i + 1) * num_pixels_x)
+                    yshape = slice(j * num_pixels_y, (j + 1) * num_pixels_y)
+                    U_final.u[yshape, xshape] = u3
+
+            if matrix is True:
+                return U_final.u
             else:
-                self.u = U_final.u
+                if new_field is True:
+                    return U_final
+                else:
+                    self.u = U_final.u
+                    self.x = X0
+                    self.y = Y0
+        else:
+            u_s = self._RS_(
+                z,
+                n,
+                new_field=new_field,
+                out_matrix=True,
+                kind=kind,
+                xout=None,
+                yout=None,
+                verbose=verbose)
+
+            if matrix is True:
+                return u_s
+            else:
+                if new_field is True:
+                    U_final = Scalar_field_XY(
+                        x=self.x, y=self.y, wavelength=self.wavelength)
+                    U_final.u = u_s
+                    return U_final
+                else:
+                    self.u = u_s
 
     def profile(self,
                 point1='',
@@ -722,7 +752,7 @@ class Scalar_field_XY(object):
             image = real(self.u)
         elif kind == 'phase':
             image = angle(self.u)  # / pi
-            image[image == 1] = -1
+            #image[image == 1] = -1
         # Extract the values along the line, using cubic interpolation
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
@@ -825,9 +855,8 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(
-            MTF_field.u[int(num_data_x /
-                            2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
+            num_data_x / 2), int(num_data_y / 2)])
 
         # Image plane spacing
         delta_x = x[1] - x[0]
@@ -1015,7 +1044,7 @@ class Scalar_field_XY(object):
         """Changes the number of points in field, mantaining the area.
 
         Parameters:
-            kind (str): "amplitude" o "phase"
+            kind (str): 'amplitude' or 'phase'
             corte (float): value of cut. If None, the cut is in the mean value
             level0 (float): minimum value. If None, minimum value of field
             level1 (float): maximum value. If None, maximum value of field
@@ -1025,7 +1054,7 @@ class Scalar_field_XY(object):
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
 
-        Todo:
+        TODO:
             Check and pass to utils
         """
 
@@ -1095,7 +1124,7 @@ class Scalar_field_XY(object):
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
 
-        Todo:
+        TODO:
             Check and pass to utils
         """
 
@@ -1165,7 +1194,7 @@ class Scalar_field_XY(object):
         Parameters:
             kind (str): 'intensity' 'area'
 
-        Todo:
+        TODO:
             pass to utils # esto lo he puesto a última hora
         """
 
@@ -1479,7 +1508,7 @@ class Scalar_field_XY(object):
         ani.save(filename, fps=fps, dpi=dpi)
 
 
-def kernelRS(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1, kind='z'):
+def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation
 
     Parameters:
@@ -1545,5 +1574,5 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z +
-                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z + (X**2 + Y**2) /
+                          (2 * z))) / (1.j * wavelength * z)

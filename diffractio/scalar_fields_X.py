@@ -8,7 +8,7 @@ It is required also for generating masks and fields.
 The main atributes are:
         * self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         * self.wavelength (float): wavelength of the incident field.
-        * self.u (numpy.array): equal size than x. complex field
+        * self.u (numpy.array): equal size than  x. complex field
         * self.quality (float): quality of RS algorithm
         * self.info (str): description of data
         * self.type (str): Class of the field
@@ -166,7 +166,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        Todo:
+        TODO:
             It can be improved for maks (not having less than 1)
         """
 
@@ -523,9 +523,10 @@ class Scalar_field_X(object):
 
         if verbose is True:
             if (self.quality.min() > 1):
-                print(('Good result: factor ', self.quality))
+                print('Good result: factor {:2.2f}'.format(self.quality))
             else:
-                print(('- Needs denser sampling: factor', self.quality))
+                print('- Needs denser sampling: factor {:2.2f}'.format(
+                    self.quality))
 
         # matrix W para integracion simpson
         a = [2, 4]

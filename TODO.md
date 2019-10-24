@@ -4,19 +4,15 @@
 
 * utils_math has several normalize functions
 
-* check forked_grating function
 
 
 
 ## alpha
-
-* Make Tutorial
-
-
-* Make examples.
+* Check that RS is working properly of XYZ (multiprocessing)
+* XZ and  XYZ: function for interactive drawing I(x,y;z)
+* draw_intensityXYZ() interpolate to show the same size in all axis
 
 
-* Tests
+## others
 
-
-* Other:
+* tests for utils

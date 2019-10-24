@@ -108,8 +108,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         if q == 0:
             self.u = exp(1.j * phase)
         if q == 1:
-            self.u = exp(
-                1.j * (phase_min + (phase_max - phase_min) * amplitude))
+            self.u = exp(1.j * (phase_min +
+                                (phase_max - phase_min) * amplitude))
 
     def area(self, percentaje):
         """Computes area where mask is not 0
@@ -161,8 +161,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             ofile.write("\ninfo:\n")
             ofile.write(info)
         ofile.write("\n\n")
-        ofile.write(
-            "length de la mask: %i x %i\n" % (len(self.x), len(self.y)))
+        ofile.write("length de la mask: %i x %i\n" % (len(self.x),
+                                                      len(self.y)))
         ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
@@ -640,8 +640,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         Xrot, Yrot = self.__rotate__(angle)
-        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 -
-                 s**2 * Xrot**2 * Yrot**2 / (R1**2 * R2**2))
+        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 - s**2 * Xrot**2 * Yrot**2 /
+                 (R1**2 * R2**2))
 
         Z1 = F < 1
         Z = Z1 * t1.u
@@ -757,8 +757,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = ones_like(self.X)
 
-        self.u = t * exp(-1.j * k * (
-            (Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
+        self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
+                                     (2 * f2)))
         self.u[t == 0] = 0
 
     def fresnel_lens(self,
@@ -1090,8 +1090,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) * (
-            (r / period)**p + (theta - phase) / (2 * pi))))
+        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) *
+                           ((r / period)**p + (theta - phase) / (2 * pi))))
         if binaria is True:
             i0 = t <= 0.5
             t[i0] = 0
@@ -1209,7 +1209,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                           radius=200 * um,
                           binaria=True):
         """
-        TODO
+        TODO: function info
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
         # lp longitud del period del edge,

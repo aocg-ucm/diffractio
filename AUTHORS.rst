@@ -19,4 +19,4 @@ Contributors
 
 * Manuel Rapariz López-Neira (2019)
 
-    * Some XY masks.
+    * XY masks (hiperellipse and sinusoidal_slit)

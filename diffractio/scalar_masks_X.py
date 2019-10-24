@@ -249,7 +249,7 @@ class Scalar_mask_X(Scalar_field_X):
             n (float): refraction_index
             anglex (float): angle of prism
 
-        Todo:
+        TODO:
             I think it is wrong: include refraction index
         """
 
@@ -265,9 +265,9 @@ class Scalar_mask_X(Scalar_field_X):
         """Fresnel biprism.
 
         Parameters:
-            angle (float): angle of the mirror
-            x0 (float): central position of mirror
-            radius (float): radius of the mirror, if mask is True
+            angle (float): angle of the fresnel biprism
+            x0 (float): central position of fresnel biprism
+            radius (float): radius of the fresnel biprism, if mask is True
             mask (bool): if True radius is applied
         """
 
@@ -375,8 +375,8 @@ class Scalar_mask_X(Scalar_field_X):
             radius (float): radius of aspheric surface
         """
         k = 2 * np.pi / self.wavelength
-        t1 = c * (self.x - x0)**2 / (1 - np.sqrt(1 - (1 + k) * c**2 *
-                                                 (self.x - x0)**2))
+        t1 = c * (self.x - x0)**2 / (
+            1 - np.sqrt(1 - (1 + k) * c**2 * (self.x - x0)**2))
 
         t2 = 0
         for i, ai in enumerate(a):
@@ -910,8 +910,8 @@ class Scalar_mask_X(Scalar_field_X):
         if kind == 'abs_fag':
             i0_ones = np.ones_like(i0)
             i0_zeros = np.zeros_like(i0)
-            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape((-1, ),
-                                                                     order='F')
+            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape(
+                (-1, ), order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)

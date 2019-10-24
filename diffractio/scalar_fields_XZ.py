@@ -201,7 +201,7 @@ class Scalar_field_XZ(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        Todo:
+        TODO:
             It can be improved for maks (not having less than 1)
         """
 
@@ -713,7 +713,7 @@ class Scalar_field_XZ(object):
     def __RS_multiprocessing__(self, i):
         """Internal for multiprocessing
 
-        Todo:
+        TODO:
             It can be using a dict as input
         """
         if self.z.min() > 0:

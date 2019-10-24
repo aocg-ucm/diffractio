@@ -372,7 +372,7 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name)
         assert True
 
-    def test_elipse(self):
+    def test_ellipse(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
