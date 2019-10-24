@@ -32,9 +32,9 @@ The magnitude is related to microns: `micron = 1.`
     * BPM - Beam Propagation method
 
 *Drawing functions*
-    * draw_intensityXYZ
-    * draw_intensityXY
-    * draw_intensityXZ
+    * draw_XYZ
+    * draw_XY
+    * draw_XZ
     * drawVolumen3D
     * draw_refraction_index3D
     * video
@@ -50,7 +50,7 @@ import matplotlib.animation as anim
 from mayavi import mlab
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
-from scipy.interpolate import RectBivariateSpline
+from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 
 from diffractio import degrees, mm, np, num_max_processors, params_drawing, plt
 from diffractio.scalar_fields_XY import Scalar_field_XY
@@ -378,29 +378,36 @@ class Scalar_field_XYZ(object):
         i_z0, _, _ = nearest(self.z, z0)
         i_z1, _, _ = nearest(self.z, z1)
 
-        kxu, kxn = interp_kind
-
         if num_points not in ([], '', 0, None):
             num_points_x, num_points_y, num_points_z = num_points
             x_new = np.linspace(x0, x1, num_points_x)
             y_new = np.linspace(y0, y1, num_points_y)
             z_new = np.linspace(z0, z1, num_points_z)
-            X_new, Y_new, Z_new = np.meshgrid(x_new, y_new, z_new)
+            field_n = Scalar_field_XYZ(
+                x=x_new,
+                y=y_new,
+                z=z_new,
+                wavelength=self.wavelength,
+                n_background=self.n_background)
 
-            f_interp_abs = RectBivariateSpline(
-                self.x, self.y, np.abs(self.u), kx=kxu, ky=kxu, s=0)
-            f_interp_phase = RectBivariateSpline(
-                self.x, self.y, np.angle(self.u), kx=kxu, ky=kxu, s=0)
-            u_new_abs = f_interp_abs(x_new, y_new)
-            u_new_phase = f_interp_phase(x_new, y_new)
+            X_new = field_n.X
+            Y_new = field_n.Y
+            Z_new = field_n.Z
+
+            f_interp_amplitude = RegularGridInterpolator(
+                (self.x, self.y, self.z), np.abs(self.u))
+            f_interp_phase = RegularGridInterpolator((self.x, self.y, self.z),
+                                                     np.angle(self.u))
+            u_new_abs = f_interp_amplitude((X_new, Y_new, Z_new))
+            u_new_phase = f_interp_phase((X_new, Y_new, Z_new))
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
-            n_interp_real = RectBivariateSpline(
-                self.x, self.y, np.real(self.n), kx=kxn, ky=kxn, s=0)
-            n_interp_imag = RectBivariateSpline(
-                self.x, self.y, np.imag(self.n), kx=kxn, ky=kxn, s=0)
-            n_new_real = n_interp_real(x_new, y_new)
-            n_new_imag = n_interp_imag(x_new, y_new)
+            n_interp_real = RegularGridInterpolator((self.x, self.y, self.z),
+                                                    np.real(self.n))
+            n_interp_imag = RegularGridInterpolator((self.x, self.y, self.z),
+                                                    np.imag(self.n))
+            n_new_real = n_interp_real((X_new, Y_new, Z_new))
+            n_new_imag = n_interp_imag((X_new, Y_new, Z_new))
             n_new = n_new_real + 1j * n_new_imag
 
         else:
@@ -411,23 +418,31 @@ class Scalar_field_XYZ(object):
             y_new = self.y[j_s]
             z_new = self.z[k_s]
             X_new, Y_new, Z_new = ndgrid(x_new, y_new, z_new)
-            u_new = self.u[i_s, j_s]
-            n_new = self.n[i_s, j_s]
+            u_new = self.u[i_s, j_s, k_s]
+            n_new = self.n[i_s, j_s, k_s]
 
         if new_field is False:
             self.x = x_new
             self.y = y_new
-            self.u = u_new
-            self.n = n_new
+            self.z = z_new
+
             self.X = X_new
             self.Y = Y_new
             self.Z = Z_new
+
+            self.u = u_new
+            self.n = n_new
+
         elif new_field is True:
-            field = Scalar_field_XYZ(
-                x=x_new, y=y_new, z=z_new, wavelength=self.wavelength)
-            field.u = u_new
-            field.n = n_new
-            return field
+            field_n = Scalar_field_XYZ(
+                x=x_new,
+                y=y_new,
+                z=z_new,
+                wavelength=self.wavelength,
+                n_background=self.n_background)
+            field_n.u = u_new
+            field_n.n = n_new
+            return field_n
 
     def incident_field(self, u0, z0=None):
         """Incident field for the experiment. It takes a Scalar_source_XYZ field.
@@ -904,16 +919,16 @@ class Scalar_field_XYZ(object):
 
         return h1
 
-    def draw_intensityXY(self,
-                         z0=5 * mm,
-                         kind='intensity',
-                         logarithm=0,
-                         normalize='maximum',
-                         title='',
-                         filename='',
-                         cut_value='',
-                         has_colorbar='False',
-                         reduce_matrix=''):
+    def draw_XY(self,
+                z0=5 * mm,
+                kind='intensity',
+                logarithm=0,
+                normalize='maximum',
+                title='',
+                filename='',
+                cut_value='',
+                has_colorbar='False',
+                reduce_matrix=''):
         """ longitudinal profile XY at a given z value
 
         Parameters:
@@ -925,6 +940,7 @@ class Scalar_field_XYZ(object):
             filename (str): if not '' stores drawing in file,
             cut_value (float): if provided, maximum value to show
             has_colorbar (bool): if True draws the colorbar
+            reduce_matrix ()
         """
 
         ufield = self.to_scalar_field_XY(
@@ -939,18 +955,16 @@ class Scalar_field_XYZ(object):
             has_colorbar=has_colorbar,
             reduce_matrix=reduce_matrix)
 
-    def draw_intensityXZ(
-            self,
-            y0=0 * mm,
-            logarithm=0,
-            normalize='',
-            draw_borders=False,
-            filename='',
-    ):
-        """Longitudinal profile YZ at a given x0 value.
+    def draw_XZ(self,
+                y0=0 * mm,
+                logarithm=0,
+                normalize='',
+                draw_borders=False,
+                filename=''):
+        """Longitudinal profile XZ at a given x0 value.
 
         Parameters:
-            z0 (float): value of z for interpolation
+            y0 (float): value of y for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
             draw_borders (bool): check
@@ -967,7 +981,7 @@ class Scalar_field_XYZ(object):
         if normalize == 'maximum':
             intensity = intensity / intensity.max()
         if normalize == 'area':
-            area = (self.y[-1] - self.y[0]) * (self.z[-1] - self.z[0])
+            area = (self.x[-1] - self.x[0]) * (self.z[-1] - self.z[0])
             intensity = intensity / area
         if normalize == 'intensity':
             intensity = intensity / (intensity.sum() / len(intensity))
@@ -998,41 +1012,39 @@ class Scalar_field_XYZ(object):
 
         return h1
 
-    def draw_intensityXYZ(self,
-                          kind='intensity',
-                          logarithm=False,
-                          normalize='maximum',
-                          draw=True):
+    def draw_XYZ(self,
+                 kind='intensity',
+                 logarithm=False,
+                 normalize='',
+                 pixel_size=(128, 128, 128)):
         """Draws  XZ field
 
         Parameters:
             kind (str): type of drawing: 'intensity', 'phase', 'real_field'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
-            draw (bool): If True draw
-        """
+            pixel_size (float, float, float): pixels for drawing
+            """
 
-        if draw is True:
-            if kind == 'intensity' or kind == '':
-                drawing = np.abs(self.u)**2
-            if kind == 'phase':
-                drawing = np.angle(self.u)
-            if kind == 'real_field':
-                drawing = np.real(self.u)
+        u_xyz_r = self.cut_resample(num_points=(128, 128, 128), new_field=True)
 
-            if logarithm == 1:
-                drawing = np.log(drawing**0.5 + 1)
+        if kind == 'intensity' or kind == '':
+            drawing = np.abs(u_xyz_r.u)**2
+        if kind == 'phase':
+            drawing = np.angle(u_xyz_r.u)
+        if kind == 'real_field':
+            drawing = np.real(u_xyz_r.u)
 
-            if normalize == 'maximum':
-                factor = max(0, drawing.max())
-                drawing = drawing / factor
+        if logarithm == 1:
+            drawing = np.log(drawing**0.5 + 1)
 
-            slicerLM(drawing)
+        if normalize == 'maximum':
+            factor = max(0, drawing.max())
+            drawing = drawing / factor
 
-    def drawVolumen3D(self,
-                      logarithm=0,
-                      normalize='maximum',
-                      maxintensity=None):
+        slicerLM(drawing)
+
+    def drawVolumen3D(self, logarithm=0, normalize='', maxintensity=None):
         """Draws  XYZ field with mlab
 
         Parameters:
@@ -1071,7 +1083,7 @@ class Scalar_field_XYZ(object):
             source,
             vmin=intMin + 0.1 * (intMax - intMin),
             vmax=intMin + 0.9 * (intMax - intMin))
-        mlab.view(azimuth=185, elevation=0, distance='auto')
+        # mlab.view(azimuth=185, elevation=0, distance='auto')
         print("Close the window to continue.")
         mlab.show()
 

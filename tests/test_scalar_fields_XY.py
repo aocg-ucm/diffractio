@@ -770,7 +770,7 @@ class Test_Scalar_fields_XY(object):
     #     scalar_fields_XYZ1 = scalar_fields_XYZ(fieldMascaraFinal,
     #                                          np.linspace(0.2 * mm, z0, 64))
     #     scalar_fields_XYZ1.RS()
-    #     scalar_fields_XYZ1.draw_intensityXYZ()
+    #     scalar_fields_XYZ1.draw_XYZ()
     #
     #     u2.save_data(filename=filename, method='savez_compressed', add_name='')
     #     save_figure_test(newpath, func_name, add_name='')

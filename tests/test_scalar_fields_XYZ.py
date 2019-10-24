@@ -102,7 +102,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.incident_field(t3)
         uxyz.RS()
-        uxyz.draw_intensityXYZ(logarithm=False, normalize='maximum')
+        uxyz.draw_XYZ(logarithm=False, normalize='maximum')
 
         uxyz.info = """info:
             test_other(self):
@@ -113,7 +113,7 @@ class Test_Scalar_fields_XYZ(object):
         # u2 = scalar_fields_XYZ(None, None, None)
         # u2.load_data(
         #     filename=filename, method='savez_compressed', verbose=True)
-        # u2.draw_intensityXYZ(logarithm=False, normalize='maximum')
+        # u2.draw_XYZ(logarithm=False, normalize='maximum')
         # u2.save_data(filename=filename, method='savez_compressed')
         # save_figure_test(newpath, func_name)
         assert True
@@ -175,7 +175,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(u0=t1)
 
         uxyz.RS(verbose=True, num_processors=4)
-        uxyz.draw_intensityXYZ(
+        uxyz.draw_XYZ(
             kind='intensity', logarithm=False, normalize='maximum', draw=True)
         uxyz.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)
@@ -213,15 +213,15 @@ class Test_Scalar_fields_XYZ(object):
             iz0=None, z0=3 * mm, is_class=True, matrix=False)
         u_xy.draw(kind='intensity')
 
-        uxyz.draw_intensityXY(
+        uxyz.draw_XY(
             z0=2 * mm, filename='{}a_{}'.format(newpath, func_name))
-        uxyz.draw_intensityXY(
+        uxyz.draw_XY(
             z0=4.5 * mm, filename='{}b_{}'.format(newpath, func_name))
-        uxyz.draw_intensityXZ(
+        uxyz.draw_XZ(
             y0=0 * mm,
             logarithm=True,
             filename='{}_c{}'.format(newpath, func_name))
-        # uxyz.draw_intensityXYZ(logarithm=False, normalize='maximum')
+        # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
         # uxyz.drawVolumen3D(logarithm=1, normalize='maximum', maxintensity=None)
 
         return uxyz
@@ -255,15 +255,15 @@ class Test_Scalar_fields_XYZ(object):
         uscalar_fields_XY = uxyz.to_scalar_field_XY(z0=3 * mm)
         uscalar_fields_XY.draw(kind='intensity', cut_value=None)
 
-        uxyz.draw_intensityXY(
+        uxyz.draw_XY(
             z0=2 * mm, filename='{}a_{}'.format(newpath, func_name))
-        uxyz.draw_intensityXY(
+        uxyz.draw_XY(
             z0=4.5 * mm, filename='{}b_{}'.format(newpath, func_name))
-        uxyz.draw_intensityXZ(
+        uxyz.draw_XZ(
             y0=0 * mm,
             logarithm=True,
             filename='{}_c{}'.format(newpath, func_name))
-        # uxyz.draw_intensityXYZ(logarithm=False, normalize='maximum')
+        # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
         # uxyz.drawVolumen3D(logarithm=1, normalize='maximum', maxintensity=None)
         uxyz.save_data(
             filename=filename, method='savez_compressed', add_name='')
@@ -314,9 +314,9 @@ class Test_Scalar_fields_XYZ(object):
 
         uxyz.BPM()
 
-        uxyz.draw_intensityXYZ(logarithm=True, normalize='maximum')
+        uxyz.draw_XYZ(logarithm=True, normalize='maximum')
         uxyz.draw_refraction_index3D()
-        uxyz.draw_intensityXZ(
+        uxyz.draw_XZ(
             y0=0.01, logarithm=True, normalize='false', draw_borders=False)
 
         # uxyz.drawVolumen3D(logarithm=True, normalize='maximum')
@@ -432,7 +432,7 @@ class Test_Scalar_fields_XYZ(object):
             angles=(0, 0, 0))
 
         # uxyz.draw_refraction_index3D()
-        uxyz.draw_intensityXYZ()
+        uxyz.draw_XYZ()
         uxyz2 = uxyz.cut_resample(
             x_limits=(-25 * um, 25 * um),
             y_limits=(-25 * um, 25 * um),
@@ -441,7 +441,7 @@ class Test_Scalar_fields_XYZ(object):
             new_field=True,
             interp_kind=(3, 1))
 
-        uxyz2.draw_intensityXYZ()
+        uxyz2.draw_XYZ()
         # uxyz2.draw_refraction_index3D()
         uxyz2.save_data(filename=filename, method='savez_compressed')
         save_figure_test(newpath, func_name)

@@ -10,7 +10,7 @@
 ## alpha
 * Check that RS is working properly of XYZ (multiprocessing)
 * XZ and  XYZ: function for interactive drawing I(x,y;z)
-* draw_intensityXYZ() interpolate to show the same size in all axis
+* draw_XYZ() interpolate to show the same size in all axis
 
 
 ## others

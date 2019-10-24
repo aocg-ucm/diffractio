@@ -166,7 +166,7 @@ XYZ fields
 
   uxyz.RS(verbose=True, num_processors=4)
 
-  uxyz.draw_intensityXYZ(y0=0 * mm, logarithm=True, normalize='maximum',filename='xyz_cut.png')
+  uxyz.draw_XYZ(y0=0 * mm, logarithm=True, normalize='maximum',filename='xyz_cut.png')
 
 
 .. figure:: xyz_mask.png
