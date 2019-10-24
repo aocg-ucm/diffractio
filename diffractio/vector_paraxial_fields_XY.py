@@ -217,7 +217,7 @@ class Vector_paraxial_field_XY(object):
         References:
             From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
 
-        Todo:
+        TODO:
             check amplification
             implement verbose
         """
@@ -850,7 +850,7 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
         h (float): to remove
         amplification (float): increase of size of ellipse
 
-    Todo:
+    TODO:
         remove hs
     """
     # esto es para verlo más grande

@@ -108,7 +108,7 @@ class Test_utils_math(object):
         assert comparison(proposal, solution, eps), func_name
 
     def test_phase2amplitude(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
@@ -126,56 +126,56 @@ class Test_utils_math(object):
         assert comparison(proposal, solution, eps), func_name
 
     def test_vector_product(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_dot_product(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_divergence(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_curl(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_get_transitions(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_cut_function(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_fft_convolution2d(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_fft_convolution1d(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_fft_correlation1d(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_fft_correlation2d(self):
-        # TODO:
+        # TODO:test
 
         assert True
 
     def test_rotate_image(self):
-        # TODO:
+        # TODO:test
 
         assert True

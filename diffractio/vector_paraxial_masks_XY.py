@@ -94,7 +94,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             v2 (2x1 numpy.array): vector polarization of dark part of mask.
 
         Warning:
-            Mask should be binary. Else the function should binarize it: Todo.
+            Mask should be binary. Else the function should binarize it: TODO.
         """
 
         v1 = v1 / np.sqrt(np.abs(v1[0])**2 + np.abs(v1[1])**2)
