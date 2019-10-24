@@ -1042,6 +1042,9 @@ class Scalar_field_XY(object):
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
+
+        TODO:
+            Check and pass to utils
         """
 
         amplitude = self.get_amplitude(matrix=True, new_field=False)
