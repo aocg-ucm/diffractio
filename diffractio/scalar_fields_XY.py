@@ -21,7 +21,7 @@ The main atributes are:
     * self.quality (float): quality of RS algorithm
     * self.info (str): description of data
     * self.type (str): Class of the field
-    * self.date (str): date when performed
+    * self.date (str): date of execution
 
 The magnitude is related to microns: `micron = 1.`
 
@@ -163,9 +163,7 @@ class Scalar_field_XY(object):
         Todo:
             It can be improved for maks (not having less than 1)
         """
-        # Se llama a la clase Scalar_field_XY
         u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-        # Campo diferencia
         u3.u = self.u - other.u
         return u3
 
@@ -541,13 +539,11 @@ class Scalar_field_XY(object):
         self.quality = dr_ideal / dr_real
         if verbose is True:
             if (self.quality.min() > 1):
-                print('Good result: factor ', self.quality)
+                print('Good result: factor {:2.2f}'.format(self.quality))
             else:
-                print('- Needs denser sampling: factor', self.quality)
+                print('- Needs denser sampling: factor {:2.2f}'.format(
+                    self.quality))
 
-        # matrix W para integración simpson
-        # he tenido problemas porque en shen viene para matrices cuadradas
-        # y yo admito matrices rectangulares. pero he solucionado.
         a = [2, 4]
         num_repx = int(round((nx) / 2) - 1)
         num_repy = int(round((ny) / 2) - 1)
@@ -566,7 +562,6 @@ class Scalar_field_XY(object):
         d1x = matrix(cx)
         d1y = matrix(cy)
         W = array(d1y.T * d1x)
-        # W=1
 
         U = zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
         U[0:ny, 0:nx] = array(W * self.u)
@@ -614,7 +609,6 @@ class Scalar_field_XY(object):
            verbose=False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-
         Parameters:
             amplification (int, int): number of frames in x and y direction
             z (float): distance to observation plane. if z<0 inverse propagation is executed
@@ -625,7 +619,6 @@ class Scalar_field_XY(object):
 
         Returns:
             if New_field is True: Scalar_field_X, else None.
-
 
         Note:
             One advantage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
@@ -723,11 +716,11 @@ class Scalar_field_XY(object):
         elif kind == 'phase':
             image = angle(self.u)  # / pi
             image[image == 1] = -1
-        # Extract the values along the line, using cubic interpolation
+
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
                      npixels)
-        # h = h - h.mean()
+
         z_profile = scipy.ndimage.map_coordinates(
             image.transpose(), np.vstack((x, y)), order=order)
 
@@ -754,7 +747,7 @@ class Scalar_field_XY(object):
             (float, float): point1
             (float, float): point2
         """
-        # normalize: '' (no hace nada), 'maximum' (el maximum es 1)
+
         h, z_profile, point1, point2 = self.profile(point1, point2, npixels,
                                                     kind, order)
 
@@ -798,7 +791,7 @@ class Scalar_field_XY(object):
             (x,y): positions of focus
         """
         intensity = np.abs(self.u)**2
-        # busca el máximo de una matrix bidimensional
+
         ix, iy = np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
             print(("x = {:2.3f} um, y = {:2.3f} um".format(
@@ -829,13 +822,12 @@ class Scalar_field_XY(object):
             MTF_field.u[int(num_data_x /
                             2), int(num_data_y / 2)])
 
-        # Image plane spacing
         delta_x = x[1] - x[0]
         delta_y = y[1] - y[0]
-        # Nyquist frequencies on x and y direction
+
         frec_nyquist_x = 0.5 / delta_x
         frec_nyquist_y = 0.5 / delta_y
-        # Defining spatial frequencies, 1000 passes um to mm
+
         fx = 1000 * np.linspace(-frec_nyquist_x, frec_nyquist_x, len(x))
         fy = 1000 * np.linspace(-frec_nyquist_y, frec_nyquist_y, len(y))
 
@@ -871,8 +863,6 @@ class Scalar_field_XY(object):
     def intensity(self):
         """Returns intensity."""
 
-        dx = self.x[1] - self.x[0]
-        dy = self.y[1] - self.y[0]
         intensity = (np.abs(self.u)**2)
         return intensity
 
@@ -1024,9 +1014,6 @@ class Scalar_field_XY(object):
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
-
-        Todo:
-            Check and pass to utils
         """
 
         amplitude = self.get_amplitude(matrix=True, new_field=False)

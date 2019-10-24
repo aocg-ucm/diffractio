@@ -12,7 +12,7 @@ The main atributes are:
         * self.quality (float): quality of RS algorithm
         * self.info (str): description of data
         * self.type (str): Class of the field
-        * self.date (str): date when performed
+        * self.date (str): date
 
 
 *Class for unidimensional scalar fields*
@@ -580,8 +580,6 @@ class Scalar_field_X(object):
            verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
-
         Parameters:
             amplification (int, int): number of frames in x and y direction
             z (float): distance to observation plane. if z<0 inverse propagation is executed
@@ -593,21 +591,26 @@ class Scalar_field_X(object):
 
         Returns:
             if New_field is True: Scalar_field_X, else None
+
+        Info:
+            One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+
+
         """
 
-        ancho_x = self.x[-1] - self.x[0]
+        width_x = self.x[-1] - self.x[0]
         num_pixels = len(self.x)
 
-        posiciones_x = -amplification * ancho_x / 2 + array(
-            list(range(amplification))) * ancho_x
+        positions_x = -amplification * width_x / 2 + array(
+            list(range(amplification))) * width_x
 
-        x0 = linspace(-amplification * ancho_x / 2,
-                      amplification * ancho_x / 2, num_pixels * amplification)
+        x0 = linspace(-amplification * width_x / 2,
+                      amplification * width_x / 2, num_pixels * amplification)
 
         u_field = np.zeros_like(x0, dtype=complex)
         qualities = np.zeros((amplification))
         for i, xi in zip(
-                list(range(len(posiciones_x))), np.flipud(posiciones_x)):
+                list(range(len(positions_x))), np.flipud(positions_x)):
             u3 = self._RS_(
                 z=z,
                 n=n,
