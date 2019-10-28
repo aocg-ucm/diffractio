@@ -29,7 +29,7 @@ if not os.path.exists(newpath):
 
 
 class Test_Scalar_masks_XZ(object):
-    def test_convert_mask_z_n_var(self):
+    def test_extrude_mask_z_n_var(self):
         """
         Here the refraction index is a function of positions z
         """
@@ -48,7 +48,7 @@ class Test_Scalar_masks_XZ(object):
         z0 = 10 * um
         z1 = 50 * um
         v_globals = dict(z0=z0, z1=z1)
-        t1.convert_mask(
+        t1.extrude_mask(
             t=t0,
             z0=z0,
             z1=z1,
@@ -60,7 +60,7 @@ class Test_Scalar_masks_XZ(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    def test_convert_mask_z_n_cte(self):
+    def test_extrude_mask_z_n_cte(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
@@ -76,7 +76,7 @@ class Test_Scalar_masks_XZ(object):
         z0 = 10 * um
         z1 = 50 * um
         v_globals = dict(z0=z0, z1=z1)
-        t1.convert_mask(
+        t1.extrude_mask(
             t=t0, z0=z0, z1=z1, refraction_index=1.5, v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False, )
 
@@ -228,7 +228,7 @@ class Test_Scalar_masks_XZ(object):
         z_max = 50 * um
         v_globals = dict(np=np)
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
-        t1.convert_mask(
+        t1.extrude_mask(
             t=t0,
             z0=z_min,
             z1=z_max,
@@ -357,7 +357,7 @@ class Test_Scalar_masks_XZ(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    def test_convert_mask_simple(self):
+    def test_extrude_mask_simple(self):
         """
         takes an refraction index and convert a mask without depth, at one with
         depth
@@ -373,7 +373,7 @@ class Test_Scalar_masks_XZ(object):
         t0.double_slit(x0=0, size=20 * um, separation=50 * um)
         t0.draw()
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
-        t1.convert_mask(
+        t1.extrude_mask(
             t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5 - 1.5j)
         t1.draw_refraction_index(draw_borders=True)
 
@@ -400,30 +400,6 @@ class Test_Scalar_masks_XZ(object):
             angle=0 * degrees,
             invert=False)
         t1.draw_refraction_index()
-
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
-        save_figure_test(newpath, func_name, add_name='')
-        assert True
-
-    def test_convert_mask_simple(self):
-        """
-        takes an refraction index and convert a mask without depth, at one with
-        depth
-        """
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
-
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
-        wavelength = .55 * um
-
-        t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
-        t0.double_slit(x0=0, size=20 * um, separation=50 * um)
-        t0.draw()
-        t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
-        t1.convert_mask(
-            t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5 - 1.5j)
-        t1.draw_refraction_index(draw_borders=True)
 
         t1.save_data(filename=filename, method='savez_compressed', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -668,8 +644,8 @@ class Test_Scalar_masks_XZ(object):
 
         t2 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
 
-        t2.convert_mask(t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5)
-        t2.convert_mask(
+        t2.extrude_mask(t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5)
+        t2.extrude_mask(
             t=t1, z0=50 * um, z1=55.5 * um, refraction_index=1.5 - 1.5)
 
         t2.draw_refraction_index(draw_borders=False)

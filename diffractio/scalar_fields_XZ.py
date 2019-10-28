@@ -1163,7 +1163,7 @@ class Scalar_field_XZ(object):
     def draw(self,
              kind='intensity',
              logarithm=0,
-             normalize='maximum',
+             normalize='',
              draw_borders=False,
              filename='',
              scale='',

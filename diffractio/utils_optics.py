@@ -645,6 +645,56 @@ def field_parameters(u, has_amplitude_sign=False):
     return amplitude, intensity, phase
 
 
+def convert_phase2heigths(phase, wavelength, n, n_background):
+    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
+
+    :math:`phase(x,z)= k (n-n_0) h(x,z)`.
+
+    Parameters:
+        phase (np.array): Phases
+        wavelength (float): wavelength
+        n (float or complex): refraction index of material
+        n_background (float): refraction index of background
+
+    Returns:
+        (np.array): depths related to phases
+    """
+    k = 2 * np.pi / wavelength
+    n = np.real(n)
+
+    return phase / (k * (n - n_background))
+
+
+def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
+    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
+
+    :math:`A_{out}=A_{in} e^{-\left\vert \mathbf{a}\right\vert z}`
+
+    and
+
+    :math:`\delta=1/\left\vert \mathbf{a}\right\vert =\lambda_{vacio}/(2\pi\kappa)`
+
+    Parameters:
+        phase (np.array): Phases
+        wavelength (float): wavelength
+        kappa (float): refraction index of material.
+        n_background (float): refraction index of background
+
+    Returns:
+        (np.array): depths related to amplitudes
+    """
+
+    eps_depth = 1e-4
+
+    amplitude[amplitude < eps_depth] = eps_depth
+
+    k = 2 * np.pi / wavelength
+
+    depth = np.log(amplitude) * wavelength / (-2 * np.pi * kappa)
+
+    return depth
+
+
 def fresnel_coefficients_dielectric(theta_i, n1, n2):
     """Components rs, rp, ts y tp - Fresnel queations
 

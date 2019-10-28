@@ -36,11 +36,17 @@ Alpha state
 
  * Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
 
- 0.0.5 (2019-10-22)
+ 0.0.6 (2019-10-22)
  ------------------------
  Alpha state
 
   * Finished first version of examples and tutorial.
+
+0.0.7 (2019-10.26)
+------------------------
+Alpha state
+
+* convert_mask -> extrude_mask
 
 
  * Modules	  = 9/10.

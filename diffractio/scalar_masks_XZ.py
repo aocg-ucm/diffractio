@@ -17,7 +17,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for unidimensional scalar masks*
 
 *Functions*
-    * convert_mask, mask_from_function, mask_from_array, object_by_surfaces
+    * extrude_mask, mask_from_function, mask_from_array, object_by_surfaces
     * image
     * semi_plane, layer, rectangle, slit, sphere, semi_sphere
     * wedge, prism, biprism
@@ -34,7 +34,7 @@ import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
 
-from diffractio import degrees, mm, np, sp, um
+from diffractio import degrees, mm, np, plt, sp, um
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.utils_math import nearest, nearest2
@@ -53,8 +53,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n`.
         self.z (numpy.array): linear array wit equidistant positions for z values
         self.wavelength (float): wavelength of the incident field.
         self.u0 (numpy.array): (x) size x - field at the last z position
@@ -80,9 +79,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         super(self.__class__, self).__init__(x, z, wavelength, n_background,
                                              info)
 
-    def convert_mask(self, t, z0, z1, refraction_index, v_globals={}, angle=0):
+    def extrude_mask(self, t, z0, z1, refraction_index, v_globals={}, angle=0):
         """
-        Converts a Scalar_mask_X in volumetric.
+        Converts a Scalar_mask_X in volumetric between z0 and z1 by growing between these two planes
         Parameters:
             t (Scalar_mask_X): an amplitude mask of type Scalar_mask_X.
             z0 (float): initial  position of mask
@@ -155,7 +154,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                         x_sides=None,
                         angle=0 * degrees,
                         v_globals={},
-                        interp_kind='quadratic'):
+                        interp_kind='quadratic',
+                        has_draw=False):
         """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
         For the definion of f1 and f2 from arrays is performed an interpolation
 
@@ -163,14 +163,11 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             r0 (float, float): location of the mask
             refraction_index (float, str): can be a number or a function n(x,z)
             array1 (numpy.array): array (x,z) that delimits the first surface
-            array1 (numpy.array): array (x,z) that delimits the second surface
+            array2 (numpy.array): array (x,z) that delimits the second surface
             x_sides (float, float): limiting upper and lower values in x,
-            angle (float): angle of rotation (radians)
+            angle (float): angle of rotation (radians): TODO -> not working
             v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
-            interp_kind: 'linear', 'nearest', 'zero',
-                         'slinear', 'quadratic', 'cubic'
-            necesita una mappeo de las variables locales y globales.
-            ver test_mask_phase_2
+            interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
         """
 
         x0, z0 = r0
@@ -182,38 +179,42 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             bounds_error=False,
             fill_value=array1[0, 1] + z0,
             assume_sorted=True)
+
         f2_interp = interp1d(
             array2[:, 0] + x0,
             array2[:, 1] + z0,
             kind=interp_kind,
             bounds_error=False,
-            fill_value=array1[0, 1] + z0,
+            fill_value=array2[0, 1] + z0,
             assume_sorted=True)
+
         F1 = f1_interp(self.x)
         F2 = f2_interp(self.x)
 
-        # plt.figure()
-        # plt.plot(self.x, F1)
-        # plt.plot(self.x, F2, 'r')
+        if has_draw is True:
+            plt.figure()
+            plt.plot(self.x, F1)
+            plt.plot(self.x, F2, 'r')
 
         Xrot, Zrot = self.__rotate__(angle, r0)
 
         i_z1, _, _ = nearest2(self.z, F1)
         i_z2, _, _ = nearest2(self.z, F2)
         ipasa = np.zeros_like(self.n, dtype=bool)
-        for i in range(len(self.x)):
+        for i, xi in enumerate(self.x):
             minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
             ipasa[i, minor:mayor] = True
 
         if x_sides is None:
             self.n[ipasa] = refraction_index
+            return ipasa
+
         else:
             ipasa2 = Xrot < x_sides[1]
             ipasa3 = Xrot > x_sides[0]
 
             self.n[ipasa * ipasa2 * ipasa3] = refraction_index
-
-        return ipasa
+            return ipasa * ipasa2 * ipasa3
 
     def object_by_surfaces(self,
                            rotation_point,
@@ -1152,7 +1153,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         t0 = Scalar_mask_X(x=self.x, wavelength=self.wavelength)
         t0.ronchi_grating(period=period, x0=Dx, fill_factor=fill_factor)
 
-        self.convert_mask(
+        self.extrude_mask(
             t=t0,
             z0=z0 + heigth_substrate / 2,
             z1=z0 + heigth_substrate / 2 + height,

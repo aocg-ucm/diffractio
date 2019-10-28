@@ -9,6 +9,7 @@ Optical examples
 
    diffraction_slit.ipynb
    diffraction_objects.ipynb
+   arago_point.ipynb
    fresnel_biprism.ipynb
    lenses.ipynb
    talbot_effect.ipynb
