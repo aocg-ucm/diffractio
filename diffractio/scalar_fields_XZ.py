@@ -1172,7 +1172,8 @@ class Scalar_field_XZ(object):
              colorbar_kind=False,
              colormap_kind="",
              z_scale='um',
-             edge_matrix=None):
+             edge_matrix=None,
+             interpolation='spline36'):
         """Draws  XZ field.
 
         Parameters:
@@ -1186,6 +1187,7 @@ class Scalar_field_XZ(object):
             reduce_matrix (int, int), 'standard' or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             z_scale (str): 'mm', 'um'
             edge_matrix (numpy.array): positions of borders
+            interpolation(str): methods = [None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16', 'spline36', 'hanning', 'hamming', 'hermite', 'kaiser', 'quadric', 'catrom', 'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos']
         """
 
         if reduce_matrix is False:
@@ -1295,6 +1297,7 @@ class Scalar_field_XZ(object):
         return h1
 
     def draw_refraction_index(self,
+                              kind='all',
                               draw_borders=True,
                               title='',
                               filename='',
@@ -1307,6 +1310,7 @@ class Scalar_field_XZ(object):
         """Draws refraction index.
 
         Parameters:
+            kind (str): 'all', 'real', 'imag'
             draw_borders (bool): If True draw edges of objects
             filename (str): if not '' stores drawing in file,
             title (str): title of drawing
@@ -1319,9 +1323,17 @@ class Scalar_field_XZ(object):
         plt.figure()
         extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
 
+        if kind == 'all':
+            n_draw = np.abs(self.n)
+        elif kind == 'real':
+            n_draw = np.real(self.n)
+            n_draw[np.abs(np.imag(self.n)) > 0] = self.n_background
+        elif kind == 'imag':
+            n_draw = np.imag(self.n)
+
         if reduce_matrix is False:
             h1 = plt.imshow(
-                np.abs(self.n),
+                n_draw,
                 interpolation='bilinear',
                 aspect='auto',
                 origin='lower',
@@ -1336,17 +1348,17 @@ class Scalar_field_XZ(object):
                 reduction_x = 1
             if reduction_z == 0:
                 reduction_z = 1
-            n_new = self.n[::reduction_z, ::reduction_x]
+            n_new = n_draw[::reduction_z, ::reduction_x]
             h1 = plt.imshow(
-                np.abs(n_new),
+                n_new,
                 interpolation='bilinear',
                 aspect='auto',
                 origin='lower',
                 extent=extension)
         else:
-            n_new = self.n[::reduce_matrix[0], ::reduce_matrix[1]]
+            n_new = n_draw[::reduce_matrix[0], ::reduce_matrix[1]]
             h1 = plt.imshow(
-                np.abs(n_new),
+                n_new,
                 interpolation='bilinear',
                 aspect='auto',
                 origin='lower',

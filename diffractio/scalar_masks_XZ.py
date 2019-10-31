@@ -170,6 +170,80 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
         """
 
+        x_c, z_c = r0
+
+        f1_interp = interp1d(
+            array1[:, 0] + x_c,
+            array1[:, 1] + z_c,
+            kind=interp_kind,
+            bounds_error=False,
+            fill_value=array1[0, 1] + z_c,
+            assume_sorted=True)
+
+        f2_interp = interp1d(
+            array2[:, 0] + x_c,
+            array2[:, 1] + z_c,
+            kind=interp_kind,
+            bounds_error=False,
+            fill_value=array2[0, 1] + z_c,
+            assume_sorted=True)
+
+        F1 = f1_interp(self.x)
+        F2 = f2_interp(self.x)
+
+        if has_draw is True:
+            plt.figure()
+            plt.plot(self.x, F1)
+            plt.plot(self.x, F2, 'r')
+
+        Xrot, Zrot = self.__rotate__(angle, r0)
+
+        i_z1, _, _ = nearest2(self.z, F1)
+        i_z2, _, _ = nearest2(self.z, F2)
+        ipasa = np.zeros_like(self.n, dtype=bool)
+        for i, xi in enumerate(self.x):
+            #     minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
+            #     ipasa[i, minor:mayor] = True
+            ipasa[i, i_z1[i]:i_z2[i]] = True
+
+        if x_sides is None:
+            self.n[ipasa] = refraction_index
+            return ipasa
+
+        else:
+            ipasa2 = Xrot < x_sides[1]
+            ipasa3 = Xrot > x_sides[0]
+
+            self.n[ipasa * ipasa2 * ipasa3] = refraction_index
+            return ipasa * ipasa2 * ipasa3
+
+    def mask_from_array_proposal(self,
+                                 r0=(0 * um, 0 * um),
+                                 refraction_index_substrate=1.5,
+                                 refraction_index_mask=None,
+                                 array1=None,
+                                 array2=None,
+                                 x_sides=None,
+                                 angle=0 * degrees,
+                                 v_globals={},
+                                 interp_kind='quadratic',
+                                 has_draw=False):
+        """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
+        For the definion of f1 and f2 from arrays is performed an interpolation
+
+        Parameters:
+            r0 (float, float): location of the mask
+            refraction_index_mask (float, str): can be a number or a function n(x,z)
+            refraction_index_substrate (float, str): can be a number or a function n(x,z)
+
+            array1 (numpy.array): array (x,z) that delimits the first surface
+            array2 (numpy.array): array (x,z) that delimits the second surface
+            x_sides (float, float): limiting upper and lower values in x,
+            angle (float): angle of rotation (radians): TODO -> not working
+            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
+            interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
+        """
+
         x0, z0 = r0
 
         f1_interp = interp1d(
@@ -201,19 +275,35 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         i_z1, _, _ = nearest2(self.z, F1)
         i_z2, _, _ = nearest2(self.z, F2)
         ipasa = np.zeros_like(self.n, dtype=bool)
+
         for i, xi in enumerate(self.x):
             minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
             ipasa[i, minor:mayor] = True
 
+        if refraction_index_mask not in (None, '', []):
+            ipasa_substrate = np.zeros_like(self.u)
+            z_subst_0 = np.max(F1)
+            z_subst_1 = np.min(F2)
+
+            i_z1, _, _ = nearest(self.z, z_subst_0)
+            i_z2, _, _ = nearest(self.z, z_subst_1)
+            ipasa_substrate[:, i_z1:i_z2] = refraction_index_substrate
+
         if x_sides is None:
-            self.n[ipasa] = refraction_index
+            self.n[ipasa] = refraction_index_mask
+            if refraction_index_mask not in (None, '', []):
+                ipasa_substrate[:, i_z1:i_z2] = refraction_index_substrate
+                self.n[ipasa_substrate] = refraction_index_substrate
+
             return ipasa
 
         else:
             ipasa2 = Xrot < x_sides[1]
             ipasa3 = Xrot > x_sides[0]
 
-            self.n[ipasa * ipasa2 * ipasa3] = refraction_index
+            self.n[ipasa * ipasa2 * ipasa3] = refraction_index_mask
+            self.n[ipasa_substrate] = refraction_index_substrate
+
             return ipasa * ipasa2 * ipasa3
 
     def object_by_surfaces(self,

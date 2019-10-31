@@ -299,6 +299,14 @@ class Scalar_field_X(object):
         """
         self.u = u0.u
 
+    def filter(self, size=0):
+        from diffractio.scalar_masks_X import Scalar_mask_X
+        from diffractio.utils_math import fft_filter
+
+        slit = Scalar_mask_X(self.x, self.wavelength)
+        slit.slit(x0=0, size=size)
+        self.u = fft_filter(self.u, slit.u)
+
     def insert_mask(self, t1, x0_mask1, clean=True, kind_position='left'):
         """Insert mask t1 in mask self. It is performed using interpolation.
 

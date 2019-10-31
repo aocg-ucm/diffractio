@@ -569,7 +569,26 @@ def fft_convolution1d(x, y):
     Returns:
         convolved function
     """
+
     return fftconvolve(x, y, mode='same')
+
+
+def fft_filter(x, y, normalize=False):
+    """ 1D convolution, using FFT
+
+    Parameters:
+        x (numpy.array): array 1 to convolve
+        y (numpy.array): array 2 to convolve
+
+    Returns:
+        convolved function
+    """
+
+    y = y / y.sum()
+
+    return fftconvolve(
+        x, y, mode='same') / fftconvolve(
+            x, np.ones_like(y) / sum(y), mode='same')
 
 
 def fft_correlation1d(x, y):
