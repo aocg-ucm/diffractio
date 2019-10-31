@@ -170,19 +170,55 @@ class Vector_paraxial_field_XY(object):
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
 
-    def get(self):
+    def get(self, kind='fields'):
         """Takes the vector field and divide in Scalar_field_XY
+
+        Parameters:
+            kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
             Scalar_field_XY: (Ex, Ey),
         """
 
-        Ex = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        Ex.u = self.Ex
-        Ey = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        Ey.u = self.Ey
+        Ex_r = self.Ex
+        Ey_r = self.Ey
 
-        return Ex, Ey
+        if kind == 'fields':
+            Ex = Scalar_field_XY(
+                x=self.x, y=self.y, wavelength=self.wavelength)
+            Ex.u = Ex_r
+            Ey = Scalar_field_XY(
+                x=self.x, y=self.y, wavelength=self.wavelength)
+            Ey.u = Ey_r
+
+            return Ex, Ey
+
+        elif kind == 'intensity':
+            intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
+            return intensity
+
+        elif kind == 'intensities':
+            intensity_x = np.abs(Ex_r)**2
+            intensity_y = np.abs(Ey_r)**2
+            return intensity_x, intensity_y
+
+        elif kind == 'phases':
+
+            phase_x = np.angle(Ex_r)
+            phase_y = np.angle(Ey_r)
+
+            return phase_x, phase_y
+
+        elif kind == 'stokes':
+            # S0, S1, S2, S3
+            return self.polarization_states(matrix=True)
+
+        elif kind == 'params_ellipse':
+            # A, B, theta, h
+            return self.polarization_ellipse(pol_state=None, matrix=True)
+
+        else:
+            print("The parameter {} in .get(kind='') is wrong".format(kind))
 
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
@@ -487,11 +523,11 @@ class Vector_paraxial_field_XY(object):
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
+        intensity = self.get('intensity')
 
-        Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
-        Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
+        intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
+                                       intensity)
 
-        intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
         plt.figure()
@@ -734,11 +770,11 @@ class Vector_paraxial_field_XY(object):
         iy_centers = num_y / (num_ellipses[1])
 
         ix_centers = (np.round(
-            ix_centers / 2 + ix_centers * np.array(range(0, num_ellipses[0])))
-                      ).astype('int')
+            ix_centers / 2 +
+            ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
         iy_centers = (np.round(
-            iy_centers / 2 + iy_centers * np.array(range(0, num_ellipses[1])))
-                      ).astype('int')
+            iy_centers / 2 +
+            iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
 
         Ix_centers, Iy_centers = np.meshgrid(
             ix_centers.astype('int'), iy_centers.astype('int'))
@@ -771,8 +807,8 @@ class Vector_paraxial_field_XY(object):
 
                     Ex = Ex / max_r * size_dim * amplification / 2 + (
                         +self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[int(
-                        yj)]
+                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
+                        int(yj)]
 
                     ax.plot(Ex, Ey, color_line, lw=line_width)
                     ax.arrow(
