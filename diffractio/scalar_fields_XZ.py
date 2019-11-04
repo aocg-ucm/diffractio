@@ -1476,7 +1476,7 @@ class Scalar_field_XZ(object):
                             normalize=False,
                             draw=True,
                             filename=''):
-        """Determine and draws transversal profile
+        """Determine and draws transversal profile.
 
         Parameters:
             kind (str): type of drawing:  'amplitude', 'intensity', 'phase', 'refraction_index'
@@ -1488,6 +1488,9 @@ class Scalar_field_XZ(object):
 
         Returns:
             numpy.array: profile
+
+        TODO:
+            Include interpolation
         """
 
         imenor, value, distance = nearest(vector=self.z, number=z0)

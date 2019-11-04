@@ -113,6 +113,7 @@ class Scalar_field_XY(object):
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Scalar_field_XY'
         self.date = get_date()
+        self.quality = 0
 
     def __str__(self):
         """Represents main data of the atributes"""
@@ -847,8 +848,9 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
-            num_data_x / 2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(
+            MTF_field.u[int(num_data_x /
+                            2), int(num_data_y / 2)])
 
         delta_x = x[1] - x[0]
         delta_y = y[1] - y[0]
@@ -1563,5 +1565,5 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z + (X**2 + Y**2) /
-                          (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z +
+                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)

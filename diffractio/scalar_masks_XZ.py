@@ -161,7 +161,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             r0 (float, float): location of the mask
-            refraction_index (float, str): can be a number or a function n(x,z)
+            refractdion_index (float, str): can be a number or a function n(x,z)
             array1 (numpy.array): array (x,z) that delimits the first surface
             array2 (numpy.array): array (x,z) that delimits the second surface
             x_sides (float, float): limiting upper and lower values in x,
