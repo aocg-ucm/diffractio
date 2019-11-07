@@ -7,5 +7,6 @@ Examples
    :glob:
 
 
-   source/examples/functioning/examples.rst
+
    source/examples/optics/examples.rst
+   source/examples/functioning/examples.rst
