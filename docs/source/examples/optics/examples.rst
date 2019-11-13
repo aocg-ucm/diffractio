@@ -7,6 +7,7 @@ Optical examples
    :glob:
 
 
+   reflection_refraction.ipynb
    diffraction_slit.ipynb
    diffraction_objects.ipynb
    arago_point.ipynb
@@ -14,4 +15,4 @@ Optical examples
    lenses.ipynb
    talbot_effect.ipynb
    fresnel_lens.ipynb
-   lens_gradient.ipynb
+   variable_refraction_index.ipynb
