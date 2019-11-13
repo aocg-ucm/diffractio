@@ -452,11 +452,14 @@ class Scalar_field_XYZ(object):
             z0 (float): position of the incident field. if None, '', [], is at the beginning
         """
 
+        self.u0 = u0
+
         if z0 in (None, '', []):
-            self.u0 = u0
+            self.u[:, :, 0] = self.u[:, :, 0] + u0.u.transpose()
+
         else:
             iz, _, _ = nearest(self.z, z0)
-            self.u[:, :, iz] = self.u[:, :, iz] + u0.u
+            self.u[:, :, iz] = self.u[:, :, iz] + u0.u.tranpose()
 
     def final_field(self):
         """Returns the final field as a Scalar_field_XYZ."""

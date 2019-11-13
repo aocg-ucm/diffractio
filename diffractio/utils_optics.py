@@ -268,7 +268,7 @@ def FWHM1D(x,
            intensity,
            percentaje=0.5,
            remove_background='mean',
-           has_drawing=True):
+           has_drawing=False):
     """FWHM
 
     remove_background = 'min', 'mean', 'None'"""
@@ -278,7 +278,7 @@ def FWHM1D(x,
     elif remove_background == 'min':
         I_background = intensity.min()
     else:
-        I_background = np.zeros_like(intensity)
+        I_background = 0
 
     intensity = intensity - I_background
 
@@ -334,11 +334,11 @@ def FWHM2D(x,
            y,
            intensity,
            percentaje=0.5,
-           remove_background='mean',
-           has_drawing=True):
+           remove_background='None',
+           has_drawing=False):
 
-    Ix = intensity.sum(axis=0)
-    Iy = intensity.sum(axis=1)
+    Ix = intensity.mean(axis=0)
+    Iy = intensity.mean(axis=1)
 
     FWHM_x = FWHM1D(
         x, Ix, percentaje, remove_background, has_drawing=has_drawing)
