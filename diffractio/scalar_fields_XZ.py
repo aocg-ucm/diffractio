@@ -64,12 +64,14 @@ from multiprocessing import Pool
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
+from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import (degrees, mm, np, num_max_processors, params_drawing,
-                        plt, seconds, um)
-from diffractio.scalar_fields_X import (Scalar_field_X, kernelRS,
+from diffractio import (degrees, eps, mm, np, num_max_processors,
+                        params_drawing, plt, seconds, um)
+from diffractio.scalar_fields_X import (PWD_kernel, Scalar_field_X,
+                                        WPM_schmidt_kernel, kernelRS,
                                         kernelRSinverse)
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.scalar_sources_X import Scalar_source_X
@@ -77,7 +79,7 @@ from diffractio.utils_common import (get_date, load_data_common,
                                      save_data_common)
 from diffractio.utils_drawing import (normalize_draw, prepare_drawing,
                                       prepare_video)
-from diffractio.utils_math import ndgrid, nearest, rotate_image
+from diffractio.utils_math import get_k, ndgrid, nearest, rotate_image
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_optics import beam_width_1D, field_parameters
 
@@ -850,6 +852,179 @@ class Scalar_field_XZ(object):
 
         return self.u
 
+    def PWD(self, n=None, matrix=False, verbose=True):
+        """
+        Plane wave decomposition algorithm (PWD).
+
+        Arguments:
+            n (np. array): refraction index, If None, it is n_background
+            matrix (bool): if True returns a matrix else
+            verbose (bool): If True prints state of algorithm
+
+        Returns:
+            numpy.array(): Field at at distance dz from the incident field
+
+        References:
+            1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+
+        """
+        dx = self.x[1] - self.x[0]
+        dz = self.z[1] - self.z[0]
+        k0 = 2 * np.pi / self.wavelength
+
+        if n is None:
+            n = self.n_background
+
+        kx = get_k(self.x, '+')
+
+        K_perp2 = kx**2
+        num_steps = len(self.z)
+        self.clear_field()
+        self.u[:, 0] = self.u0.u
+        for i, zi in enumerate(self.z[0:-1]):
+            result = self.u[:, i]
+            result_next = PWD_kernel(result, n, k0, K_perp2, dz)
+            self.u[:, i + 1] = result_next
+            if verbose is True:
+                print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+
+        if matrix is True:
+            return self.u
+
+    def WPM(self, kind='schmidt', filter=1, matrix=False, verbose=False):
+        """
+        WPM Methods.
+        'schmidt method is very fast, only needs discrete number of refraction indexes'
+
+
+        Arguments:
+            kind (str): 'schmidt, scalar, TE, TM
+            filter (1, or np.array): filter for edges
+            matrix (bool): if True returns a matrix else
+            verbose (bool): If True prints information
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
+        """
+
+        k0 = 2 * np.pi / self.wavelength
+        x = self.x
+        z = self.z
+        dx = x[1] - x[0]
+        dz = z[1] - z[0]
+
+        self.u[:, 0] = self.u0.u
+        kx = get_k(x, flavour='+')
+        k_perp2 = kx**2
+        k_perp = kx
+
+        X, KP = np.meshgrid(x, k_perp)
+
+        t1 = time.time()
+
+        for j in range(1, len(self.z)):
+
+            if kind == 'schmidt':
+                self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(
+                    self.u[:, j - 1], self.n[:, j - 1], k0, k_perp2,
+                    dz) * filter
+            else:
+                print("{}".format(j), sep='\r', end='\r')
+
+                Nj, KP = np.meshgrid(self.n[:, j - 1], k_perp)
+                X, UJ = np.meshgrid(x, fftshift(fft(self.u[:, j - 1])))
+
+                kz = csqrt((Nj * k0)**2 - KP**2)
+                Pj = np.exp(1j * kz * dz)
+
+                if kind == 'TM':
+                    M00, _, _, M11 = self.M_xz(j=j, kx=kx)
+                    M = M00
+                elif kind == 'TE':
+                    M00, _, _, M11 = self.M_xz(j=j, kx=kx)
+                    M = M11
+                elif kind == 'scalar':
+                    M = 1
+
+                WXj = M * UJ * np.exp(1j * KP * (X - x[0]))
+
+                uj = np.mean(WXj * Pj, 0)
+                self.u[:, j] = uj * filter + self.u[:, j]
+
+        t2 = time.time()
+        if verbose is True:
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                t2 - t1, (t2 - t1) / len(self.z) * 1000))
+
+        if matrix is True:
+            return self.u
+
+    def M_xz(self, j, kx):
+        """
+        Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
+        “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+        """
+        ## simple parameters
+
+        k0 = 2 * np.pi / self.wavelength
+
+        z = self.z
+        x = self.x
+
+        num_x = self.x.size
+        num_z = self.z.size
+
+        dz = z[1] - z[0]
+        dx = x[1] - x[0]
+
+        nj = self.n[:, j]
+        nj_1 = self.n[:, j - 1]
+
+        n_med = nj.mean()
+        n_1_med = nj_1.mean()
+
+        ## parameters
+        NJ, KX = np.meshgrid(nj, kx)
+        NJ_1, KX = np.meshgrid(nj_1, kx)
+
+        k_perp = KX + eps
+
+        kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
+        kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
+
+        tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
+        t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
+
+        kj_1 = NJ_1 * k0
+        fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
+        # cuidado no es la misma definición, me parece que está repetido
+        e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
+        eg_xj_1 = fj_1 * e_xj_1
+        # cuidado no es la misma definición, me parece que está mal por no ser simétrica
+
+        p001 = 0
+        p002 = tg_TM * (1 - 1j * eg_xj_1)
+        p111 = t_TE
+        p112 = 0
+
+        ## M00
+        M00 = (p001 + p002)
+
+        ## M01
+        M01 = 0
+
+        ## M10
+        M10 = 0
+
+        ## M11
+        M11 = (p111 + p112)
+
+        return M00, M01, M10, M11
+
     def RS_polychromatic(self,
                          initial_field,
                          wavelengths,
@@ -995,7 +1170,8 @@ class Scalar_field_XZ(object):
             (np.array): array with intensity I(z)
         """
 
-        intensity_prof = np.sum((np.abs(self.u)**2) * np.real(self.n), axis=0)
+        # intensity_prof = np.sum((np.abs(self.u)**2) * np.real(self.n), axis=0)
+        intensity_prof = np.sum((np.abs(self.u)**2), axis=0)
         I_max = intensity_prof[0]
         if normalized is True:
             intensity_prof = intensity_prof / I_max
@@ -1005,6 +1181,7 @@ class Scalar_field_XZ(object):
             plt.grid()
             plt.xlabel("$z\,(mm)$")
             plt.ylabel("$I(z)$")
+            plt.ylim(bottom=0)
 
         return intensity_prof
 
@@ -1267,7 +1444,7 @@ class Scalar_field_XZ(object):
                 colormap_kind = params_drawing["color_real"]
 
         if kind == 'intensity':
-            climits = I_drawing.min(), I_drawing.max()
+            climits = 0, I_drawing.max()
         if kind == 'amplitude':
             climits = -I_drawing.max(), I_drawing.max()
         if kind == 'phase':

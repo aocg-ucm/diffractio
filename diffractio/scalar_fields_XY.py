@@ -55,6 +55,8 @@ import scipy.ndimage
 from matplotlib import cm, rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
+from numpy.lib.scimath import sqrt as csqrt
+
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
@@ -848,9 +850,8 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(
-            MTF_field.u[int(num_data_x /
-                            2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
+            num_data_x / 2), int(num_data_y / 2)])
 
         delta_x = x[1] - x[0]
         delta_y = y[1] - y[0]
@@ -1565,5 +1566,32 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z +
-                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z + (X**2 + Y**2) /
+                          (2 * z))) / (1.j * wavelength * z)
+
+
+def PWD_kernel(u, n, k0, k_perp2, dz):
+    """
+    Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
+
+    Arguments:
+        u (np.array): field
+        n (np.array): refraction index
+        k0 (float): wavenumber
+        k_perp (np.array): transversal k
+        dz (float): increment in distances
+
+    Returns:
+        (numpy.array): Field at at distance dz from the incident field
+
+    References:
+        1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+
+    """
+    absorption = 0.00
+
+    Ek = fftshift(fft2(u))
+    H = np.exp(1j * dz * csqrt(n**2 * k0**2 - k_perp2) - absorption)
+
+    result = (ifft2(fftshift(H * Ek)))
+    return result

@@ -723,10 +723,10 @@ def fZernike(X, Y, n, m, radius=5 * mm):
 
     Z = zeros(R.shape, dtype=np.float)
     for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(
-            np.abs(n - s)) / (factorial(np.abs(s)) * factorial(
-                np.abs(round(0.5 * (n + np.abs(m)) - s))) * factorial(
-                    np.abs(round(0.5 * (n - np.abs(m)) - s))))
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
+            factorial(np.abs(s)) * factorial(
+                np.abs(round(0.5 * (n + np.abs(m)) - s))
+            ) * factorial(np.abs(round(0.5 * (n - np.abs(m)) - s))))
 
     if m >= 0:
         fz1 = N * Z * np.cos(m * THETA)
@@ -776,3 +776,50 @@ def laguerre_polynomial_nk(x, n=4, k=5):
         summation = summation + (-1)**m * f(n + k) / (
             f(n - m) * f(k + m) * f(m)) * x**m
     return summation
+
+
+def get_k(x, flavour='-'):
+    """provides k vector from x vector. Two flavours are provided (ordered + or disordered - )
+
+    Arguments:
+        x (np.array): x array
+        flavour (str): '+' or '-'
+
+    Returns:
+        kx (np.array): k vector
+
+    Todo:
+        Check
+    """
+
+    num_x = x.size
+    if flavour == '-':
+        size_x = x[-1] - x[0]
+
+        kx1 = np.linspace(0, num_x / 2 + 1, int(num_x / 2))
+        kx2 = np.linspace(-num_x / 2, -1, int(num_x / 2))
+        kx = (2 * np.pi / size_x) * np.concatenate((kx1, kx2))
+
+    elif flavour == '+':
+        dx = x[1] - x[0]
+        kx = 2 * np.pi / (num_x * dx) * (
+            range(-int(num_x / 2), int(num_x / 2)))
+
+    return kx
+
+
+def filter_edge_1D(x, size=1.1, exponent=32):
+    """function 1 at center and reduced at borders. For propagation algorithms
+
+    Arguments:
+        x (np.array): position
+        size (float): related to relative position of x
+        exponent (integer): related to shape of edges
+    Returns:
+        np.array: function for filtering
+    """
+
+    num_x = len(x)
+    x_center = (x[-1] + x[0]) / 2
+    Dx = size * (x[-1] - x[0])
+    return np.exp(-(2 * (x - x_center) / (Dx))**np.abs(exponent))

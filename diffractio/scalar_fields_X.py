@@ -60,6 +60,7 @@ from numpy import (angle, array, concatenate, exp, linspace, pi, shape, sqrt,
 from scipy.fftpack import fft, fftshift, ifft
 from scipy.interpolate import interp1d
 from scipy.special import hankel1
+from numpy.lib.scimath import sqrt as csqrt
 
 from . import degrees, mm, np, num_max_processors, plt
 from .utils_common import get_date, load_data_common, save_data_common
@@ -944,6 +945,61 @@ def kernelRSinverse(x, wavelength, z, n=1, kind='z', fast=False):
         return (-0.5j * k * x / R) * hk1
     elif kind == '0':
         return (-0.5j * k) * hk1
+
+
+def PWD_kernel(u, n, k0, k_perp2, dz):
+    """
+    Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
+
+    Arguments:
+        u (np.array): fields
+        n (np.array): refraction index
+        k0 (float): wavenumber
+        k_perp2 (np.array): transversal k**2
+        dz (float): increment in distances
+
+    Returns:
+        numpy.array(): Field at at distance dz from the incident field
+
+    References:
+        1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+
+    """
+
+    Ek = fftshift(fft(u))
+    H = np.exp(1j * dz * csqrt(n**2 * k0**2 - k_perp2))
+
+    return ifft(fftshift(H * Ek))
+
+
+def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
+    """
+    Kernel for fast propagation of WPM method
+
+    Arguments:
+        u (np.array): fields
+        n (np.array): refraction index
+        k0 (float): wavenumber
+        k_perp2 (np.array): transversal k**2
+        dz (float): increment in distances
+
+    References:
+
+        1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+        2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+    """
+    refraction_indexes = np.unique(n)
+    number_refraction_indexes = len(refraction_indexes)
+
+    u_final = np.zeros_like(u, dtype=complex)
+    for m, n_m in enumerate(refraction_indexes):
+        # print (m, n_m)
+        u_temp = PWD_kernel(u, n_m, k0, k_perp2, dz)
+        Imz = (n == n_m)
+        u_final = u_final + Imz * u_temp
+
+    return u_final
 
 
 def polychromatic_multiprocessing(function_process,

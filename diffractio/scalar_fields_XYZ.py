@@ -52,13 +52,14 @@ from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 
-from diffractio import degrees, mm, np, num_max_processors, params_drawing, plt
-from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio import (degrees, eps, mm, np, num_max_processors,
+                        params_drawing, plt)
+from diffractio.scalar_fields_XY import PWD_kernel, Scalar_field_XY
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.utils_common import (get_date, load_data_common,
                                      save_data_common)
 from diffractio.utils_drawing import normalize_draw, prepare_drawing
-from diffractio.utils_math import ndgrid, nearest
+from diffractio.utils_math import get_k, ndgrid, nearest
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
 from diffractio.utils_slicer import slicerLM
@@ -629,6 +630,118 @@ class Scalar_field_XYZ(object):
             modo = modo * filtroBorde
             field[:, :, k] = modo
             self.u = field
+
+    def PWD(self, n=None, matrix=False, verbose=False):
+        """
+        Plane wave decompostion algorithm.
+
+        Arguments:
+            n (np. array): refraction index, If None, it is n_background
+            verbose (bool): If True prints state of algorithm
+
+        Returns:
+            numpy.array(): Field at at distance dz from the incident field
+
+        References:
+            1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+
+
+        Todo:
+            include filter for edges
+        """
+
+        dx = self.x[1] - self.x[0]
+        dy = self.y[1] - self.y[0]
+        dz = self.z[1] - self.z[0]
+        k0 = 2 * np.pi / self.wavelength
+
+        if n is None:
+            n = self.n_background
+
+        kx = get_k(self.x, '+')
+        ky = get_k(self.y, '+')
+        Kx, Ky = np.meshgrid(kx, ky)
+        K_perp2 = Kx**2 + Ky**2
+
+        self.clear_field()
+        num_steps = len(self.z)
+
+        self.u[:, :, 0] = self.u0.u
+        for i, zi in enumerate(self.z[0:-1]):
+            result = self.u[:, :, i]
+            result_next = PWD_kernel(result, n, k0, K_perp2, dz)
+            self.u[:, :, i + 1] = result_next
+            if verbose is True:
+                print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+
+        if matrix is True:
+            return self.u
+
+    def M_xyz(self, j, kx, ky):
+        """
+        TODO: sin terminar
+        Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
+        “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+        """
+        ## simple parameters
+
+        k0 = 2 * np.pi / self.wavelength
+
+        z = self.z
+        x = self.x
+        y = self.y
+
+        num_x = self.x.size
+        num_y = self.y.size
+        num_z = self.z.size
+
+        dz = z[1] - z[0]
+        dx = x[1] - x[0]
+        dx = y[1] - y[0]
+
+        nj = self.n[:, j]
+        nj_1 = self.n[:, j - 1]
+
+        n_med = nj.mean()
+        n_1_med = nj_1.mean()
+
+        ## parameters
+        NJ, KX = np.meshgrid(nj, kx)
+        NJ_1, KX = np.meshgrid(nj_1, kx)
+
+        k_perp = KX + eps
+
+        kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
+        kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
+
+        tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
+        t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
+
+        kj_1 = NJ_1 * k0
+        fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
+        # cuidado no es la misma definición, me parece que está repetido
+        e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
+        eg_xj_1 = fj_1 * e_xj_1
+        # cuidado no es la misma definición, me parece que está mal por no ser simétrica
+
+        p001 = 0
+        p002 = tg_TM * (1 - 1j * eg_xj_1)
+        p111 = t_TE
+        p112 = 0
+
+        ## M00
+        M00 = (p001 + p002)
+
+        ## M01
+        M01 = 0
+
+        ## M10
+        M10 = 0
+
+        ## M11
+        M11 = (p111 + p112)
+
+        return M00, M01, M10, M11
 
     def to_scalar_field_XY(self,
                            iz0=None,
