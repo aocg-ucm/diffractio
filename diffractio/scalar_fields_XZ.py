@@ -995,8 +995,8 @@ class Scalar_field_XZ(object):
             (np.array): array with intensity I(z)
         """
 
-        intensity_prof = np.sum((np.abs(self.u)**2), axis=0)
-        I_max = intensity_prof.max()
+        intensity_prof = np.sum((np.abs(self.u)**2) * np.real(self.n), axis=0)
+        I_max = intensity_prof[0]
         if normalized is True:
             intensity_prof = intensity_prof / I_max
         if draw is True:
@@ -1215,7 +1215,7 @@ class Scalar_field_XZ(object):
             u_new = self.u[::reduce_matrix[0], ::reduce_matrix[1]]
             amplitude, intensity, phase = field_parameters(u_new, True)
 
-        phase[intensity < 0.005 * (intensity.max())] = 0
+        # phase[intensity < 0.005 * (intensity.max())] = 0
 
         if z_scale == 'um':
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]

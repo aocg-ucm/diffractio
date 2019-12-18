@@ -106,7 +106,7 @@ def execute_multiprocessing(__function_process__,
                             num_processors,
                             verbose=False):
     """Executes multiprocessing reading a dictionary.
-    
+
     Parameters:
         __function_process__ function tu process, it only accepts a dictionary
         dict_Parameters, dictionary / array with Parameters:
