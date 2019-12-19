@@ -89,11 +89,11 @@ class Scalar_source_X(Scalar_field_X):
         else:
             R = -z0 * (1 + (z_rayleigh / z0)**2)
         amplitude = A * w0 / w * exp(-(self.x - x0)**2 / (w**2))
-        phase1 = exp(1j * k * ((self.x - x0) * sin(theta)))  # rotation
-        phase2 = exp(
-            1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 / (2 * R)))
+        phase1 = exp(1j * k * ((self.x - x0) * np.sin(theta)))  # rotation
+        phase2 = exp(1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 /
+                           (2 * R)))
 
-        self.u = amplitude * phase1 * phase2
+        self.u = amplitude * phase1
 
     def spherical_wave(self,
                        A=1,
@@ -145,9 +145,8 @@ class Scalar_source_X(Scalar_field_X):
 
         self.u = np.zeros_like(self.u, dtype=complex)
         for p in params:
-            self.u = self.u + p['A'] * exp(
-                1.j * k *
-                (self.x * sin(p['theta']) + p['z0'] * cos(p['theta'])))
+            self.u = self.u + p['A'] * exp(1.j * k * (
+                self.x * sin(p['theta']) + p['z0'] * cos(p['theta'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle):
         """Several paralel plane waves.
