@@ -102,6 +102,13 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Fast Fourier Transform (FFT)** which allows, in a single step to determine the field at the far field.
 
+* **Plane Wave Descomposition (PWD)**
+
+* **Wave Propagation Method (PWD)**
+
+* **Vector Rayleigh-Sommerfeld (VRS)**
+
+* **Vector Wave Propagation Method (VPWD)**
 
 
 The fields, masks and sources can be stored in files,
@@ -170,8 +177,16 @@ L.M. Sanchez Brea, "Diffratio, python module for diffraction and interference op
 References
 ---------------------------
 
+**Propagation algorithms**:
+
 * J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
-* F. Shen y A. Wang, «Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula», Applied Optics, vol. 45, n.º 6, pp. 1102–1110, 2006.
+1. Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
+1. Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
+1. Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
+1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+1. Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
+
+
 * Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
 * B. E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
 * J. A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.

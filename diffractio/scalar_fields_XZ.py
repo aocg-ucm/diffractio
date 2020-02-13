@@ -324,8 +324,8 @@ class Scalar_field_XZ(object):
             filtro1 = np.zeros_like(self.n)
             sizex, sizez = self.n.shape
             centerx, centerz = int(sizex / 2), int(sizez / 2)
-            filtro1[centerx - pixels_filtering:centerx + pixels_filtering,
-                    centerz - 1:centerz + 1] = 1
+            filtro1[centerx - pixels_filtering:centerx +
+                    pixels_filtering, centerz - 1:centerz + 1] = 1
             filtro1 = filtro1 / sum(sum(filtro1))
             self.n = fftshift(ifft2(fft2(self.n) * fft2(filtro1)))
         elif type_filter == 2:
@@ -336,8 +336,8 @@ class Scalar_field_XZ(object):
             centerx = (self.x[-1] + self.x[0]) / 2
             # i_centerx = int(sizex / 2)
             # filtro1[i_centerx - pixels_filtering:i_centerx + pixels_filtering] = 1
-            filtro1 = np.exp(-(self.x - centerx)**2 /
-                             (2 * pixels_filtering**2))
+            filtro1 = np.exp(
+                -(self.x - centerx)**2 / (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
                 max_diff = np.abs(np.diff(self.n[:, i])).max()
@@ -760,7 +760,7 @@ class Scalar_field_XZ(object):
             num_processors (int): number of processors for multiprocessing
 
         Returns:
-           time in sssthe processing
+           time in the processing
         """
 
         time1 = time.time()
@@ -777,10 +777,9 @@ class Scalar_field_XZ(object):
         # parametro de quality
         dr_real = sqrt(dx**2)
         rmax = sqrt((xout**2).max())
-        dr_ideal = sqrt(
-            (self.wavelength / self.n_background)**2 + rmax**2 + 2 *
-            (self.wavelength / self.n_background
-             ) * sqrt(rmax**2 + self.z.min()**2)) - rmax
+        dr_ideal = sqrt((self.wavelength / self.n_background)**2 + rmax**2 +
+                        2 * (self.wavelength / self.n_background) *
+                        sqrt(rmax**2 + self.z.min()**2)) - rmax
         self.quality = dr_ideal / dr_real
 
         # when computation is performed: quality is determined
@@ -1259,7 +1258,8 @@ class Scalar_field_XZ(object):
                 algorithm.append('RS')
                 refr_index_RS.append(self.n[0, i])
 
-            elif algorithm[num_transition] == 'RS' and variation[i] > min_variation:
+            elif algorithm[
+                    num_transition] == 'RS' and variation[i] > min_variation:
                 # create new transition
                 # print(("c {} - {} -> BPM".format(variation[i], self.z[i])))
                 num_transition = num_transition + 1
@@ -1267,7 +1267,8 @@ class Scalar_field_XZ(object):
                 algorithm.append('BPM')
                 refr_index_RS.append(-1)
 
-            elif algorithm[num_transition] == 'BPM' and variation[i] < min_variation:
+            elif algorithm[
+                    num_transition] == 'BPM' and variation[i] < min_variation:
                 # create new transition
                 # print(("d {} - {} -> RS".format(variation[i], self.z[i])))
                 num_transition = num_transition + 1
@@ -1891,8 +1892,9 @@ class Scalar_field_XZ(object):
 
         global l2a, zZ, I_drawing, z, h1, x, log1, norm1
         plt.figure()
-        h1, = plt.plot(
-            [self.z[0], self.z[0]], [self.x[0], self.x[-1]], lw=2, color='w')
+        h1, = plt.plot([self.z[0], self.z[0]], [self.x[0], self.x[-1]],
+                       lw=2,
+                       color='w')
 
         I_drawing = prepare_drawing(self.u, kind, logarithm, normalize)
 
