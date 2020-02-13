@@ -348,6 +348,71 @@ def FWHM2D(x,
     return FWHM_x, FWHM_y
 
 
+def DOF(z, widths, w_factor=np.sqrt(2), has_draw=False, verbose=False):
+    """Determines Depth-of_focus (DOF) in terms of the width at different distances
+
+Parameters:
+
+    z (np.array): z positions
+    widths (np.array): width at positions z
+    range (float): range to determine z where   w = range * w0, being w0 the beam waist
+    has_draw (bool): if True draws the depth of focus
+
+References:
+
+    B. E. A. Saleh and M. C. Teich, Fundamentals of photonics. john Wiley & sons, 2nd ed. 2007. Eqs (3.1-18) (3.1-22) page 79
+
+Returns:
+
+    (float): Depth of focus
+    (float): beam waist
+    (float, float, float): postions (z_min, z_0, z_max) of the depth of focus
+    """
+
+    beam_waist = widths.min()
+    i_w0 = np.where(widths == beam_waist)
+    i_w0 = int(i_w0[0][0])
+    left = widths[0:i_w0]
+    right = widths[i_w0::]
+
+    i_left, _, distance_left = nearest(left, w_factor * beam_waist)
+
+    i_right, _, distance_right = nearest(right, w_factor * beam_waist)
+
+    z_rayleigh = z[i_right + i_w0] - z[i_left]
+
+    if verbose:
+
+        print(i_w0, widths[i_w0])
+        print(z_rayleigh)
+
+        print(widths[i_right + i_w0], z[i_right + i_w0])
+        print(widths[i_left], z[i_left])
+
+    if has_draw:
+        plt.figure()
+
+        plt.plot(z, widths, 'k', lw=2)
+        plt.plot(z, -widths, 'k', lw=2)
+        plt.plot(z, np.zeros_like(z), 'k-.', lw=2)
+
+        plt.plot([z[i_left], z[i_left]], [-widths[i_left], widths[i_left]],
+                 'r--')
+        plt.plot([z[i_right + i_w0], z[i_right + i_w0]],
+                 [-widths[i_right + i_w0], widths[i_right + i_w0]], 'r--')
+        plt.annotate(
+            s='',
+            xy=(z[i_left], -widths[i_right + i_w0]),
+            xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
+            arrowprops=dict(arrowstyle='<->'))
+        plt.text(z[i_w0], -widths.mean(), '$z_{R}$', fontsize=18)
+        plt.xlim(z[0], z[-1])
+        plt.ylim(-widths.max(), widths.max())
+
+    return z_rayleigh, beam_waist, np.array(
+        [z[i_left], z[i_w0], z[i_right + i_w0]])
+
+
 def detect_intensity_range(x,
                            intensity,
                            percentage=0.95,

@@ -30,13 +30,13 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
-import multiprocessing
 import datetime
+import multiprocessing
 
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-from matplotlib import rcParams, cm
-import matplotlib.pyplot as plt
+from matplotlib import cm, rcParams
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -58,7 +58,7 @@ num_max_processors = multiprocessing.cpu_count()
 no_date = False  # for test folder
 
 params_drawing = dict()
-params_drawing['color_intensity'] = cm.hot  # cm.gist_heat  #cm.hot
+params_drawing['color_intensity'] = cm.gist_heat  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.magma
 params_drawing['color_phase'] = cm.hsv  # cm.hsv
 params_drawing['color_real'] = cm.seismic

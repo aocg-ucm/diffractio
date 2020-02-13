@@ -70,9 +70,8 @@ from scipy.interpolate import RectBivariateSpline
 
 from diffractio import (degrees, eps, mm, np, num_max_processors,
                         params_drawing, plt, seconds, um)
-from diffractio.scalar_fields_X import (PWD_kernel, Scalar_field_X,
-                                        WPM_schmidt_kernel, kernelRS,
-                                        kernelRSinverse)
+from diffractio.scalar_fields_X import (
+    PWD_kernel, Scalar_field_X, WPM_schmidt_kernel, kernelRS, kernelRSinverse)
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.scalar_sources_X import Scalar_source_X
 from diffractio.utils_common import (get_date, load_data_common,
@@ -123,6 +122,7 @@ class Scalar_field_XZ(object):
         self.fast = False
         self.quality = 0
         self.borders = None  # borders at refraction index
+        self.params_drawing = params_drawing
 
         if x is not None and z is not None:
             self.X, self.Z = ndgrid(x, z)
@@ -1435,13 +1435,13 @@ class Scalar_field_XZ(object):
 
         if colormap_kind in ('', [], None, True):
             if kind == 'intensity':
-                colormap_kind = params_drawing["color_intensity"]
+                colormap_kind = self.params_drawing["color_intensity"]
             if kind == 'amplitude':
-                colormap_kind = params_drawing["color_amplitude"]
+                colormap_kind = self.params_drawing["color_amplitude"]
             if kind == 'phase':
-                colormap_kind = params_drawing["color_phase"]
+                colormap_kind = self.params_drawing["color_phase"]
             if kind == 'real':
-                colormap_kind = params_drawing["color_real"]
+                colormap_kind = self.params_drawing["color_real"]
 
         if kind == 'intensity':
             climits = 0, I_drawing.max()

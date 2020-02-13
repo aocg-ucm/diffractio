@@ -103,6 +103,7 @@ class Scalar_field_XYZ(object):
         self.fast = True
         self.quality = 0
         self.borders = None
+        self.params_drawing = params_drawing
 
         if x is not None and z is not None:
             self.X, self.Y, self.Z = ndgrid(x, y, z)
@@ -743,7 +744,7 @@ class Scalar_field_XYZ(object):
 
         return M00, M01, M10, M11
 
-    def to_scalar_field_XY(self,
+    def to_Scalar_field_XY(self,
                            iz0=None,
                            z0=None,
                            is_class=True,
@@ -809,6 +810,39 @@ class Scalar_field_XYZ(object):
                 iy = iy0
             return np.squeeze(self.u[:, iy, :])
 
+    def to_Scalar_field_YZ(self,
+                           ix0=None,
+                           x0=None,
+                           is_class=True,
+                           matrix=False):
+        """pass results to Scalar_field_XZ. Only one of the first two variables (iy0,y0) should be used
+
+        Parameters:
+            ix0 (int): position i of x data in array
+            x0 (float): position x to extract
+            class (bool): If True it returns a class
+            matrix (bool): If True it returns a matrix
+
+        TODO:
+            Simplify and change variable name clase
+        """
+        if is_class is True:
+            field_output = Scalar_field_XZ(
+                x=self.y, z=self.z, wavelength=self.wavelength)
+            if ix0 is None:
+                ix, tmp1, tmp2 = nearest(self.x, x0)
+            else:
+                iy = iy0
+            field_output.u = np.squeeze(self.u[:, ix, :])
+            return field_output
+
+        if matrix is True:
+            if ix0 is None:
+                ix, tmp1, tmp2 = nearest(self.x, x0)
+            else:
+                ix = ix0
+            return np.squeeze(self.u[ix, :, :])
+
     def to_Z(self,
              kind='amplitude',
              x0=None,
@@ -855,12 +889,16 @@ class Scalar_field_XYZ(object):
 
         return self.z, y
 
-    def beam_widths(self, kind='sigma4', has_draw=True, verbose=False):
+    def beam_widths(self,
+                    kind='sigma4',
+                    has_draw=[True, False],
+                    percentaje=0.5,
+                    verbose=False):
         """Determines the widths of the beam
 
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHD2D'
-            has_draw (bool): If True, draws
+            has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
             verbose (bool): prints info
         """
 
@@ -884,8 +922,9 @@ class Scalar_field_XYZ(object):
                     u_zi.x,
                     u_zi.y,
                     intensity,
-                    percentaje=0.5,
-                    has_drawing=True)
+                    percentaje=percentaje,
+                    remove_background='min',
+                    has_drawing=has_draw[1])
                 principal_axis = 0.
 
             beam_width_x[i] = dx
@@ -896,7 +935,7 @@ class Scalar_field_XYZ(object):
                 print("{:2.0f} ".format(i))
 
         beam_width = np.sqrt(beam_width_x**2 + beam_width_y**2)
-        if has_draw is True:
+        if has_draw[0] is True:
             plt.figure()
             plt.plot(self.z, beam_width, 'r', label='axis')
             plt.xlabel("z ($\mu$m)")
@@ -1059,7 +1098,7 @@ class Scalar_field_XYZ(object):
             reduce_matrix ()
         """
 
-        ufield = self.to_scalar_field_XY(
+        ufield = self.to_Scalar_field_XY(
             iz0=None, z0=z0, is_class=True, matrix=False)
         ufield.draw(
             kind=kind,
@@ -1114,7 +1153,64 @@ class Scalar_field_XYZ(object):
         plt.ylabel('x $(um)$', fontsize=16)
         plt.title('intensity XZ', fontsize=20)
         h1.set_cmap(
-            params_drawing['color_intensity'])  # OrRd # Reds_r gist_heat
+            self.params_drawing['color_intensity'])  # OrRd # Reds_r gist_heat
+        plt.colorbar()
+
+        # -----------------     no functiona de momento -----------------
+        if draw_borders is True:
+            x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
+            )
+            plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
+
+        if not filename == '':
+            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+
+        return h1
+
+    def draw_YZ(self,
+                x0=0 * mm,
+                logarithm=0,
+                normalize='',
+                draw_borders=False,
+                filename=''):
+        """Longitudinal profile YZ at a given x0 value.
+
+        Parameters:
+            x0 (float): value of x for interpolation
+            logarithm (bool): If True, intensity is scaled in logarithm
+            normalize (str):  False, 'maximum', 'intensity', 'area'
+            draw_borders (bool): check
+            filename (str): filename to save
+        """
+
+        plt.figure()
+        ufield = self.to_Scalar_field_YZ(x0=x0)
+        intensity = np.abs(ufield.u)**2
+
+        if logarithm == 1:
+            intensity = np.log(intensity + 1)
+
+        if normalize == 'maximum':
+            intensity = intensity / intensity.max()
+        if normalize == 'area':
+            area = (self.y[-1] - self.y[0]) * (self.z[-1] - self.z[0])
+            intensity = intensity / area
+        if normalize == 'intensity':
+            intensity = intensity / (intensity.sum() / len(intensity))
+
+        h1 = plt.imshow(
+            intensity,
+            interpolation='bilinear',
+            aspect='auto',
+            origin='lower',
+            extent=[
+                self.z[0] / 1000, self.z[-1] / 1000, self.y[0], self.y[-1]
+            ])
+        plt.xlabel('z (mm)', fontsize=16)
+        plt.ylabel('y $(um)$', fontsize=16)
+        plt.title('intensity YZ', fontsize=20)
+        h1.set_cmap(
+            self.params_drawing['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
         # -----------------     no functiona de momento -----------------
@@ -1254,12 +1350,12 @@ class Scalar_field_XYZ(object):
                 return "no correct kind in video"
 
         if kind == 'intensity':
-            cmap1 = params_drawing['color_intensity']
+            cmap1 = self.params_drawing['color_intensity']
         elif kind == 'phase':
-            cmap1 = params_drawing['color_phase']
+            cmap1 = self.params_drawing['color_phase']
 
         elif kind == 'real':
-            cmap1 = params_drawing['color_real']
+            cmap1 = self.params_drawing['color_real']
 
         else:
             return "no correct kind in video"
@@ -1284,7 +1380,7 @@ class Scalar_field_XYZ(object):
             fig = plt.figure()
             ax = fig.add_axes([0, 0, 1, 1])
 
-        frame = self.to_scalar_field_XY(
+        frame = self.to_Scalar_field_XY(
             iz0=0, z0=None, is_class=True, matrix=False)
 
         intensity_global = f(self.u, kind).max()
@@ -1302,12 +1398,12 @@ class Scalar_field_XYZ(object):
         n_frames = len(self.z)
         with writer.saving(fig, filename, 300):
             for i_prog in range(n_frames):
-                frame = self.to_scalar_field_XY(
+                frame = self.to_Scalar_field_XY(
                     iz0=i_prog, z0=None, is_class=True, matrix=False)
                 intensity = f(frame.u, kind)
                 image.set_array(intensity)
                 if kind == 'intensity':
-                    image.set_clim(0, intensity_global)
+                    image.set_clim(vmax=intensity_global)
                 elif kind == 'phase':
                     image.set_clim(-np.pi, np.pi)
                 texto = "z = {:2.3f} mm".format(self.z[i_prog] / mm)

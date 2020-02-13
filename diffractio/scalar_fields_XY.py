@@ -56,7 +56,6 @@ from matplotlib import cm, rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
 from numpy.lib.scimath import sqrt as csqrt
-
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
@@ -116,6 +115,7 @@ class Scalar_field_XY(object):
         self.type = 'Scalar_field_XY'
         self.date = get_date()
         self.quality = 0
+        self.params_drawing = params_drawing
 
     def __str__(self):
         """Represents main data of the atributes"""
@@ -1272,7 +1272,7 @@ class Scalar_field_XY(object):
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
         if colormap_kind in ['', None, []]:
-            colormap_kind = params_drawing["color_intensity"]
+            colormap_kind = self.params_drawing["color_intensity"]
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
         id_fig, IDax, IDimage = draw2D(
             intensity,
@@ -1305,7 +1305,7 @@ class Scalar_field_XY(object):
         amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
         max_amplitude = np.abs(amplitude).max()
         if colormap_kind in ['', None, []]:
-            colormap_kind = params_drawing["color_amplitude"]
+            colormap_kind = self.params_drawing["color_amplitude"]
         id_fig, IDax, IDimage = draw2D(
             amplitude,
             self.x,
@@ -1332,7 +1332,7 @@ class Scalar_field_XY(object):
         phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
-            colormap_kind = params_drawing["color_phase"]
+            colormap_kind = self.params_drawing["color_phase"]
 
         id_fig, IDax, IDimage = draw2D(
             phase,
@@ -1392,10 +1392,9 @@ class Scalar_field_XY(object):
         plt.title("$intensity$")
         plt.axis('scaled')
         plt.axis(extension)
-        h1.set_cmap(cm.hot)  # params_drawing["color_intensity"])  # seismic
         plt.colorbar(orientation='horizontal', shrink=0.66)
         plt.axis(extension)
-        h1.set_cmap(cm.hot)
+        h1.set_cmap(self.params_drawing["color_intensity"])
 
         ax = plt.subplot(1, 2, 2)
         phase[phase == 1] = -1
@@ -1415,7 +1414,7 @@ class Scalar_field_XY(object):
         plt.axis(extension)
         plt.title("$phase$")
         plt.clim(-180, 180)
-        h2.set_cmap(cm.seismic)  # params_drawing["color_phase"]
+        h2.set_cmap(self.params_drawing["color_phase"])  #
         plt.subplots_adjust(0, 0, 1, 1, 0, 0)
 
         return (h1, h2)
@@ -1440,7 +1439,7 @@ class Scalar_field_XY(object):
         rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
-            colormap_kind = params_drawing["color_real"]
+            colormap_kind = self.params_drawing["color_real"]
 
         id_fig, IDax, IDimage = draw2D(
             rf,
