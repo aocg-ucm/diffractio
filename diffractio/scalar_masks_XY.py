@@ -563,11 +563,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t
 
     def circle(self, r0, radius, angle=0 * degrees):
-        """Divides the field in two levels
+        """Creates a circle or an ellipse.
 
         Parameters:
-            r0 (float, float): center of circle
-            radius (float, float): radius of circle
+            r0 (float, float): center of circle/ellipse
+            radius (float, float): radius of circle/ellipse
             angle (float): angle of rotation in radians
 
         Example:

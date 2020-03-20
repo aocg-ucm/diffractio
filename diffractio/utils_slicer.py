@@ -201,6 +201,6 @@ class VolumeSlicer(HasTraits):
 
 
 def slicerLM(fxyz):
+    print("Close the window to continue.")
     m = VolumeSlicer(data=fxyz)
     m.configure_traits()
-    print("Close the window to continue.")
