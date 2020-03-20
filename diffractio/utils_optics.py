@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
-import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
+
+import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, nearest
@@ -348,15 +349,22 @@ def FWHM2D(x,
     return FWHM_x, FWHM_y
 
 
-def DOF(z, widths, w_factor=np.sqrt(2), has_draw=False, verbose=False):
+def DOF(z,
+        widths,
+        w_factor=np.sqrt(2),
+        w_fixed=0,
+        has_draw=False,
+        verbose=False):
     """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
 Parameters:
 
     z (np.array): z positions
     widths (np.array): width at positions z
-    range (float): range to determine z where   w = range * w0, being w0 the beam waist
+    w_factor (float): range to determine z where   w = w_factor * w0, being w0 the beam waist
+    w_fixed (float): If it is not 0, then it is used as w_min
     has_draw (bool): if True draws the depth of focus
+    verbose (bool): if True, prints data
 
 References:
 
@@ -369,9 +377,16 @@ Returns:
     (float, float, float): postions (z_min, z_0, z_max) of the depth of focus
     """
 
-    beam_waist = widths.min()
-    i_w0 = np.where(widths == beam_waist)
-    i_w0 = int(i_w0[0][0])
+    if w_fixed == 0:
+        beam_waist = widths.min()
+        i_w0 = np.where(widths == beam_waist)
+        i_w0 = int(i_w0[0][0])
+
+    else:
+        beam_waist = w_fixed
+        i_w0, _, _ = nearest(widths, beam_waist)
+
+    print(i_w0)
     left = widths[0:i_w0]
     right = widths[i_w0::]
 

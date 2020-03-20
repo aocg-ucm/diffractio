@@ -66,6 +66,43 @@ def nearest2(vector, numbers):
     return indexes, values, distances
 
 
+def find_extrema(array2D, x, y, kind='max', verbose=True):
+    """In a 2D-array, formed by vectors x, and y, the maxima or minima are found
+
+    Parameters:
+        array2D (np. array 2D): 2D array with variable
+        x (np.array 1D): 1D array with x axis
+        y (np.array 1D): 1D array with y axis
+        kind (str): 'min' or 'max': detects minima or maxima
+        verbose (bool): If True prints data.
+    """
+
+    if kind == 'max':
+        result = np.where(array2D == np.amax(array2D))
+    elif kind == 'min':
+        result = np.where(array2D == np.min(array2D))
+
+    listOfCordinates = list(zip(result[1], result[0]))
+
+    num_extrema = len(listOfCordinates)
+
+    indexes = np.zeros((num_extrema, 2))
+    xy_ext = np.zeros((num_extrema, 2))
+    extrema = np.zeros((num_extrema))
+
+    for i, cord in enumerate(listOfCordinates):
+        indexes[i, :] = cord[0], cord[1]
+        xy_ext[i, 0] = x[cord[0]]
+        xy_ext[i, 1] = y[cord[1]]
+        extrema[i] = array2D[cord[1], cord[0]]
+
+    if verbose is True:
+        for cord in listOfCordinates:
+            print(cord, x[cord[0]], y[cord[1]], array2D[cord[1], cord[0]])
+
+    return indexes, xy_ext, extrema
+
+
 def ndgrid(*args, **kwargs):
     """n-dimensional gridding like Matlab's NDGRID
 
@@ -723,10 +760,10 @@ def fZernike(X, Y, n, m, radius=5 * mm):
 
     Z = zeros(R.shape, dtype=np.float)
     for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
-            factorial(np.abs(s)) * factorial(
-                np.abs(round(0.5 * (n + np.abs(m)) - s))
-            ) * factorial(np.abs(round(0.5 * (n - np.abs(m)) - s))))
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(
+            np.abs(n - s)) / (factorial(np.abs(s)) * factorial(
+                np.abs(round(0.5 * (n + np.abs(m)) - s))) * factorial(
+                    np.abs(round(0.5 * (n - np.abs(m)) - s))))
 
     if m >= 0:
         fz1 = N * Z * np.cos(m * THETA)
@@ -802,8 +839,8 @@ def get_k(x, flavour='-'):
 
     elif flavour == '+':
         dx = x[1] - x[0]
-        kx = 2 * np.pi / (num_x * dx) * (
-            range(-int(num_x / 2), int(num_x / 2)))
+        kx = 2 * np.pi / (num_x * dx) * (range(-int(num_x / 2), int(
+            num_x / 2)))
 
     return kx
 

@@ -51,6 +51,7 @@ from mayavi import mlab
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
+from scipy.signal import correlate2d
 
 from diffractio import (degrees, eps, mm, np, num_max_processors,
                         params_drawing, plt)
@@ -902,7 +903,7 @@ class Scalar_field_XYZ(object):
             verbose (bool): prints info
         """
 
-        u_zi = Scalar_field_XY(self.x, self.y, self.wavelength)
+        # u_zi = Scalar_field_XY(self.x, self.y, self.wavelength)
         beam_width_x = np.zeros_like(self.z)
         beam_width_y = np.zeros_like(self.z)
         principal_axis_z = np.zeros_like(self.z)
@@ -918,9 +919,11 @@ class Scalar_field_XYZ(object):
 
             elif kind == 'FWHM2D':
                 intensity = np.abs(u_prop_mat)**2
+                # intensity = correlate2d(
+                #     intensity, np.ones((3, 3)) / 9, mode='same')
                 dx, dy = FWHM2D(
-                    u_zi.x,
-                    u_zi.y,
+                    self.x,
+                    self.y,
                     intensity,
                     percentaje=percentaje,
                     remove_background='min',
