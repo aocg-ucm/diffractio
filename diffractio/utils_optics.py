@@ -386,7 +386,6 @@ Returns:
         beam_waist = w_fixed
         i_w0, _, _ = nearest(widths, beam_waist)
 
-    print(i_w0)
     left = widths[0:i_w0]
     right = widths[i_w0::]
 
@@ -397,7 +396,6 @@ Returns:
     z_rayleigh = z[i_right + i_w0] - z[i_left]
 
     if verbose:
-
         print(i_w0, widths[i_w0])
         print(z_rayleigh)
 
