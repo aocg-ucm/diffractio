@@ -15,15 +15,15 @@ Pre-alpha state.
 
 Pre-alpha state.
 
-Modules are passed to python3.
+* Modules are passed to python3.
 
 
 0.0.2 (2019-10-01)
 ------------------------
 Alpha state
 
- * copyreg removed (previous not worked)
- * change fft to scipy: "from scipy.fftpack import fft, ifft, fftshift"
+* copyreg removed (previous not worked)
+* change fft to scipy: "from scipy.fftpack import fft, ifft, fftshift"
 
 
   First release on PyPI in pre-alpha state.
@@ -34,24 +34,25 @@ Alpha state
 ------------------------
 Alpha state
 
- * Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
+* Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
 
  0.0.6 (2019-10-22)
  ------------------------
  Alpha state
 
-  * Finished first version of examples and tutorial.
+* Finished first version of examples and tutorial.
 
 0.0.7 (2019-10.26)
 ------------------------
 Alpha state
 
 * convert_mask -> extrude_mask
+* improving documentation
+* implementing PWD
 
-
- * Modules	  = 9/10.
- * Functions 	= 9/10.
- * Tutorial 	= 8/10.
- * Examples 	= 7/10.
- * Tests 	    = 9/10.
- * Drawing 	  = 9/10.
+* Modules	  = 9/10.
+* Functions 	= 9/10.
+* Tutorial 	= 8/10.
+* Examples 	= 7/10.
+* Tests 	    = 9/10.
+* Drawing 	  = 9/10.

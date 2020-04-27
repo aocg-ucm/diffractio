@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """The setup script."""
 
@@ -32,7 +32,6 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
@@ -52,7 +51,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM'
+        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
@@ -60,6 +59,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.0.6',
+    version='0.0.7',
     zip_safe=False,
 )
