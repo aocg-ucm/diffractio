@@ -40,7 +40,7 @@ from matplotlib import cm, rcParams
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 
 name = 'diffractio'
 

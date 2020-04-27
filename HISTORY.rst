@@ -47,6 +47,9 @@ Alpha state
 Alpha state
 
 * convert_mask -> extrude_mask
+* improving documentation
+* implementing PWD
+
 
 
  * Modules	  = 9/10.
