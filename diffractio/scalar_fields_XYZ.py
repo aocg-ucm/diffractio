@@ -891,14 +891,14 @@ class Scalar_field_XYZ(object):
         return self.z, y
 
     def beam_widths(self,
-                    kind='sigma4',
+                    kind='FWHM2D',
                     has_draw=[True, False],
                     percentaje=0.5,
                     verbose=False):
         """Determines the widths of the beam
 
         Parameters:
-            kind (str): kind of algorithm: 'sigma4', 'FWHD2D'
+            kind (str): kind of algorithm: 'sigma4', 'FWHM2D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
             verbose (bool): prints info
         """
