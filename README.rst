@@ -85,10 +85,10 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 
 
 .. image:: mask1.png
-   :width: 400
+   :height: 300
 
 .. image:: mask2.png
-   :width: 400
+   :height: 350
 
 
 Fields
@@ -121,6 +121,25 @@ In some modules, videos can be generated for a better analysis of optical fields
    :width: 400
 
 
+
+
+Paraxial vector beams
+==================================
+
+Here, we implement new classes where the fields E_x and E_y are generated and propagted using Rayleigh-Sommerfeld approach.
+Also, simple and complex polarizing masks can be created.
+
+**Ex and Ey fields**
+
+.. image:: vector_gauss_radial_fields.png
+   :width: 700
+   
+**Polarization: Stokes parameters**
+
+.. image:: vector_gauss_radial_stokes.png
+  :width: 700
+
+
 Other features
 =================
 
@@ -136,18 +155,6 @@ Other features
 
 * Polychromatic and extended source problems can also be analyzed using multiprocessing.
 
-
-Paraxial vector beams
-==================================
-
-Here, we implement new classes where the fields $E_x$ and $E_y$ are generated and propagted using Rayleigh-Sommerfeld approach.
-Also, simple and complex polarizing masks can be created.
-
-.. image:: vector_gauss_radial_fields.png
-   :width: 700
-
-.. image:: vector_gauss_radial_stokes.png
-  :width: 700
 
 
 Authors
@@ -180,11 +187,11 @@ References
 **Propagation algorithms**:
 
 * J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
-1. Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
-1. Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
-1. Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
-1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
-1. Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
+* Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
+* Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
+* Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
+* Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+* Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
 
 
 * Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.

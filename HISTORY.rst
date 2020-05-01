@@ -42,6 +42,8 @@ Alpha state
 
 * Finished first version of examples and tutorial.
 
+
+
 0.0.7 (2019-10.26)
 ------------------------
 Alpha state
