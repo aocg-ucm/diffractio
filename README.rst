@@ -4,14 +4,14 @@ Python Diffraction-Interference module
 
 
 .. image:: https://img.shields.io/pypi/v/diffractio.svg
-        :target: https://pypi.org/project/diffractio/
+		:target: https://pypi.org/project/diffractio/
 
 .. image:: https://img.shields.io/travis/optbrea/diffractio.svg
-        :target: https://bitbucket.org/optbrea/diffractio/src/master/
+		:target: https://bitbucket.org/optbrea/diffractio/src/master/
 
 .. image:: https://readthedocs.org/projects/diffractio/badge/?version=latest
-        :target: https://diffractio.readthedocs.io/en/latest/
-        :alt: Documentation Status
+		:target: https://diffractio.readthedocs.io/en/latest/
+		:alt: Documentation Status
 
 
 * Free software: MIT license
@@ -108,7 +108,7 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Vector Rayleigh-Sommerfeld (VRS)**.
 
-* **Vector Wave Propagation Method (VPWD)**.
+* **Vector Wave Propagation Method (VWPM)**.
 
 
 The fields, masks and sources can be stored in files.
@@ -163,11 +163,11 @@ Authors
 * Luis Miguel Sanchez Brea <optbrea@ucm.es>
 
 
-    **Universidad Complutense de Madrid**,
-    Faculty of Physical Sciences,
-    Department of Optics
-    Plaza de las ciencias 1,
-    ES-28040 Madrid (Spain)
+	**Universidad Complutense de Madrid**,
+	Faculty of Physical Sciences,
+	Department of Optics
+	Plaza de las ciencias 1,
+	ES-28040 Madrid (Spain)
 
 .. image:: logoUCM.png
    :width: 125

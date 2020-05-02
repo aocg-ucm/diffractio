@@ -60,6 +60,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.0.9',
+    version='0.0.10',
     zip_safe=False,
 )

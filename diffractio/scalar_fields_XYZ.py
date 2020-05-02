@@ -1368,9 +1368,9 @@ class Scalar_field_XYZ(object):
 
         Writer = anim.writers['ffmpeg']
         if extension == '.avi':
-            writer = Writer(fps=fps, codec='ffv1')
+            writer = Writer(fps=fps)  #, codec='ffv1'
         elif extension == '.mp4':
-            writer = Writer(fps=fps, codec='mpeg4', bitrate=1e6)
+            writer = Writer(fps=fps, bitrate=1e6)  #codec='mpeg4',
         else:
             print("file needs to be .avi or .mp4")
         xmin, xmax, ymin, ymax = self.x[0], self.x[-1], self.y[0], self.y[-1]

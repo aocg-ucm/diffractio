@@ -12,11 +12,11 @@ To install Python diffraction and interference, run this command in your termina
 
 .. code-block:: console
 
-    # Linux:
-    $ pip3 install diffractio
+	# Linux:
+	$ pip3 install diffractio
 
-    # Windows:
-    $ pip install diffractio
+	# Windows:
+	$ pip install diffractio
 
 
 This is the preferred method to install Python diffraction and interference, as it will always install the most recent stable release.
@@ -28,6 +28,18 @@ you through the process.
 .. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
 
 
+Additional packages
+------------------------
+
+Diffractio uses also the following non-standard modules:
+
+* hickle
+* mayavi
+* py-pol
+
+They should previously be installed before Diffractio module.
+
+
 From sources
 ------------
 
@@ -37,8 +49,8 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git@bitbucket.org:optbrea/diffractio.git
-    $ git clone https://optbrea@bitbucket.org/optbrea/diffractio.git
+	$ git clone git@bitbucket.org:optbrea/diffractio.git
+	$ git clone https://optbrea@bitbucket.org/optbrea/diffractio.git
 
 
 
@@ -46,11 +58,11 @@ Once you have a copy of the source, you can install it with:
 
 .. code-block:: console
 
-    # Linux:
-    $ python3 setup.py install
+	# Linux:
+	$ python3 setup.py install
 
-    # Windows:
-    $ python setup.py install
+	# Windows:
+	$ python setup.py install
 
 
 
