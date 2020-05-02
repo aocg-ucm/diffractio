@@ -48,6 +48,7 @@ setup(
     install_requires=requirements,
     license="MIT license",
     # long_description=readme + '\n\n' + history,
+    long_description=readme,
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
@@ -59,6 +60,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.0.7',
+    version='0.0.9',
     zip_safe=False,
 )

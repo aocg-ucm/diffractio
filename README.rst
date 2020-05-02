@@ -102,16 +102,16 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Fast Fourier Transform (FFT)** which allows, in a single step to determine the field at the far field.
 
-* **Plane Wave Descomposition (PWD)**
+* **Plane Wave Descomposition (PWD)**.
 
-* **Wave Propagation Method (PWD)**
+* **Wave Propagation Method (PWD)**.
 
-* **Vector Rayleigh-Sommerfeld (VRS)**
+* **Vector Rayleigh-Sommerfeld (VRS)**.
 
-* **Vector Wave Propagation Method (VPWD)**
+* **Vector Wave Propagation Method (VPWD)**.
 
 
-The fields, masks and sources can be stored in files,
+The fields, masks and sources can be stored in files.
 
 Also drawings can be easily obtained, for intensity, phase, fields, etc.
 
@@ -133,7 +133,7 @@ Also, simple and complex polarizing masks can be created.
 
 .. image:: vector_gauss_radial_fields.png
    :width: 700
-   
+
 **Polarization: Stokes parameters**
 
 .. image:: vector_gauss_radial_stokes.png
@@ -192,8 +192,6 @@ References
 * Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
 * Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
 * Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
-
-
 * Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
 * B. E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
 * J. A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.

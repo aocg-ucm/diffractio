@@ -375,8 +375,8 @@ class Scalar_mask_X(Scalar_field_X):
             radius (float): radius of aspheric surface
         """
         k = 2 * np.pi / self.wavelength
-        t1 = c * (self.x - x0)**2 / (
-            1 - np.sqrt(1 - (1 + k) * c**2 * (self.x - x0)**2))
+        t1 = c * (self.x - x0)**2 / (1 - np.sqrt(1 - (1 + k) * c**2 *
+                                                 (self.x - x0)**2))
 
         t2 = 0
         for i, ai in enumerate(a):
@@ -665,11 +665,11 @@ class Scalar_mask_X(Scalar_field_X):
             amp_max (float): maximum transmittance
             phase_max (float): maximum modulation for phase gratings
             delta_x (float): x shifting for movement of grating
-            x0 (float): ***TODO
+            x0 (float):  -
             length (float): length of the grating.  0: length is equal to size of x l=(x[-1]-x[0]),  <l: it can be shorter than l
             x_center (float): x-position of center of grating
 
-        Returns
+        Returns:
             numpy.array: px
         """
 
@@ -765,7 +765,7 @@ class Scalar_mask_X(Scalar_field_X):
             length (float): length of the grating,  0: length is equal to size of x l=(x[-1]-x[0]). <l: it can be shorter than l
             x_center (float): x-position of center of grating
 
-        Returns
+        Returns:
             numpy.array: qx
         """
 
@@ -910,8 +910,8 @@ class Scalar_mask_X(Scalar_field_X):
         if kind == 'abs_fag':
             i0_ones = np.ones_like(i0)
             i0_zeros = np.zeros_like(i0)
-            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape(
-                (-1, ), order='F')
+            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape((-1, ),
+                                                                     order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)

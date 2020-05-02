@@ -674,7 +674,8 @@ class Scalar_field_XYZ(object):
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, :, i + 1] = result_next
             if verbose is True:
-                print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+                # print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+                print("{}/{}".format(i, num_steps))
 
         if matrix is True:
             return self.u

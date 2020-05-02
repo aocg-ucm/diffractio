@@ -12,7 +12,12 @@ To install Python diffraction and interference, run this command in your termina
 
 .. code-block:: console
 
+    # Linux:
     $ pip3 install diffractio
+
+    # Windows:
+    $ pip install diffractio
+
 
 This is the preferred method to install Python diffraction and interference, as it will always install the most recent stable release.
 
@@ -41,7 +46,12 @@ Once you have a copy of the source, you can install it with:
 
 .. code-block:: console
 
+    # Linux:
     $ python3 setup.py install
+
+    # Windows:
+    $ python setup.py install
+
 
 
 .. _Bitbucket repo: https://bitbucket.org/optbrea/diffractio/src/master/

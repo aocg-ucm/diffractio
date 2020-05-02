@@ -44,13 +44,14 @@ Alpha state
 
 
 
-0.0.7 (2019-10.26)
+0.0.7 and 0.0.8 (2020-05-02)
 ------------------------
 Alpha state
 
 * convert_mask -> extrude_mask
-* improving documentation
-* implementing PWD
+* Improved documentation
+* Implemented PWD
+* Reduced size of html
 
 * Modules	  = 9/10.
 * Functions 	= 9/10.

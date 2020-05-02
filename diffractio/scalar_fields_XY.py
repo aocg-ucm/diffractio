@@ -52,7 +52,7 @@ The magnitude is related to microns: `micron = 1.`
 
 import matplotlib.animation as animation
 import scipy.ndimage
-from matplotlib import cm, rcParams
+from matplotlib import rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
                    matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
 from numpy.lib.scimath import sqrt as csqrt
@@ -84,15 +84,13 @@ class Scalar_field_XY(object):
     """Class for working with XY scalar fields.
 
     Parameters:
-        x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         y (numpy.array): linear array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions.
-            The number of data is preferibly :math:`2^n` .
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         self.y (numpy.array): linear array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
         self.u (numpy.array): (x,z) complex field
@@ -850,8 +848,9 @@ class Scalar_field_XY(object):
 
         num_data_x, num_data_y = MTF_field.u.shape
 
-        mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[int(
-            num_data_x / 2), int(num_data_y / 2)])
+        mtf_norm = np.abs(MTF_field.u) / np.abs(
+            MTF_field.u[int(num_data_x /
+                            2), int(num_data_y / 2)])
 
         delta_x = x[1] - x[0]
         delta_y = y[1] - y[0]
@@ -1565,8 +1564,8 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z + (X**2 + Y**2) /
-                          (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z +
+                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
 
 
 def PWD_kernel(u, n, k0, k_perp2, dz):

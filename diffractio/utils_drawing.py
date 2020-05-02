@@ -233,13 +233,11 @@ def change_image_size(image_name,
 def extract_image_from_video(nombre_video=None,
                              num_frame="[0, ]",
                              final_filename='prueba.png'):
-    """Extract images form a video using imageMagick
-    convert 'animacion.avi[15,]' animacion_frame.png
-        - saca el frame 15 (solo el 15)
-    convert 'animacion.avi[15]' animacion_frame.png
-        - saca los 15 primeros frame los numera con _1
-    convert 'animacion.avi[5,10]' animacion_frame.png
-        - saca el frame 5 y el 10
+    """Extract images form a video using imageMagick.
+
+    convert 'animacion.avi[15,]' animacion_frame.png. Extracts frame 15 (ony 15)
+    convert 'animacion.avi[15]' animacion_frame.png. Extracts the first 15
+    convert 'animacion.avi[5,10]' animacion_frame.png. Extracts frame 5 and 10
     """
 
     texto = "convert '%s%s' %s" % (nombre_video, num_frame, final_filename)

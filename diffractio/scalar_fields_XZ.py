@@ -70,8 +70,9 @@ from scipy.interpolate import RectBivariateSpline
 
 from diffractio import (degrees, eps, mm, np, num_max_processors,
                         params_drawing, plt, seconds, um)
-from diffractio.scalar_fields_X import (
-    PWD_kernel, Scalar_field_X, WPM_schmidt_kernel, kernelRS, kernelRSinverse)
+from diffractio.scalar_fields_X import (PWD_kernel, Scalar_field_X,
+                                        WPM_schmidt_kernel, kernelRS,
+                                        kernelRSinverse)
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.scalar_sources_X import Scalar_source_X
 from diffractio.utils_common import (get_date, load_data_common,
@@ -885,7 +886,8 @@ class Scalar_field_XZ(object):
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, i + 1] = result_next
             if verbose is True:
-                print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+                # print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+                print("{}/{}".format(i, num_steps))
 
         if matrix is True:
             return self.u

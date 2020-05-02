@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
+import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
-
-import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, nearest
@@ -726,7 +725,7 @@ def field_parameters(u, has_amplitude_sign=False):
 def convert_phase2heigths(phase, wavelength, n, n_background):
     """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
 
-    :math:`phase(x,z)= k (n-n_0) h(x,z)`.
+    phase(x,z)= k (n-n_0) h(x,z).
 
     Parameters:
         phase (np.array): Phases
@@ -744,13 +743,7 @@ def convert_phase2heigths(phase, wavelength, n, n_background):
 
 
 def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
-    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
-
-    :math:`A_{out}=A_{in} e^{-\left\vert \mathbf{a}\right\vert z}`
-
-    and
-
-    :math:`\delta=1/\left\vert \mathbf{a}\right\vert =\lambda_{vacio}/(2\pi\kappa)`
+    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ.
 
     Parameters:
         phase (np.array): Phases
