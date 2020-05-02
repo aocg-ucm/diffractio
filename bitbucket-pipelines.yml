@@ -3,12 +3,9 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: python:3.7.3
-
+image: python:3.6.9
 pipelines:
   default:
     - step:
-        caches:
-          - pip3
-        script: # Modify the commands below to build your repository.
-          - pip3 install -r requirements.txt
+        script:
+          - pip install -r requirements.txt
