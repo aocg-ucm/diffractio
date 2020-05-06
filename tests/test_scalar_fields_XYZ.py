@@ -209,7 +209,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(t3)
         uxyz.RS()
 
-        u_xy = uxyz.to_scalar_field_XY(
+        u_xy = uxyz.to_Scalar_field_XY(
             iz0=None, z0=3 * mm, is_class=True, matrix=False)
         u_xy.draw(kind='intensity')
 
@@ -252,7 +252,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(t3)
         uxyz.RS()
 
-        uscalar_fields_XY = uxyz.to_scalar_field_XY(z0=3 * mm)
+        uscalar_fields_XY = uxyz.to_Scalar_field_XY(z0=3 * mm)
         uscalar_fields_XY.draw(kind='intensity', cut_value=None)
 
         uxyz.draw_XY(

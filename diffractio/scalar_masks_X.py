@@ -271,7 +271,7 @@ class Scalar_mask_X(Scalar_field_X):
             mask (bool): if True radius is applied
         """
 
-        k = 2 * sp.pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
 
         # distance from generatriz to cone axis
         xp = self.x > x0
@@ -282,7 +282,7 @@ class Scalar_mask_X(Scalar_field_X):
         h[xp] = -np.sin(angle) * (self.x[xp] - x0)
         h[xn] = np.sin(angle) * (self.x[xn] - x0)
 
-        u = sp.exp(1.j * (k * h + np.pi))
+        u = np.exp(1.j * (k * h + np.pi))
 
         t = np.ones_like(self.x)
 

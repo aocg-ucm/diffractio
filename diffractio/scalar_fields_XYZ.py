@@ -20,7 +20,7 @@ The magnitude is related to microns: `micron = 1.`
 
 *Definition of a scalar field*
 	* load and save data
-	* to_scalar_field_XY
+	* to_Scalar_field_XY
 	* xy_2_xyz
 	* cut_function
 	* __rotate__
@@ -1322,6 +1322,7 @@ class Scalar_field_XYZ(object):
               kind='intensity',
               fps=15,
               frame=True,
+              axis='auto',
               verbose=False):
         """Makes a video in the range given by self.z.
 
@@ -1370,7 +1371,8 @@ class Scalar_field_XYZ(object):
         if extension == '.avi':
             writer = Writer(fps=fps)  #, codec='ffv1'
         elif extension == '.mp4':
-            writer = Writer(fps=fps, bitrate=1e6)  #codec='mpeg4',
+            writer = Writer(
+                fps=fps, bitrate=1e6, codec='mpeg4')  #codec='mpeg4',
         else:
             print("file needs to be .avi or .mp4")
         xmin, xmax, ymin, ymax = self.x[0], self.x[-1], self.y[0], self.y[-1]
@@ -1379,7 +1381,7 @@ class Scalar_field_XYZ(object):
             plt.ion()
             fig, axes = plt.subplots(nrows=1)
             ax = plt.gca()
-            plt.axis('auto')
+            plt.axis(axis)
         else:
             fig = plt.figure()
             ax = fig.add_axes([0, 0, 1, 1])
