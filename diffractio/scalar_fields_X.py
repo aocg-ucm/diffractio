@@ -990,7 +990,6 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
 		2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
 	"""
     refraction_indexes = np.unique(n)
-    number_refraction_indexes = len(refraction_indexes)
 
     u_final = np.zeros_like(u, dtype=complex)
     for m, n_m in enumerate(refraction_indexes):

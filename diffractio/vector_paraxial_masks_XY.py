@@ -4,25 +4,25 @@
 This module generates Vector_paraxial_mask_XY class for defining vector masks. Its parent is Vector_paraxial_field_XY.
 
 The main atributes are:
-        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        self.wavelength (float): wavelength of the incident field.
-        self.Ex (numpy.array): Electric_x field
-        self.Ey (numpy.array): Electric_y field
+		self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		self.wavelength (float): wavelength of the incident field.
+		self.Ex (numpy.array): Electric_x field
+		self.Ey (numpy.array): Electric_y field
 
 
 *Class for bidimensional vector XY masks*
 
 *Functions*
-    * unique_masks
-    * equal_masks
-    * global_mask
-    * complementary_masks
-    * apply_polarization
-    * polarizer_linear
-    * quarter_waveplate
-    * half_wave
-    * polarizer_retarder
+	* unique_masks
+	* equal_masks
+	* global_mask
+	* complementary_masks
+	* apply_polarization
+	* polarizer_linear
+	* quarter_waveplate
+	* half_wave
+	* polarizer_retarder
 """
 from diffractio import degrees, eps, np
 from diffractio.scalar_masks_XY import Scalar_mask_XY
@@ -34,142 +34,181 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
 
-    def equal_mask(self, mask):
-        """The same mask is applied to all the fields.
+        self.M00 = np.zeros_like(self.X)
+        self.M01 = np.zeros_like(self.X)
+        self.M10 = np.zeros_like(self.X)
+        self.M11 = np.zeros_like(self.X)
 
-        Parameters:
-            mask (scalar_mask_XY): mask to apply.
+        del self.Ex, self.Ey
 
+    def __mul__(self, other):
         """
+		Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
 
-        self.Ex = mask.u
-        self.Ey = mask.u
+		Parameters:
+			other (Vector_paraxial_mask_XY): 2nd object to multiply.
 
-    def unique_mask(self, mask, v=(1, 1)):
-        """The same mask is applied to all the fields. Each field can have a different amplitude-phase, given in v.
+		Returns:
+			v_mask_XY (Vector_paraxial_mask_XY): Result.
+		"""
 
-        Parameters:
-            masks (scalar_mask_XY): mask to apply.
-            v (2x1 numpy.array): complex array with polarizations for each field. When v=(1,1) the field is not affected
+        pass
+
+    def __rmul__(self, other):
         """
+		Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
 
-        self.Ex = v[0] * mask.u
-        self.Ey = v[1] * mask.u
+		Parameters:
+			other (Vector_paraxial_mask_XY): 2nd object to multiply.
 
-    def global_mask(self, mask=None, r0=(0, 0), radius=(0, 0)):
-        """Applies a global mask u to Ex and Ey fields.
+		Returns:
+			v_mask_XY (Vector_paraxial_mask_XY): Result.
+		"""
+        pass
 
-        Parameters:
-            u (Scalar_mask_xy): If u=None, it draws a circle with the rest for parameters.
-            r0 (float, float): center of circle
-            radius (float, float): radius of circle
-        """
+    def apply_scalar_mask(self, u_mask):
+        """The same mask u_mask is applied to all the Jones Matrix.
 
-        if mask not in (None, '', [], 0):
-            self.Ex = self.Ex * mask.u
-            self.Ey = self.Ey * mask.u
+		Parameters:
+			u_mask (scalar_mask_XY): mask to apply.
 
-        else:
-            if r0 is None:
-                x_center = (self.x.max() + self.x.min()) / 2
-                y_center = (self.y.max() + self.y.min()) / 2
-                r0 = (x_center, y_center)
-            if radius[0] * radius[1] == 0:
-                x_radius = (self.x.max() - self.x.min()) / 2
-                y_radius = (self.y.max() - self.y.min()) / 2
-                radius = (x_radius, y_radius)
+		"""
+        self.M00 = self.M00 * u_mask.u
+        self.M01 = self.M01 * u_mask.u
+        self.M10 = self.M10 * u_mask.u
+        self.M11 = self.M11 * u_mask.u
 
-            c = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            c.circle(r0=r0, radius=radius, angle=0 * degrees)
+    def apply_circle(self, r0=None, radius=None):
+        """The same circular mask is applied to all the Jones Matrix.
 
-            self.Ex = self.Ex * c.u
-            self.Ey = self.Ey * c.u
+		Parameters:
+			r0 (float, float): center, if None it is generated
+			radius (float, float): radius, if None it is generated
+		"""
+        if radius == None:
+            x_min, x_max = self.x[0], self.x[-1]
+            y_min, y_max = self.y[0], self.y[-1]
 
-    def complementary_masks(self, mask, v1=(1, 0), v2=(0, 1)):
+            x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
+            x_radius, y_radius = (x_max - x_min) / 2, (y_max - y_min) / 2
+
+            radius = (x_radius, y_radius)
+            r0 = (x_center, y_center)
+
+        u_mask_circle = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        u_mask_circle.circle(r0=r0, radius=radius)
+
+        self.M00 = self.M00 * u_mask_circle.u
+        self.M01 = self.M01 * u_mask_circle.u
+        self.M10 = self.M10 * u_mask_circle.u
+        self.M11 = self.M11 * u_mask_circle.u
+
+    def complementary_masks(self,
+                            mask,
+                            state_0=np.array([[1, 0], [0, 0]]),
+                            state_1=np.array([[0, 0], [0, 1]]),
+                            is_binarized=True):
         """Creates two different fields Ex and Ey from a mask and its complementary.
+		For generality, is mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
-        Parameters:
-            mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
-            v1 (2x1 numpy.array): vector polarization of clear part of mask.
-            v2 (2x1 numpy.array): vector polarization of dark part of mask.
+		Parameters:
+			mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
+			state_0 (2x1 numpy.array): polarization matrix for 0s.
+			state_1 (2x1 numpy.array): polarization matrix for 1s.
 
-        Warning:
-            Mask should be binary. Else the function should binarize it: TODO.
-        """
-
-        v1 = v1 / np.sqrt(np.abs(v1[0])**2 + np.abs(v1[1])**2)
-        v2 = v2 / np.sqrt(np.abs(v2[0])**2 + np.abs(v2[1])**2)
+		Warning:
+			Mask should be binary. Else the function should binarize it: TODO.
+		"""
 
         t = np.abs(mask.u)**2
-        t = t / t.max()
-        t[t < 0.5] = 0
-        t[t >= 0.5] = 1
+        if is_binarized:
+            t = t / t.max()
+            t[t < 0.5] = 0
+            t[t >= 0.5] = 1
 
-        self.Ex = v1[0] * t + v2[0] * (1 - t)
-        self.Ey = v1[1] * t + v2[1] * (1 - t)
+        self.M00 = t * state_1[0, 0] + (1 - t) * state_0[0, 0]
+        self.M01 = t * state_1[0, 1] + (1 - t) * state_0[1, 0]
+        self.M10 = t * state_1[1, 0] + (1 - t) * state_0[0, 1]
+        self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
 
     def apply_polarization(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
-        This is the most general function to obtain polarizer.
+		This is the most general function to obtain polarizer.
 
-        Parameters:
-            polarizer (2x2 numpy.matrix): Jones_matrix
-        """
+		Parameters:
+			polarizer (2x2 numpy.matrix): Jones_matrix
+		"""
 
         if isinstance(polarizer, Jones_matrix):
             M = polarizer.M
+        else:
+            M = polarizer
 
         uno = np.ones_like(self.X, dtype=complex)
         M = np.asarray(M)
 
-        Ex_new = uno * M[0, 0] + uno * M[0, 1]
-        Ey_new = uno * M[1, 0] + uno * M[1, 1]
-        self.Ex = Ex_new
-        self.Ey = Ey_new
+        self.M00 = uno * M[0, 0]
+        self.M01 = uno * M[0, 1]
+        self.M10 = uno * M[1, 0]
+        self.M11 = uno * M[1, 1]
 
-    def polarizer_linear(self, angle=0 * degrees):
+    def polarizer_linear(self, azimuth=0 * degrees):
         """Generates an XY linear polarizer.
 
-        Parameters:
-            angle (float): linear polarizer angle
-        """
+		Parameters:
+			angle (float): linear polarizer angle
+		"""
         PL = Jones_matrix('m0')
-        PL.diattenuator_perfect(angle=angle)
+        PL.diattenuator_perfect(azimuth=azimuth)
         self.apply_polarization(PL)
 
-    def quarter_waveplate(self, angle=0 * degrees):
+    def quarter_waveplate(self, azimuth=0 * degrees):
         """Generates an XY quarter wave plate.
 
-        Parameters:
-            angle (float): polarizer angle
-        """
+		Parameters:
+			azimuth (float): polarizer angle
+		"""
         PL = Jones_matrix('m0')
-        PL.quarter_waveplate(angle=angle)
+        PL.quarter_waveplate(azimuth=azimuth)
         self.apply_polarization(PL)
 
-    def half_waveplate(self, angle=0 * degrees):
+    def half_waveplate(self, azimuth=0 * degrees):
         """Generates an XY half wave plate.
 
-        Parameters:
-            angle (float): polarizer angle
-        """
+		Parameters:
+			azimuth (float): polarizer angle
+		"""
         PL = Jones_matrix('m0')
-        PL.half_waveplate(angle=angle)
+        PL.half_waveplate(azimuth=azimuth)
         self.apply_polarization(PL)
 
     def polarizer_retarder(self,
                            delay=0 * degrees,
                            p1=1,
                            p2=1,
-                           angle=0 * degrees):
+                           azimuth=0 * degrees):
         """Generates an XY retarder.
 
-        Parameters:
-            delay (float): delay between Ex and Ey components.
-            p1 (float): transmittance of fast axis.
-            p2 (float): transmittance of slow axis.
-            angle (float): linear polarizer angle
-        """
+		Parameters:
+			delay (float): delay between Ex and Ey components.
+			p1 (float): transmittance of fast axis.
+			p2 (float): transmittance of slow axis.
+			azimuth (float): linear polarizer angle
+		"""
         PL = Jones_matrix('m0')
-        PL.diattenuator_retarder_linear(delay=delay, p1=p1, p2=p1, angle=angle)
+        PL.diattenuator_retarder_linear(
+            delay=delay, p1=p1, p2=p1, azimuth=azimuth)
         self.apply_polarization(PL)
+
+    def to_py_pol(self):
+        """Pass mask to py_pol.jones_matrix
+
+		Returns:
+			py_pol.jones_matrix
+
+		"""
+
+        m0 = Jones_matrix(name="from diffratio")
+        m0.from_components((self.M00, self.M01, self.M10, self.M11))
+
+        return m0

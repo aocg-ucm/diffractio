@@ -62,7 +62,7 @@ class Test_Vector_paraxial_fields_XY(object):
             kind='amplitude')
 
         vc = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        vc.equal_mask(mask=mask)
+        vc.apply_scalar_mask(mask=mask)
 
         vp = Vector_paraxial_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(angle=0 * degrees)

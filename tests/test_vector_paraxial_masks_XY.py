@@ -84,7 +84,7 @@ class Test_vector_masks_XY(object):
 
         # mask vectorial
         EM = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        EM.equal_mask(mask=mask)
+        EM.apply_scalar_mask(mask=mask)
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
 
