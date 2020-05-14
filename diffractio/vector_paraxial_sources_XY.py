@@ -26,7 +26,10 @@ The magnitude is related to microns: `micron = 1.`
 	* local_polarized_vector_wave_hybrid
 """
 
-from diffractio import degrees, eps, np, um
+import matplotlib
+from matplotlib import rcParams
+
+from diffractio import degrees, eps, np, params_drawing, plt, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_optics import normalize
@@ -54,6 +57,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
+        self._type = 'Vector_paraxial_source_XY'
 
     def constant_wave(self,
                       u=None,

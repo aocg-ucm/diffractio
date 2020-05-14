@@ -5,42 +5,42 @@ This module generates Vector_paraxial_field_XY class.
 
 It is required also for generating masks and fields.
 The main atributes are:
-    * self.Ex - x component of electric field
-    * self.Ey - y component of electric field
-    * self.x - x positions of the field
-    * self.wavelength - wavelength of the incident field. The field is monocromatic
-    * self.x - x positions of the field
-    * self.y - y positions of the field
-    * self.wavelength - wavdelength of the incident field. The field is monochromatic
-    * self.Ex - x component of electric field. Equal size to x * y. complex field
-    * self.Ey - y component of electric field. Equal size to x * y. complex field
-    * self.X (numpy.array): equal size to x * y. complex field
-    * self.Y (numpy.array): equal size to x * y. complex field
-    * self.quality (float): quality of RS algorithm
-    * self.info (str): description of data
-    * self.type (str): Class of the field
-    * self.date (str): date when performed
+	* self.Ex - x component of electric field
+	* self.Ey - y component of electric field
+	* self.x - x positions of the field
+	* self.wavelength - wavelength of the incident field. The field is monocromatic
+	* self.x - x positions of the field
+	* self.y - y positions of the field
+	* self.wavelength - wavdelength of the incident field. The field is monochromatic
+	* self.Ex - x component of electric field. Equal size to x * y. complex field
+	* self.Ey - y component of electric field. Equal size to x * y. complex field
+	* self.X (numpy.array): equal size to x * y. complex field
+	* self.Y (numpy.array): equal size to x * y. complex field
+	* self.quality (float): quality of RS algorithm
+	* self.info (str): description of data
+	* self.type (str): Class of the field
+	* self.date (str): date when performed
 
 
 The magnitude is related to microns: `micron = 1.`
 
-*Class for XY paraial vector fields*
+*Class for XY paraxial vector fields*
 
 *Definition of a scalar field*
-    * add, substract fields
-    * save, load data, clean, get, normalize
-    * cut_resample
-    * appy_mask
+	* add, substract fields
+	* save, load data, clean, get, normalize
+	* cut_resample
+	* appy_mask
 
 *Vector parameters*
-    * polarization_states
-    * polarization_ellipse
+	* polarization_states
+	* polarization_ellipse
 
 *Propagation*
-    * RS - Rayleigh Sommerfeld
+	* RS - Rayleigh Sommerfeld
 
 *Drawing functions*
-    * draw: intensity, intensities, phases, fields, stokes, param_ellipse, ellipses
+	* draw: intensity, intensities, phases, fields, stokes, param_ellipse, ellipses
 
 """
 
@@ -59,19 +59,19 @@ percentaje_intensity = params_drawing['percentaje_intensity']
 class Vector_paraxial_field_XY(object):
     """Class for vectorial fields.
 
-    Parameters:
-        x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        wavelength (float): wavelength of the incident field
-        info (str): String with info about the simulation
+	Parameters:
+		x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		wavelength (float): wavelength of the incident field
+		info (str): String with info about the simulation
 
-    Attributes:
-        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-        self.wavelength (float): wavelength of the incident field.
-        self.Ex (numpy.array): Electric_x field
-        self.Ey (numpy.array): Electric_y field
-    """
+	Attributes:
+		self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+		self.wavelength (float): wavelength of the incident field.
+		self.Ex (numpy.array): Electric_x field
+		self.Ey (numpy.array): Electric_y field
+	"""
 
     def __init__(self, x, y, wavelength, info=''):
         self.x = x
@@ -83,6 +83,7 @@ class Vector_paraxial_field_XY(object):
         self.Ey = np.zeros_like(self.X, dtype=complex)
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
+        self._type = 'Vector_paraxial_field_XY'
 
     def __str__(self):
         """Represents data from class."""
@@ -96,15 +97,15 @@ class Vector_paraxial_field_XY(object):
     def __add__(self, other, kind='standard'):
         """adds two Vector_paraxial_field_XY. For example two light sources or two masks
 
-        Parameters:
-            other (Vector_paraxial_field_XY): 2nd field to add
-            kind (str): instruction how to add the fields:
-                - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
-                - 'standard': not implemented yet
+		Parameters:
+			other (Vector_paraxial_field_XY): 2nd field to add
+			kind (str): instruction how to add the fields:
+				- 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
+				- 'standard': not implemented yet
 
-        Returns:
-            Vector_paraxial_field_XY: `E3 = E1 + E2`
-        """
+		Returns:
+			Vector_paraxial_field_XY: `E3 = E1 + E2`
+		"""
 
         EM = Vector_paraxial_field_XY(self.x, self.y, self.wavelength)
 
@@ -114,32 +115,16 @@ class Vector_paraxial_field_XY(object):
 
         return EM
 
-    def __mul__(self, other):
-        """Multiply two fields. :math:`E_1(x)= E_0(x)*t(x)`
-
-
-        Parameters:
-            other (Vector_paraxial_field_XY): field to multiply
-
-        Returns:
-            Scalar_field_X: :math:`u_1(x)= u_0(x)*t(x)`
-        """
-
-        EM = Vector_paraxial_field_XY(self.x, self.y, self.wavelength)
-        EM.Ex = self.Ex * other.Ex
-        EM.Ey = self.Ey * other.Ey
-        return EM
-
     def save_data(self, filename='', method='hickle', add_name=''):
         """Save data of Scalar_field_X class to a dictionary.
 
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
+		Parameters:
+			filename (str): filename
+			method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
 
-        Returns:
-            (bool): True if saving is performed, else False.
-        """
+		Returns:
+			(bool): True if saving is performed, else False.
+		"""
         try:
             save_data_common(self, filename + add_name, method)
             return True
@@ -149,11 +134,11 @@ class Vector_paraxial_field_XY(object):
     def load_data(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_X.
 
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-            verbose (bool): shows data process by screen
-        """
+		Parameters:
+			filename (str): filename
+			method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
+			verbose (bool): shows data process by screen
+		"""
         dict0 = load_data_common(self, filename, method, verbose)
 
         if verbose:
@@ -173,12 +158,12 @@ class Vector_paraxial_field_XY(object):
     def get(self, kind='fields'):
         """Takes the vector field and divide in Scalar_field_XY
 
-        Parameters:
-            kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
+		Parameters:
+			kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
-        Returns:
-            Scalar_field_XY: (Ex, Ey),
-        """
+		Returns:
+			Scalar_field_XY: (Ex, Ey),
+		"""
 
         Ex_r = self.Ex
         Ey_r = self.Ey
@@ -223,9 +208,9 @@ class Vector_paraxial_field_XY(object):
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
-        Parameters:
-           u (Scalar_mask_XY): mask
-         """
+		Parameters:
+		   u (Scalar_mask_XY): mask
+		 """
         self.Ex = self.Ex * u.u
         self.Ey = self.Ey * u.u
 
@@ -233,30 +218,30 @@ class Vector_paraxial_field_XY(object):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
 
-        Parameters:
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
-            n (float): refraction index
-            new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
+		Parameters:
+			z (float): distance to observation plane.
+				if z<0 inverse propagation is executed
+			n (float): refraction index
+			new_field (bool): if False the computation goes to self.u
+							  if True a new instance is produced
 
-            verbose (bool): if True it writes to shell. Not implemented yet
+			verbose (bool): if True it writes to shell. Not implemented yet
 
-        Returns:
-            if New_field is True: Scalar_field_X
-            else None
+		Returns:
+			if New_field is True: Scalar_field_X
+			else None
 
 
-        Note:
-            One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+		Note:
+			One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
-        References:
-            From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
+		References:
+			From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
 
-        TODO:
-            check amplification
-            implement verbose
-        """
+		TODO:
+			check amplification
+			implement verbose
+		"""
 
         e0x, e0y = self.get()
 
@@ -277,13 +262,13 @@ class Vector_paraxial_field_XY(object):
     def polarization_states(self, matrix=False):
         """returns the Stokes parameters
 
-        Parameters:
-            Matrix (bool): if True returns Matrix, else Scalar_field_XY
+		Parameters:
+			Matrix (bool): if True returns Matrix, else Scalar_field_XY
 
-        Returns:
-            S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3  for Matrix=False
-        """
+		Returns:
+			S0,S1,S2,S3 images for Matrix=True
+			S0,S1,S2,S3  for Matrix=False
+		"""
 
         I = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
         Q = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
@@ -312,14 +297,14 @@ class Vector_paraxial_field_XY(object):
     def polarization_ellipse(self, pol_state=None, matrix=False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
-            pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-            Matrix (bool): if True returns Matrix, else Scalar_field_XY
+		Parameters:
+			pol_state (None or (I, Q, U, V) ): Polarization state previously computed
+			Matrix (bool): if True returns Matrix, else Scalar_field_XY
 
-        Returns:
-            A, B, theta, h for Matrix=True
-            CA, CB, Ctheta, Ch for Matrix=False
-        """
+		Returns:
+			A, B, theta, h for Matrix=True
+			CA, CB, Ctheta, Ch for Matrix=False
+		"""
         if pol_state is None:
             I, Q, U, V = self.polarization_states(matrix=True)
         else:
@@ -370,13 +355,13 @@ class Vector_paraxial_field_XY(object):
                      interp_kind=(3, 1)):
         """Cuts the field to the range (x0,x1). (y0,y1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
-        Parameters:
-            x_limits (float,float): (x0,x1) starting and final points to cut. if '' - takes the current limit x[0] and x[-1]
-            y_limits (float,float): (y0,y1) - starting and final points to cut. if '' - takes the current limit y[0] and y[-1]
-            num_points (int): it resamples x, y and u. [],'',0,None -> it leave the points as it is
-            new_field (bool): it returns a new Scalar_field_XY
-            interp_kind (int): numbers between 1 and 5
-        """
+		Parameters:
+			x_limits (float,float): (x0,x1) starting and final points to cut. if '' - takes the current limit x[0] and x[-1]
+			y_limits (float,float): (y0,y1) - starting and final points to cut. if '' - takes the current limit y[0] and y[-1]
+			num_points (int): it resamples x, y and u. [],'',0,None -> it leave the points as it is
+			new_field (bool): it returns a new Scalar_field_XY
+			interp_kind (int): numbers between 1 and 5
+		"""
         if x_limits == '':
             # used only for resampling
             x0 = self.x[0]
@@ -458,47 +443,55 @@ class Vector_paraxial_field_XY(object):
 
     def draw(self,
              kind='intensity',
-             logarithm=False,
+             logarithm=0,
              normalize=False,
              cut_value=None,
              num_ellipses=(11, 11),
              amplification=0.5,
              filename='',
-             draw=True):
+             draw=True,
+             **kwargs):
         """Draws electromagnetic field
 
-        Parameters:
-            kind (str):  'intensity', 'intensities', 'phases', field', 'stokes', 'param_ellipse', 'ellipses'
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            title (str): title of figure
-            filename (str): if not '' stores drawing in file,
-            cut_value (float): If not None, cuts the maximum intensity to this value
-            num_ellipses (int): number of ellipses for parameters_ellipse
-            amplification (float): amplification of ellipses
-        """
+		Parameters:
+			kind (str):  'intensity', 'intensities', 'phases', field', 'stokes', 'param_ellipse', 'ellipses'
+			logarithm (float): If >0, intensity is scaled in logarithm
+			normalize (bool): If True, max(intensity)=1
+			title (str): title of figure
+			filename (str): if not '' stores drawing in file,
+			cut_value (float): If not None, cuts the maximum intensity to this value
+			num_ellipses (int): number of ellipses for parameters_ellipse
+			amplification (float): amplification of ellipses
+
+			# TODO: change to similar to v_matrix
+
+		"""
         if draw is True:
 
             if kind == 'intensity':
                 id_fig = self.__draw_intensity__(logarithm, normalize,
-                                                 cut_value)
+                                                 cut_value, **kwargs)
             elif kind == 'intensities':
                 id_fig = self.__draw_intensities__(logarithm, normalize,
-                                                   cut_value)
+                                                   cut_value, **kwargs)
 
             elif kind == 'phases':
-                id_fig = self.__draw_phases__()
+                id_fig = self.__draw_phases__(**kwargs)
             elif kind == 'fields':
-                id_fig = self.__draw_fields__(logarithm, normalize, cut_value)
+                id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
+                                              **kwargs)
 
             elif kind == 'stokes':
-                id_fig = self.__draw_stokes__()
+                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value,
+                                              **kwargs)
 
             elif kind == 'param_ellipse':
-                id_fig = self.__draw_param_ellipse__()
+                id_fig = self.__draw_param_ellipse__(**kwargs)
 
             elif kind == 'ellipses':
-                id_fig = self.__draw_ellipses__(num_ellipses, amplification)
+                id_fig = self.__draw_ellipses__(logarithm, normalize,
+                                                cut_value, num_ellipses,
+                                                amplification, **kwargs)
 
             else:
                 print(
@@ -513,16 +506,21 @@ class Vector_paraxial_field_XY(object):
             return id_fig
 
     def __draw_intensity__(self,
-                           logarithm=False,
-                           normalize=False,
-                           cut_value=None):
+                           logarithm,
+                           normalize,
+                           cut_value,
+                           color_intensity=None):
         """Draws the intensity
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            cut_value (float): If not None, cuts the maximum intensity to this value
-        """
+		Parameters:
+			logarithm (bool): If True, intensity is scaled in logarithm
+			normalize (bool): If True, max(intensity)=1
+			cut_value (float): If not None, cuts the maximum intensity to this value
+		"""
+
+        if color_intensity is None:
+            color_intensity = params_drawing['color_intensity']
+
         intensity = self.get('intensity')
 
         intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
@@ -532,45 +530,52 @@ class Vector_paraxial_field_XY(object):
 
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
-        __draw1__(self, intensity, params_drawing['color_intensity'],
-                  "$Intensity$")
+        __draw1__(self, intensity, color_intensity, "$Intensity$")
         plt.subplots_adjust(
             left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
         return h1
 
     def __draw_intensities__(self,
-                             logarithm=False,
-                             normalize=False,
-                             cut_value=None):
+                             logarithm,
+                             normalize,
+                             cut_value,
+                             color_intensity=None):
         """internal funcion: draws intensity X,Y.
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            cut_value (float): If not None, cuts the maximum intensity to this value
-        """
+		Parameters:
+			logarithm (bool): If True, intensity is scaled in logarithm
+			normalize (bool): If True, max(intensity)=1
+			cut_value (float): If not None, cuts the maximum intensity to this value
+		"""
 
-        color_intensity = params_drawing['color_intensity']
+        if color_intensity is None:
+            color_intensity = params_drawing['color_intensity']
+
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
-
-        intensity_max = max((np.abs(Ex_r)**2).max(), (np.abs(Ey_r)**2).max())
-
         tx, ty = rcParams['figure.figsize']
+
+        intensity1 = np.abs(Ex_r)**2
+        intensity1 = normalize_draw(intensity1, logarithm, normalize,
+                                    cut_value)
+
+        intensity2 = np.abs(Ey_r)**2
+        intensity2 = normalize_draw(intensity2, logarithm, normalize,
+                                    cut_value)
+
+        intensity_max = np.max((intensity1.max(), intensity2.max()))
 
         plt.figure(figsize=(2 * tx, ty))
 
         h1 = plt.subplot(1, 2, 1)
-        intensity = np.abs(Ex_r)**2
-        intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
-        __draw1__(self, intensity, color_intensity, "$I_x$")
+
+        __draw1__(self, intensity1, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(1, 2, 2)
-        intensity = np.abs(Ey_r)**2
-        intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
-        __draw1__(self, intensity, color_intensity, "$I_y$")
+
+        __draw1__(self, intensity2, color_intensity, "$I_y$")
         plt.clim(0, intensity_max)
 
         plt.subplots_adjust(
@@ -579,16 +584,17 @@ class Vector_paraxial_field_XY(object):
 
         return h1, h2
 
-    def __draw_phases__(self):
+    def __draw_phases__(self, color_phase=None):
         """internal funcion: draws phases X,Y
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            cut_value (float): If not None, cuts the maximum intensity to this value
-        """
+		Parameters:
+			logarithm (bool): If True, intensity is scaled in logarithm
+			normalize (bool): If True, max(intensity)=1
+			cut_value (float): If not None, cuts the maximum intensity to this value
+		"""
 
-        color_phase = params_drawing['color_phase']
+        if color_phase is None:
+            color_phase = params_drawing['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -619,37 +625,49 @@ class Vector_paraxial_field_XY(object):
 
         return h1, h2
 
-    def __draw_fields__(self, logarithm=False, normalize=False,
-                        cut_value=None):
+    def __draw_fields__(self,
+                        logarithm,
+                        normalize,
+                        cut_value,
+                        color_intensity=None,
+                        color_phase=None):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            title (str): title of figure
-            cut_value (float): If not None, cuts the maximum intensity to this value
+		Parameters:
+			logarithm (bool): If True, intensity is scaled in logarithm
+			normalize (bool): If True, max(intensity)=1
+			title (str): title of figure
+			cut_value (float): If not None, cuts the maximum intensity to this value
 
-        """
+		"""
 
-        color_intensity = params_drawing['color_intensity']
-        color_phase = params_drawing['color_phase']
+        if color_intensity is None:
+            color_intensity = params_drawing['color_intensity']
+        if color_phase is None:
+            color_phase = params_drawing['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
 
-        intensity_max = max((np.abs(Ex_r)**2).max(), (np.abs(Ey_r)**2).max())
+        intensity_x = np.abs(Ex_r)**2
+        intensity_x = normalize_draw(intensity_x, logarithm, normalize,
+                                     cut_value)
 
+        intensity_y = np.abs(Ey_r)**2
+        intensity_y = normalize_draw(intensity_y, logarithm, normalize,
+                                     cut_value)
+
+        intensity_max = np.max((intensity_x.max(), intensity_y.max()))
         tx, ty = rcParams['figure.figsize']
 
         plt.figure(figsize=(2 * tx, 2 * ty))
 
         h1 = plt.subplot(2, 2, 1)
-        intensity_x = np.abs(self.Ex)**2
+
         __draw1__(self, intensity_x, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
-        intensity_y = np.abs(self.Ey)**2
         __draw1__(self, intensity_y, color_intensity, "$I_y$")
         plt.clim(0, intensity_max)
 
@@ -672,16 +690,27 @@ class Vector_paraxial_field_XY(object):
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self):
+    def __draw_stokes__(self,
+                        logarithm,
+                        normalize,
+                        cut_value,
+                        color_intensity=None,
+                        color_stokes=None):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
-        """
+		"""
 
         tx, ty = rcParams['figure.figsize']
 
-        color_intensity = params_drawing['color_intensity']
-        color_stokes = params_drawing['color_stokes']
+        if color_intensity is None:
+            color_intensity = params_drawing['color_intensity']
+        if color_stokes is None:
+            color_stokes = params_drawing['color_stokes']
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
+        S0 = normalize_draw(S0, logarithm, normalize, cut_value)
+        S1 = normalize_draw(S1, logarithm, normalize, cut_value)
+        S2 = normalize_draw(S2, logarithm, normalize, cut_value)
+        S3 = normalize_draw(S3, logarithm, normalize, cut_value)
 
         intensity_max = S0.max()
 
@@ -707,12 +736,14 @@ class Vector_paraxial_field_XY(object):
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self):
+    def __draw_param_ellipse__(self, color_intensity=None, color_phase=None):
         """__internal__: computes and draws polariations ellipses
-        """
+		"""
 
-        color_intensity = params_drawing['color_intensity']
-        color_phase = params_drawing['color_phase']
+        if color_intensity is None:
+            color_intensity = params_drawing['color_intensity']
+        if color_phase is None:
+            color_phase = params_drawing['color_phase']
 
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
@@ -743,18 +774,23 @@ class Vector_paraxial_field_XY(object):
         return (h1, h2, h3, h4)
 
     def __draw_ellipses__(self,
+                          logarithm,
+                          normalize,
+                          cut_value,
                           num_ellipses=(21, 21),
                           amplification=0.75,
                           color_line='w',
                           line_width=1,
                           draw_arrow=True,
                           head_width=2,
-                          ax=False):
+                          ax=False,
+                          color_intensity=None):
         """__internal__: draw ellipses
 
-        Parameters:
-            num_ellipses (int): number of ellipses for parameters_ellipse
-        """
+		Parameters:
+			num_ellipses (int): number of ellipses for parameters_ellipse
+		"""
+
         percentaje_intensity = params_drawing['percentaje_intensity']
         intensity_max = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
 
@@ -792,7 +828,10 @@ class Vector_paraxial_field_XY(object):
         angles = np.linspace(0, 360 * degrees, 64)
 
         if ax is False:
-            self.draw('intensity', logarithm=False)
+            self.draw(
+                'intensity',
+                logarithm=logarithm,
+                color_intensity=color_intensity)
             ax = plt.gca()
 
         for i, xi in enumerate(ix_centers):
@@ -811,16 +850,17 @@ class Vector_paraxial_field_XY(object):
                         int(yj)]
 
                     ax.plot(Ex, Ey, color_line, lw=line_width)
-                    ax.arrow(
-                        Ex[0],
-                        Ey[0],
-                        Ex[0] - Ex[1],
-                        Ey[0] - Ey[1],
-                        width=0,
-                        head_width=head_width,
-                        fc=color_line,
-                        ec=color_line,
-                        length_includes_head=False)
+                    if draw_arrow:
+                        ax.arrow(
+                            Ex[0],
+                            Ey[0],
+                            Ex[0] - Ex[1],
+                            Ey[0] - Ey[1],
+                            width=0,
+                            head_width=head_width,
+                            fc=color_line,
+                            ec=color_line,
+                            length_includes_head=False)
                 # else:
                 #     print(max_r, intensity_max,
                 #           percentaje_intensity * intensity_max)
@@ -829,11 +869,11 @@ class Vector_paraxial_field_XY(object):
 def __draw1__(hdl, image, colormap, title='', has_max=False):
     """Draws image
 
-    Parameters:
-        image (numpy.array): array with drawing
-        colormap (str): colormap
-        title (str): title of drawing
-    """
+	Parameters:
+		image (numpy.array): array with drawing
+		colormap (str): colormap
+		title (str): title of drawing
+	"""
     extension = [hdl.x.min(), hdl.x.max(), hdl.y.min(), hdl.y.max()]
     h = plt.imshow(
         image,
@@ -877,18 +917,18 @@ def __draw1__(hdl, image, colormap, title='', has_max=False):
 def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
     """computes polarization ellipse for drawing
 
-    Parameters:
-        x0 (float): position x of ellipse
-        y0 (float): position y of ellipse
-        A (float): axis 1 of ellipse
-        B (float): axis 2 of ellipse
-        theta (float): angle of ellipse
-        h (float): to remove
-        amplification (float): increase of size of ellipse
+	Parameters:
+		x0 (float): position x of ellipse
+		y0 (float): position y of ellipse
+		A (float): axis 1 of ellipse
+		B (float): axis 2 of ellipse
+		theta (float): angle of ellipse
+		h (float): to remove
+		amplification (float): increase of size of ellipse
 
-    TODO:
-        remove hs
-    """
+	TODO:
+		remove hs
+	"""
     # esto es para verlo más grande
     A = A * amplification
     B = B * amplification
@@ -908,14 +948,14 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
 def polarization_ellipse(self, pol_state=None, matrix=False):
     """returns A, B, theta, h polarization parameter of elipses
 
-    Parameters:
-        pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-        Matrix (bool): if True returns Matrix, else Scalar_field_XY
+	Parameters:
+		pol_state (None or (I, Q, U, V) ): Polarization state previously computed
+		Matrix (bool): if True returns Matrix, else Scalar_field_XY
 
-    Returns:
-        A, B, theta, h for Matrix=True
-        CA, CB, Ctheta, Ch for Matrix=False
-    """
+	Returns:
+		A, B, theta, h for Matrix=True
+		CA, CB, Ctheta, Ch for Matrix=False
+	"""
     if pol_state is None:
         I, Q, U, V = self.polarization_states(matrix=True)
     else:
@@ -947,3 +987,6 @@ def polarization_ellipse(self, pol_state=None, matrix=False):
         Ctheta.u = theta
         Ch.u = h
         return (CA, CB, Ctheta, Ch)
+
+
+2

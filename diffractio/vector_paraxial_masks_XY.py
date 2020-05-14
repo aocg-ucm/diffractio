@@ -24,15 +24,20 @@ The main atributes are:
 	* half_wave
 	* polarizer_retarder
 """
-from diffractio import degrees, eps, np
+import matplotlib
+
+import diffractio
+from diffractio import degrees, eps, np, number_types, plt
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
+from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 from py_pol.jones_matrix import Jones_matrix
 
 
 class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
+        self._type = 'Vector_paraxial_mask_XY'
 
         self.M00 = np.zeros_like(self.X)
         self.M01 = np.zeros_like(self.X)
@@ -52,7 +57,37 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 			v_mask_XY (Vector_paraxial_mask_XY): Result.
 		"""
 
-        pass
+        # Easy case, multiply by a number
+        #print(other._type)
+        if isinstance(other, number_types):
+            m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
+            m3.M00 = self.M00 * other
+            m3.M01 = self.M01 * other
+            m3.M10 = self.M10 * other
+            m3.M11 = self.M11 * other
+            # print("Matrix * numero")
+
+        # elif other._type in ('Vector_paraxial_source_XY',
+        #                      'Vector_paraxial_field_XY'):
+        #
+        #     # print("Matrix * vector")
+        #     m3 = Vector_paraxial_source_XY(self.x, self.y, self.wavelength)
+        #     m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
+        #     m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
+
+        elif other._type == 'Vector_paraxial_mask_XY':
+            m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
+
+            m3.M00 = other.M00 * self.M00 + other.M01 * self.M10
+            m3.M01 = other.M00 * self.M01 + other.M01 * self.M11
+            m3.M10 = other.M10 * self.M00 + other.M11 * self.M10
+            m3.M11 = other.M10 * self.M01 + other.M11 * self.M11
+
+        else:
+            raise ValueError('other thype ({}) is not correct'.format(
+                type(other)))
+
+        return m3
 
     def __rmul__(self, other):
         """
@@ -64,7 +99,49 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 		Returns:
 			v_mask_XY (Vector_paraxial_mask_XY): Result.
 		"""
+        if isinstance(other, number_types):
+            m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
+            m3.M00 = self.M00 * other
+            m3.M01 = self.M01 * other
+            m3.M10 = self.M10 * other
+            m3.M11 = self.M11 * other
+            # print("numero * matriz")
+
+        elif other._type in ('Vector_paraxial_source_XY',
+                             'Vector_paraxial_field_XY'):
+            print("vector * matriz")
+            m3 = Vector_paraxial_source_XY(self.x, self.y, self.wavelength)
+            m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
+            m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
+
+        return m3
+
+    def rotate(self, angle, new_mask=False):
+        """Rotates the mask a certain angle.abs
+
+		Parameters:
+			angle (float): rotation angle in radians
+			new_mask (bool): if True generates a new mask
+		Returns:
+			if new_mask is True: Vector_paraxial_mask_XY
+		"""
+
+        # TODO:
+        # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
+
         pass
+
+    def from_scalar_mask(self, u_mask):
+        """The same mask u_mask is applied to all the Jones Matrix.
+
+		Parameters:
+			u_mask (scalar_mask_XY): mask to apply.
+
+		"""
+        self.M00 = u_mask.u
+        self.M01 = np.zeros_like(u_mask.u)
+        self.M10 = np.zeros_like(u_mask.u)
+        self.M11 = u_mask.u
 
     def apply_scalar_mask(self, u_mask):
         """The same mask u_mask is applied to all the Jones Matrix.
@@ -212,3 +289,83 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         m0.from_components((self.M00, self.M01, self.M10, self.M11))
 
         return m0
+
+    def draw(self, kind='amplitude', z_scale='um'):
+
+        #def draw_masks(self, kind='fields'):
+        color_inicial = matplotlib.rc('image.cmap')
+        matplotlib.rc('image', cmap='hot')
+
+        extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
+        if z_scale == 'mm':
+            extension = extension / 1000.
+
+        if kind in ('amplitude', 'all'):
+            plt.figure()
+            fig, axs = plt.subplots(
+                2,
+                2,
+                sharex='col',
+                sharey='row',
+                gridspec_kw={
+                    'hspace': 0.05,
+                    'wspace': 0.05
+                })
+            im1 = axs.flat[0].imshow(np.abs(self.M00), extent=extension)
+            im1.set_clim(0, 1)
+            im1 = axs.flat[1].imshow(np.abs(self.M01), extent=extension)
+            im1.set_clim(0, 1)
+            im1 = axs.flat[2].imshow(np.abs(self.M10), extent=extension)
+            im1.set_clim(0, 1)
+            im1 = axs.flat[3].imshow(np.abs(self.M11), extent=extension)
+            im1.set_clim(0, 1)
+
+            plt.suptitle("Amplitudes")
+            cax = plt.axes([.95, 0.15, 0.05, 0.7])
+            plt.colorbar(im1, cax=cax)
+            if z_scale == 'um':
+                axs.flat[2].set_xlabel(r'x ($\mu$m)')
+                axs.flat[2].set_ylabel(r'y($\mu$m)')
+            elif z_scale == 'mm':
+                axs.flat[2].set_xlabel(r'x (mm)')
+                axs.flat[2].set_ylabel(r'y (mm)')
+
+        if kind in ('phase', 'all'):
+
+            plt.figure()
+            matplotlib.rc('image', cmap='RdBu')
+
+            fig, axs = plt.subplots(
+                2,
+                2,
+                sharex='col',
+                sharey='row',
+                gridspec_kw={
+                    'hspace': 0.1,
+                    'wspace': 0.1
+                })
+            im1 = axs.flat[0].imshow(np.angle(self.M00), extent=extension)
+            im1.set_clim(-np.pi, np.pi)
+            im1 = axs.flat[1].imshow(np.angle(self.M01), extent=extension)
+            im1.set_clim(-np.pi, np.pi)
+            im1 = axs.flat[2].imshow(np.angle(self.M10), extent=extension)
+            im1.set_clim(-np.pi, np.pi)
+            im1 = axs.flat[3].imshow(np.angle(self.M11), extent=extension)
+            im1.set_clim(-np.pi, np.pi)
+            plt.suptitle("phases")
+            cax = plt.axes([.95, 0.15, 0.05, 0.7])
+            plt.colorbar(im1, cax=cax)
+
+
+def rotation_matrix_Jones(angle):
+    """Creates an array of Jones 2x2 rotation matrices.
+
+	Parameters:
+		angle (np.array): array of angle of rotation, in radians.
+
+	Returns:
+		numpy.array: 2x2 matrix
+	"""
+    M = np.array([[np.cos(angle), np.sin(angle)],
+                  [-np.sin(angle), np.cos(angle)]])
+    return M
