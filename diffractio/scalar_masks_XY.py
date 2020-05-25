@@ -23,7 +23,7 @@ The magnitude is related to microns: `micron = 1.`
     * inverse_amplitude, inverse_phase
     * widen
     * image
-    * slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
+    * point_maks, slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
     * mask_from_function
     * prism, lens, fresnel_lens, lens_billet,
     * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
@@ -72,7 +72,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.type = 'Scalar_mask_XY'
 
     def set_amplitude(self, q=1, positivo=0, amp_min=0, amp_max=1):
-        """makes that the mask has only maplitude
+        """makes that the mask has only amplitude.
 
         Parameters:
             q (int): 0 - amplitude as it is and phase is removed. 1 - take phase and convert to amplitude
@@ -108,8 +108,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         if q == 0:
             self.u = exp(1.j * phase)
         if q == 1:
-            self.u = exp(1.j * (phase_min +
-                                (phase_max - phase_min) * amplitude))
+            self.u = exp(
+                1.j * (phase_min + (phase_max - phase_min) * amplitude))
 
     def area(self, percentaje):
         """Computes area where mask is not 0
@@ -161,8 +161,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             ofile.write("\ninfo:\n")
             ofile.write(info)
         ofile.write("\n\n")
-        ofile.write("length de la mask: %i x %i\n" % (len(self.x),
-                                                      len(self.y)))
+        ofile.write(
+            "length de la mask: %i x %i\n" % (len(self.x), len(self.y)))
         ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
@@ -442,6 +442,30 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return num_points
 
+    def point_mask(self, r0):
+        """Generates 1 or several point masks at positions r0
+
+        Arguments:
+            r0 (float, float) or (np.array, np.array): (x,y) point or points where mask is 1
+
+
+        """
+        x0, y0 = r0
+        u = np.zeros_like(self.X)
+
+        if type(r0[0]) in (int, float):
+            i_x0, _, _ = nearest(self.x, x0)
+            i_y0, _, _ = nearest(self.y, y0)
+            u[i_x0, i_y0] = 1
+        else:
+            i_x0s, _, _ = nearest2(self.x, x0)
+            i_y0s, _, _ = nearest2(self.y, y0)
+            for (i_x0, i_y0) in zip(i_x0s, i_y0s):
+                u[i_x0, i_y0] = 1
+
+        self.u = u
+        return self
+
     def slit(self, x0, size, angle=0 * degrees):
         """Slit: 1 inside, 0 outside
 
@@ -640,8 +664,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         Xrot, Yrot = self.__rotate__(angle)
-        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 - s**2 * Xrot**2 * Yrot**2 /
-                 (R1**2 * R2**2))
+        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 -
+                 s**2 * Xrot**2 * Yrot**2 / (R1**2 * R2**2))
 
         Z1 = F < 1
         Z = Z1 * t1.u
@@ -757,8 +781,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = ones_like(self.X)
 
-        self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
-                                     (2 * f2)))
+        self.u = t * exp(-1.j * k * (
+            (Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
         self.u[t == 0] = 0
 
     def fresnel_lens(self,
@@ -1090,8 +1114,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) *
-                           ((r / period)**p + (theta - phase) / (2 * pi))))
+        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) * (
+            (r / period)**p + (theta - phase) / (2 * pi))))
         if binaria is True:
             i0 = t <= 0.5
             t[i0] = 0
@@ -1529,7 +1553,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Definition of transmittance
         u = np.zeros_like(self.X)
         ipasa = np.abs((Xrot - x0) / radiusx)**nx + \
-            np.abs((Yrot - y0) / radiusy)**ny < 1
+         np.abs((Yrot - y0) / radiusy)**ny < 1
         u[ipasa] = 1
         self.u = u
 

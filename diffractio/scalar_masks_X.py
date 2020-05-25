@@ -24,9 +24,10 @@ The main atributes are:
 
 from scipy.interpolate import interp1d
 
-from diffractio import degrees, mm, np, plt, sp, um
+from diffractio import degrees, mm, np, plt, um
 from diffractio.scalar_fields_X import Scalar_field_X
-from diffractio.utils_math import cut_function, fft_convolution1d, nearest2
+from diffractio.utils_math import (cut_function, fft_convolution1d, nearest,
+                                   nearest2)
 from diffractio.utils_optics import roughness_1D
 
 
@@ -166,6 +167,25 @@ class Scalar_mask_X(Scalar_field_X):
 
         self.u = t * np.exp(1.j * k * (index - 1) * (F2 - F1))
         self.u[t == 0] = 0
+
+    def point_mask(self, x0):
+        """Generates 1 or several point masks at positions x0
+
+        Arguments:
+            x0 float or np.array: x point or points where mask is 1.
+        """
+        u = np.zeros_like(self.x)
+
+        if type(x0) in (int, float):
+            i_x0, _, _ = nearest(self.x, x0)
+            u[i_x0] = 1
+        else:
+            i_x0s, _, _ = nearest2(self.x, x0)
+            for i_x0 in i_x0s:
+                u[i_x0] = 1
+
+        self.u = u
+        return self
 
     def slit(self, x0=0, size=100 * um):
         """Slit: 1 inside, 0 outside

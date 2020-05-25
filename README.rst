@@ -27,7 +27,7 @@ Python Diffraction-Interference module
 Features
 ----------------------
 
-Diffratio is a Python library for Diffraction and Interference Optics.
+Diffractio is a Python library for Diffraction and Interference Optics.
 
 It implements Scalar and paraxial vector Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Beam Propagation Method (BPM) and Fast Fourier Transform (FFT). When possible, multiprocessing is implemented for a faster computation.
 
@@ -98,17 +98,18 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Rayleigh-Sommerfeld (RS)** which allows in a single step to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
 
-* **Beam propagation method (BPM)** which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms.
-
 * **Fast Fourier Transform (FFT)** which allows, in a single step to determine the field at the far field.
 
-* **Plane Wave Descomposition (PWD)**.
+* **Plane Wave Descomposition (PWD)**. It provides the key idea of the wave propagation method because it emphasizes the decomposition of a field E(r) into its plane waves components by the Fourier transformation.
 
-* **Wave Propagation Method (PWD)**.
+* **Wave Propagation Method (WPM)**. The WPM [Appl. Opt. 32, 4984 (1993) ] was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation
 
-* **Vector Rayleigh-Sommerfeld (VRS)**.
 
-* **Vector Wave Propagation Method (VWPM)**.
+* **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is M is computed according to the split-step propagation scheme.
+
+* **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS mehtod [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
+
+* **Vector Wave Propagation Method (VWPM)**.  The VWPM metho [J. Opt. Soc. Am. A  27(4), 709-717 (2010)] extends the WPM to three-dimensional vectorial fields (VWPMs) by considering the polarization dependent Fresnel coefficients for transmission in each propagation step. The continuity of the electric field is maintained in all three dimensions by an enhanced propagation vector and the transfer matrix. - in development
 
 
 The fields, masks and sources can be stored in files.
@@ -178,7 +179,7 @@ Authors
 Citing
 ---------------------------
 
-L.M. Sanchez Brea, "Diffratio, python module for diffraction and interference optics", https://pypi.org/project/diffractio/ (2019)
+L.M. Sanchez Brea, "Diffractio, python module for diffraction and interference optics", https://pypi.org/project/diffractio/ (2019)
 
 
 References
@@ -186,14 +187,18 @@ References
 
 **Propagation algorithms**:
 
-* J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
 * Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
 * Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
 * Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
 * Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
 * Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
-* Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
+* Fertig, M. & Brenner, K.-H. Vector wave propagation method. PhD thesis (Mannheim, 2010).
+
+**Other references**
+
+* J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
 * B. E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
+* Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
 * J. A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
 * "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
 * Beam width: https://en.wikipedia.org/wiki/Beam_diameter

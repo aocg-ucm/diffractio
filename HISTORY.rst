@@ -53,6 +53,23 @@ Alpha state
 * Implemented PWD
 * Reduced size of html
 
+
+0.0.9 and 0.0.10 (2020-05-02)
+------------------------
+Alpha state
+
+* Improvemen to documentaion (readthedocs)
+
+0.0.11 (2020-05-**)
+------------------------
+Alpha state
+
+* Solved big errata in vector_paraxial_masks
+* Improved documentation, tutorial and examples of vector_paraxial_*
+* Scalar_mask_XY: point_mask
+* Scalar_mask_X: point_mask
+
+
 * Modules	  = 9/10.
 * Functions 	= 9/10.
 * Tutorial 	= 8/10.

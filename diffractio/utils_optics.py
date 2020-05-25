@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
-import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
+
+import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, nearest
@@ -268,7 +269,7 @@ def FWHM1D(x,
            intensity,
            percentaje=0.5,
            remove_background='mean',
-           has_drawing=False):
+           has_draw=False):
     """FWHM
 
     remove_background = 'min', 'mean', 'None'"""
@@ -309,7 +310,7 @@ def FWHM1D(x,
 
     intensity = intensity + I_background
 
-    if has_drawing is True:
+    if has_draw is True:
         if remove_background is True:
             intensity = intensity + intensity.min()
         plt.figure()
@@ -335,15 +336,13 @@ def FWHM2D(x,
            intensity,
            percentaje=0.5,
            remove_background='None',
-           has_drawing=False):
+           has_draw=False):
 
     Ix = intensity.mean(axis=0)
     Iy = intensity.mean(axis=1)
 
-    FWHM_x = FWHM1D(
-        x, Ix, percentaje, remove_background, has_drawing=has_drawing)
-    FWHM_y = FWHM1D(
-        y, Iy, percentaje, remove_background, has_drawing=has_drawing)
+    FWHM_x = FWHM1D(x, Ix, percentaje, remove_background, has_draw=has_draw)
+    FWHM_y = FWHM1D(y, Iy, percentaje, remove_background, has_draw=has_draw)
 
     return FWHM_x, FWHM_y
 
@@ -758,8 +757,6 @@ def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
     eps_depth = 1e-4
 
     amplitude[amplitude < eps_depth] = eps_depth
-
-    k = 2 * np.pi / wavelength
 
     depth = np.log(amplitude) * wavelength / (-2 * np.pi * kappa)
 

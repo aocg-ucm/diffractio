@@ -79,9 +79,8 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float): constant value for phase shift
         """
         k = 2 * pi / self.wavelength
-        self.u = A * exp(1.j * k * (
-            self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)
-        ) + z0 * cos(phi))
+        self.u = A * exp(1.j * k * (self.X * sin(theta) * sin(phi) + self.Y *
+                                    cos(theta) * sin(phi)) + z0 * cos(phi))
 
     def gauss_beam(self,
                    r0,
@@ -128,12 +127,10 @@ class Scalar_source_XY(Scalar_field_XY):
 
         amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2) -
                                      (self.Y - y0)**2 / (wy**2))
-        phase1 = exp(
-            1.j * k *
-            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)
-             ))  # rotation
-        phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
-                           (2 * R)))
+        phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi) +
+                                self.Y * cos(theta) * sin(phi)))  # rotation
+        phase2 = exp(
+            1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) / (2 * R)))
 
         self.u = amplitude * phase1 * phase2
 
@@ -188,9 +185,9 @@ class Scalar_source_XY(Scalar_field_XY):
 
         x0, y0 = r0
         # Definicion del vortice
-        amplitude = ((self.X - x0) + 1.j * sign(m) *
-                     (self.Y - y0))**np.abs(m) * exp(-(
-                         (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
+        amplitude = (
+            (self.X - x0) + 1.j * sign(m) * (self.Y - y0))**np.abs(m) * exp(-(
+                (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
         self.u = amplitude
 
     def laguerre_beam(self, r0, w0, z, p, l):
@@ -220,8 +217,8 @@ class Scalar_source_XY(Scalar_field_XY):
         THETA = arctan2(self.X, self.Y)
 
         # Definicion de los terminos producto
-        t1 = exp(-1.j * k * R2 / (2 * Rz) - R2 / wz**2 + 1.j *
-                 (2 * p + l + 1) * f_gouy)
+        t1 = exp(-1.j * k * R2 / (2 * Rz) - R2 / wz**2 +
+                 1.j * (2 * p + l + 1) * f_gouy)
         t2 = exp(-1.j * l * THETA)
         t3 = ((-1)**p) * (R2 / wz**2)**(l / 2)
         t4 = laguerre_polynomial_nk(2 * R2 / wz**2, p, l)
@@ -246,12 +243,12 @@ class Scalar_source_XY(Scalar_field_XY):
         intesity = zeros(self.X.shape, dtype=np.float)
 
         for s in range(len(m)):
-            Ix = (hermite(m[s])(sqrt(2 * pi) * (
-                self.X - x0) / w0) * exp(-pi * (self.X - x0)**2 / w0**2))**2
-            Iy = (hermite(n[s])(sqrt(2 * pi) * (
-                self.Y - y0) / w0) * exp(-pi * (self.Y - y0)**2 / w0**2))**2
-            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])
-                                     ) * sqrt(2**n[s] * factorial(n[s])))
+            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) * exp(
+                -pi * (self.X - x0)**2 / w0**2))**2
+            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) * exp(
+                -pi * (self.Y - y0)**2 / w0**2))**2
+            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) * sqrt(
+                2**n[s] * factorial(n[s])))
 
             intesity = intesity + f * c_mn[s] * Ix * Iy
 
@@ -325,10 +322,10 @@ class Scalar_source_XY(Scalar_field_XY):
         else:
             jbessel = jv(n, k * np.sin(alpha) * R)
 
-        self.u = A * jbessel * np.exp(
-            1j * beta * z0) * np.exp(1.j * k * (
-                self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)
-            ) + z0 * cos(phi))
+        self.u = A * jbessel * np.exp(1j * beta * z0) * np.exp(
+            1.j * k *
+            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)) +
+            z0 * cos(phi))
 
     def plane_waves_dict(self, params):
         """Several plane waves with parameters defined in dictionary
@@ -345,9 +342,10 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = np.zeros_like(self.u, dtype=complex)
         for p in params:
-            self.u = self.u + p['A'] * exp(1.j * k * (
-                self.X * sin(p['theta']) * sin(p['phi']) + self.
-                Y * cos(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
+            self.u = self.u + p['A'] * exp(
+                1.j * k *
+                (self.X * sin(p['theta']) * sin(p['phi']) + self.Y * cos(
+                    p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle, z0=0):
         """Several paralel plane waves

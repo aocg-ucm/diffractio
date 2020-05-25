@@ -4,30 +4,29 @@
 This module generates Vector_paraxial_mask_XY class for defining vector masks. Its parent is Vector_paraxial_field_XY.
 
 The main atributes are:
-		self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-		self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
-		self.wavelength (float): wavelength of the incident field.
-		self.Ex (numpy.array): Electric_x field
-		self.Ey (numpy.array): Electric_y field
+        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+        self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
+        self.wavelength (float): wavelength of the incident field.
+        self.Ex (numpy.array): Electric_x field
+        self.Ey (numpy.array): Electric_y field
 
 
 *Class for bidimensional vector XY masks*
 
 *Functions*
-	* unique_masks
-	* equal_masks
-	* global_mask
-	* complementary_masks
-	* apply_polarization
-	* polarizer_linear
-	* quarter_waveplate
-	* half_wave
-	* polarizer_retarder
+    * unique_masks
+    * equal_masks
+    * global_mask
+    * complementary_masks
+    * apply_polarization
+    * polarizer_linear
+    * quarter_waveplate
+    * half_wave
+    * polarizer_retarder
 """
 import matplotlib
 
-import diffractio
-from diffractio import degrees, eps, np, number_types, plt
+from diffractio import degrees, np, number_types, plt
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
@@ -48,17 +47,17 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
     def __mul__(self, other):
         """
-		Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
+        Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
 
-		Parameters:
-			other (Vector_paraxial_mask_XY): 2nd object to multiply.
+        Parameters:
+            other (Vector_paraxial_mask_XY): 2nd object to multiply.
 
-		Returns:
-			v_mask_XY (Vector_paraxial_mask_XY): Result.
-		"""
+        Returns:
+            v_mask_XY (Vector_paraxial_mask_XY): Result.
+        """
 
         # Easy case, multiply by a number
-        #print(other._type)
+        # print(other._type)
         if isinstance(other, number_types):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
             m3.M00 = self.M00 * other
@@ -91,14 +90,14 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
     def __rmul__(self, other):
         """
-		Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
+        Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.
 
-		Parameters:
-			other (Vector_paraxial_mask_XY): 2nd object to multiply.
+        Parameters:
+            other (Vector_paraxial_mask_XY): 2nd object to multiply.
 
-		Returns:
-			v_mask_XY (Vector_paraxial_mask_XY): Result.
-		"""
+        Returns:
+            v_mask_XY (Vector_paraxial_mask_XY): Result.
+        """
         if isinstance(other, number_types):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
             m3.M00 = self.M00 * other
@@ -119,12 +118,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def rotate(self, angle, new_mask=False):
         """Rotates the mask a certain angle.abs
 
-		Parameters:
-			angle (float): rotation angle in radians
-			new_mask (bool): if True generates a new mask
-		Returns:
-			if new_mask is True: Vector_paraxial_mask_XY
-		"""
+        Parameters:
+            angle (float): rotation angle in radians
+            new_mask (bool): if True generates a new mask
+        Returns:
+            if new_mask is True: Vector_paraxial_mask_XY
+        """
 
         # TODO:
         # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
@@ -134,10 +133,10 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def from_scalar_mask(self, u_mask):
         """The same mask u_mask is applied to all the Jones Matrix.
 
-		Parameters:
-			u_mask (scalar_mask_XY): mask to apply.
+        Parameters:
+            u_mask (scalar_mask_XY): mask to apply.
 
-		"""
+        """
         self.M00 = u_mask.u
         self.M01 = np.zeros_like(u_mask.u)
         self.M10 = np.zeros_like(u_mask.u)
@@ -146,10 +145,10 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def apply_scalar_mask(self, u_mask):
         """The same mask u_mask is applied to all the Jones Matrix.
 
-		Parameters:
-			u_mask (scalar_mask_XY): mask to apply.
+        Parameters:
+            u_mask (scalar_mask_XY): mask to apply.
 
-		"""
+        """
         self.M00 = self.M00 * u_mask.u
         self.M01 = self.M01 * u_mask.u
         self.M10 = self.M10 * u_mask.u
@@ -158,11 +157,11 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def apply_circle(self, r0=None, radius=None):
         """The same circular mask is applied to all the Jones Matrix.
 
-		Parameters:
-			r0 (float, float): center, if None it is generated
-			radius (float, float): radius, if None it is generated
-		"""
-        if radius == None:
+        Parameters:
+            r0 (float, float): center, if None it is generated
+            radius (float, float): radius, if None it is generated
+        """
+        if radius is None:
             x_min, x_max = self.x[0], self.x[-1]
             y_min, y_max = self.y[0], self.y[-1]
 
@@ -186,16 +185,16 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                             state_1=np.array([[0, 0], [0, 1]]),
                             is_binarized=True):
         """Creates two different fields Ex and Ey from a mask and its complementary.
-		For generality, is mask is a decimal number between 0 and 1, it takes the linear interpolation.
+        For generality, is mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
-		Parameters:
-			mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
-			state_0 (2x1 numpy.array): polarization matrix for 0s.
-			state_1 (2x1 numpy.array): polarization matrix for 1s.
+        Parameters:
+            mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
+            state_0 (2x1 numpy.array): polarization matrix for 0s.
+            state_1 (2x1 numpy.array): polarization matrix for 1s.
 
-		Warning:
-			Mask should be binary. Else the function should binarize it: TODO.
-		"""
+        Warning:
+            TODO: Mask should be binary. Else the function should binarize it.
+        """
 
         t = np.abs(mask.u)**2
         if is_binarized:
@@ -210,11 +209,11 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
     def apply_polarization(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
-		This is the most general function to obtain polarizer.
+        This is the most general function to obtain polarizer.
 
-		Parameters:
-			polarizer (2x2 numpy.matrix): Jones_matrix
-		"""
+        Parameters:
+            polarizer (2x2 numpy.matrix): Jones_matrix
+        """
 
         if isinstance(polarizer, Jones_matrix):
             M = polarizer.M
@@ -232,9 +231,9 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def polarizer_linear(self, azimuth=0 * degrees):
         """Generates an XY linear polarizer.
 
-		Parameters:
-			angle (float): linear polarizer angle
-		"""
+        Parameters:
+            angle (float): linear polarizer angle
+        """
         PL = Jones_matrix('m0')
         PL.diattenuator_perfect(azimuth=azimuth)
         self.apply_polarization(PL)
@@ -242,9 +241,9 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def quarter_waveplate(self, azimuth=0 * degrees):
         """Generates an XY quarter wave plate.
 
-		Parameters:
-			azimuth (float): polarizer angle
-		"""
+        Parameters:
+            azimuth (float): polarizer angle
+        """
         PL = Jones_matrix('m0')
         PL.quarter_waveplate(azimuth=azimuth)
         self.apply_polarization(PL)
@@ -252,9 +251,9 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def half_waveplate(self, azimuth=0 * degrees):
         """Generates an XY half wave plate.
 
-		Parameters:
-			azimuth (float): polarizer angle
-		"""
+        Parameters:
+            azimuth (float): polarizer angle
+        """
         PL = Jones_matrix('m0')
         PL.half_waveplate(azimuth=azimuth)
         self.apply_polarization(PL)
@@ -266,12 +265,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                            azimuth=0 * degrees):
         """Generates an XY retarder.
 
-		Parameters:
-			delay (float): delay between Ex and Ey components.
-			p1 (float): transmittance of fast axis.
-			p2 (float): transmittance of slow axis.
-			azimuth (float): linear polarizer angle
-		"""
+        Parameters:
+            delay (float): delay between Ex and Ey components.
+            p1 (float): transmittance of fast axis.
+            p2 (float): transmittance of slow axis.
+            azimuth (float): linear polarizer angle
+        """
         PL = Jones_matrix('m0')
         PL.diattenuator_retarder_linear(
             delay=delay, p1=p1, p2=p1, azimuth=azimuth)
@@ -280,20 +279,20 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
     def to_py_pol(self):
         """Pass mask to py_pol.jones_matrix
 
-		Returns:
-			py_pol.jones_matrix
+        Returns:
+            py_pol.jones_matrix
 
-		"""
+        """
 
-        m0 = Jones_matrix(name="from diffratio")
+        m0 = Jones_matrix(name="from Diffractio")
         m0.from_components((self.M00, self.M01, self.M10, self.M11))
 
         return m0
 
     def draw(self, kind='amplitude', z_scale='um'):
 
-        #def draw_masks(self, kind='fields'):
-        color_inicial = matplotlib.rc('image.cmap')
+        # def draw_masks(self, kind='fields'):
+        # color_inicial = matplotlib.rc('image.cmap')
         matplotlib.rc('image', cmap='hot')
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
@@ -360,12 +359,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 def rotation_matrix_Jones(angle):
     """Creates an array of Jones 2x2 rotation matrices.
 
-	Parameters:
-		angle (np.array): array of angle of rotation, in radians.
+    Parameters:
+        angle (np.array): array of angle of rotation, in radians.
 
-	Returns:
-		numpy.array: 2x2 matrix
-	"""
+    Returns:
+        numpy.array: 2x2 matrix
+    """
     M = np.array([[np.cos(angle), np.sin(angle)],
                   [-np.sin(angle), np.cos(angle)]])
     return M
