@@ -521,12 +521,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # si solamente un numero, posiciones y radius son los mismos para ambos
 
-        if len(size) == 1:
-            size = (size, size)
+        if isinstance(size, (float, int)):
+            sizex, sizey = size, size
+        else:
+            sizex, sizey = size
 
         x0, y0 = r0
-        # Tamano
-        sizex, sizey = size
 
         # Definicion del square/rectangle
         xmin = x0 - sizex / 2
@@ -673,7 +673,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = Z
 
     def ring(self, r0, radius1, radius2, angle=0 * degrees):
-        """ Ring
+        """ Ring.
 
         Parameters:
             r0 (float, float): center of ring
@@ -684,11 +684,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # si solamente un numero, posiciones y radius son los mismos para ambos
         # Definicion del origen y radius del ring
-
-        if len(radius1) == 1:
-            radius1 = (radius1, radius1)
-        if len(radius2) == 1:
-            radius2 = (radius2, radius2)
 
         ring1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -708,8 +703,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         """
         # Definicion del origen y length de la cross
 
-        if len(size) == 1:
-            size = (size[0], size[0])
+        # if isinstance(size, (float, int)):
+        #     sizex, sizey = size, size
+        # else:
+        #     sizex, sizey = size
 
         # Definicion de la cross
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)

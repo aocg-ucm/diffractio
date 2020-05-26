@@ -28,13 +28,26 @@ on it is strongly simplified by turning off interaction, and choosing
 specific scene interactor styles. Indeed, non-technical users can be
 confused with too rich interaction.
 """
-from mayavi import mlab
-from mayavi.core.api import PipelineBase, Source
-from mayavi.core.ui.api import MayaviScene, MlabSceneModel, SceneEditor
-from traits.api import Array, HasTraits, Instance, on_trait_change
-from traitsui.api import Group, HGroup, Item, View
-from tvtk.api import tvtk
-from tvtk.pyface.scene import Scene
+import sys
+
+try:
+    from mayavi import mlab
+    from mayavi.core.api import PipelineBase, Source
+    from mayavi.core.ui.api import MayaviScene, MlabSceneModel, SceneEditor
+except:
+    print("mayavi is not imported.")
+
+try:
+    from traits.api import Array, HasTraits, Instance, on_trait_change
+    from traitsui.api import Group, HGroup, Item, View
+except:
+    print("traits is not imported.")
+
+try:
+    from tvtk.api import tvtk
+    from tvtk.pyface.scene import Scene
+except:
+    print("tvtk is not imported.")
 
 
 class VolumeSlicer(HasTraits):
@@ -96,8 +109,8 @@ class VolumeSlicer(HasTraits):
             ipw.ipw.interaction = 0
         self.scene3d.scene.background = (0, 0, 0)
         # Keep the view always pointing up
-        self.scene3d.scene.interactor.interactor_style = \
-         tvtk.InteractorStyleTerrain()
+        self.scene3d.scene.interactor.interactor_style = tvtk.InteractorStyleTerrain(
+        )
 
     def make_side_view(self, axis_name):
         scene = getattr(self, 'scene_%s' % axis_name)
@@ -196,11 +209,16 @@ class VolumeSlicer(HasTraits):
             ),
         ),
         resizable=True,
-        title='Volume Slicer',
+        title='Diffractio',
     )
 
 
 def slicerLM(fxyz):
-    print("Close the window to continue.")
+    modules_name = 'tvtk', 'traits', 'mayavi'
+    for module_name in modules_name:
+        if module_name not in sys.modules:
+            print('Module {} has not been imported'.format(module_name))
+            return
+
     m = VolumeSlicer(data=fxyz)
     m.configure_traits()

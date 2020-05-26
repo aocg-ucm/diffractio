@@ -48,7 +48,6 @@ import types
 from multiprocessing import Pool
 
 import matplotlib.animation as anim
-from mayavi import mlab
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
@@ -64,7 +63,21 @@ from diffractio.utils_drawing import normalize_draw, prepare_drawing
 from diffractio.utils_math import get_k, ndgrid, nearest
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
-from diffractio.utils_slicer import slicerLM
+
+try:
+    from mayavi import mlab
+except:
+    print("mayavi.mlab is not imported.")
+
+try:
+    import traits
+    import tvtk
+    import traitsui
+
+    from diffractio.utils_slicer import slicerLM
+
+except:
+    print("traits, tvtk or traitsui is not imported.")
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -1234,7 +1247,7 @@ class Scalar_field_XYZ(object):
                  logarithm=False,
                  normalize='',
                  pixel_size=(128, 128, 128)):
-        """Draws  XZ field
+        """Draws  XZ field.
 
         Parameters:
             kind (str): type of drawing: 'intensity', 'phase', 'real_field'
@@ -1273,6 +1286,12 @@ class Scalar_field_XYZ(object):
             Simplify, drawing
             include kind and other parameters of draw
         """
+
+        module_name = 'mayavi'
+        if module_name not in sys.modules:
+            print('Module {} has not been imported'.format(module_name))
+            return
+
         intensity = np.abs(self.u)**2
 
         if logarithm == 1:
@@ -1310,6 +1329,7 @@ class Scalar_field_XYZ(object):
         Parameters:
             kind (str): 'real', 'imag', 'abs'
         """
+
         print("close the window to continue")
         if kind == 'real':
             slicerLM(np.real(self.n))
