@@ -63,21 +63,12 @@ from diffractio.utils_drawing import normalize_draw, prepare_drawing
 from diffractio.utils_math import get_k, ndgrid, nearest
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
+from diffractio.utils_slicer import slicerLM
 
 try:
     from mayavi import mlab
 except:
     print("mayavi.mlab is not imported.")
-
-try:
-    import traits
-    import tvtk
-    import traitsui
-
-    from diffractio.utils_slicer import slicerLM
-
-except:
-    print("traits, tvtk or traitsui is not imported.")
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -1344,7 +1335,8 @@ class Scalar_field_XYZ(object):
               fps=15,
               frame=True,
               axis='auto',
-              verbose=False):
+              verbose=False,
+              directory_name='new_video'):
         """Makes a video in the range given by self.z.
 
         Parameters:
@@ -1388,7 +1380,6 @@ class Scalar_field_XYZ(object):
             return "no correct kind in video"
 
         file, extension = os.path.splitext(filename)
-
         Writer = anim.writers['ffmpeg']
         if extension == '.avi':
             writer = Writer(fps=fps)  # codec='ffv1'
@@ -1424,7 +1415,18 @@ class Scalar_field_XYZ(object):
         fig.canvas.draw()
 
         n_frames = len(self.z)
-        with writer.saving(fig, filename, 300):
+
+        if extension == '.png':
+
+            try:
+                os.makedirs(directory_name)
+                print("new directory: {}".format(directory_name))
+                os.chdir(directory_name)
+            except OSError:
+                pass
+            # let exception propagate if we just can't
+            # cd into the specified directory
+
             for i_prog in range(n_frames):
                 frame = self.to_Scalar_field_XY(
                     iz0=i_prog, z0=None, is_class=True, matrix=False)
@@ -1439,7 +1441,7 @@ class Scalar_field_XYZ(object):
                 plt.ylabel("y (microns)")
                 plt.title(texto)
                 plt.draw()
-                writer.grab_frame(facecolor='k')
+                plt.savefig("{}_{:04.0f}.png".format(file, i_prog))
                 if verbose:
                     if (sys.version_info > (3, 0)):
                         print(
@@ -1452,5 +1454,36 @@ class Scalar_field_XYZ(object):
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
                                 i_prog, n_frames, self.z[i_prog] / mm,
                                 intensity.max(), intensity.min()))
+            os.chdir("../")
+
+        elif extension == '.avi' or extension == '.mp4':
+            with writer.saving(fig, filename, 300):
+                for i_prog in range(n_frames):
+                    frame = self.to_Scalar_field_XY(
+                        iz0=i_prog, z0=None, is_class=True, matrix=False)
+                    intensity = f(frame.u, kind)
+                    image.set_array(intensity)
+                    if kind == 'intensity':
+                        image.set_clim(vmax=intensity_global)
+                    elif kind == 'phase':
+                        image.set_clim(-np.pi, np.pi)
+                    texto = "z = {:2.3f} mm".format(self.z[i_prog] / mm)
+                    plt.xlabel("x (microns)")
+                    plt.ylabel("y (microns)")
+                    plt.title(texto)
+                    plt.draw()
+                    writer.grab_frame(facecolor='k')
+                    if verbose:
+                        if (sys.version_info > (3, 0)):
+                            print(
+                                "{} de {}: z={}, max= {:2.2f} min={:2.2f}".
+                                format(i_prog, n_frames, self.z[i_prog] / mm,
+                                       intensity.max(), intensity.min()),
+                                end='\r')
+                        else:
+                            print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}"
+                                   ).format(i_prog,
+                                            n_frames, self.z[i_prog] / mm,
+                                            intensity.max(), intensity.min()))
 
         plt.close()
