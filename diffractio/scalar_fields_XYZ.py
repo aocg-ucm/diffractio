@@ -1423,13 +1423,15 @@ class Scalar_field_XYZ(object):
         n_frames = len(self.z)
 
         if extension == '.png':
-
+            current_directory = os.getcwd()
             try:
                 os.makedirs(directory_name)
                 print("new directory: {}".format(directory_name))
-                os.chdir(directory_name)
             except OSError:
+                print("this directory is not new: overwrite.")
                 pass
+
+            os.chdir(directory_name)
             # let exception propagate if we just can't
             # cd into the specified directory
 
@@ -1460,7 +1462,7 @@ class Scalar_field_XYZ(object):
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
                                 i_prog, n_frames, self.z[i_prog] / mm,
                                 intensity.max(), intensity.min()))
-            os.chdir("../")
+            os.chdir(current_directory)
 
         elif extension == '.avi' or extension == '.mp4':
             with writer.saving(fig, filename, 300):
