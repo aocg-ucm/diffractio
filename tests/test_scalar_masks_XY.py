@@ -633,29 +633,6 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
-    def test_lens_billet(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
-
-        num_data = 512
-        length = 250 * um
-        x = np.linspace(-length / 2, length / 2, num_data)
-        y = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 0.6328 * um
-
-        t1 = Scalar_mask_XY(x, y, wavelength)
-        t1.lens_billet(
-            r0=(0 * um, 0 * um),
-            radius=(200 * um, 200 * um),
-            focal=(5 * mm, 5 * mm),
-            angle=0 * degrees,
-            radius_agujero=50 * um)
-        t1.draw(kind='phase')
-
-        t1.save_data(filename=filename, method='savez_compressed')
-        save_figure_test(newpath, func_name)
-        assert True
-
     def test_biprism_fresnel(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)

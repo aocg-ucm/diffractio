@@ -215,10 +215,15 @@ class VolumeSlicer(HasTraits):
 
 def slicerLM(fxyz):
     modules_name = 'tvtk', 'traits', 'mayavi'
+    is_all_charged = True
     for module_name in modules_name:
         if module_name not in sys.modules:
             print('Module {} has not been imported'.format(module_name))
-            return
-
-    m = VolumeSlicer(data=fxyz)
-    m.configure_traits()
+            is_all_charged = False
+    if is_all_charged is True:
+        m = VolumeSlicer(data=fxyz)
+        m.configure_traits()
+    else:
+        print(
+            "slicerLM cannot be used since tvtk, traits or mayavi modules are not imported"
+        )

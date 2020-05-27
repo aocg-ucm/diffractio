@@ -25,7 +25,7 @@ The magnitude is related to microns: `micron = 1.`
     * image
     * point_maks, slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
     * mask_from_function
-    * prism, lens, fresnel_lens, lens_billet,
+    * prism, lens, fresnel_lens
     * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
     * axicon, biprism_fresnel,
     * radial_grating, angular_grating, hyperbolic_grating, archimedes_spiral, laguerre_gauss_spiral
@@ -256,7 +256,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             index (float): refraction index
             f1 (str): function for first surface
             f2 (str): function for second surface
-            radius (float, float): size of mask
+            radius (float, float) or (float): size of mask
             v_globals (dict): dictionary with globals
             mask (bool): If True applies mask
         """
@@ -395,8 +395,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             t1 (Scalar_mask_XY): Mask of the desired figure to be drawn
-            space (float, float): spaces between figures.
-            margin (float, float): extra space outside the mask
+            space (float, float) or (float): spaces between figures.
+            margin (float, float) or (float): extra space outside the mask
             angle (float): Angle to rotate the matrix of circles
 
         Returns:
@@ -511,7 +511,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of square
-            size (float, float): size of slit
+            size (float, float) or (float): size of slit
             angle (float): angle of rotation in radians
 
         Example:
@@ -591,7 +591,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of circle/ellipse
-            radius (float, float): radius of circle/ellipse
+            radius (float, float) or (float): radius of circle/ellipse
             angle (float): angle of rotation in radians
 
         Example:
@@ -620,7 +620,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of circle
-            radius (float, float): radius of circle
+            radius (float, float) or (float): radius of circle
             potencia (float): value of exponential
             angle (float): angle of rotation in radians
 
@@ -677,8 +677,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of ring
-            radius1 (float, float): inner radius
-            radius2 (float, float): outer radius
+            radius1 (float, float) or (float): inner radius
+            radius2 (float, float) or (float): outer radius
             angle (float): angle of rotation in radians
         """
 
@@ -698,7 +698,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of cross
-            size (float, float): length, width of cross
+            size (float, float) or (float): length, width of cross
             angle (float): angle of rotation in radians
         """
         # Definicion del origen y length de la cross
@@ -747,8 +747,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            radius (float, float): radius of lens mask
-            focal (float, float): focal length of lens
+            radius (float, float) or (float): radius of lens mask
+            focal (float, float) or (float): focal length of lens
             angle (float): angle of axis in radians
             mask (bool): if True, mask with size radius
 
@@ -795,8 +795,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            radius (float, float): radius of lens mask
-            focal (float, float): focal length of lens
+            radius (float, float) or (float): radius of lens mask
+            focal (float, float) or (float): focal length of lens
             levels (float, float): levels (1,0) or other of the lens
             kind (str):  'amplitude' or 'phase'
             phase (float): phase shift for phase lens
@@ -838,32 +838,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             t2.u = exp(1j * t2.u * phase)
 
         self.u = t2.u * t1
-
-    def lens_billet(self,
-                    r0,
-                    radius,
-                    focal,
-                    radius_agujero,
-                    angle=0 * degrees,
-                    mask=True):
-        """Billet lens, that is a lens with a hole in the center
-
-        Parameters:
-            r0 (float, float): (x0,y0) - center of lens
-            radius (float, float): radius of lens mask
-            focal (float, float): focal length of lens
-            radius_agujero (float): radius of hole
-            angle (float): angle of axis in radians
-            mask (bool): if True, mask with size radius
-        """
-        x0, y0 = r0
-        t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t1.lens(r0, radius, focal, angle, mask)
-        field = t1.u
-        ipasa = (t1.X - x0)**2 / radius_agujero**2 + (
-            t1.Y - y0)**2 / radius_agujero**2 < 1
-        field[ipasa] = 1
-        self.u = field
 
     def axicon(self, r0, radius, height, n):
         """Axicon, that is a lens with a hole in the center
@@ -1342,13 +1316,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = exp(1j * phase)
 
     def grating_2D(self,
-                   period=40. * um,
+                   period,
                    amin=0,
                    amax=1.,
-                   phase=0. * pi / 2,
+                   phase=0,
                    x0=0,
-                   fill_factor=0.75,
-                   angle=0.0 * degrees):
+                   fill_factor=0.5,
+                   angle=0 * degrees):
         """2D binary grating
 
          Parameters:

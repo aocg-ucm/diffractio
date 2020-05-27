@@ -4,14 +4,14 @@ Python Diffraction-Interference module
 
 
 .. image:: https://img.shields.io/pypi/v/diffractio.svg
-		:target: https://pypi.org/project/diffractio/
+        :target: https://pypi.org/project/diffractio/
 
 .. image:: https://img.shields.io/travis/optbrea/diffractio.svg
-		:target: https://bitbucket.org/optbrea/diffractio/src/master/
+        :target: https://bitbucket.org/optbrea/diffractio/src/master/
 
 .. image:: https://readthedocs.org/projects/diffractio/badge/?version=latest
-		:target: https://diffractio.readthedocs.io/en/latest/
-		:alt: Documentation Status
+        :target: https://diffractio.readthedocs.io/en/latest/
+        :alt: Documentation Status
 
 
 * Free software: MIT license
@@ -29,7 +29,8 @@ Features
 
 Diffractio is a Python library for Diffraction and Interference Optics.
 
-It implements Scalar and paraxial vector Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Beam Propagation Method (BPM) and Fast Fourier Transform (FFT). When possible, multiprocessing is implemented for a faster computation.
+It implements Scalar and paraxial vector Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Plane Wave Descomposition (PWD), Wave Propagation Method (WPM), Beam Propagation Method (BPM), and Vectorial Rayleigh-Sommerfeld (VRS). When possible, multiprocessing is implemented for a faster computation.
+
 
 The scalar propagations techniques are implemented to:
 
@@ -164,11 +165,11 @@ Authors
 * Luis Miguel Sanchez Brea <optbrea@ucm.es>
 
 
-	**Universidad Complutense de Madrid**,
-	Faculty of Physical Sciences,
-	Department of Optics
-	Plaza de las ciencias 1,
-	ES-28040 Madrid (Spain)
+    **Universidad Complutense de Madrid**,
+    Faculty of Physical Sciences,
+    Department of Optics
+    Plaza de las ciencias 1,
+    ES-28040 Madrid (Spain)
 
 .. image:: logoUCM.png
    :width: 125
@@ -188,22 +189,20 @@ References
 **Propagation algorithms**:
 
 * Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
-* Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
 * Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
+* Fertig, M. & Brenner, K.-H. Vector wave propagation method. PhD thesis (Mannheim, 2010).
+* Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
 * Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
 * Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
-* Fertig, M. & Brenner, K.-H. Vector wave propagation method. PhD thesis (Mannheim, 2010).
 
 **Other references**
 
-* J. W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
-* B. E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
-* Z. Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
-* J. A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
+* J.W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
+* B.E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
+* Z.Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
+* J.A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
 * "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
 * Beam width: https://en.wikipedia.org/wiki/Beam_diameter
-
-
 
 
 Credits
