@@ -1384,14 +1384,16 @@ class Scalar_field_XYZ(object):
             return "no correct kind in video"
 
         file, extension = os.path.splitext(filename)
-        Writer = anim.writers['ffmpeg']
         if extension == '.avi':
+            Writer = anim.writers['ffmpeg']
             writer = Writer(fps=fps)  # codec='ffv1'
         elif extension == '.mp4':
+            Writer = anim.writers['ffmpeg']
             writer = Writer(
                 fps=fps, bitrate=1e6, codec='mpeg4')  # codec='mpeg4',
         else:
             print("file needs to be .avi or .mp4")
+            print("No writer is available. is .png? Then correct.")
         xmin, xmax, ymin, ymax = self.x[0], self.x[-1], self.y[0], self.y[-1]
 
         if frame is True:
