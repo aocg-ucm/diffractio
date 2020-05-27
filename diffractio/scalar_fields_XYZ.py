@@ -63,7 +63,11 @@ from diffractio.utils_drawing import normalize_draw, prepare_drawing
 from diffractio.utils_math import get_k, ndgrid, nearest
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
-from diffractio.utils_slicer import slicerLM
+
+try:
+    from diffractio.utils_slicer import slicerLM
+except:
+    print("slicerLM is not loaded.")
 
 try:
     from mayavi import mlab
