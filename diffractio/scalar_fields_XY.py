@@ -830,7 +830,7 @@ class Scalar_field_XY(object):
                 self.x[ix], self.y[iy])))
         return self.x[ix], self.y[iy]
 
-    def MTF(self, kind='mm', has_draw=True):
+    def MTF(self, kind='mm', has_draw=True, is_matrix=True):
         """Computes the MTF of a field, If this field is near to focal point, the MTF will be wide
 
         Parameters:
@@ -890,7 +890,12 @@ class Scalar_field_XY(object):
 
         self.u = tmp_field
 
-        return fx, fy, mtf_norm
+        if is_matrix is True:
+            return fx, fy, mtf_norm
+        else:
+            u_mtf = Scalar_field_XY(fx, fy, self.wavelength)
+            u_mtf.u = mtf_norm
+            return u_mtf
 
     def intensity(self):
         """Returns intensity."""

@@ -466,6 +466,34 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return self
 
+    def regular_points(self, xlim, ylim, num_data, verbose=False):
+        """Generates n x m or several point masks.
+
+        Arguments:
+            xlim (float, float): (xmin, xmax) positions
+            ylim (float, float): (ymin, ymax) positions
+            num_data (int, int): (x, y) number of points
+
+        """
+        x0, x1 = xlim
+        y0, y1 = ylim
+        nx, ny = num_data
+        x_points = np.linspace(x0, x1, nx)
+        y_points = np.linspace(y0, y1, ny)
+
+        u = np.zeros_like(self.X)
+        i_x0, _, _ = nearest2(self.x, x_points)
+        i_y0, _, _ = nearest2(self.y, y_points)
+        if verbose is True:
+            print(i_x0)
+            print(i_y0)
+
+        iX, iY = np.meshgrid(i_x0, i_y0)
+        u[iX, iY] = 1
+
+        self.u = u
+        return self
+
     def slit(self, x0, size, angle=0 * degrees):
         """Slit: 1 inside, 0 outside
 
