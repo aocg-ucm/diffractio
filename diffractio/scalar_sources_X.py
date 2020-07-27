@@ -93,7 +93,7 @@ class Scalar_source_X(Scalar_field_X):
         phase2 = exp(
             1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 / (2 * R)))
 
-        self.u = amplitude * phase1
+        self.u = amplitude * phase1 * phase2
 
     def spherical_wave(self,
                        A=1,
@@ -126,7 +126,6 @@ class Scalar_source_X(Scalar_field_X):
 
         # Onda esferica
         self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
-        # self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) DANI
 
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)

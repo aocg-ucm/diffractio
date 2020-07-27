@@ -328,7 +328,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """
 
         # Rotacion del square/rectangle
-
         Xrot, Zrot = self.__rotate__(angle, rotation_point)
 
         v_locals = {
@@ -338,6 +337,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             'um': um,
             'np': np
         }
+
         v_locals['Xrot'] = Xrot
         v_locals['Zrot'] = Zrot
 
@@ -434,7 +434,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             array2=fx2_n,
             x_sides=x_sides,
             angle=0 * degrees,
-            interp_kind='quadratic')
+            interp_kind='linear')
 
         self.surface_detection()  # bordes nuevos
         perfil_nuevo = self.borders
@@ -456,7 +456,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n = n
         return n
 
-    def image(self, filename, n_max=1.5, n_min=1, angle=0, invert=False):
+    def image(self, filename, n_max, n_min, angle=0, invert=False):
         """Converts an image file in an xz-refraction index matrix.
         If the image is gray-scale the refraction index is gradual betwee n_min and n_max.
         If the image is color, we get the first Red frame
@@ -501,7 +501,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             image = image.max() - image
         self.n = n_min + image * (n_max - n_min)
 
-    def semi_plane(self, r0, refraction_index, angle, rotation_point=None):
+    def semi_plane(self, r0, refraction_index, angle=0, rotation_point=None):
         """Inserts a semi-sphere in background (x>x0). If it is something else previous, it is removed.
 
         Parameters:
@@ -681,7 +681,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                     r0,
                     radius,
                     refraction_index,
-                    angle,
+                    angle=0,
                     rotation_point=None):
         """ Insert a semi_sphere in background.
 
@@ -718,7 +718,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                               radius,
                               thickness,
                               refraction_index,
-                              angle,
+                              angle=0,
                               rotation_point=None,
                               mask=0):
         """Insert a plane-convergent lens in background-
@@ -786,7 +786,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                         radius,
                         thickness,
                         refraction_index,
-                        angle,
+                        angle=0,
                         rotation_point=None,
                         mask=0):
         """Inserts a convergent lens in background.
@@ -857,7 +857,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                              radius,
                              thickness,
                              refraction_index,
-                             angle,
+                             angle=0,
                              rotation_point=None,
                              mask=False):
         """Insert a plane-divergent lens in background.
@@ -922,7 +922,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                        radius,
                        thickness,
                        refraction_index,
-                       angle,
+                       angle=0,
                        rotation_point=None,
                        mask=0):
         """Insert a  divergent lens in background.
@@ -1121,7 +1121,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
               length,
               refraction_index,
               angle_wedge,
-              angle,
+              angle=0,
               rotation_point=None):
         """ Insert a wedge pointing towards the light beam
 
@@ -1152,7 +1152,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
               length,
               refraction_index,
               angle_prism,
-              angle,
+              angle=0,
               rotation_point=None):
         """Similar to wedge but the use is different. Also the angle is usually different. One of the sides is paralel to x=x0
 
@@ -1181,13 +1181,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point, refraction_index, Fs, angle, v_globals={})
         return ipasa
 
-    def biprism(self, r0, length, height, refraction_index, angle):
+    def biprism(self, r0, length, height, refraction_index, angle=0):
         """Fresnel biprism.
 
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             length (float): length of the long part (z direction)
-            length (float): height of biprism
+            height (float): height of biprism
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """

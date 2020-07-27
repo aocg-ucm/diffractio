@@ -351,7 +351,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u * np.exp(1.j * k * (n - 1) * h)
         return h
 
-    def lens(self, x0=0 * um, radius=100 * um, focal=5 * mm, mask=True):
+    def lens(self, x0, focal, radius=6 * mm, mask=True):
         """Transparent lens.
 
         Parameters:

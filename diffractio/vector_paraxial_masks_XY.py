@@ -108,7 +108,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         elif other._type in ('Vector_paraxial_source_XY',
                              'Vector_paraxial_field_XY'):
-            print("vector * matriz")
             m3 = Vector_paraxial_source_XY(self.x, self.y, self.wavelength)
             m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
             m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey

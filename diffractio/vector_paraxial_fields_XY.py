@@ -503,7 +503,7 @@ class Vector_paraxial_field_XY(object):
                 plt.savefig(
                     filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
 
-            return id_fig
+            # return id_fig
 
     def __draw_intensity__(self,
                            logarithm,
@@ -874,7 +874,8 @@ def __draw1__(hdl, image, colormap, title='', has_max=False):
         colormap (str): colormap
         title (str): title of drawing
     """
-    extension = [hdl.x.min(), hdl.x.max(), hdl.y.min(), hdl.y.max()]
+    extension = [hdl.x[0], hdl.x[-1], hdl.y[0], hdl.y[-1]]
+
     h = plt.imshow(
         image,
         interpolation='bilinear',
@@ -882,7 +883,6 @@ def __draw1__(hdl, image, colormap, title='', has_max=False):
         origin='lower',
         extent=extension)
 
-    title = title
     plt.title(title, fontsize=16)
 
     if has_max is True:

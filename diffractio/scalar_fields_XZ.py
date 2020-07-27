@@ -55,6 +55,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 import copyreg
+import sys
 import time
 import types
 from copy import deepcopy
@@ -606,7 +607,12 @@ class Scalar_field_XZ(object):
         field[:, 0] = field_z
         for k in range(0, numz):
             if verbose is True:
-                print(("BPM: {}/{}".format(k, numz)))
+
+                if sys.version_info.major == 3:
+                    print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
+                else:
+                    print("BPM: {}/{}".format(k, numz).format(
+                        i, num_executions))
             # Función de transferencia para la propagación que es identica a la
             # respuesta de frecuencia espacial en óptica de Fourier
             # incorporando el termino (-j k0 z) para cada sampling.
@@ -652,7 +658,13 @@ class Scalar_field_XZ(object):
             uf = self.u0
             for i in range(num_executions):
                 if verbose is True:
-                    print(i)
+                    if sys.version_info.major == 3:
+                        print(
+                            "{}/{}".format(i, num_executions),
+                            sep="\r",
+                            end="\r")
+                    else:
+                        print("{}/{}".format(i, num_executions))
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(
                     x=self.x,
@@ -787,7 +799,14 @@ class Scalar_field_XZ(object):
                 self.quality))
         else:
             if verbose is True:
-                print('Good result: factor {:2.2f}'.format(self.quality))
+                if sys.version_info.major == 3:
+                    print(
+                        'Good result: factor {:2.2f}'.format(self.quality),
+                        sep="\r",
+                        end="\r")
+                else:
+                    print('Good result: factor {:2.2f}'.format(self.quality))
+                print()
 
         # matrix W para integracion simpson
         a = [2, 4]
@@ -845,12 +864,19 @@ class Scalar_field_XZ(object):
         time2 = time.time()
 
         if verbose is True:
-            print(("time in RS= {}. num proc= {}".format(
-                time2 - time1, num_processors)))
+            if sys.version_info.major == 3:
+                print(
+                    "time in RS= {}. num proc= {}".format(
+                        time2 - time1, num_processors),
+                    sep="\r",
+                    end="\r")
+            else:
+                print("time in RS= {}. num proc= {}".format(
+                    time2 - time1, num_processors))
 
         return self.u
 
-    def PWD(self, n=None, matrix=False, verbose=True):
+    def PWD(self, n=None, matrix=False, verbose=False):
         """
         Plane wave decomposition algorithm (PWD).
 
@@ -883,8 +909,9 @@ class Scalar_field_XZ(object):
             result = self.u[:, i]
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, i + 1] = result_next
-            if verbose is True:
-                # print("{}/{}".format(i, num_steps), sep='\n', end='\n')
+            if sys.version_info.major == 3:
+                print("{}/{}".format(i, num_steps), sep='\r', end='\r')
+            else:
                 print("{}/{}".format(i, num_steps))
 
         if matrix is True:
@@ -925,7 +952,8 @@ class Scalar_field_XZ(object):
 
         t1 = time.time()
 
-        for j in range(1, len(self.z)):
+        num_steps = len(self.z)
+        for j in range(1, num_steps):
 
             if kind == 'schmidt':
                 self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(
@@ -953,6 +981,12 @@ class Scalar_field_XZ(object):
 
                 uj = np.mean(WXj * Pj, 0)
                 self.u[:, j] = uj * filter + self.u[:, j]
+
+            if verbose is True:
+                if sys.version_info.major == 3:
+                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+                else:
+                    print("{}/{}".format(j, num_steps))
 
         t2 = time.time()
         if verbose is True:

@@ -519,6 +519,7 @@ class Scalar_field_XY(object):
 
         References:
              Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
+
         """
 
         if xout is None:
@@ -591,16 +592,18 @@ class Scalar_field_XY(object):
         Usalida = S[ny - 1:, nx - 1:]  # hasta el final
         # los calculos se pueden dejar en la instancia o crear un new field
 
+        Usalida = Usalida / z
+
         if out_matrix is True:
-            return Usalida / z
+            return Usalida
 
         if new_field is True:
             field_output = Scalar_field_XY(self.x, self.y, self.wavelength)
-            field_output.u = Usalida / z
+            field_output.u = Usalida
             field_output.quality = self.quality
             return field_output
         else:
-            self.u = Usalida / z
+            self.u = Usalida
 
     def RS(self,
            z,
@@ -706,7 +709,7 @@ class Scalar_field_XY(object):
     def profile(self,
                 point1='',
                 point2='',
-                npixels=1000,
+                npixels=None,
                 kind='intensity',
                 order=2):
         """Determine profile in image. If points are not given, then image is shown and points are obtained clicking.
@@ -724,6 +727,9 @@ class Scalar_field_XY(object):
             (float, float): point1
             (float, float): point2
         """
+
+        if npixels is None:
+            npixels = len(self.x)
 
         if point1 == '' or point2 == '':
             self.draw(kind=kind)
@@ -761,7 +767,7 @@ class Scalar_field_XY(object):
     def draw_profile(self,
                      point1='',
                      point2='',
-                     npixels=1000,
+                     npixels=None,
                      kind='intensity',
                      order=0):
         """Draws profile in image. If points are not given, then image is shown and points are obtained clicking.
@@ -779,6 +785,9 @@ class Scalar_field_XY(object):
             (float, float): point1
             (float, float): point2
         """
+
+        if npixels is None:
+            npixels = len(self.x)
 
         h, z_profile, point1, point2 = self.profile(point1, point2, npixels,
                                                     kind, order)

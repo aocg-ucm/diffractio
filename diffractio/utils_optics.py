@@ -459,7 +459,7 @@ def detect_intensity_range(x,
     x_max = x[i_max]
 
     if has_draw is True:
-        fig, ax = plt.subplots()
+        _, ax = plt.subplots()
 
         if logarithm is True:
             I2 = np.log(intensity + 1)
