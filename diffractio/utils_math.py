@@ -860,3 +860,29 @@ def filter_edge_1D(x, size=1.1, exponent=32):
     x_center = (x[-1] + x[0]) / 2
     Dx = size * (x[-1] - x[0])
     return np.exp(-(2 * (x - x_center) / (Dx))**np.abs(exponent))
+
+
+def filter_edge_2D(x, y, size=1.1, exponent=32):
+    """function 1 at center and reduced at borders. For propagation algorithms
+
+    Arguments:
+        x (np.array): x position
+        y (np.array): y position
+        size (float): related to relative position of x and y
+        exponent (integer): related to shape of edges
+    Returns:
+        np.array: function for filtering
+    """
+
+    # num_x = len(x)
+    x_center = (x[-1] + x[0]) / 2
+    y_center = (y[-1] + y[0]) / 2
+    Dx = size * (x[-1] - x[0])
+    Dy = size * (y[-1] - y[0])
+
+    X, Y = np.meshgrid(x, y)
+
+    exp1 = np.exp(-(2 * (X - x_center) / (Dx))**np.abs(exponent))
+    exp2 = np.exp(-(2 * (Y - y_center) / (Dy))**np.abs(exponent))
+
+    return exp1 * exp2
