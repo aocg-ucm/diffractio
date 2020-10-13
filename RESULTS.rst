@@ -6,6 +6,8 @@ Results obtained with Diffractio
 Scientific articles
 ----------------------
 
+  * Vishniakou, I. & Seelig, J. D. Differentiable model-based adaptive optics with transmitted and reflected light. Opt. Express 28, 26436 (2020). https://www.osapublishing.org/oe/abstract.cfm?uri=oe-28-18-26436
+
   * Vishniakou, I. & Seelig, J. D. Wavefront correction for adaptive optics with reflected light and deep neural networks. Opt. Express 28, 15459–15471 (2020). https://www.osapublishing.org/oe/abstract.cfm?uri=oe-28-10-15459
 
   * Sanchez-Brea, L. M., Torcal-Milla, F. J., del Hoyo, J., Cuadrado, A. & Gomez-Pedrero, J. A. Optimization of angular diffractive lenses with extended depth of focus. J. Opt. 22, 065601 (2020). https://iopscience.iop.org/article/10.1088/2040-8986/ab8614
