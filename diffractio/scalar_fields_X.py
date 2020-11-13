@@ -870,7 +870,7 @@ class Scalar_field_X(object):
             plt.ylabel(kind)
             plt.xlim(left=self.x[0], right=self.x[-1])
 
-        if scale is not '':
+        if scale != '':
             plt.axis(scale)
 
         if not filename == '':
@@ -1022,7 +1022,7 @@ def polychromatic_multiprocessing(function_process,
         time_proc (float): time interval in the processing
     """
 
-    if spectrum is '':
+    if spectrum != '':
         spectrum = np.ones_like(wavelengths)
 
     if type(wavelengths) in (list, np.ndarray):

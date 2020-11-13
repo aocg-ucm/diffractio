@@ -886,12 +886,12 @@ class Scalar_field_XYZ(object):
             y = np.angle(u)
 
         if has_draw is True:
-            if z_scale is 'mm':
+            if z_scale == 'mm':
                 plt.plot(self.z / mm, y, 'k', lw=2)
                 plt.xlabel('$z\,(mm)$')
                 plt.xlim(left=self.z[0] / mm, right=self.z[-1] / mm)
 
-            elif z_scale is 'um':
+            elif z_scale == 'um':
                 plt.plot(self.z, y, 'k', lw=2)
                 plt.xlabel('$z\,(\mu m)$')
                 plt.xlim(left=self.z[0], right=self.z[-1])
@@ -1016,7 +1016,7 @@ class Scalar_field_XYZ(object):
 
         if reduce_matrix is False:
             amplitude, intensity, phase = field_parameters(self.u)
-        elif reduce_matrix is 'standard':
+        elif reduce_matrix == 'standard':
             num_x = len(self.x)
             num_y = len(self.y)
             num_z = len(self.z)
@@ -1074,7 +1074,7 @@ class Scalar_field_XYZ(object):
         h1.set_cmap(colormap_kind)  # OrRd # Reds_r gist_heat
         plt.clim(I_drawing.min(), I_drawing.max())
 
-        if scale is not '':
+        if scale != '':
             plt.axis(scale)
 
         if draw_borders is True:

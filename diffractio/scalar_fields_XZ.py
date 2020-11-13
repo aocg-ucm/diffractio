@@ -834,7 +834,7 @@ class Scalar_field_XZ(object):
         if num_processors == 1:
             for i_z, z in enumerate(self.z):
 
-                if z > 0:
+                if z >= 0:
                     H = kernelRS(
                         xext,
                         self.wavelength,
@@ -1331,7 +1331,7 @@ class Scalar_field_XZ(object):
             z_new = self.z
             x_new = self.x
 
-        elif reduce_matrix is 'standard':
+        elif reduce_matrix == 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
             reduction_x = int(num_x / 1000)
@@ -1411,7 +1411,7 @@ class Scalar_field_XZ(object):
         if reduce_matrix is False:
             amplitude, intensity, phase = field_parameters(self.u, True)
 
-        elif reduce_matrix is 'standard':
+        elif reduce_matrix == 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
             reduction_x = int(num_x / 2000)
@@ -1495,7 +1495,7 @@ class Scalar_field_XZ(object):
         h1.set_cmap(colormap_kind)  # OrRd # Reds_r gist_heat
         plt.clim(climits)
 
-        if scale is not '':
+        if scale != '':
             plt.axis(scale)
 
         if draw_borders is True:
@@ -1556,7 +1556,7 @@ class Scalar_field_XZ(object):
                 aspect='auto',
                 origin='lower',
                 extent=extension)
-        elif reduce_matrix is 'standard':
+        elif reduce_matrix == 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
             reduction_x = int(num_x / 2000)
@@ -1592,7 +1592,7 @@ class Scalar_field_XZ(object):
         if colorbar_kind not in (False, '', None):
             plt.colorbar(orientation=colorbar_kind)
 
-        if scale is not '':
+        if scale != '':
             plt.axis(scale)
 
         if draw_borders is True:
@@ -1829,7 +1829,7 @@ class Scalar_field_XZ(object):
                     h1.set_ydata(I_drawing[:, i])
                     plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
                     plt.draw()
-                    if filename is '':
+                    if filename == '':
                         plt.pause(wait)
                     else:
                         if verbose:
@@ -1840,7 +1840,7 @@ class Scalar_field_XZ(object):
                     h1.set_ydata(I_drawing[i, :])
                     plt.title("x={:6.2f}, i={}".format(round(self.x[i], 2), i))
                     plt.draw()
-                    if filename is '':
+                    if filename == '':
                         plt.pause(wait)
                     else:
                         if verbose:

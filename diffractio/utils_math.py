@@ -66,7 +66,7 @@ def nearest2(vector, numbers):
     return indexes, values, distances
 
 
-def find_extrema(array2D, x, y, kind='max', verbose=True):
+def find_extrema(array2D, x, y, kind='max', verbose=False):
     """In a 2D-array, formed by vectors x, and y, the maxima or minima are found
 
     Parameters:
@@ -75,6 +75,11 @@ def find_extrema(array2D, x, y, kind='max', verbose=True):
         y (np.array 1D): 1D array with y axis
         kind (str): 'min' or 'max': detects minima or maxima
         verbose (bool): If True prints data.
+
+    Returns:
+        indexes (int,int): indexes of the position
+        xy_ext (float, float): position of maximum
+        extrema (float): value of maximum
     """
 
     if kind == 'max':
@@ -86,7 +91,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=True):
 
     num_extrema = len(listOfCordinates)
 
-    indexes = np.zeros((num_extrema, 2))
+    indexes = np.zeros((num_extrema, 2),dtype=np.integer)
     xy_ext = np.zeros((num_extrema, 2))
     extrema = np.zeros((num_extrema))
 

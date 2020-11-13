@@ -8,7 +8,7 @@ from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
 import pandas as pd
 
 from . import degrees, np, plt
-from .utils_math import fft_convolution1d, fft_convolution2d, nearest
+from .utils_math import fft_convolution1d, fft_convolution2d, nearest, find_extrema
 
 
 def roughness_1D(x, t, s, kind='normal'):
@@ -196,7 +196,8 @@ def beam_width_2D(x, y, intensity):
 
 
     """
-    X, Y = np.meshgrid(x, y)
+    from .utils_math import ndgrid
+    X, Y = ndgrid(x, y)
     intensity = intensity - intensity.min()
 
     P = intensity.sum()
@@ -268,11 +269,11 @@ def refraction_index(filename, wavelength, raw=False, has_draw=True):
 def FWHM1D(x,
            intensity,
            percentaje=0.5,
-           remove_background='mean',
+           remove_background=None,
            has_draw=False):
-    """FWHM
+    """FWHM1D
 
-    remove_background = 'min', 'mean', 'None'"""
+    remove_background = 'min', 'mean', None"""
 
     if remove_background == 'mean':
         I_background = intensity.mean()
@@ -321,12 +322,8 @@ def FWHM1D(x,
 
         plt.plot(x[i_max], intensity[i_max], 'ro', ms=8)
         plt.plot(
-            x[int(i_left)] + distance_left, intensity[int(i_left)], 'ro', ms=8)
-        plt.plot(
-            x[int(i_right)] + distance_right,
-            intensity[int(i_right)],
-            'ro',
-            ms=8)
+            x[int(i_right)], intensity[int(i_left)], 'ro', ms=8)
+        plt.plot(x[int(i_left)], intensity[int(i_right)], 'ro', ms=8)
 
     return FWHM_x
 
@@ -336,13 +333,28 @@ def FWHM2D(x,
            intensity,
            percentaje=0.5,
            remove_background='None',
-           has_draw=False):
+           has_draw=False,
+           xlim=None):
 
-    Ix = intensity.mean(axis=0)
-    Iy = intensity.mean(axis=1)
+    # Ix = intensity.mean(axis=0)
+    # Iy = intensity.mean(axis=1)
 
+    i_pos, _, I_max = find_extrema(intensity.transpose(), x, y, kind='max')
+
+    Ix = intensity[:, i_pos[0, 1]]
+    Iy = intensity[i_pos[0, 0], :]
+
+    # print(x.shape, Iy.shape)
     FWHM_x = FWHM1D(x, Ix, percentaje, remove_background, has_draw=has_draw)
+    if has_draw is True:
+        if xlim is not None:
+            plt.xlim(xlim)
+
+    # print(y.shape, Iy.shape)
     FWHM_y = FWHM1D(y, Iy, percentaje, remove_background, has_draw=has_draw)
+    if has_draw is True:
+        if xlim is not None:
+            plt.xlim(xlim)
 
     return FWHM_x, FWHM_y
 

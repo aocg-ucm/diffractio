@@ -343,9 +343,9 @@ class Scalar_field_XY(object):
             X_new, Y_new = np.meshgrid(x_new, y_new)
 
             f_interp_abs = RectBivariateSpline(
-                self.x, self.y, np.abs(self.u), kx=kxu, ky=kxu, s=0)
+                self.y, self.x, np.abs(self.u), kx=kxu, ky=kxu, s=0)
             f_interp_phase = RectBivariateSpline(
-                self.x, self.y, np.angle(self.u), kx=kxu, ky=kxu, s=0)
+                self.y, self.x, np.angle(self.u), kx=kxu, ky=kxu, s=0)
             u_new_abs = f_interp_abs(x_new, y_new)
             u_new_phase = f_interp_phase(x_new, y_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
@@ -756,8 +756,9 @@ class Scalar_field_XY(object):
             image[image == 1] = -1
 
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
-        h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
-                     npixels)
+        h=h-h[-1]/2
+        # h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
+        #              npixels)
 
         z_profile = scipy.ndimage.map_coordinates(
             image.transpose(), np.vstack((x, y)), order=order)
