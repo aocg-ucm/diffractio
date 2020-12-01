@@ -6,6 +6,8 @@ Results obtained with Diffractio
 Scientific articles
 ----------------------
 
+  * Khasanov, I. S. &  Zykova, L. A. “Terahertz ghost imaging and surface plasmon resonance microscopy : quality,” Proc. SPIE 11582, Fourth International Conference on Terahertz and Microwave Radiation: Generation, Detection, and Applications,  1158215, 2020.
+
   * Vishniakou, I. & Seelig, J. D. Differentiable model-based adaptive optics with transmitted and reflected light. Opt. Express 28, 26436 (2020). https://www.osapublishing.org/oe/abstract.cfm?uri=oe-28-18-26436
 
   * Vishniakou, I. & Seelig, J. D. Wavefront correction for adaptive optics with reflected light and deep neural networks. Opt. Express 28, 15459–15471 (2020). https://www.osapublishing.org/oe/abstract.cfm?uri=oe-28-10-15459
