@@ -91,7 +91,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
 
     num_extrema = len(listOfCordinates)
 
-    indexes = np.zeros((num_extrema, 2),dtype=np.integer)
+    indexes = np.zeros((num_extrema, 2), dtype=np.integer)
     xy_ext = np.zeros((num_extrema, 2))
     extrema = np.zeros((num_extrema))
 

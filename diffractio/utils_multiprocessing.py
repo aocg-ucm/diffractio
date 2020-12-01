@@ -54,7 +54,7 @@ def separate_from_iterable(iterable, shape=0):
     # Cambiar la forma de las variables
     variables = range(N_var)
     for indV in range(N_var):
-        if shape is 0:
+        if shape == 0:
             variables[indV] = iterable[:, indV]
         else:
             variables[indV] = np.reshape(iterable[:, indV], shape)

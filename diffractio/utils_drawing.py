@@ -87,7 +87,7 @@ def draw2D(
     """
     if reduce_matrix in (None, '', []):
         pass
-    elif reduce_matrix is 'standard':
+    elif reduce_matrix == 'standard':
         num_x = len(x)
         num_y = len(y)
         reduction_x = int(num_x / 500)
@@ -344,7 +344,7 @@ def reduce_matrix_size(reduce_matrix, x, y, image, verbose=False):
     image_ini = image.shape
     if reduce_matrix in (None, '', []):
         pass
-    elif reduce_matrix is 'standard':
+    elif reduce_matrix == 'standard':
         num_x = len(x)
         num_y = len(y)
         reduction_x = int(num_x / 500)
