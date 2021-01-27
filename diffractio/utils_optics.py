@@ -8,7 +8,8 @@ from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
 import pandas as pd
 
 from . import degrees, np, plt
-from .utils_math import fft_convolution1d, fft_convolution2d, nearest, find_extrema
+from .utils_math import (fft_convolution1d, fft_convolution2d, find_extrema,
+                         ndgrid, nearest)
 
 
 def roughness_1D(x, t, s, kind='normal'):
@@ -101,7 +102,7 @@ def roughness_2D(x, y, t, s):
     return h_corr
 
 
-def beam_width_1D(u, x):
+def beam_width_1D(u, x, remove_background=None):
     """One dimensional beam width, according to D4σ or second moment width.
 
     Parameters:
@@ -117,6 +118,9 @@ def beam_width_1D(u, x):
     """
 
     intensity = np.abs(u)**4
+
+    if remove_background is True:
+        intensity = intensity - intensity - min()
 
     P = (intensity).sum()
     x_mean = (intensity * x).sum() / P
@@ -173,7 +177,7 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
     return width, x_list, i_list
 
 
-def beam_width_2D(x, y, intensity):
+def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
     """2D beam width, ISO11146 width
 
 
@@ -196,9 +200,9 @@ def beam_width_2D(x, y, intensity):
 
 
     """
-    from .utils_math import ndgrid
     X, Y = ndgrid(x, y)
-    intensity = intensity - intensity.min()
+    if remove_background is True:
+        intensity = intensity - intensity - min()
 
     P = intensity.sum()
     x_mean = (intensity * X).sum() / P
@@ -206,12 +210,36 @@ def beam_width_2D(x, y, intensity):
     x2_mean = (intensity * (X - x_mean)**2).sum() / P
     y2_mean = (intensity * (Y - y_mean)**2).sum() / P
     xy_mean = (intensity * (X - x_mean) * (Y - y_mean)).sum() / P
-    gamma = (x2_mean - y2_mean) / np.abs(x2_mean - y2_mean + 1e-16)
+    # gamma = (x2_mean - y2_mean) / np.abs(x2_mean - y2_mean + 1e-16)
+    gamma = np.sign(x2_mean - y2_mean + 0.0000000001)
+    rt = sqrt(
+        (x2_mean - y2_mean)**2 + 4 * xy_mean**2)
+    dx = 2 * sqrt(2) * sqrt(x2_mean + y2_mean + gamma * rt)
+    dy = 2 * sqrt(2) * sqrt(x2_mean + y2_mean - gamma * rt)
+
+    # print(gamma)
+    # print(rt)
+    # print(x2_mean, y2_mean, rt, dx, dy)
+
     principal_axis = 0.5 * np.arctan2(2 * xy_mean, x2_mean - y2_mean)
-    dx = 2 * sqrt(2) * sqrt(x2_mean + y2_mean + gamma * sqrt(
-        (x2_mean - y2_mean)**2 + 4 * xy_mean**2))
-    dy = 2 * sqrt(2) * sqrt(x2_mean + y2_mean - gamma * sqrt(
-        (x2_mean - y2_mean)**2 + 4 * xy_mean**2))
+
+    if has_draw is True:
+        from .scalar_fields_XY import Scalar_field_XY
+        from matplotlib.patches import Ellipse
+
+        u0 = Scalar_field_XY(x, y, 1)
+        u0.u = np.sqrt(intensity)
+        u0.draw()
+        ellipse = Ellipse(xy=(x_mean, y_mean), width=dy,
+                          height=dx, angle=-principal_axis / degrees)
+
+        ax = plt.gca()
+        ax.add_artist(ellipse)
+        ellipse.set_clip_box(ax.bbox)
+        ellipse.set_alpha(0.75)
+        ellipse.set_facecolor('none')
+        ellipse.set_edgecolor([1, 1, 1])
+        ellipse.set_linewidth(3)
 
     return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
 
@@ -324,6 +352,8 @@ def FWHM1D(x,
         plt.plot(
             x[int(i_right)], intensity[int(i_left)], 'ro', ms=8)
         plt.plot(x[int(i_left)], intensity[int(i_right)], 'ro', ms=8)
+        plt.ylim(ymin=0)
+        plt.xlim(x[0], x[-1])
 
     return FWHM_x
 
@@ -335,7 +365,8 @@ def FWHM2D(x,
            remove_background='None',
            has_draw=False,
            xlim=None):
-
+    """TODO: perform profiles at several angles and fit to a ellipse.
+        Get dx, dy, angle, x_center, y_center"""
     # Ix = intensity.mean(axis=0)
     # Iy = intensity.mean(axis=1)
 
@@ -424,7 +455,7 @@ Returns:
         plt.plot([z[i_right + i_w0], z[i_right + i_w0]],
                  [-widths[i_right + i_w0], widths[i_right + i_w0]], 'r--')
         plt.annotate(
-            s='',
+            text='',
             xy=(z[i_left], -widths[i_right + i_w0]),
             xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
             arrowprops=dict(arrowstyle='<->'))

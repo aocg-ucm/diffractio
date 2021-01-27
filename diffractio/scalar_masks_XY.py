@@ -39,7 +39,6 @@ import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
                    ones_like, pi, shape, sin, sqrt, zeros, zeros_like)
-from PIL import Image
 from scipy.signal import fftconvolve
 
 from diffractio import degrees, np, plt, sp, um
@@ -47,6 +46,7 @@ from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_math import fft_convolution2d, nearest, nearest2
 from diffractio.utils_optics import roughness_2D
+from PIL import Image
 
 
 class Scalar_mask_XY(Scalar_field_XY):
@@ -639,7 +639,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Definicion de la transmitancia
         u = zeros(shape(self.X))
-        ipasa = (Xrot - x0)**2 / radiusx**2 + (Yrot - y0)**2 / radiusy**2 < 1
+        ipasa = (Xrot - x0)**2 / (radiusx + 1e-15)**2 + \
+            (Yrot - y0)**2 / (radiusy**2 + 1e-15) < 1
         u[ipasa] = 1
         self.u = u
 
@@ -768,7 +769,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = exp(1j * k * (index - 1) * (
             (Xrot - x0) * sin(angle_wedge_x)) +
-                     (Yrot - y0) * sin(angle_wedge_y))
+            (Yrot - y0) * sin(angle_wedge_y))
 
     def lens(self, r0, radius, focal, angle=0 * degrees, mask=True):
         """Transparent lens
@@ -1552,7 +1553,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Definition of transmittance
         u = np.zeros_like(self.X)
         ipasa = np.abs((Xrot - x0) / radiusx)**nx + \
-         np.abs((Yrot - y0) / radiusy)**ny < 1
+            np.abs((Yrot - y0) / radiusy)**ny < 1
         u[ipasa] = 1
         self.u = u
 

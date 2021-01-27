@@ -61,13 +61,13 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, mm, np, params_drawing, plt, seconds, um
-from diffractio.utils_common import (get_date, load_data_common,
-                                     save_data_common)
-from diffractio.utils_drawing import (draw2D, normalize_draw, prepare_drawing,
-                                      reduce_matrix_size)
 from diffractio.utils_math import get_edges, ndgrid, nearest, rotate_image
-from diffractio.utils_optics import field_parameters
+from diffractio.utils_optics import beam_width_2D, field_parameters
+
+from . import degrees, mm, np, params_drawing, plt, seconds, um
+from .utils_common import get_date, load_data_common, save_data_common
+from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
+                            reduce_matrix_size)
 
 try:
     import screeninfo
@@ -385,6 +385,7 @@ class Scalar_field_XY(object):
             matrix=False,
             new_field=False):
         """Fast Fourier Transform (FFT) of the field.
+        TODO: change to the frequency domain.
 
         Parameters:
             z (float): distance to the observation plane or focal of lens
@@ -756,7 +757,7 @@ class Scalar_field_XY(object):
             image[image == 1] = -1
 
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
-        h=h-h[-1]/2
+        h = h - h[-1] / 2
         # h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
         #              npixels)
 
@@ -907,6 +908,69 @@ class Scalar_field_XY(object):
             u_mtf.u = mtf_norm
             return u_mtf
 
+    def beam_width_4s(self, has_draw=True):
+        """Returns the beam width parameters according to ISO11146.
+
+        Parameters:
+            has_draw (bool): If True, it draws
+
+        Returns:
+            (float): dx width x
+            (float): dy width y
+            (float): principal_axis, angle
+            (str): (x_mean, y_mean, x2_mean, y2_mean, xy_mean), Moments
+
+        References:
+
+            * https://en.wikipedia.org/wiki/Beam_diameter
+            * http://www.auniontech.com/ueditor/file/20170921/1505982360689799.pdf
+    """
+        dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean) = beam_width_2D(
+            self.x, self.y, np.abs(self.u)**2, has_draw=False)
+
+        if has_draw is True:
+            from matplotlib.patches import Ellipse
+
+            self.draw()
+            ellipse = Ellipse(xy=(x_mean, y_mean), width=dy,
+                              height=dx, angle=-principal_axis / degrees)
+            ellipse2 = Ellipse(xy=(x_mean, y_mean), width=dy / 2,
+                               height=dx / 2, angle=-principal_axis / degrees)
+
+            ellipse3 = Ellipse(xy=(x_mean, y_mean), width=dy / 4,
+                               height=dx / 4, angle=-principal_axis / degrees)
+
+            ax = plt.gca()
+            ax.add_artist(ellipse)
+            ellipse.set_clip_box(ax.bbox)
+            ellipse.set_facecolor('none')
+            ellipse.set_alpha(0.75)
+            ellipse.set_edgecolor('yellow')
+            ellipse.set_linewidth(3)
+
+            ax.add_artist(ellipse2)
+            ellipse2.set_clip_box(ax.bbox)
+            ellipse2.set_facecolor('none')
+            ellipse2.set_alpha(0.75)
+            ellipse2.set_edgecolor('red')
+            ellipse2.set_linewidth(3)
+
+            ax.add_artist(ellipse3)
+            ellipse3.set_clip_box(ax.bbox)
+            ellipse3.set_facecolor('none')
+            ellipse3.set_alpha(0.75)
+            ellipse3.set_edgecolor('black')
+            ellipse3.set_linewidth(3)
+
+            x0 = self.x[0]
+            y0 = self.y[0]
+            plt.plot(x0, y0, 'yellow', label='4$\sigma$')
+            plt.plot(x0, y0, 'red', label='2$\sigma$')
+            plt.plot(x0, y0, 'black', label='1$\sigma$')
+            plt.legend()
+
+        return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
+
     def intensity(self):
         """Returns intensity."""
 
@@ -917,7 +981,7 @@ class Scalar_field_XY(object):
         """Returns average intensity as: (np.abs(self.u)**2).sum() / num_data.
 
         Parameters:
-            verbose (bool): If True prints data.
+            verbose(bool): If True prints data.
         """
         num_data = len(self.x) * len(self.y)
         average_intensity = (np.abs(self.u)**2).sum() / num_data
@@ -930,8 +994,8 @@ class Scalar_field_XY(object):
         """Takes the images and sends the images to a screen in full size.
 
         Parameters:
-            id_screen (hdl): handle to screen
-            kind ('str'): 'amplitude', 'intensity', 'phase'
+            id_screen(hdl): handle to screen
+            kind('str'): 'amplitude', 'intensity', 'phase'
         """
 
         amplitude, intensity, phase = field_parameters(self.u)
@@ -966,8 +1030,8 @@ class Scalar_field_XY(object):
         """Gets the amplitude of the field.
 
         Parameters:
-            matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new Scalar_field_XY
+            matrix(bool): if True numpy.matrix is returned
+            new_field(bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X
@@ -990,8 +1054,8 @@ class Scalar_field_XY(object):
         """Gets the phase of the field.
 
         Parameters:
-            matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new Scalar_field_XY
+            matrix(bool): if True numpy.matrix is returned
+            new_field(bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
@@ -1014,9 +1078,9 @@ class Scalar_field_XY(object):
         """Removes the phase of the field. Amplitude is kept.
 
         Parameters:
-            sign (bool): If True, sign is kept, else, it is removed
-            matrix (bool):  if True numpy.matrix is returned
-            new_field (bool): if True it returns a new Scalar_field_XY
+            sign(bool): If True, sign is kept, else, it is removed
+            matrix(bool): if True numpy.matrix is returned
+            new_field(bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
@@ -1052,12 +1116,12 @@ class Scalar_field_XY(object):
         """Changes the number of points in field, mantaining the area.
 
         Parameters:
-            kind (str): 'amplitude' or 'phase'
-            corte (float): value of cut. If None, the cut is in the mean value
-            level0 (float): minimum value. If None, minimum value of field
-            level1 (float): maximum value. If None, maximum value of field
-            new_field (bool): if True returns new field
-            matrix (bool): if True it returs a matrix
+            kind(str): 'amplitude' or 'phase'
+            corte(float): value of cut. If None, the cut is in the mean value
+            level0(float): minimum value. If None, minimum value of field
+            level1(float): maximum value. If None, maximum value of field
+            new_field(bool): if True returns new field
+            matrix(bool): if True it returs a matrix
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
@@ -1122,12 +1186,12 @@ class Scalar_field_XY(object):
         """Discretize in a number of levels equal to num_levels.
 
         Parameters:
-            kind (str): "amplitude" o "phase"
-            num_levels (int): number of levels for the discretization
-            factor (float): from the level, how area is binarized. if 1 everything is binarized,
-            phaseInicial (float): *
-            new_field (bool): if True returns new field
-            matrix (bool): if True it returs a matrix
+            kind(str): "amplitude" o "phase"
+            num_levels(int): number of levels for the discretization
+            factor(float): from the level, how area is binarized. if 1 everything is binarized,
+            phaseInicial(float): *
+            new_field(bool): if True returns new field
+            matrix(bool): if True it returs a matrix
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
@@ -1200,10 +1264,10 @@ class Scalar_field_XY(object):
         """Normalize the field.
 
         Parameters:
-            kind (str): 'intensity' 'area'
+            kind(str): 'intensity' 'area'
 
         TODO:
-            pass to utils # esto lo he puesto a última hora
+            pass to utils  # esto lo he puesto a última hora
         """
 
         if kind == 'intensity':
@@ -1229,14 +1293,14 @@ class Scalar_field_XY(object):
         """Draws  XY field.
 
         Parameters:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (str):  False, 'maximum', 'area', 'intensity'
-            title (str): title for the drawing
-            filename (str): if not '' stores drawing in file,
-            cut_value (float): if provided, maximum value to show
-            has_colorbar (bool): if True draws the colorbar
-            reduce_matrix (str): 'standard'
+            kind(str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
+            logarithm(bool): If True, intensity is scaled in logarithm
+            normalize(str):  False, 'maximum', 'area', 'intensity'
+            title(str): title for the drawing
+            filename(str): if not '' stores drawing in file,
+            cut_value(float): if provided, maximum value to show
+            has_colorbar(bool): if True draws the colorbar
+            reduce_matrix(str): 'standard'
         """
 
         if reduce_matrix in ([], None, ''):
@@ -1285,10 +1349,10 @@ class Scalar_field_XY(object):
         """Draws intensity  XY field.
 
         Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (str):  False, 'maximum', 'area', 'intensity'
-            title (str): title for the drawing
-            cut_value (float): if provided, maximum value to show
+            logarithm(bool): If True, intensity is scaled in logarithm
+            normalize(str):  False, 'maximum', 'area', 'intensity'
+            title(str): title for the drawing
+            cut_value(float): if provided, maximum value to show
         """
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
@@ -1316,10 +1380,10 @@ class Scalar_field_XY(object):
         """Draws amplitude  XY field.
 
         Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (str):  False, 'maximum', 'area', 'intensity'
-            title (str): title for the drawing
-            cut_value (float): if provided, maximum value to show
+            logarithm(bool): If True, intensity is scaled in logarithm
+            normalize(str):  False, 'maximum', 'area', 'intensity'
+            title(str): title for the drawing
+            cut_value(float): if provided, maximum value to show
         """
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
@@ -1344,7 +1408,7 @@ class Scalar_field_XY(object):
         """Draws phase of  XY field
 
         Parameters:
-            title (str): title for the drawing
+            title(str): title for the drawing
         """
         amplitude, intensity, phase = field_parameters(
             self.u, has_amplitude_sign=True)
@@ -1378,10 +1442,10 @@ class Scalar_field_XY(object):
         """Draws field  XY field.
 
         Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (str):  False, 'maximum', 'area', 'intensity'
-            title (str): title for the drawing
-            cut_value (float): if provided, maximum value to show
+            logarithm(bool): If True, intensity is scaled in logarithm
+            normalize(str):  False, 'maximum', 'area', 'intensity'
+            title(str): title for the drawing
+            cut_value(float): if provided, maximum value to show
         """
 
         amplitude, intensity, phase = field_parameters(
@@ -1450,10 +1514,10 @@ class Scalar_field_XY(object):
         """Draws real field  XY field.
 
         Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (str):  False, 'maximum', 'area', 'intensity'
-            title (str): title for the drawing
-            cut_value (float): if provided, maximum value to show
+            logarithm(bool): If True, intensity is scaled in logarithm
+            normalize(str):  False, 'maximum', 'area', 'intensity'
+            title(str): title for the drawing
+            cut_value(float): if provided, maximum value to show
         """
 
         rf = np.real(self.u)
@@ -1487,7 +1551,7 @@ class Scalar_field_XY(object):
         """Makes a video
 
         Parameters:
-            kind (str): 'intensity', 'phase', 'amplitude'
+            kind(str): 'intensity', 'phase', 'amplitude'
         """
 
         fig = plt.figure()
@@ -1525,12 +1589,12 @@ def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation
 
     Parameters:
-        X (numpy.array): positions x
-        Y (numpy.array): positions y
-        wavelength (float): wavelength of incident fields
-        z (float): distance for propagation
-        n (float): refraction index of background
-        kind (str): 'z', 'x', '0': for simplifying vector propagation
+        X(numpy.array): positions x
+        Y(numpy.array): positions y
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refraction index of background
+        kind(str): 'z', 'x', '0': for simplifying vector propagation
 
     Returns:
         complex np.array: kernel
@@ -1551,12 +1615,12 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     """Kernel for inverse RS propagation
 
     Parameters:
-        X (numpy.array): positions x
-        Y (numpy.array): positions y
-        wavelength (float): wavelength of incident fields
-        z (float): distance for propagation
-        n (float): refraction index of background
-        kind (str): 'z', 'x', '0': for simplifying vector propagation
+        X(numpy.array): positions x
+        Y(numpy.array): positions y
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refraction index of background
+        kind(str): 'z', 'x', '0': for simplifying vector propagation
 
     Returns:
         complex np.array: kernel
@@ -1577,11 +1641,11 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
     """Kernel for Fesnel propagation
 
     Parameters:
-        X (numpy.array): positions x
-        Y (numpy.array): positions y
-        wavelength (float): wavelength of incident fields
-        z (float): distance for propagation
-        n (float): refraction index of background
+        X(numpy.array): positions x
+        Y(numpy.array): positions y
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refraction index of background
 
     Returns:
         complex np.array: kernel
@@ -1593,20 +1657,20 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
 
 def PWD_kernel(u, n, k0, k_perp2, dz):
     """
-    Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
+    Step for scalar(TE) Plane wave decomposition(PWD) algorithm.
 
     Arguments:
-        u (np.array): field
-        n (np.array): refraction index
-        k0 (float): wavenumber
-        k_perp (np.array): transversal k
-        dz (float): increment in distances
+        u(np.array): field
+        n(np.array): refraction index
+        k0(float): wavenumber
+        k_perp(np.array): transversal k
+        dz(float): increment in distances
 
     Returns:
         (numpy.array): Field at at distance dz from the incident field
 
     References:
-        1. Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
+        1. Schmidt, S. et al. Wave - optical modeling beyond the thin - element - approximation. Opt. Express 24, 30188 (2016).
 
     """
     absorption = 0.00
