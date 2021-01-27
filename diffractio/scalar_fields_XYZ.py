@@ -96,7 +96,6 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
-
     def __init__(self,
                  x=None,
                  y=None,
@@ -151,8 +150,8 @@ class Scalar_field_XYZ(object):
         self.X, self.Y, self.Z = ndgrid(self.x, self.y, self.z)
 
         self.u = np.zeros_like(self.X, dtype=complex)
-        self.n = np.ones(
-            np.shape(self.X), dtype=float)  # el índice de refracción
+        self.n = np.ones(np.shape(self.X),
+                         dtype=float)  # el índice de refracción
 
         for i in range(len(self.z)):
             # print self.u[:,:,i].shape
@@ -395,12 +394,11 @@ class Scalar_field_XYZ(object):
             x_new = np.linspace(x0, x1, num_points_x)
             y_new = np.linspace(y0, y1, num_points_y)
             z_new = np.linspace(z0, z1, num_points_z)
-            field_n = Scalar_field_XYZ(
-                x=x_new,
-                y=y_new,
-                z=z_new,
-                wavelength=self.wavelength,
-                n_background=self.n_background)
+            field_n = Scalar_field_XYZ(x=x_new,
+                                       y=y_new,
+                                       z=z_new,
+                                       wavelength=self.wavelength,
+                                       n_background=self.n_background)
 
             X_new = field_n.X
             Y_new = field_n.Y
@@ -446,12 +444,11 @@ class Scalar_field_XYZ(object):
             self.n = n_new
 
         elif new_field is True:
-            field_n = Scalar_field_XYZ(
-                x=x_new,
-                y=y_new,
-                z=z_new,
-                wavelength=self.wavelength,
-                n_background=self.n_background)
+            field_n = Scalar_field_XYZ(x=x_new,
+                                       y=y_new,
+                                       z=z_new,
+                                       wavelength=self.wavelength,
+                                       n_background=self.n_background)
             field_n.u = u_new
             field_n.n = n_new
             return field_n
@@ -476,12 +473,12 @@ class Scalar_field_XYZ(object):
     def final_field(self):
         """Returns the final field as a Scalar_field_XYZ."""
 
-        u_final = Scalar_field_XY(
-            x=self.x,
-            y=self.y,
-            wavelength=self.wavelength,
-            n_background=1,
-            info="from final_field at z0= {} um".format(self.z[-1]))
+        u_final = Scalar_field_XY(x=self.x,
+                                  y=self.y,
+                                  wavelength=self.wavelength,
+                                  n_background=1,
+                                  info="from final_field at z0= {} um".format(
+                                      self.z[-1]))
         u_final.u = self.u[:, :, -1]
         return u_final
 
@@ -491,14 +488,13 @@ class Scalar_field_XYZ(object):
         Parameters:
             i (int): Number for for loop.
         """
-        self.u[:, :, i] = self.u0.RS(
-            amplification=(1, 1),
-            z=self.z[i],
-            n=self.n_background,
-            new_field=False,
-            matrix=True,
-            kind='z',
-            verbose=False)
+        self.u[:, :, i] = self.u0.RS(amplification=(1, 1),
+                                     z=self.z[i],
+                                     n=self.n_background,
+                                     new_field=False,
+                                     matrix=True,
+                                     kind='z',
+                                     verbose=False)
         return self.u[:, :, i]
 
     def RS(self, verbose=False, num_processors=num_max_processors - 2):
@@ -515,14 +511,13 @@ class Scalar_field_XYZ(object):
         time1 = time.time()
         if num_processors == 1:
             for iz in np.array(range(0, len(self.z))):
-                self.u[:, :, iz] = self.u0.RS(
-                    amplification=(1, 1),
-                    z=self.z[iz],
-                    n=self.n_background,
-                    new_field=False,
-                    matrix=True,
-                    kind='z',
-                    verbose=verbose)
+                self.u[:, :, iz] = self.u0.RS(amplification=(1, 1),
+                                              z=self.z[iz],
+                                              n=self.n_background,
+                                              new_field=False,
+                                              matrix=True,
+                                              kind='z',
+                                              verbose=verbose)
 
         else:
             pool = Pool(num_processors)
@@ -620,10 +615,10 @@ class Scalar_field_XYZ(object):
         KX, KY = ndgrid(kx, ky)
 
         phase1 = np.exp((1j * deltaz * (KX**2 + KY**2)) / (2 * k0))
-        field = np.zeros(
-            np.shape(self.n), dtype=complex)  # el índice de refracción
-        filtroBorde = np.exp(-((pixelx) / (0.98 * 0.5 * numx))**90 - (
-            (pixely) / (0.98 * 0.5 * numx))**90)
+        field = np.zeros(np.shape(self.n),
+                         dtype=complex)  # el índice de refracción
+        filtroBorde = np.exp(-((pixelx) / (0.98 * 0.5 * numx))**90 -
+                             ((pixely) / (0.98 * 0.5 * numx))**90)
 
         gaussX = np.exp(-(self.X[:, :, 0] / (20 * self.x[0]))**2)
         gaussY = np.exp(-(self.Y[:, :, 0] / (20 * self.y[0]))**2)
@@ -772,8 +767,9 @@ class Scalar_field_XYZ(object):
             Simplify and change variable name clase
         """
         if is_class is True:
-            field_output = Scalar_field_XY(
-                x=self.x, y=self.y, wavelength=self.wavelength)
+            field_output = Scalar_field_XY(x=self.x,
+                                           y=self.y,
+                                           wavelength=self.wavelength)
             if iz0 is None:
                 iz, tmp1, tmp2 = nearest(self.z, z0)
             else:
@@ -805,8 +801,9 @@ class Scalar_field_XYZ(object):
             Simplify and change variable name clase
         """
         if is_class is True:
-            field_output = Scalar_field_XZ(
-                x=self.x, z=self.z, wavelength=self.wavelength)
+            field_output = Scalar_field_XZ(x=self.x,
+                                           z=self.z,
+                                           wavelength=self.wavelength)
             if iy0 is None:
                 iy, tmp1, tmp2 = nearest(self.y, y0)
             else:
@@ -838,13 +835,14 @@ class Scalar_field_XYZ(object):
             Simplify and change variable name clase
         """
         if is_class is True:
-            field_output = Scalar_field_XZ(
-                x=self.y, z=self.z, wavelength=self.wavelength)
+            field_output = Scalar_field_XZ(x=self.y,
+                                           z=self.z,
+                                           wavelength=self.wavelength)
             if ix0 is None:
                 ix, tmp1, tmp2 = nearest(self.x, x0)
             else:
                 iy = iy0
-            field_output.u = np.squeeze(self.u[:, ix, :])
+            field_output.u = np.squeeze(self.u[ix, :, :])
             return field_output
 
         if matrix is True:
@@ -931,13 +929,12 @@ class Scalar_field_XYZ(object):
                 intensity = np.abs(u_prop_mat)**2
                 # intensity = correlate2d(
                 #     intensity, np.ones((3, 3)) / 9, mode='same')
-                dx, dy = FWHM2D(
-                    self.x,
-                    self.y,
-                    intensity,
-                    percentaje=percentaje,
-                    remove_background='min',
-                    has_draw=has_draw[1])
+                dx, dy = FWHM2D(self.x,
+                                self.y,
+                                intensity,
+                                percentaje=percentaje,
+                                remove_background='min',
+                                has_draw=has_draw[1])
                 principal_axis = 0.
 
             beam_width_x[i] = dx
@@ -1057,12 +1054,11 @@ class Scalar_field_XYZ(object):
             print("bad kind parameter")
             return
 
-        h1 = plt.imshow(
-            I_drawing,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=extension)
+        h1 = plt.imshow(I_drawing,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension)
         plt.xlabel('z ($\mu m$)')
         plt.ylabel('x ($\mu m$)')
         plt.zlabel('y ($\mu m$)')
@@ -1111,17 +1107,18 @@ class Scalar_field_XYZ(object):
             reduce_matrix ()
         """
 
-        ufield = self.to_Scalar_field_XY(
-            iz0=None, z0=z0, is_class=True, matrix=False)
-        ufield.draw(
-            kind=kind,
-            logarithm=logarithm,
-            normalize=normalize,
-            title=title,
-            filename=filename,
-            cut_value=cut_value,
-            has_colorbar=has_colorbar,
-            reduce_matrix=reduce_matrix)
+        ufield = self.to_Scalar_field_XY(iz0=None,
+                                         z0=z0,
+                                         is_class=True,
+                                         matrix=False)
+        ufield.draw(kind=kind,
+                    logarithm=logarithm,
+                    normalize=normalize,
+                    title=title,
+                    filename=filename,
+                    cut_value=cut_value,
+                    has_colorbar=has_colorbar,
+                    reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
                 y0=0 * mm,
@@ -1154,14 +1151,14 @@ class Scalar_field_XYZ(object):
         if normalize == 'intensity':
             intensity = intensity / (intensity.sum() / len(intensity))
 
-        h1 = plt.imshow(
-            intensity,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=[
-                self.z[0] / 1000, self.z[-1] / 1000, self.y[0], self.y[-1]
-            ])
+        h1 = plt.imshow(intensity,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=[
+                            self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
+                            self.y[-1]
+                        ])
         plt.xlabel('z (mm)', fontsize=16)
         plt.ylabel('x $(um)$', fontsize=16)
         plt.title('intensity XZ', fontsize=20)
@@ -1211,14 +1208,14 @@ class Scalar_field_XYZ(object):
         if normalize == 'intensity':
             intensity = intensity / (intensity.sum() / len(intensity))
 
-        h1 = plt.imshow(
-            intensity,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=[
-                self.z[0] / 1000, self.z[-1] / 1000, self.y[0], self.y[-1]
-            ])
+        h1 = plt.imshow(intensity,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=[
+                            self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
+                            self.y[-1]
+                        ])
         plt.xlabel('z (mm)', fontsize=16)
         plt.ylabel('y $(um)$', fontsize=16)
         plt.title('intensity YZ', fontsize=20)
@@ -1310,10 +1307,9 @@ class Scalar_field_XYZ(object):
         mlab.figure(fgcolor=(0, 0, 0), bgcolor=(1, 1, 1))
         mlab.clf()
         source = mlab.pipeline.scalar_field(intensity)
-        mlab.pipeline.volume(
-            source,
-            vmin=intMin + 0.1 * (intMax - intMin),
-            vmax=intMin + 0.9 * (intMax - intMin))
+        mlab.pipeline.volume(source,
+                             vmin=intMin + 0.1 * (intMax - intMin),
+                             vmax=intMin + 0.9 * (intMax - intMin))
         # mlab.view(azimuth=185, elevation=0, distance='auto')
         print("Close the window to continue.")
         mlab.show()
@@ -1355,7 +1351,6 @@ class Scalar_field_XYZ(object):
             include logarithm and normalize
             check
         """
-
         def f(x, kind):
             # return x
             amplitude, intensity, phase = field_parameters(
@@ -1389,8 +1384,8 @@ class Scalar_field_XYZ(object):
             writer = Writer(fps=fps)  # codec='ffv1'
         elif extension == '.mp4':
             Writer = anim.writers['ffmpeg']
-            writer = Writer(
-                fps=fps, bitrate=1e6, codec='mpeg4')  # codec='mpeg4',
+            writer = Writer(fps=fps, bitrate=1e6,
+                            codec='mpeg4')  # codec='mpeg4',
         else:
             print("file needs to be .avi or .mp4")
             print("No writer is available. is .png? Then correct.")
@@ -1405,18 +1400,19 @@ class Scalar_field_XYZ(object):
             fig = plt.figure()
             ax = fig.add_axes([0, 0, 1, 1])
 
-        frame = self.to_Scalar_field_XY(
-            iz0=0, z0=None, is_class=True, matrix=False)
+        frame = self.to_Scalar_field_XY(iz0=0,
+                                        z0=None,
+                                        is_class=True,
+                                        matrix=False)
 
         intensity_global = f(self.u, kind).max()
         intensity = f(frame.u, kind)
 
-        image = ax.imshow(
-            intensity,
-            interpolation='bilinear',
-            aspect='equal',
-            origin='lower',
-            extent=[xmin, xmax, ymin, ymax])
+        image = ax.imshow(intensity,
+                          interpolation='bilinear',
+                          aspect='equal',
+                          origin='lower',
+                          extent=[xmin, xmax, ymin, ymax])
         image.set_cmap(cmap1)  # seismic coolwarm gist_heat
         fig.canvas.draw()
 
@@ -1436,8 +1432,10 @@ class Scalar_field_XYZ(object):
             # cd into the specified directory
 
             for i_prog in range(n_frames):
-                frame = self.to_Scalar_field_XY(
-                    iz0=i_prog, z0=None, is_class=True, matrix=False)
+                frame = self.to_Scalar_field_XY(iz0=i_prog,
+                                                z0=None,
+                                                is_class=True,
+                                                matrix=False)
                 intensity = f(frame.u, kind)
                 image.set_array(intensity)
                 if kind == 'intensity':
@@ -1467,8 +1465,10 @@ class Scalar_field_XYZ(object):
         elif extension == '.avi' or extension == '.mp4':
             with writer.saving(fig, filename, 300):
                 for i_prog in range(n_frames):
-                    frame = self.to_Scalar_field_XY(
-                        iz0=i_prog, z0=None, is_class=True, matrix=False)
+                    frame = self.to_Scalar_field_XY(iz0=i_prog,
+                                                    z0=None,
+                                                    is_class=True,
+                                                    matrix=False)
                     intensity = f(frame.u, kind)
                     image.set_array(intensity)
                     if kind == 'intensity':
@@ -1483,11 +1483,10 @@ class Scalar_field_XYZ(object):
                     writer.grab_frame(facecolor='k')
                     if verbose:
                         if (sys.version_info > (3, 0)):
-                            print(
-                                "{} de {}: z={}, max= {:2.2f} min={:2.2f}".
-                                format(i_prog, n_frames, self.z[i_prog] / mm,
-                                       intensity.max(), intensity.min()),
-                                end='\r')
+                            print("{} de {}: z={}, max= {:2.2f} min={:2.2f}".
+                                  format(i_prog, n_frames, self.z[i_prog] / mm,
+                                         intensity.max(), intensity.min()),
+                                  end='\r')
                         else:
                             print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}"
                                    ).format(i_prog,
