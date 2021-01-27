@@ -133,11 +133,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         return (num_pixels_1 / num_pixels) * (delta_x * delta_y)
 
-    def save_mask(self, filename="", info=""):
+    def save_mask(self, filename="", kind='amplitude', info=""):
         """Create a mask in a file, for example, ablation or litography engraver
 
         Parameters:
             filename (str): file name
+            kind (str): save amplitude or phase
             info (str): info of the mask
 
         Returns:
@@ -150,7 +151,15 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # creo image
         plt.figure()
-        plt.imsave(filename, self.u, cmap='gray', dpi=300, origin='lower')
+        filter = np.abs(self.u)>0
+        if kind == 'amplitude':
+            mask = np.abs(self.u)
+        elif kind == 'phase':
+            mask = np.angle(self.u)
+            mask = (mask - mask.min()) / (mask.max() - mask.min())
+            mask = mask * filter
+
+        plt.imsave(filename, mask, cmap='gray', dpi=300, origin='lower')
         plt.close()
 
         # creo txt con data importantes
