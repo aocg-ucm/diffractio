@@ -65,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -85,8 +84,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         if q == 0:
             if positivo == 0:
-                self.u = amp_min + (
-                    amp_max - amp_min) * amplitude * np.sign(phase)
+                self.u = amp_min + (amp_max -
+                                    amp_min) * amplitude * np.sign(phase)
             if positivo == 1:
                 self.u = amp_min + (amp_max - amp_min) * amplitude
         else:
@@ -108,8 +107,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         if q == 0:
             self.u = exp(1.j * phase)
         if q == 1:
-            self.u = exp(
-                1.j * (phase_min + (phase_max - phase_min) * amplitude))
+            self.u = exp(1.j * (phase_min +
+                                (phase_max - phase_min) * amplitude))
 
     def area(self, percentaje):
         """Computes area where mask is not 0
@@ -170,8 +169,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             ofile.write("\ninfo:\n")
             ofile.write(info)
         ofile.write("\n\n")
-        ofile.write(
-            "length de la mask: %i x %i\n" % (len(self.x), len(self.y)))
+        ofile.write("length de la mask: %i x %i\n" %
+                    (len(self.x), len(self.y)))
         ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
@@ -230,8 +229,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         """
 
         filter = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        filter.circle(
-            r0=(0 * um, 0 * um), radius=(radius, radius), angle=0 * degrees)
+        filter.circle(r0=(0 * um, 0 * um),
+                      radius=(radius, radius),
+                      angle=0 * degrees)
 
         image = np.abs(self.u)
         filtrado = np.abs(filter.u) / np.abs(filter.u.sum())
@@ -398,6 +398,44 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         u[u > 1] = 1
         self.u = u
+
+    def photon_sieve(self, t1, r0):
+        """Generates a matrix of shapes given in t1.
+
+        Parameters:
+            t1 (Scalar_mask_XY): Mask of the desired figure to be drawn
+            r0 (float, float) or (np.array, np.array): (x,y) point or points where mask is 1
+
+
+        Returns:
+            (int): number of points in the mask
+
+        """
+
+        x0, y0 = r0
+        u = np.zeros_like(self.X)
+        uj = np.zeros_like(self.X)
+
+        if type(r0[0]) in (int, float):
+            i_x0, _, _ = nearest(self.x, x0)
+            i_y0, _, _ = nearest(self.y, y0)
+            u[i_x0, i_y0] = 1
+        else:
+            i_x0s, _, _ = nearest2(self.x, x0)
+            i_y0s, _, _ = nearest2(self.y, y0)
+
+        for i, x_i in enumerate(x0):
+            y_j = y0[i]
+            i_xcercano, _, _ = nearest(self.x, x_i)
+            j_ycercano, _, _ = nearest(self.y, y_j)
+            if x_i < self.x.max() and x_i > self.x.min() and y_j < self.y.max(
+            ) and y_j > self.y.min():
+                uj[i_xcercano, j_ycercano] = 1
+        num_points = int(uj.sum())
+        u = fftconvolve(uj, t1.u, mode='same')
+        u[u > 1] = 1
+        self.u = u
+        return num_points
 
     def insert_array_masks(self, t1, space, margin=0, angle=0 * degrees):
         """Generates a matrix of shapes given in t1.
@@ -702,8 +740,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         Xrot, Yrot = self.__rotate__(angle)
-        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 -
-                 s**2 * Xrot**2 * Yrot**2 / (R1**2 * R2**2))
+        F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 - s**2 * Xrot**2 * Yrot**2 /
+                 (R1**2 * R2**2))
 
         Z1 = F < 1
         Z = Z1 * t1.u
@@ -759,7 +797,11 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3
 
-    def prism(self, r0, index, angle_wedge_x, angle_wedge_y,
+    def prism(self,
+              r0,
+              index,
+              angle_wedge_x,
+              angle_wedge_y,
               angle=0 * degrees):
         """prism with angles angle_wedge_x, angle_wedge_y
 
@@ -776,9 +818,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
         Xrot, Yrot = self.__rotate__(angle)
 
-        self.u = exp(1j * k * (index - 1) * (
-            (Xrot - x0) * sin(angle_wedge_x)) +
-            (Yrot - y0) * sin(angle_wedge_y))
+        self.u = exp(1j * k * (index - 1) *
+                     ((Xrot - x0) * sin(angle_wedge_x)) +
+                     (Yrot - y0) * sin(angle_wedge_y))
 
     def lens(self, r0, radius, focal, angle=0 * degrees, mask=True):
         """Transparent lens
@@ -816,8 +858,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = ones_like(self.X)
 
-        self.u = t * exp(-1.j * k * (
-            (Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
+        self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
+                                     (2 * f2)))
         self.u[t == 0] = 0
 
     def fresnel_lens(self,
@@ -1089,14 +1131,18 @@ class Scalar_mask_XY(Scalar_field_XY):
         ymin = y0 - sizey / 2
         ymax = y0 + sizey / 2
 
-        th1.square(
-            r0=(xmin, ymin), size=(hammer_width, hammer_width), angle=angle)
-        th2.square(
-            r0=(xmin, ymax), size=(hammer_width, hammer_width), angle=angle)
-        th3.square(
-            r0=(xmax, ymin), size=(hammer_width, hammer_width), angle=angle)
-        th4.square(
-            r0=(xmax, ymax), size=(hammer_width, hammer_width), angle=angle)
+        th1.square(r0=(xmin, ymin),
+                   size=(hammer_width, hammer_width),
+                   angle=angle)
+        th2.square(r0=(xmin, ymax),
+                   size=(hammer_width, hammer_width),
+                   angle=angle)
+        th3.square(r0=(xmax, ymin),
+                   size=(hammer_width, hammer_width),
+                   angle=angle)
+        th4.square(r0=(xmax, ymax),
+                   size=(hammer_width, hammer_width),
+                   angle=angle)
         # La superposicion de ambas da lugar a la cross
         t3 = t1.u + th1.u + th2.u + th3.u + th4.u
         t3[t3 > 0] = 1
@@ -1123,8 +1169,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) * (
-            (r / period)**p + (theta - phase) / (2 * pi))))
+        t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) *
+                           ((r / period)**p + (theta - phase) / (2 * pi))))
         if binaria is True:
             i0 = t <= 0.5
             t[i0] = 0
@@ -1151,8 +1197,9 @@ class Scalar_mask_XY(Scalar_field_XY):
             laguerre_gauss_spiral(r0=(0 * um, 0 * um), kind='amplitude', l=1, w0=625 * um, z=0.01 * um)
         """
 
-        u_ilum = Scalar_source_XY(
-            x=self.x, y=self.y, wavelength=self.wavelength)
+        u_ilum = Scalar_source_XY(x=self.x,
+                                  y=self.y,
+                                  wavelength=self.wavelength)
         # Haz de Laguerre
         u_ilum.laguerre_beam(p=0, l=l, r0=r0, w0=w0, z=z)
 
@@ -1196,8 +1243,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         THETA = arctan2(Xrot, Yrot)
 
-        self.u = exp(
-            1.j * alpha * cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
+        self.u = exp(1.j * alpha * cos(l * THETA - 2 * pi / period *
+                                       (Xrot - r0[0])))
 
         phase = np.angle(self.u)
 
@@ -1230,8 +1277,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         Xrot, Yrot = self.__rotate__(angle)
 
         # Definicion de la sinusoidal
-        self.u = amp_min + (amp_max - amp_min) * (
-            1 + cos(2 * pi * (Xrot - x0) / period)) / 2
+        self.u = amp_min + (amp_max -
+                            amp_min) * (1 + cos(2 * pi *
+                                                (Xrot - x0) / period)) / 2
 
     def sine_edge_grating(self,
                           r0=(0 * um, 0 * um),
@@ -1290,8 +1338,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         y0 = cos(pi * fill_factor)
 
-        t.sine_grating(
-            period=period, amp_min=-1, amp_max=1, x0=x0, angle=angle)
+        t.sine_grating(period=period,
+                       amp_min=-1,
+                       amp_max=1,
+                       x0=x0,
+                       angle=angle)
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
         self.u = t.u
@@ -1450,8 +1501,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         u = zeros(shape(self.X))
 
         random_part = np.random.randn(Yrot.shape[0], Yrot.shape[1])
-        ipasa = (Xrot - x0)**2 + (Yrot - y0)**2 - (
-            radius + sigma * random_part)**2 < 0
+        ipasa = (Xrot - x0)**2 + (Yrot - y0)**2 - (radius +
+                                                   sigma * random_part)**2 < 0
         u[ipasa] = 1
         self.u = u
 
@@ -1504,13 +1555,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         for m in range(3, num_rings + 2, 2):
             inner_radius = sqrt((m - 1) * self.wavelength * focal)
             outer_radius = sqrt(m * self.wavelength * focal)
-            ring.ring_rough(
-                r0,
-                inner_radius,
-                outer_radius,
-                angle=angle,
-                sigma=sigma,
-                correlation_length=correlation_length)
+            ring.ring_rough(r0,
+                            inner_radius,
+                            outer_radius,
+                            angle=angle,
+                            sigma=sigma,
+                            correlation_length=correlation_length)
             lens.u = lens.u + ring.u
         self.u = lens.u
 
@@ -1617,8 +1667,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         u = np.zeros_like(self.X)
         X_sin1 = x0 + size / 2 + amplitude1 * np.sin(
             2 * np.pi * Yrot / period1)
-        X_sin2 = x0 - size / 2 + amplitude2 * np.sin(
-            2 * np.pi * Yrot / period2 + phase)
+        X_sin2 = x0 - size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot /
+                                                     period2 + phase)
         ipasa_1 = (X_sin1 > Xrot) & (X_sin2 < Xrot)
         u[ipasa_1] = 1
         self.u = u

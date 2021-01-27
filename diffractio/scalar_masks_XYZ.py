@@ -165,10 +165,10 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         x0, y0, z0 = r0
         radiusx, radiusy = radius
 
-        ipasar = (self.Z - z0)**2 / radiusx**2 + (
-            self.Y - y0)**2 / radiusy**2 <= 1
-        ipasaz1 = self.X >= x0 - length / 2
-        ipasaz2 = self.X <= x0 + length / 2
+        ipasar = (self.X - x0)**2 / radiusx**2 + (self.Y -
+                                                  y0)**2 / radiusy**2 <= 1
+        ipasaz1 = self.Z >= z0 - length / 2
+        ipasaz2 = self.Z <= z0 + length / 2
         ipasa = ipasar * ipasaz1 * ipasaz2
         """
         TODO: no funciona
