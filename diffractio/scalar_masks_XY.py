@@ -829,12 +829,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3
 
-    def prism(self,
-              r0,
-              index,
-              angle_wedge_x,
-              angle_wedge_y,
-              angle=0 * degrees):
+    def prism_backup(self,
+                     r0,
+                     index,
+                     angle_wedge_x,
+                     angle_wedge_y,
+                     angle=0 * degrees):
         """prism with angles angle_wedge_x, angle_wedge_y
 
         Parameters:
@@ -853,6 +853,25 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = exp(1j * k * (index - 1) *
                      ((Xrot - x0) * sin(angle_wedge_x)) +
                      (Yrot - y0) * sin(angle_wedge_y))
+
+    def prism(self,
+              r0,
+              angle_wedge,
+              angle=0 * degrees):
+        """prism which produces a certain angle
+
+        Parameters:
+            r0 (float, float): center wedge
+            angle_wedge (float): angle of wedge in x direction
+            angle (float): angle of rotation in radians
+
+        """
+        # Vector de onda
+        k = 2 * pi / self.wavelength
+        x0, y0 = r0
+        Xrot, Yrot = self.__rotate__(angle)
+
+        self.u = exp(1j * k *(Xrot - x0) * np.sin(angle_wedge))
 
     def lens(self, r0, radius, focal, angle=0 * degrees, mask=True):
         """Transparent lens
