@@ -40,6 +40,7 @@ import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
                    ones_like, pi, shape, sin, sqrt, zeros, zeros_like)
 from scipy.signal import fftconvolve
+from scipy.special import eval_hermite
 
 from diffractio import degrees, np, plt, sp, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
@@ -1765,3 +1766,27 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         u[ipasa] = 1
         self.u = u
+
+    def hermite_gauss_binary(self, r0=(0, 0), w0=(1*um, 1*um), n=1, m=1):
+        """Binary phase mask to generate an Hermite Gauss beam.
+
+        Parameters:
+            r0 (float, float): (x,y) position of source
+            w0 (float, float): width of the beam
+            n (int): order in x
+            m (int): order in y
+
+        Example:
+             hermite_gauss_binary(r0=(0,0), w0=(100*um, 50*um), n=2, m=3)
+        """
+        # Prepare space
+        X = self.X - r0[0]
+        Y = self.Y - r0[1]
+        r2 = sqrt(2)
+        wx, wy = w0
+
+        # Calculate amplitude
+        E = eval_hermite(n, r2*X/wx) * eval_hermite(m, r2*Y/wy)
+        phase = pi * (E > 0)
+
+        self.u = self.u * exp(1j * phase)
