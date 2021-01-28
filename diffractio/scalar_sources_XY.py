@@ -37,7 +37,7 @@ The magnitude is related to microns: `micron = 1.`
 from math import factorial
 
 from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
-from scipy.special import j0, j1, jv
+from scipy.special import j0, j1, jv, eval_hermite
 from scipy.special.orthogonal import hermite
 
 from diffractio import degrees, np, um
@@ -224,6 +224,40 @@ class Scalar_source_XY(Scalar_field_XY):
         t4 = laguerre_polynomial_nk(2 * R2 / wz**2, p, l)
         # El field es el producto t1*t2*t3*t4
         self.u = t1 * t2 * t3 * t4
+
+    def hermite_gauss_beam_JdH(self, A=1, r0=(0,0), w0=(1*um, 1*um), R=(np.inf, np.inf), n=1, m=1):
+        """Hermite Gauss beam.
+
+        Parameters:
+            A (float): max amplitude of the Hermite Gauss beam
+            r0 (float, float): (x,y) position of source
+            w0 (float, float): width of the beam
+            R (float, float): Curvature radius.
+            n (int): order in x
+            m (int): order in y
+
+        Example:
+             hermite_gauss_beam(A=1, r0=(0,0), w0=(100*um, 50*um), R=(20*m, 30*m), n=2, m=3)
+        """
+        # Prepare space
+        E = zeros(self.X.shape, dtype=np.float)
+        X = self.X - r0[0]
+        Y = self.Y - r0[1]
+        r2 = sqrt(2)
+        wx, wy = w0
+        Rx, Ry = R
+        k = 2*pi / self.wavelength
+
+        # Calculate amplitude
+        Ex = eval_hermite(n, r2*X/wx) * exp(-X**2/wx**2)
+        Ey = eval_hermite(m, r2*Y/wy) * exp(-Y**2/wy**2)
+        Ex = Ex / np.max(Ex)
+        Ey = Ey / np.max(Ex)
+
+        # Calculate phase
+        Ef = exp(-1j*k * (X**2/Rx + Y**2/Ry))
+
+        self.u = A * Ex * Ey * Ef
 
     def hermite_gauss_beam(self, A, r0, w0, m, n, c_mn):
         """Hermite Gauss beam.
