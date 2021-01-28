@@ -33,7 +33,6 @@ The magnitude is related to microns: `micron = 1.`
     * roughness, circle_rough, ring_rough, fresnel_lens_rough,
 """
 
-import datetime
 
 import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
@@ -134,51 +133,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         return (num_pixels_1 / num_pixels) * (delta_x * delta_y)
 
-    def save_mask(self, filename="", kind='amplitude', info=""):
-        """Create a mask in a file, for example, ablation or litography engraver
 
-        Parameters:
-            filename (str): file name
-            kind (str): save amplitude or phase
-            info (str): info of the mask
-
-        Returns:
-            float: area (in um**2)
-        """
-
-        # creo nombre para txt
-        name = filename.split(".")
-        nombreTxt = name[0] + ".txt"
-
-        # creo image
-        plt.figure()
-        filter = np.abs(self.u) > 0
-        if kind == 'amplitude':
-            mask = np.abs(self.u)
-        elif kind == 'phase':
-            mask = np.angle(self.u)
-            mask = (mask - mask.min()) / (mask.max() - mask.min())
-            mask = mask * filter
-
-        plt.imsave(filename, mask, cmap='gray', dpi=300, origin='lower')
-        plt.close()
-
-        # creo txt con data importantes
-        ofile = open(nombreTxt, "w")
-        ofile.write("nombre de archivo %s\n" % filename)
-        ofile.write("fecha: {}\n".format(datetime.date.today()))
-        if info is not None:
-            ofile.write("\ninfo:\n")
-            ofile.write(info)
-        ofile.write("\n\n")
-        ofile.write("length de la mask: %i x %i\n" %
-                    (len(self.x), len(self.y)))
-        ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
-                    (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
-        ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
-                    (self.y.min(), self.y[-1], self.y[1] - self.y[0]))
-        ofile.write("\nlongitud de onda = %f *um" % self.wavelength)
-        ofile.close()
 
     def inverse_amplitude(self):
         """Inverts the amplitude of the mask, phase is equal as initial"""
