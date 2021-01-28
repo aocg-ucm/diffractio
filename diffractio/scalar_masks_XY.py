@@ -65,6 +65,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -150,7 +151,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # creo image
         plt.figure()
-        filter = np.abs(self.u)>0
+        filter = np.abs(self.u) > 0
         if kind == 'amplitude':
             mask = np.abs(self.u)
         elif kind == 'phase':
@@ -249,6 +250,37 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.u = covolved_image
 
     # __MASCARAS PROPIAMENTE DICHAS____________________________________________
+
+    def extrude_mask_x(self, mask_X, y0=None, y1=None, kind='unique', normalize=None):
+        """
+        Converts a Scalar_mask_X in volumetric between z0 and z1 by growing between these two planes
+        Parameters:
+            mask_X (Scalar_mask_X): an amplitude mask of type Scalar_mask_X.
+            y0 (float): initial  position of mask
+            y1 (float): final position of mask
+            kind (str): 'superpose', 'unique'
+            normalize (str): if 'cut' (>1 -> 1), 'normalize', None
+        """
+
+        if y0 is None:
+            y0 = self.y[0]
+        if y1 is None:
+            y1 = self.y[-1]
+
+        iy0, value, distance = nearest(vector=self.y, number=y0)
+        iy1, value, distance = nearest(vector=self.y, number=y1)
+
+        for i, index in enumerate(range(iy0, iy1)):
+            if kind == 'unique':
+                self.u[index, :] = mask_X.u
+            elif kind == 'superpose':
+                self.u[index, :] = self.u[index, :] + mask_X.u
+
+        if normalize == 'cut':
+            self.u[self.u > 1] = 1
+        elif normalize == 'normalize':
+            maximum = np.abs(self.u.max())
+            self.u = self.u / maximum
 
     def mask_from_function(self,
                            r0,
