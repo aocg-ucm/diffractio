@@ -911,6 +911,45 @@ class Scalar_mask_X(Scalar_field_X):
 
         return t
 
+    def binary_code_positions(self, x_transitions, start='down', has_draw=True):
+        """
+        Genenerates a binary code, using the positions given in x_transitions
+
+        Parameters:
+            x_transitions (numpy.array): positions where transitions are placed
+            start (str): How the binary code starts:'down' (starts in 0) or 'up' (starts in 1)
+            has_draw (bool): If True, draws the code
+
+        """
+
+        x_transitions = np.sort(x_transitions)
+        x_transitions = np.hstack((self.x[0], x_transitions, self.x[-1]))
+        x_transitions = np.unique(x_transitions)
+
+        t = np.ones_like(self.x)
+
+        i_transitions, _, _ = nearest2(self.x, x_transitions)
+
+        i_transitions = i_transitions.astype(int)
+
+        for i in range(0, len(i_transitions) - 1, 2):
+            i0 = i_transitions[i]
+            i1 = i_transitions[i + 1]
+            t[i0:i1] = 0
+
+        if start == 'up':
+            t = 1 - t
+
+        self.u = t
+
+        if has_draw:
+            plt.figure(figsize=(18, 5))
+            plt.plot(self.x, t)
+            plt.plot(x_transitions, np.ones_like(x_transitions), 'ko')
+            plt.xlim(self.x[0], self.x[-1])
+
+        return t
+
     def binary_code(self,
                     kind='standard',
                     i0=[1, 1, 0, 0, 1, 0, 1],

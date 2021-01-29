@@ -37,7 +37,7 @@ The magnitude is related to microns: `micron = 1.`
 from math import factorial
 
 from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
-from scipy.special import j0, j1, jv, eval_hermite
+from scipy.special import eval_hermite, j0, j1, jv
 from scipy.special.orthogonal import hermite
 
 from diffractio import degrees, np, um
@@ -206,7 +206,7 @@ class Scalar_source_XY(Scalar_field_XY):
              hermite_gauss_beam(A=1, r0=(0,0), w0=(100*um, 50*um), n=2, m=3, z=0)
         """
         # Prepare space
-        E = zeros(self.X.shape, dtype=np.float)
+        # E = zeros(self.X.shape, dtype=np.float)
         X = self.X - r0[0]
         Y = self.Y - r0[1]
 
