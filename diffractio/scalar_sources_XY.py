@@ -190,7 +190,138 @@ class Scalar_source_XY(Scalar_field_XY):
                 (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
         self.u = amplitude
 
-    def laguerre_beam(self, r0, w0, z, p, l):
+    def hermite_gauss_beam(self, A=1, r0=(0,0), w0=(1*um, 1*um), n=0, m=0, z=0, z0=(0,0)):
+        """Hermite Gauss beam.
+
+        Parameters:
+            A (float): amplitude of the Hermite Gauss beam.
+            r0 (float, float): (x,y) position of the beam center.
+            w0 (float, float): Gaussian waist.
+            n (int): order in x.
+            m (int): order in y.
+            z (float): Propagation distance.
+            z0 (float, float): Beam waist position at each dimension
+
+        Example:
+             hermite_gauss_beam(A=1, r0=(0,0), w0=(100*um, 50*um), n=2, m=3, z=0)
+        """
+        # Prepare space
+        E = zeros(self.X.shape, dtype=np.float)
+        X = self.X - r0[0]
+        Y = self.Y - r0[1]
+
+        # Parameters
+        r2 = sqrt(2)
+        w0x, w0y = w0
+        z0x, z0y = z0
+        k = 2*pi / self.wavelength
+
+        # Calculate propagation
+        zx = z - z0x
+        zRx = k*w0x**2/2
+        wx = w0x * sqrt(1 + zx**2/zRx**2)
+        if zx == 0:
+            Rx = np.inf
+        else:
+            Rx = zx + zRx**2/zx
+
+        zy = z - z0y
+        zRy = k*w0y**2/2
+        wy = w0y * sqrt(1 + zy**2/zRy**2)
+        if zy == 0:
+            Ry = np.inf
+        else:
+            Ry = zy + zRy**2/zy
+
+        # Calculate amplitude
+        A = A * sqrt(2**(1-n-m) / (pi*factorial(n)*factorial(m))) * sqrt(w0x*w0y / (wx*wy))
+        Ex = eval_hermite(n, r2*X/wx) * exp(-X**2/wx**2)
+        Ey = eval_hermite(m, r2*Y/wy) * exp(-Y**2/wy**2)
+
+        # Calculate phase
+        Ef = exp(1j*k * (X**2/Rx + Y**2/Ry)) * exp(
+            -1j * (0.5+n) * np.arctan(zx/zRx)) * exp(
+                -1j * (0.5+m) * np.arctan(zy/zRy)) * exp(
+                    1j * k * (zx + zy)/2)
+
+
+        self.u = A * Ex * Ey * Ef
+
+    def hermite_gauss_beam_depercated(self, A, r0, w0, m, n, c_mn):
+        """Hermite Gauss beam.
+
+        Parameters:
+            A (float): amplitude of the Hermite Gauss beam
+            r0 (float, float): (x,y) position of source
+            w0 (float): width of the beam
+            m (list): list of integers with orders
+            n (list): list of integers with orders
+            c_mn (list): list of integers with coefficients
+
+        Example:
+             hermite_gauss_beam(A=1, r0, w0=100 * um, m=[1, 3, 3, 5, 5, 5], n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
+        """
+        x0, y0 = r0
+        intesity = zeros(self.X.shape, dtype=np.float)
+
+        for s in range(len(m)):
+            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) * exp(
+                -pi * (self.X - x0)**2 / w0**2))**2
+            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) * exp(
+                -pi * (self.Y - y0)**2 / w0**2))**2
+            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) * sqrt(
+                2**n[s] * factorial(n[s])))
+
+            intesity = intesity + f * c_mn[s] * Ix * Iy
+
+        self.u = A * intesity
+
+    def laguerre_beam(self, A=1, r0=(0,0), w0=1*um, n=0, l=0, z=0, z0=0):
+        """Laguerre beam.
+
+        Parameters:
+            A (float): amplitude of the Hermite Gauss beam.
+            r0 (float, float): (x,y) position of the beam center.
+            w0 (float): Gaussian waist.
+            n (int): radial order.
+            l (int): angular order.
+            z (float): Propagation distance.
+            z0 (float): Beam waist position.
+
+        Example:
+            laguerre_beam(A=1, r0=(0 * um, 0 * um),  w0=1 * um,  p=0, l=0,  z=0)
+        """
+        # Prepare space
+        E = zeros(self.X.shape, dtype=np.float)
+        X = self.X - r0[0]
+        Y = self.Y - r0[1]
+        Ro2 = X**2 + Y**2
+        Ro = np.sqrt(Ro2)
+        Th = np.arctan2(Y, X)
+
+        # Parameters
+        r2 = sqrt(2)
+        z = z-z0
+        k = 2*pi / self.wavelength
+
+        # Calculate propagation
+        zR = k*w0**2/2
+        w = w0 * sqrt(1 + z**2/zR**2)
+        if z == 0:
+            R = np.inf
+        else:
+            R = z + zR**2/z
+
+        # Calculate amplitude
+        A = A * w0 / w
+        Er = laguerre_polynomial_nk(2 * Ro2 / w**2, n, l) * exp(-Ro2/w**2) * (r2*Ro / w)**l
+
+        # Calculate phase
+        Ef = exp(1j*(k * Ro2/R + l * Th)) * exp(-1j * (1+n) * np.arctan(z/zR))
+
+        self.u = A * Er * Ef
+
+    def laguerre_beam_depercated(self, r0, w0, z, p, l):
         """Laguerre beam.
 
         Parameters:
@@ -224,69 +355,6 @@ class Scalar_source_XY(Scalar_field_XY):
         t4 = laguerre_polynomial_nk(2 * R2 / wz**2, p, l)
         # El field es el producto t1*t2*t3*t4
         self.u = t1 * t2 * t3 * t4
-
-    def hermite_gauss_beam_JdH(self, A=1, r0=(0,0), w0=(1*um, 1*um), R=(np.inf, np.inf), n=1, m=1):
-        """Hermite Gauss beam.
-
-        Parameters:
-            A (float): max amplitude of the Hermite Gauss beam
-            r0 (float, float): (x,y) position of source
-            w0 (float, float): width of the beam
-            R (float, float): Curvature radius.
-            n (int): order in x
-            m (int): order in y
-
-        Example:
-             hermite_gauss_beam(A=1, r0=(0,0), w0=(100*um, 50*um), R=(20*m, 30*m), n=2, m=3)
-        """
-        # Prepare space
-        E = zeros(self.X.shape, dtype=np.float)
-        X = self.X - r0[0]
-        Y = self.Y - r0[1]
-        r2 = sqrt(2)
-        wx, wy = w0
-        Rx, Ry = R
-        k = 2*pi / self.wavelength
-
-        # Calculate amplitude
-        Ex = eval_hermite(n, r2*X/wx) * exp(-X**2/wx**2)
-        Ey = eval_hermite(m, r2*Y/wy) * exp(-Y**2/wy**2)
-        Ex = Ex / np.max(Ex)
-        Ey = Ey / np.max(Ex)
-
-        # Calculate phase
-        Ef = exp(-1j*k * (X**2/Rx + Y**2/Ry))
-
-        self.u = A * Ex * Ey * Ef
-
-    def hermite_gauss_beam(self, A, r0, w0, m, n, c_mn):
-        """Hermite Gauss beam.
-
-        Parameters:
-            A (float): amplitude of the Hermite Gauss beam
-            r0 (float, float): (x,y) position of source
-            w0 (float): width of the beam
-            m (list): list of integers with orders
-            n (list): list of integers with orders
-            c_mn (list): list of integers with coefficients
-
-        Example:
-             hermite_gauss_beam(A=1, r0, w0=100 * um, m=[1, 3, 3, 5, 5, 5], n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
-        """
-        x0, y0 = r0
-        intesity = zeros(self.X.shape, dtype=np.float)
-
-        for s in range(len(m)):
-            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) * exp(
-                -pi * (self.X - x0)**2 / w0**2))**2
-            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) * exp(
-                -pi * (self.Y - y0)**2 / w0**2))**2
-            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) * sqrt(
-                2**n[s] * factorial(n[s])))
-
-            intesity = intesity + f * c_mn[s] * Ix * Iy
-
-        self.u = A * intesity
 
     def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
         """Zernike beam.

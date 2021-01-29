@@ -45,7 +45,7 @@ from scipy.special import eval_hermite
 from diffractio import degrees, np, plt, sp, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_math import fft_convolution2d, nearest, nearest2
+from diffractio.utils_math import fft_convolution2d, nearest, nearest2, laguerre_polynomial_nk
 from diffractio.utils_optics import roughness_2D
 from PIL import Image
 
@@ -1748,14 +1748,14 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
-    def hermite_gauss_binary(self, r0=(0, 0), w0=(1*um, 1*um), n=1, m=1):
+    def hermite_gauss_binary(self, r0=(0, 0), w0=(1*um, 1*um), n=0, m=0):
         """Binary phase mask to generate an Hermite Gauss beam.
 
         Parameters:
-            r0 (float, float): (x,y) position of source
-            w0 (float, float): width of the beam
-            n (int): order in x
-            m (int): order in y
+            r0 (float, float): (x,y) position of source.
+            w0 (float, float): width of the beam.
+            n (int): order in x.
+            m (int): order in y.
 
         Example:
              hermite_gauss_binary(r0=(0,0), w0=(100*um, 50*um), n=2, m=3)
@@ -1770,4 +1770,28 @@ class Scalar_mask_XY(Scalar_field_XY):
         E = eval_hermite(n, r2*X/wx) * eval_hermite(m, r2*Y/wy)
         phase = pi * (E > 0)
 
-        self.u = self.u * exp(1j * phase)
+        self.u = exp(1j * phase)
+
+    def laguerre_gauss_binary(self, r0=(0, 0), w0=1*um, n=0, l=0):
+        """Binary phase mask to generate an Hermite Gauss beam.
+
+        Parameters:
+            r0 (float, float): (x,y) position of source.
+            w0 (float, float): width of the beam.
+            n (int): radial order.
+            l (int): angular order.
+
+        Example:
+             laguerre_gauss_binary(r0=(0,0), w0=1*um, n=0, l=0)
+        """
+        # Prepare space
+        X = self.X - r0[0]
+        Y = self.Y - r0[1]
+        Ro2 = X**2 + Y**2
+        Th = np.arctan2(Y, X)
+
+        # Calculate amplitude
+        E = laguerre_polynomial_nk(2 * Ro2 / w0**2, n, l)
+        phase = pi * (E > 0)
+
+        self.u = exp(1j * (phase + l * Th))
