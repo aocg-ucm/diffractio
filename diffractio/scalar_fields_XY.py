@@ -311,8 +311,10 @@ class Scalar_field_XY(object):
         # creo image
         plt.figure()
         filter = np.abs(self.u) > 0
+
         if kind == 'amplitude':
             mask = np.abs(self.u)
+
         elif kind == 'phase':
             mask = np.angle(self.u)
             mask = (mask - mask.min()) / (mask.max() - mask.min())
@@ -321,7 +323,6 @@ class Scalar_field_XY(object):
         if binarize is True:
             mask_min = mask.min()
             mask_max = mask.max()
-            mask_range = mask_max - mask_min
             mask_mean = (mask_max + mask_min) / 2
 
             mask2 = np.zeros_like(mask)
@@ -656,7 +657,7 @@ class Scalar_field_XY(object):
         Usalida = S[ny - 1:, nx - 1:]  # hasta el final
         # los calculos se pueden dejar en la instancia o crear un new field
 
-        Usalida = Usalida / z
+        # Usalida = Usalida / z  210131
 
         if out_matrix is True:
             return Usalida
@@ -1647,8 +1648,34 @@ class Scalar_field_XY(object):
 
         ani.save(filename, fps=fps, dpi=dpi)
 
-
 def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
+    """Kernel for RS propagation.
+
+    Había una errata según: Juan Valencia <valen167@umn.edu>  210131
+
+    Parameters:
+        X(numpy.array): positions x
+        Y(numpy.array): positions y
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refraction index of background
+        kind(str): 'z', 'x', '0': for simplifying vector propagation
+
+    Returns:
+        complex np.array: kernel
+    """
+    k = 2 * pi * n / wavelength
+    R = sqrt(X**2 + Y**2 + z**2)
+    if kind == 'z':
+        return 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+    elif kind == 'x':
+        return 1 / (2 * pi) * exp(1.j * k * R) * X / R**2 * (1 / R - 1.j * k)
+    elif kind == 'y':
+        return 1 / (2 * pi) * exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
+    elif kind == '0':
+        return 1 / (2 * pi) * exp(1.j * k * R) / R* (1 / R - 1.j * k)
+
+def kernelRS_back(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation
 
     Parameters:
@@ -1665,13 +1692,13 @@ def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     k = 2 * pi * n / wavelength
     R = sqrt(X**2 + Y**2 + z**2)
     if kind == 'z':
-        return 1 / (2 * pi) * exp(1.j * k * R) * z / R * (1 / R - 1.j * k)
+        return 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
     elif kind == 'x':
-        return 1 / (2 * pi) * exp(1.j * k * R) * X / R * (1 / R - 1.j * k)
+        return 1 / (2 * pi) * exp(1.j * k * R) * X / R**2 * (1 / R - 1.j * k)
     elif kind == 'y':
-        return 1 / (2 * pi) * exp(1.j * k * R) * Y / R * (1 / R - 1.j * k)
+        return 1 / (2 * pi) * exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(1.j * k * R) * (1 / R - 1.j * k)
+        return 1 / (2 * pi) * exp(1.j * k * R) / R * (1 / R - 1.j * k)
 
 
 def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
@@ -1698,6 +1725,34 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
         return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R * (1 / R + 1.j * k)
     elif kind == '0':
         return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
+
+
+
+def kernelRSinverse_back(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
+    """Kernel for inverse RS propagation
+
+    Parameters:
+        X(numpy.array): positions x
+        Y(numpy.array): positions y
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refraction index of background
+        kind(str): 'z', 'x', '0': for simplifying vector propagation
+
+    Returns:
+        complex np.array: kernel
+    """
+    k = 2 * pi * n / wavelength
+    R = sqrt(X**2 + Y**2 + z**2)
+    if kind == 'z':
+        return 1 / (2 * pi) * exp(-1.j * k * R) * z / R * (1 / R + 1.j * k)
+    elif kind == 'x':
+        return 1 / (2 * pi) * exp(-1.j * k * R) * X / R * (1 / R + 1.j * k)
+    elif kind == 'y':
+        return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R * (1 / R + 1.j * k)
+    elif kind == '0':
+        return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
+
 
 
 def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):

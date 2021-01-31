@@ -477,7 +477,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return num_points
 
-    def point_mask(self, r0):
+    def dots(self, r0):
         """Generates 1 or several point masks at positions r0
 
         Arguments:
@@ -501,7 +501,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return self
 
-    def regular_points(self, xlim, ylim, num_data, verbose=False):
+    def dots_regular(self, xlim, ylim, num_data, verbose=False):
         """Generates n x m or several point masks.
 
         Arguments:
@@ -926,8 +926,46 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t2.u * t1
 
-    def axicon(self, r0, radius, height, n):
-        """Axicon, that is a lens with a hole in the center
+
+    def axicon(self, r0, radius, angle, refraction_index=1.5, off_axis_angle = 0*degrees, reflective=False):
+        """Axicon,
+
+        Parameters:
+            r0 (float, float): (x0,y0) - center of lens
+            radius (float): radius of lens mask
+            height (float): height of axicon
+            n (float): refraction index
+
+        Example:
+            axicon(r0=(0 * um, 0 * um), radius=200 * um, height=5 * um,  n=1.5)
+        """
+        # Vector de onda
+        k = 2 * np.pi / self.wavelength
+        x0, y0 = r0
+
+        # distance de la generatriz al eje del cono
+        r = np.sqrt((self.X - x0)**2 + (self.Y - y0)**2)
+
+
+        # Region de transmitancia
+        u_mask = np.zeros_like(self.X)
+        ipasa = r < radius
+        u_mask[ipasa] = 1
+
+        if off_axis_angle == 0*degrees:
+            t_off_axis = 1
+        else:
+            t_off_axis = np.exp(-1j * k * self.X * np.sin(off_axis_angle))
+
+        if reflective is True:
+            self.u = u_mask * np.exp(-2j * k  * r * np.tan(angle)) * t_off_axis
+
+        else:
+            self.u = u_mask * np.exp(-1j * k * (refraction_index - 1) * r * np.tan(angle)) * t_off_axis
+
+
+    def axicon_backup(self, r0, radius, height, n):
+        """Axicon,
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens

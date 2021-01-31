@@ -168,7 +168,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = t * np.exp(1.j * k * (index - 1) * (F2 - F1))
         self.u[t == 0] = 0
 
-    def point_mask(self, x0):
+    def dots(self, x0):
         """Generates 1 or several point masks at positions x0
 
         Arguments:
@@ -185,7 +185,6 @@ class Scalar_mask_X(Scalar_field_X):
                 u[i_x0] = 1
 
         self.u = u
-        return self
 
     def slit(self, x0=0, size=100 * um):
         """Slit: 1 inside, 0 outside

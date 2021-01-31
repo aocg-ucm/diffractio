@@ -43,9 +43,8 @@ Alpha state
 * Finished first version of examples and tutorial.
 
 
-
 0.0.7 and 0.0.8 (2020-05-02)
-------------------------
+--------------------------------
 Alpha state
 
 * convert_mask -> extrude_mask
@@ -55,20 +54,24 @@ Alpha state
 
 
 0.0.9 and 0.0.10 (2020-05-02)
-------------------------
+--------------------------------
 Alpha state
 
-* Improvemen to documentaion (readthedocs)
+* Improvement to documentation (readthedocs)
 
-0.0.11 (2020-05-**)
-------------------------
+0.0.11 (2021-01-**)
+--------------------------------
 Alpha state
 
 * Solved big errata in vector_paraxial_masks
-* Improved documentation, tutorial and examples of vector_paraxial_*
-* Scalar_mask_XY: point_mask
-* Scalar_mask_X: point_mask
+* Solved errata in XY: kernelRS and kernelRSinverse
+* Improved documentation, tutorial and examples of vector_paraxial
+* Scalar_mask_XY: dots
+* Scalar_mask_X: dots
 
+
+(% ejecution)
+--------------------------------
 
 * Modules	  = 9/10.
 * Functions 	= 9/10.

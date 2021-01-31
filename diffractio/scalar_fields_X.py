@@ -882,6 +882,7 @@ class Scalar_field_X(object):
             plt.ylim(-pi, pi)
 
 
+
 def kernelRS(x, wavelength, z, n=1, kind='z', fast=False):
     """Kernel for RS propagation. :math:`hk_1 = \sqrt{2/(\pi \, k \, R)}  e^{i  (k \, R - 3  \pi / 4)}`
 
