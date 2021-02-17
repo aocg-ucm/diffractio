@@ -1323,7 +1323,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max -
-                            amp_min) * (1 + cos(2 * pi *
+                            amp_min) * (1 + sin(2 * pi *
                                                 (Xrot - x0) / period)) / 2
 
     def sine_edge_grating(self,

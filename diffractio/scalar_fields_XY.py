@@ -1675,7 +1675,7 @@ def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     elif kind == '0':
         return 1 / (2 * pi) * exp(1.j * k * R) / R* (1 / R - 1.j * k)
 
-def kernelRS_back(X, Y, wavelength, z, n=1, kind='z'):
+def kernelRS_deprecated(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation
 
     Parameters:
@@ -1728,7 +1728,7 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
 
 
 
-def kernelRSinverse_back(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
+def kernelRSinverse_deprecated(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     """Kernel for inverse RS propagation
 
     Parameters:
