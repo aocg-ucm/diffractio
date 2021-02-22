@@ -592,13 +592,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         # Definicion del square/rectangle
-        xmin = - sizex / 2
-        xmax = + sizex / 2
-        ymin = - sizey / 2
-        ymax = + sizey / 2
+        xmin = x0 - sizex / 2
+        xmax = x0 + sizex / 2
+        ymin = y0 - sizey / 2
+        ymax = y0 + sizey / 2
 
         # Rotacion del square/rectangle
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Transmitancia de los points interiores
         u = zeros(shape(self.X))
@@ -623,9 +623,9 @@ class Scalar_mask_XY(Scalar_field_XY):
             x_edge (float): position of division
             angle (float): angle of rotation in radians
         """
-        Xrot, Yrot = self.__rotate__(angle,(x_edge,0))
+        Xrot, Yrot = self.__rotate__(angle)
         self.u = level1 * ones(self.X.shape)
-        self.u[Xrot > 0] = level2
+        self.u[Xrot > x_edge] = level2
 
     def gray_scale(self, num_levels=4, levelMin=0, levelMax=1):
         """Generates a number of strips with different amplitude
@@ -670,12 +670,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             radiusx, radiusy = radius
 
         # Rotacion del circula/elipse
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Definicion de la transmitancia
         u = zeros(shape(self.X))
-        ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
-            (Yrot)**2 / (radiusy**2 + 1e-15) < 1
+        ipasa = (Xrot - x0)**2 / (radiusx + 1e-15)**2 + \
+            (Yrot - y0)**2 / (radiusy**2 + 1e-15) < 1
         u[ipasa] = 1
         self.u = u
 
@@ -703,7 +703,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         # Rotacion del circula/elipse
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
         R = sqrt(self.X**2 + self.Y**2)
         self.u = exp(-R**potencia / (2 * radiusx**potencia))
 
@@ -727,7 +727,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         t1.square(r0=r0, size=(2 * R1, 2 * R2), angle=angle)
         x0, y0 = r0
 
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
         F = sqrt(Xrot**2 / R1**2 + Yrot**2 / R2**2 - s**2 * Xrot**2 * Yrot**2 /
                  (R1**2 * R2**2))
 
@@ -785,7 +785,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3
 
-    def prism_deprecated(self,
+    def prism_backup(self,
                      r0,
                      index,
                      angle_wedge_x,
@@ -825,9 +825,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Vector de onda
         k = 2 * pi / self.wavelength
         x0, y0 = r0
-        Xrot, Yrot = self.__rotate__(angle,(x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
-        self.u = exp(1j * k *(Xrot) * np.sin(angle_wedge))
+        self.u = exp(1j * k *(Xrot - x0) * np.sin(angle_wedge))
 
     def lens(self, r0, radius, focal, angle=0 * degrees, mask=True):
         """Transparent lens
@@ -855,7 +855,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         f1, f2 = focal
 
         # rotation de la lens
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Definicion de la amplitude y la phase
         if mask is True:
@@ -906,7 +906,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         f1, f2 = focal
 
         # rotation de la lens
-        Xrot, Yrot = self.__rotate__(angle, r0)
+        Xrot, Yrot = self.__rotate__(angle, position=r0)
 
         # Definicion de la amplitude y la phase
         if mask is True:
@@ -964,7 +964,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.u = u_mask * np.exp(-1j * k * (refraction_index - 1) * r * np.tan(angle)) * t_off_axis
 
 
-    def axicon_deprecated(self, r0, radius, height, n):
+    def axicon_backup(self, r0, radius, height, n):
         """Axicon,
 
         Parameters:
@@ -1120,10 +1120,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         # distance de la generatriz al eje del cono
 
         # rotation de la lens
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
-        r = sqrt((self.X - x0)**2 + (self.Y )**2)
-        x_posiciones = sqrt(np.abs((Xrot )**2 - (Yrot )**2))
+        r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
+        x_posiciones = sqrt(np.abs((Xrot - x0)**2 - (Yrot - y0)**2))
         # Region de transmitancia
         t = (1 + sin(2 * pi * x_posiciones / period)) / 2
         if binaria is True:
@@ -1284,11 +1284,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             forked_grating(r0=(0 * um, 0 * um), period=20 * um, l=2, alpha=1, angle=0 * degrees)
         """
 
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         THETA = arctan2(Xrot, Yrot)
 
-        self.u = exp(1.j * alpha * cos(l * THETA - 2 * pi / period * (Xrot )))
+        self.u = exp(1.j * alpha * cos(l * THETA - 2 * pi / period *
+                                       (Xrot - r0[0])))
 
         phase = np.angle(self.u)
 
@@ -1318,12 +1319,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
              sine_grating(period=40 * um, amp_min=0, amp_max=1, x0=0 * um, angle=0 * degrees)
         """
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max -
                             amp_min) * (1 + sin(2 * pi *
-                                                (Xrot) / period)) / 2
+                                                (Xrot - x0) / period)) / 2
 
     def sine_edge_grating(self,
                           r0=(0 * um, 0 * um),
@@ -1433,12 +1434,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         """
         k = 2 * pi / self.wavelength
         # Inclinacion de las franjas
-        Xrot, Yrot = self.__rotate__(angle, (x0,0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Calculo de la pendiente
         pendiente = height / period
         # Calculo de la height
-        h = (Xrot) * pendiente
+        h = (Xrot - x0) * pendiente
 
         # Calculo del a phase
         phase = k * (index - 1) * h
@@ -1651,12 +1652,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             radiusx, radiusy = radius
 
         # Rotation of the super-ellipse
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         # Definition of transmittance
         u = np.zeros_like(self.X)
-        ipasa = np.abs((Xrot ) / radiusx)**nx + \
-            np.abs((Yrot ) / radiusy)**ny < 1
+        ipasa = np.abs((Xrot - x0) / radiusx)**nx + \
+            np.abs((Yrot - y0) / radiusy)**ny < 1
         u[ipasa] = 1
         self.u = u
 
@@ -1706,12 +1707,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         assert amplitude1 > 0 and amplitude2 > 0 and period1 > 0 and period2 > 0
 
-        Xrot, Yrot = self.__rotate__(angle, (x0,0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         u = np.zeros_like(self.X)
-        X_sin1 =  + size / 2 + amplitude1 * np.sin(
+        X_sin1 = x0 + size / 2 + amplitude1 * np.sin(
             2 * np.pi * Yrot / period1)
-        X_sin2 =  - size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot /
+        X_sin2 = x0 - size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot /
                                                      period2 + phase)
         ipasa_1 = (X_sin1 > Xrot) & (X_sin2 < Xrot)
         u[ipasa_1] = 1
@@ -1739,11 +1740,11 @@ class Scalar_mask_XY(Scalar_field_XY):
             x0, y0 = r0
 
         # Rotation of the crossed slits
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle)
 
         u = np.zeros_like(self.X)
-        Y1 = slope_x * np.abs(Xrot ) # + y0
-        Y2 = slope_y * np.abs(Xrot ) # + y0
+        Y1 = slope_x * np.abs(Xrot - x0) + y0
+        Y2 = slope_y * np.abs(Xrot - x0) + y0
 
         if (slope_x > 0) and (slope_y < 0):
             ipasa = (Yrot > Y1) | (Yrot < Y2)

@@ -443,7 +443,7 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_XY(x, y, wavelength)
-        t1.two_levels(level1=0, level2=.5, xcorte=0)
+        t1.two_levels(level1=0, level2=.5, x_edge=0)
         t1.draw(kind='intensity')
 
         t1.save_data(filename=filename, method='savez_compressed')

@@ -210,7 +210,7 @@ XY Vector paraxial fields
   EM0.radial_wave(u=u0, r0=(0, 0), radius=(200, 200))
 
   t0 = Scalar_mask_XY(x0, y0, wavelength)
-  t0.two_levels(level1=0, level2=1, xcorte=0, angle=0)
+  t0.two_levels(level1=0, level2=1, x_edge=0, angle=0)
 
   M0 = Vector_paraxial_mask_XY(x=x0, y=y0, wavelength=wavelength)
   M0.complementary_masks(t0, v1=(1, 1j), v2=(1, -1j))

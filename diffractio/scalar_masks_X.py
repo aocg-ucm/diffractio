@@ -225,20 +225,20 @@ class Scalar_mask_X(Scalar_field_X):
 
         return self.u
 
-    def two_levels(self, level1=0, level2=1, xcorte=0):
+    def two_levels(self, level1=0, level2=1, x_edge=0):
         """Divides the image in two levels.
 
         Parameters:
             level1 (float): value of level1
             level2 (float): value of level2
-            xcorte (float): position of separation of levels
+            x_edge (float): position of separation of levels
         """
 
         # Definicion de un primer level de unos
         self.u = level1 * np.ones(self.x.shape)
         # Aquellos points cuyo mayor sea mayor que el value de corte, adquieren
         # el value del level2
-        self.u[self.x > xcorte] = level2
+        self.u[self.x > x_edge] = level2
 
     def gray_scale(self, num_levels=4, levelMin=0, levelMax=1):
         """Divides the mask in n, vertical levels.
