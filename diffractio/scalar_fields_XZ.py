@@ -587,12 +587,12 @@ class Scalar_field_XZ(object):
         rangox = self.x[-1] - self.x[0]
 
         # Formamos el bloque de píxeles
-        pixelx = np.linspace(-numx / 2, numx / 2, numx)
+        pixelx = np.linspace(-int(numx / 2), int(numx / 2), numx)
         # Campo inicial
         field_z = self.u0.u
         # Calculo de la phase 1 normalizada -------------------
-        kx1 = np.linspace(0, numx / 2 + 1, int(numx / 2))
-        kx2 = np.linspace(-numx / 2, -1, int(numx / 2))
+        kx1 = np.linspace(0, int(numx / 2) + 1, int(numx / 2))
+        kx2 = np.linspace(-int(numx / 2), -1, int(numx / 2))
         # Número de ondas del material en una dimensión
         kx = (2 * np.pi / rangox) * np.concatenate((kx1, kx2))
         # Función de transferencia para la propagación que es identica
@@ -604,7 +604,8 @@ class Scalar_field_XZ(object):
         field = np.zeros(np.shape(self.n), dtype=complex)
         # Función supergausiana para eliminar rebotes en los edges
         filtroBorde = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**90)  # 0.98
-        # --------------- Ciclo principal del programa ------------------------
+
+        # --------------- main loop ------------------------
         field[:, 0] = field_z
         for k in range(0, numz):
             if verbose is True:

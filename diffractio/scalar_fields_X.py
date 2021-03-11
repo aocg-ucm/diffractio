@@ -670,12 +670,12 @@ class Scalar_field_X(object):
         numx = len(self.x)  # distance en x
         rangox = self.x[-1] - self.x[0]
         # Formamos el bloque de píxeles
-        pixelx = linspace(-numx / 2, numx / 2, numx)
+        pixelx = linspace(-int(numx / 2), int(numx / 2), numx)
         # Campo inicial
         field_z = self.u
         # Calculo de la phase 1 normalizada -------------------
-        kx1 = linspace(0, numx / 2 + 1, numx / 2)
-        kx2 = linspace(-numx / 2, -1, numx / 2)
+        kx1 = linspace(0, int(numx / 2) + 1, int(numx / 2))
+        kx2 = linspace(-int(numx / 2), -1, int(numx / 2))
         # Número de ondas del material en una dimensión
         kx = (2 * pi / rangox) * np.concatenate((kx1, kx2))
 

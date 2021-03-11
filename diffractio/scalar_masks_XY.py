@@ -1318,7 +1318,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
              sine_grating(period=40 * um, amp_min=0, amp_max=1, x0=0 * um, angle=0 * degrees)
         """
-        Xrot, Yrot = self.__rotate__(angle, (x0,y0))
+        Xrot, Yrot = self.__rotate__(angle, (x0,0))
 
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max -
