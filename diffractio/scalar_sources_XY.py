@@ -190,7 +190,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
         self.u = amplitude
 
-    def hermite_gauss_beam(self, A=1, r0=(0,0), w0=(1*um, 1*um), n=0, m=0, z=0, z0=(0,0)):
+    def hermite_gauss_beam(self, A=1, r0=(0, 0), w0=(1 * um, 1 * um), n=0, m=0, z=0, z0=(0, 0)):
         """Hermite Gauss beam.
 
         Parameters:
@@ -214,36 +214,36 @@ class Scalar_source_XY(Scalar_field_XY):
         r2 = sqrt(2)
         w0x, w0y = w0
         z0x, z0y = z0
-        k = 2*pi / self.wavelength
+        k = 2 * pi / self.wavelength
 
         # Calculate propagation
         zx = z - z0x
-        zRx = k*w0x**2/2
-        wx = w0x * sqrt(1 + zx**2/zRx**2)
+        zRx = k * w0x**2 / 2
+        wx = w0x * sqrt(1 + zx**2 / zRx**2)
         if zx == 0:
             Rx = np.inf
         else:
-            Rx = zx + zRx**2/zx
+            Rx = zx + zRx**2 / zx
 
         zy = z - z0y
-        zRy = k*w0y**2/2
-        wy = w0y * sqrt(1 + zy**2/zRy**2)
+        zRy = k * w0y**2 / 2
+        wy = w0y * sqrt(1 + zy**2 / zRy**2)
         if zy == 0:
             Ry = np.inf
         else:
-            Ry = zy + zRy**2/zy
+            Ry = zy + zRy**2 / zy
 
         # Calculate amplitude
-        A = A * sqrt(2**(1-n-m) / (pi*factorial(n)*factorial(m))) * sqrt(w0x*w0y / (wx*wy))
-        Ex = eval_hermite(n, r2*X/wx) * exp(-X**2/wx**2)
-        Ey = eval_hermite(m, r2*Y/wy) * exp(-Y**2/wy**2)
+        A = A * sqrt(2**(1 - n - m) / (pi * factorial(n) *
+                                       factorial(m))) * sqrt(w0x * w0y / (wx * wy))
+        Ex = eval_hermite(n, r2 * X / wx) * exp(-X**2 / wx**2)
+        Ey = eval_hermite(m, r2 * Y / wy) * exp(-Y**2 / wy**2)
 
         # Calculate phase
-        Ef = exp(1j*k * (X**2/Rx + Y**2/Ry)) * exp(
-            -1j * (0.5+n) * np.arctan(zx/zRx)) * exp(
-                -1j * (0.5+m) * np.arctan(zy/zRy)) * exp(
-                    1j * k * (zx + zy)/2)
-
+        Ef = exp(1j * k * (X**2 / Rx + Y**2 / Ry)) * exp(
+            -1j * (0.5 + n) * np.arctan(zx / zRx)) * exp(
+                -1j * (0.5 + m) * np.arctan(zy / zRy)) * exp(
+                    1j * k * (zx + zy) / 2)
 
         self.u = A * Ex * Ey * Ef
 
@@ -276,7 +276,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * intesity
 
-    def laguerre_beam(self, A=1, r0=(0,0), w0=1*um, n=0, l=0, z=0, z0=0):
+    def laguerre_beam(self, A=1, r0=(0, 0), w0=1 * um, n=0, l=0, z=0, z0=0):
         """Laguerre beam.
 
         Parameters:
@@ -292,7 +292,6 @@ class Scalar_source_XY(Scalar_field_XY):
             laguerre_beam(A=1, r0=(0 * um, 0 * um),  w0=1 * um,  p=0, l=0,  z=0)
         """
         # Prepare space
-        E = zeros(self.X.shape, dtype=np.float)
         X = self.X - r0[0]
         Y = self.Y - r0[1]
         Ro2 = X**2 + Y**2
@@ -301,23 +300,25 @@ class Scalar_source_XY(Scalar_field_XY):
 
         # Parameters
         r2 = sqrt(2)
-        z = z-z0
-        k = 2*pi / self.wavelength
+        z = z - z0
+        k = 2 * pi / self.wavelength
 
         # Calculate propagation
-        zR = k*w0**2/2
-        w = w0 * sqrt(1 + z**2/zR**2)
+        zR = k * w0**2 / 2
+        w = w0 * sqrt(1 + z**2 / zR**2)
         if z == 0:
             R = np.inf
         else:
-            R = z + zR**2/z
+            R = z + zR**2 / z
 
         # Calculate amplitude
         A = A * w0 / w
-        Er = laguerre_polynomial_nk(2 * Ro2 / w**2, n, l) * exp(-Ro2/w**2) * (r2*Ro / w)**l
+        Er = laguerre_polynomial_nk(
+            2 * Ro2 / w**2, n, l) * exp(-Ro2 / w**2) * (r2 * Ro / w)**l
 
         # Calculate phase
-        Ef = exp(1j*(k * Ro2/R + l * Th)) * exp(-1j * (1+n) * np.arctan(z/zR))
+        Ef = exp(1j * (k * Ro2 / R + l * Th)) * \
+            exp(-1j * (1 + n) * np.arctan(z / zR))
 
         self.u = A * Er * Ef
 

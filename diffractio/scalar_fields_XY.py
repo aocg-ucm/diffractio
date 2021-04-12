@@ -945,8 +945,8 @@ class Scalar_field_XY(object):
             text_y = "$f_y (cycles/mm)$"
         elif kind == 'degrees':
             print("not implemented yet")
-            frec_x = fx
-            frec_y = fy
+            # frec_x = fx
+            # frec_y = fy
             text_x = "$f_x (cycles/deg - not yet)$"
             text_y = "$f_x (cycles/deg - not yet)$"
 
@@ -1529,7 +1529,7 @@ class Scalar_field_XY(object):
 
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
-        ax = plt.subplot(1, 2, 1)
+        plt.subplot(1, 2, 1)
 
         h1 = plt.imshow(
             intensity,
@@ -1648,6 +1648,7 @@ class Scalar_field_XY(object):
 
         ani.save(filename, fps=fps, dpi=dpi)
 
+
 def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation.
 
@@ -1673,7 +1674,8 @@ def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
     elif kind == 'y':
         return 1 / (2 * pi) * exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(1.j * k * R) / R* (1 / R - 1.j * k)
+        return 1 / (2 * pi) * exp(1.j * k * R) / R * (1 / R - 1.j * k)
+
 
 def kernelRS_deprecated(X, Y, wavelength, z, n=1, kind='z'):
     """Kernel for RS propagation
@@ -1727,7 +1729,6 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
         return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
 
 
-
 def kernelRSinverse_deprecated(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     """Kernel for inverse RS propagation
 
@@ -1752,7 +1753,6 @@ def kernelRSinverse_deprecated(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, ki
         return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R * (1 / R + 1.j * k)
     elif kind == '0':
         return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
-
 
 
 def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):

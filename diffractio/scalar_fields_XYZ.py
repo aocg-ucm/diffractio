@@ -96,6 +96,7 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
+
     def __init__(self,
                  x=None,
                  y=None,

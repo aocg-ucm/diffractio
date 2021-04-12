@@ -3,7 +3,7 @@
 
 from copy import deepcopy
 
-from diffractio import um, mm, nm, np, sp, plt
+from diffractio import mm, nm, np, plt, sp, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 
@@ -369,9 +369,13 @@ def compute_error(I_result, I_target):
             DOE.u=np.exp(1j*mask)
 """
 
+
 def make_binary(mask):
-    mask_new=Scalar_mask_XY(mask.x,mask.y, mask.wavelength)
-    mask_new.u=deepcopy(mask.u)
-    mask_new.u[mask.u>0.5]=1.
-    mask_new.u[mask.u<=0.5]=0.
+    """
+    # TODO:
+    """
+    mask_new = Scalar_mask_XY(mask.x, mask.y, mask.wavelength)
+    mask_new.u = deepcopy(mask.u)
+    mask_new.u[mask.u > 0.5] = 1.
+    mask_new.u[mask.u <= 0.5] = 0.
     return mask_new
