@@ -93,7 +93,6 @@ class Scalar_field_X(object):
         self.type (str): Class of the field
         self.date (str): date when performed
     """
-
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         self.x = x
         self.wavelength = wavelength
@@ -261,19 +260,17 @@ class Scalar_field_X(object):
 
         if num_points not in ([], '', 0, None):
             x_new = linspace(x0, x1, num_points)
-            f_interp_abs = interp1d(
-                self.x,
-                np.abs(self.u),
-                kind=interp_kind,
-                bounds_error=False,
-                fill_value=0)
+            f_interp_abs = interp1d(self.x,
+                                    np.abs(self.u),
+                                    kind=interp_kind,
+                                    bounds_error=False,
+                                    fill_value=0)
 
-            f_interp_phase = interp1d(
-                self.x,
-                np.imag(self.u),
-                kind=interp_kind,
-                bounds_error=False,
-                fill_value=0)
+            f_interp_phase = interp1d(self.x,
+                                      np.imag(self.u),
+                                      kind=interp_kind,
+                                      bounds_error=False,
+                                      fill_value=0)
 
             u_new_abs = f_interp_abs(x_new)
             u_new_phase = f_interp_phase(x_new)
@@ -325,19 +322,17 @@ class Scalar_field_X(object):
             t1.x = t1.x - (t1.x[0] + t1.x[-1]) / 2 + x0_mask1
 
         # interpolation is different for real and imag
-        f_interp_real = interp1d(
-            t1.x,
-            np.real(t1.u),
-            kind='nearest',
-            bounds_error=False,
-            fill_value=0)
+        f_interp_real = interp1d(t1.x,
+                                 np.real(t1.u),
+                                 kind='nearest',
+                                 bounds_error=False,
+                                 fill_value=0)
 
-        f_interp_imag = interp1d(
-            t1.x,
-            np.imag(t1.u),
-            kind='nearest',
-            bounds_error=False,
-            fill_value=0)
+        f_interp_imag = interp1d(t1.x,
+                                 np.imag(t1.u),
+                                 kind='nearest',
+                                 bounds_error=False,
+                                 fill_value=0)
 
         # interpolates all the range
         u_new_real = f_interp_real(self.x)
@@ -361,8 +356,10 @@ class Scalar_field_X(object):
             kind_position (str): 'left', 'center': positions are at left or center.
         """
 
-        self.insert_mask(
-            t1, x_pos[0], clean=clean, kind_position=kind_position)
+        self.insert_mask(t1,
+                         x_pos[0],
+                         clean=clean,
+                         kind_position=kind_position)
 
         for xi in x_pos[1:]:
             self.insert_mask(t1, xi, clean=False, kind_position=kind_position)
@@ -558,8 +555,12 @@ class Scalar_field_X(object):
         if z > 0:
             H = kernelRS(xext, self.wavelength, z, n, kind=kind, fast=fast)
         else:
-            H = kernelRSinverse(
-                xext, self.wavelength, z, n, kind=kind, fast=fast)
+            H = kernelRSinverse(xext,
+                                self.wavelength,
+                                z,
+                                n,
+                                kind=kind,
+                                fast=fast)
 
         # calculo de la transformada de Fourier
         S = ifft(fft(U) * fft(H)) * dx
@@ -619,17 +620,16 @@ class Scalar_field_X(object):
 
         u_field = np.zeros_like(x0, dtype=complex)
         qualities = np.zeros((amplification))
-        for i, xi in zip(
-                list(range(len(positions_x))), np.flipud(positions_x)):
-            u3 = self._RS_(
-                z=z,
-                n=n,
-                matrix=False,
-                new_field=True,
-                fast=fast,
-                kind=kind,
-                xout=xi,
-                verbose=verbose)
+        for i, xi in zip(list(range(len(positions_x))),
+                         np.flipud(positions_x)):
+            u3 = self._RS_(z=z,
+                           n=n,
+                           matrix=False,
+                           new_field=True,
+                           fast=fast,
+                           kind=kind,
+                           xout=xi,
+                           verbose=verbose)
             xshape = slice(i * num_pixels, (i + 1) * num_pixels)
             u_field[xshape] = u3.u
             qualities[i] = u3.quality
