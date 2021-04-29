@@ -33,7 +33,6 @@ The magnitude is related to microns: `micron = 1.`
     * roughness, circle_rough, ring_rough, fresnel_lens_rough,
 """
 
-
 import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
@@ -66,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -206,7 +204,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     # __MASCARAS PROPIAMENTE DICHAS____________________________________________
 
-    def extrude_mask_x(self, mask_X, y0=None, y1=None, kind='unique', normalize=None):
+    def extrude_mask_x(self,
+                       mask_X,
+                       y0=None,
+                       y1=None,
+                       kind='unique',
+                       normalize=None):
         """
         Converts a Scalar_mask_X in volumetric between z0 and z1 by growing between these two planes
         Parameters:
@@ -537,8 +540,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
         """
         # Definicion de la slit
-        xmin = - size / 2
-        xmax = + size / 2
+        xmin = -size / 2
+        xmax = +size / 2
 
         # Rotacion de la slit
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
@@ -591,10 +594,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
 
         # Definicion del square/rectangle
-        xmin = - sizex / 2
-        xmax = + sizex / 2
-        ymin = - sizey / 2
-        ymax = + sizey / 2
+        xmin = -sizex / 2
+        xmax = +sizex / 2
+        ymin = -sizey / 2
+        ymax = +sizey / 2
 
         # Rotacion del square/rectangle
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
@@ -809,10 +812,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                      ((Xrot - x0) * sin(angle_wedge_x)) +
                      (Yrot - y0) * sin(angle_wedge_y))
 
-    def prism(self,
-              r0,
-              angle_wedge,
-              angle=0 * degrees):
+    def prism(self, r0, angle_wedge, angle=0 * degrees):
         """prism which produces a certain angle
 
         Parameters:
@@ -925,7 +925,13 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t2.u * t1
 
-    def axicon(self, r0, radius, angle, refraction_index=1.5, off_axis_angle=0 * degrees, reflective=False):
+    def axicon(self,
+               r0,
+               radius,
+               angle,
+               refraction_index=1.5,
+               off_axis_angle=0 * degrees,
+               reflective=False):
         """Axicon,
 
         Parameters:
@@ -1226,12 +1232,13 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def laguerre_gauss_spiral(self, r0, kind, l, w0, z):
+    def laguerre_gauss_spiral(self, r0, kind, n, l, w0, z):
         """laguerre_gauss spiral
 
         Parameters:
             r0 (float, float): (x0,y0) - center of laguerre_gauss_spiral
             kind (str): 'amplitude' or 'phase'
+            n (int): of spiral
             l (int): power of spiral
             w0 (float): width of spiral
             z (float): propagation distance
@@ -1244,7 +1251,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                                   y=self.y,
                                   wavelength=self.wavelength)
         # Haz de Laguerre
-        u_ilum.laguerre_beam(p=0, l=l, r0=r0, w0=w0, z=z)
+        u_ilum.laguerre_beam(n=4, l=l, r0=r0, w0=w0, z=z)
 
         # Se define el length de la espiral
         length = (self.x.max() - self.x[0]) / 2
@@ -1320,9 +1327,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
         # Definicion de la sinusoidal
-        self.u = amp_min + (amp_max -
-                            amp_min) * (1 + sin(2 * pi *
-                                                (Xrot) / period)) / 2
+        self.u = amp_min + (amp_max - amp_min) * (1 + sin(2 * pi *
+                                                          (Xrot) / period)) / 2
 
     def sine_edge_grating(self,
                           r0=(0 * um, 0 * um),
@@ -1448,21 +1454,21 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = exp(1j * phase)
 
     def grating_2D(self,
+                   r0,
                    period,
                    amin=0,
                    amax=1.,
-                   phase=0,
-                   x0=0,
+                   phase=0 * pi / 2,
                    fill_factor=0.5,
                    angle=0 * degrees):
         """2D binary grating
 
          Parameters:
+            r0 (float, r0):  initial position
             period (float): period of the grating
             amin (float): minimum amplitude
             amax (float): maximum amplitude
             phase (float): max phase shift in phase gratings
-            x0 (float):  phase shift
             fill_factor (float): fill_factor
             angle (float): angle of the grating in radians
 
@@ -1472,29 +1478,29 @@ class Scalar_mask_XY(Scalar_field_XY):
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         # Red horizontal
-        t1.binary_grating(period, amin, amax, phase, x0, fill_factor, angle)
+        t1.binary_grating(period, amin, amax, phase, r0[0], fill_factor, angle)
         # Red vertical
-        t2.binary_grating(period, amin, amax, phase, x0, fill_factor,
+        t2.binary_grating(period, amin, amax, phase, r0[1], fill_factor,
                           angle + 90. * degrees)
         # Red binaria
         self.u = t1.u * t2.u
 
     def grating_2D_chess(self,
-                         period=40 * um,
+                         r0,
+                         period,
                          amin=0,
                          amax=1,
                          phase=0 * pi / 2,
-                         x0=0,
-                         fill_factor=0.75,
+                         fill_factor=0.5,
                          angle=0 * degrees):
         """2D binary grating as chess
 
          Parameters:
+            r0 (float, r0):  initial position
             period (float): period of the grating
             amin (float): minimum amplitude
             amax (float): maximum amplitude
             phase (float): max phase shift in phase gratings
-            x0 (float):  phase shift
             fill_factor (float): fill_factor
             angle (float): angle of the grating in radians
 
@@ -1504,8 +1510,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t1.binary_grating(period, amin, amax, phase, x0, fill_factor, angle)
-        t2.binary_grating(period, amin, amax, phase, x0, fill_factor,
+        t1.binary_grating(period, amin, amax, phase, r0[0], fill_factor, angle)
+        t2.binary_grating(period, amin, amax, phase, r0[1], fill_factor,
                           angle + 90. * degrees)
         u = np.logical_xor(t1.u, t2.u)
         self.u = u.astype(float)
@@ -1708,10 +1714,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
         u = np.zeros_like(self.X)
-        X_sin1 = + size / 2 + amplitude1 * np.sin(
-            2 * np.pi * Yrot / period1)
-        X_sin2 = - size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot /
-                                                  period2 + phase)
+        X_sin1 = +size / 2 + amplitude1 * np.sin(2 * np.pi * Yrot / period1)
+        X_sin2 = -size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot / period2 +
+                                                 phase)
         ipasa_1 = (X_sin1 > Xrot) & (X_sin2 < Xrot)
         u[ipasa_1] = 1
         self.u = u

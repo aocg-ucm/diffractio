@@ -61,7 +61,6 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
@@ -79,8 +78,9 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float): constant value for phase shift
         """
         k = 2 * pi / self.wavelength
-        self.u = A * exp(1.j * k * (self.X * sin(theta) * sin(phi) + self.Y *
-                                    cos(theta) * sin(phi)) + z0 * cos(phi))
+        self.u = A * exp(1.j * k *
+                         (self.X * sin(theta) * sin(phi) +
+                          self.Y * cos(theta) * sin(phi)) + z0 * cos(phi))
 
     def gauss_beam(self,
                    r0,
@@ -129,8 +129,8 @@ class Scalar_source_XY(Scalar_field_XY):
                                      (self.Y - y0)**2 / (wy**2))
         phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi) +
                                 self.Y * cos(theta) * sin(phi)))  # rotation
-        phase2 = exp(
-            1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) / (2 * R)))
+        phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
+                           (2 * R)))
 
         self.u = amplitude * phase1 * phase2
 
@@ -185,12 +185,19 @@ class Scalar_source_XY(Scalar_field_XY):
 
         x0, y0 = r0
         # Definicion del vortice
-        amplitude = (
-            (self.X - x0) + 1.j * sign(m) * (self.Y - y0))**np.abs(m) * exp(-(
-                (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
+        amplitude = ((self.X - x0) + 1.j * sign(m) *
+                     (self.Y - y0))**np.abs(m) * exp(-(
+                         (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
         self.u = amplitude
 
-    def hermite_gauss_beam(self, A=1, r0=(0, 0), w0=(1 * um, 1 * um), n=0, m=0, z=0, z0=(0, 0)):
+    def hermite_gauss_beam(self,
+                           A=1,
+                           r0=(0, 0),
+                           w0=(1 * um, 1 * um),
+                           n=0,
+                           m=0,
+                           z=0,
+                           z0=(0, 0)):
         """Hermite Gauss beam.
 
         Parameters:
@@ -234,16 +241,17 @@ class Scalar_source_XY(Scalar_field_XY):
             Ry = zy + zRy**2 / zy
 
         # Calculate amplitude
-        A = A * sqrt(2**(1 - n - m) / (pi * factorial(n) *
-                                       factorial(m))) * sqrt(w0x * w0y / (wx * wy))
+        A = A * sqrt(2**(1 - n - m) /
+                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y /
+                                                                (wx * wy))
         Ex = eval_hermite(n, r2 * X / wx) * exp(-X**2 / wx**2)
         Ey = eval_hermite(m, r2 * Y / wy) * exp(-Y**2 / wy**2)
 
         # Calculate phase
         Ef = exp(1j * k * (X**2 / Rx + Y**2 / Ry)) * exp(
             -1j * (0.5 + n) * np.arctan(zx / zRx)) * exp(
-                -1j * (0.5 + m) * np.arctan(zy / zRy)) * exp(
-                    1j * k * (zx + zy) / 2)
+                -1j * (0.5 + m) * np.arctan(zy / zRy)) * exp(1j * k *
+                                                             (zx + zy) / 2)
 
         self.u = A * Ex * Ey * Ef
 
@@ -265,12 +273,12 @@ class Scalar_source_XY(Scalar_field_XY):
         intesity = zeros(self.X.shape, dtype=np.float)
 
         for s in range(len(m)):
-            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) * exp(
-                -pi * (self.X - x0)**2 / w0**2))**2
-            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) * exp(
-                -pi * (self.Y - y0)**2 / w0**2))**2
-            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) * sqrt(
-                2**n[s] * factorial(n[s])))
+            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) *
+                  exp(-pi * (self.X - x0)**2 / w0**2))**2
+            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) *
+                  exp(-pi * (self.Y - y0)**2 / w0**2))**2
+            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) *
+                           sqrt(2**n[s] * factorial(n[s])))
 
             intesity = intesity + f * c_mn[s] * Ix * Iy
 
@@ -313,8 +321,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         # Calculate amplitude
         A = A * w0 / w
-        Er = laguerre_polynomial_nk(
-            2 * Ro2 / w**2, n, l) * exp(-Ro2 / w**2) * (r2 * Ro / w)**l
+        Er = laguerre_polynomial_nk(2 * Ro2 / w**2, n, l) * exp(
+            -Ro2 / w**2) * (r2 * Ro / w)**l
 
         # Calculate phase
         Ef = exp(1j * (k * Ro2 / R + l * Th)) * \
@@ -349,8 +357,8 @@ class Scalar_source_XY(Scalar_field_XY):
         THETA = arctan2(self.X, self.Y)
 
         # Definicion de los terminos producto
-        t1 = exp(-1.j * k * R2 / (2 * Rz) - R2 / wz**2 +
-                 1.j * (2 * p + l + 1) * f_gouy)
+        t1 = exp(-1.j * k * R2 / (2 * Rz) - R2 / wz**2 + 1.j *
+                 (2 * p + l + 1) * f_gouy)
         t2 = exp(-1.j * l * THETA)
         t3 = ((-1)**p) * (R2 / wz**2)**(l / 2)
         t4 = laguerre_polynomial_nk(2 * R2 / wz**2, p, l)
@@ -447,8 +455,8 @@ class Scalar_source_XY(Scalar_field_XY):
         for p in params:
             self.u = self.u + p['A'] * exp(
                 1.j * k *
-                (self.X * sin(p['theta']) * sin(p['phi']) + self.Y * cos(
-                    p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
+                (self.X * sin(p['theta']) * sin(p['phi']) + self.Y *
+                 cos(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle, z0=0):
         """Several paralel plane waves
@@ -505,8 +513,12 @@ class Scalar_source_XY(Scalar_field_XY):
             xi = x_central - x_range / 2 + dist_x * (i + 0.5)
             for j in range(num_beams_y):
                 yi = y_central - y_range / 2 + dist_y * (j + 0.5)
-                self.gauss_beam(
-                    r0=(xi, yi), w0=w0, z0=z0, A=A, theta=theta, phi=phi)
+                self.gauss_beam(r0=(xi, yi),
+                                w0=w0,
+                                z0=z0,
+                                A=A,
+                                theta=theta,
+                                phi=phi)
                 t = t + self.u
         self.u = t
 
@@ -532,6 +544,10 @@ class Scalar_source_XY(Scalar_field_XY):
             thetai = np.pi / 2 - max_angle_x / 2 + angle_x * (i + 0.5)
             for j in range(num_beams_y):
                 phii = np.pi / 2 - max_angle_y / 2 + angle_y * (j + 0.5)
-                self.gauss_beam(
-                    r0=r0, w0=w0, z0=z0, A=A, theta=thetai, phi=phii)
+                self.gauss_beam(r0=r0,
+                                w0=w0,
+                                z0=z0,
+                                A=A,
+                                theta=thetai,
+                                phi=phii)
                 t = t + self.u
