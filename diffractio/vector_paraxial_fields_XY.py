@@ -203,7 +203,7 @@ class Vector_paraxial_field_XY(object):
             return self.polarization_ellipse(pol_state=None, matrix=True)
 
         else:
-            print("The parameter {} in .get(kind='') is wrong".format(kind))
+            print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
@@ -214,7 +214,7 @@ class Vector_paraxial_field_XY(object):
         self.Ex = self.Ex * u.u
         self.Ey = self.Ey * u.u
 
-    def RS(self, z=10 * mm, n=1, new_field=True):
+    def RS(self, z=10 * mm, n=1, new_field=True, amplification=(1, 1), verbose=False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
 
@@ -224,6 +224,7 @@ class Vector_paraxial_field_XY(object):
             n (float): refraction index
             new_field (bool): if False the computation goes to self.u
                               if True a new instance is produced
+            amplification (int, int): number of frames in x and y direction
 
             verbose (bool): if True it writes to shell. Not implemented yet
 
@@ -246,18 +247,24 @@ class Vector_paraxial_field_XY(object):
         e0x, e0y = self.get()
 
         # estas son las components justo en la posicion pedida
-        Ex = e0x.RS(z=z, n=n, new_field=True, kind='z')
-        Ey = e0y.RS(z=z, n=n, new_field=True, kind='z')
+        Ex = e0x.RS(z=z, n=n, new_field=True, kind='z',
+                    amplification=amplification)
+        Ey = e0y.RS(z=z, n=n, new_field=True, kind='z',
+                    amplification=amplification, verbose=verbose)
 
         if new_field is True:
-            EM = Vector_paraxial_field_XY(self.x, self.y, self.wavelength)
+            EM = Vector_paraxial_field_XY(Ex.x, Ex.y, self.wavelength)
             EM.Ex = Ex.u
             EM.Ey = Ey.u
+            EM.x = Ex.x
+            EM.y = Ex.y
             return EM
 
         else:
             self.Ex = Ex.u
             self.Ey = Ey.u
+            self.x = Ex.x
+            self.y = Ex.y
 
     def polarization_states(self, matrix=False):
         """returns the Stokes parameters
@@ -503,7 +510,7 @@ class Vector_paraxial_field_XY(object):
                 plt.savefig(
                     filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
 
-            # return id_fig
+            return id_fig
 
     def __draw_intensity__(self,
                            logarithm,
@@ -792,7 +799,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         percentaje_intensity = params_drawing['percentaje_intensity']
-        intensity_max = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
+        intensity_max = (np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
 
         Dx = self.x[-1] - self.x[0]
         Dy = self.y[-1] - self.y[0]

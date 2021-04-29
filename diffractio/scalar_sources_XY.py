@@ -255,34 +255,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Ex * Ey * Ef
 
-    def hermite_gauss_beam_depercated(self, A, r0, w0, m, n, c_mn):
-        """Hermite Gauss beam.
-
-        Parameters:
-            A (float): amplitude of the Hermite Gauss beam
-            r0 (float, float): (x,y) position of source
-            w0 (float): width of the beam
-            m (list): list of integers with orders
-            n (list): list of integers with orders
-            c_mn (list): list of integers with coefficients
-
-        Example:
-             hermite_gauss_beam(A=1, r0, w0=100 * um, m=[1, 3, 3, 5, 5, 5], n=[1, 1, 3, 1, 3, 5], c_mn=[.25, 1, 1, 1, 1, 1])
-        """
-        x0, y0 = r0
-        intesity = zeros(self.X.shape, dtype=np.float)
-
-        for s in range(len(m)):
-            Ix = (hermite(m[s])(sqrt(2 * pi) * (self.X - x0) / w0) *
-                  exp(-pi * (self.X - x0)**2 / w0**2))**2
-            Iy = (hermite(n[s])(sqrt(2 * pi) * (self.Y - y0) / w0) *
-                  exp(-pi * (self.Y - y0)**2 / w0**2))**2
-            f = sqrt(2) / (w0 * sqrt(2**m[s] * factorial(m[s])) *
-                           sqrt(2**n[s] * factorial(n[s])))
-
-            intesity = intesity + f * c_mn[s] * Ix * Iy
-
-        self.u = A * intesity
+    
 
     def laguerre_beam(self, A=1, r0=(0, 0), w0=1 * um, n=0, l=0, z=0, z0=0):
         """Laguerre beam.
@@ -330,40 +303,6 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Er * Ef
 
-    def laguerre_beam_depercated(self, r0, w0, z, p, l):
-        """Laguerre beam.
-
-        Parameters:
-            r0 (float, float): (x,y) position of source
-            w0 (float): width of the vortex beam
-            z (float): distance
-            p (int): order of the laguerre_beam
-            l (int): order of the laguerre_beam
-
-        Example:
-            laguerre_beam(r0=(0 * um, 0 * um),  w0=100 * um,  z=0.01 * um,  p=0, l=0)
-        """
-        # Vector de onda
-        k = 2 * pi / self.wavelength
-        # rango de Rayleigh
-        zR = pi * w0**2 / self.wavelength
-
-        # Definicion de parametros
-        Rz = z * sqrt(1 + (zR / z)**2)
-        wz = w0 * sqrt(1 + (z / zR)**2)
-        f_gouy = k * z - arctan2(z, zR)
-
-        R2 = (self.X - r0[0])**2 + (self.Y - r0[1])**2
-        THETA = arctan2(self.X, self.Y)
-
-        # Definicion de los terminos producto
-        t1 = exp(-1.j * k * R2 / (2 * Rz) - R2 / wz**2 + 1.j *
-                 (2 * p + l + 1) * f_gouy)
-        t2 = exp(-1.j * l * THETA)
-        t3 = ((-1)**p) * (R2 / wz**2)**(l / 2)
-        t4 = laguerre_polynomial_nk(2 * R2 / wz**2, p, l)
-        # El field es el producto t1*t2*t3*t4
-        self.u = t1 * t2 * t3 * t4
 
     def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
         """Zernike beam.

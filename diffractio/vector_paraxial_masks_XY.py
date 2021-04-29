@@ -74,7 +74,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         #     m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
         #     m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
 
-        elif other._type == 'Vector_paraxial_mask_XY':
+        elif other._type in('Vector_paraxial_mask_XY','Vector_paraxial_field_XY'):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
 
             m3.M00 = other.M00 * self.M00 + other.M01 * self.M10

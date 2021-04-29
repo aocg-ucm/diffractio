@@ -1454,8 +1454,7 @@ class Scalar_field_XYZ(object):
                         print(
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}".format(
                                 i_prog, n_frames, self.z[i_prog] / mm,
-                                intensity.max(), intensity.min()),
-                            end='\r')
+                                intensity.max(), intensity.min()), end='\r')
                     else:
                         print((
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
