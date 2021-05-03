@@ -35,8 +35,8 @@ The magnitude is related to microns: `micron = 1.`
     * draw_XYZ
     * draw_XY
     * draw_XZ
-    * drawVolumen3D
-    * draw_refraction_index3D
+    * draw_volume
+    * draw_refraction_index
     * video
 
 """
@@ -66,12 +66,12 @@ from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
 
 try:
     from diffractio.utils_slicer import slicerLM
-except:
+except ImportError:
     print("slicerLM is not loaded.")
 
 try:
     from mayavi import mlab
-except:
+except ImportError:
     print("mayavi.mlab is not imported.")
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
@@ -301,7 +301,28 @@ class Scalar_field_XYZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-    def save_data(self, filename, method, add_name=''):
+    def save_data(self, filename, add_name='', description='', verbose=False):
+        """Common save data function to be used in all the modules.
+        The methods included are: npz, matlab
+
+
+        Parameters:
+            filename (str): filename
+            add_name= (str): sufix to the name, if 'date' includes a date
+            description (str): text to be stored in the dictionary to save.
+            verbose (bool): If verbose prints filename.
+
+        Returns:
+            (str): filename. If False, file could not be saved.
+        """
+        try:
+            final_filename = save_data_common(self,
+                                              filename, add_name, description, verbose)
+            return final_filename
+        except:
+            return False
+
+    def save_data_depracted(self, filename, method, add_name=''):
         """Save data of Scalar_field_XZ class to a dictionary.
 
         Parameters:
@@ -317,7 +338,27 @@ class Scalar_field_XYZ(object):
         except:
             return False
 
-    def load_data(self, filename, method, verbose=False):
+    def load_data(self, filename, verbose=False):
+        """Load data from a file to a Scalar_field_XZ.
+            The methods included are: npz, matlab
+
+
+        Parameters:
+            filename (str): filename
+            verbose (bool): shows data process by screen
+        """
+        dict0 = load_data_common(self, filename, verbose)
+
+        if verbose:
+            print(dict0.keys())
+
+        if dict0 is not None:
+            if isinstance(dict0, dict):
+                self.__dict__ = dict0
+            else:
+                raise Exception('no dictionary in load_data')
+
+    def load_data_deprecated(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
 
         Parameters:
@@ -1267,7 +1308,7 @@ class Scalar_field_XYZ(object):
 
         slicerLM(drawing)
 
-    def drawVolumen3D(self, logarithm=0, normalize='', maxintensity=None):
+    def draw_volume(self, logarithm=0, normalize='', maxintensity=None):
         """Draws  XYZ field with mlab
 
         Parameters:
@@ -1315,7 +1356,7 @@ class Scalar_field_XYZ(object):
         print("Close the window to continue.")
         mlab.show()
 
-    def draw_refraction_index3D(self, kind='real'):
+    def draw_refraction_index(self, kind='real'):
         """Draws XYZ refraction index with slicer
 
         Parameters:

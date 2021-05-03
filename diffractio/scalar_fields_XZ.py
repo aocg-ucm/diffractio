@@ -408,7 +408,28 @@ class Scalar_field_XZ(object):
         self.n = n
         return n
 
-    def save_data(self, filename='', method='hickle', add_name=''):
+    def save_data(self, filename, add_name='', description='', verbose=False):
+        """Common save data function to be used in all the modules.
+        The methods included are: npz, matlab
+
+
+        Parameters:
+            filename (str): filename
+            add_name= (str): sufix to the name, if 'date' includes a date
+            description (str): text to be stored in the dictionary to save.
+            verbose (bool): If verbose prints filename.
+
+        Returns:
+            (str): filename. If False, file could not be saved.
+        """
+        try:
+            final_filename = save_data_common(self,
+                                              filename, add_name, description, verbose)
+            return final_filename
+        except:
+            return False
+
+    def save_data_deprecated(self, filename='', method='hickle', add_name=''):
         """Save data of Scalar_field_XZ class to a dictionary.
 
         Parameters:
@@ -424,7 +445,28 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    def load_data(self, filename, method, verbose=False):
+    def load_data(self, filename, verbose=False):
+        """Load data from a file to a Scalar_field_XZ.
+            The methods included are: npz, matlab
+
+
+        Parameters:
+            filename (str): filename
+            verbose (bool): shows data process by screen
+        """
+        dict0 = load_data_common(self, filename, verbose)
+
+        if dict0 is not None:
+            if isinstance(dict0, dict):
+                self.__dict__ = dict0
+
+                if verbose:
+                    print(dict0.keys())
+
+            else:
+                raise Exception('no dictionary in load_data')
+
+    def load_data_deprecated(self, filename, method, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
 
         Parameters:

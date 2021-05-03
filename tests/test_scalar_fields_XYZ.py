@@ -45,14 +45,14 @@ class Test_Scalar_fields_XYZ(object):
         t1 = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
 
         t1.u = np.ones_like(t1.u)
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
 
         save_figure_test(newpath, func_name, add_name='_save')
         del t1
 
         t2 = Scalar_field_XYZ(x=None, y=None, z=None, wavelength=None)
         t2.load_data(
-            filename=filename, method='savez_compressed', verbose=True)
+            filename=filename+'.npz', verbose=True)
 
         save_figure_test(newpath, func_name, add_name='_load')
         assert True
@@ -107,14 +107,14 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.info = """info:
             test_other(self):
             """
-        filename = uxyz.save_data(filename=filename, method='savez_compressed')
+        filename = uxyz.save_data(filename=filename+'.npz')
         del uxyz
 
         # u2 = scalar_fields_XYZ(None, None, None)
         # u2.load_data(
-        #     filename=filename, method='savez_compressed', verbose=True)
+        #     filename=filename+'.npz', verbose=True)
         # u2.draw_XYZ(logarithm=False, normalize='maximum')
-        # u2.save_data(filename=filename, method='savez_compressed')
+        # u2.save_data(filename=filename+'.npz')
         # save_figure_test(newpath, func_name)
         assert True
 
@@ -147,8 +147,8 @@ class Test_Scalar_fields_XYZ(object):
             refraction_index=1.5,
             eje=(0, 0, 0),
             angle=0 * degrees)
-        # uxyz.draw_refraction_index3D()
-        uxyz.save_data(filename=filename, method='savez_compressed')
+        # uxyz.draw_refraction_index()
+        uxyz.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -176,8 +176,8 @@ class Test_Scalar_fields_XYZ(object):
 
         uxyz.RS(verbose=True, num_processors=4)
         uxyz.draw_XYZ(
-            kind='intensity', logarithm=False, normalize='maximum', draw=True)
-        uxyz.save_data(filename=filename, method='savez_compressed')
+            kind='intensity', logarithm=False, normalize='maximum')
+        uxyz.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -222,7 +222,7 @@ class Test_Scalar_fields_XYZ(object):
             logarithm=True,
             filename='{}_c{}'.format(newpath, func_name))
         # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
-        # uxyz.drawVolumen3D(logarithm=1, normalize='maximum', maxintensity=None)
+        # uxyz.draw_volume(logarithm=1, normalize='maximum', maxintensity=None)
 
         return uxyz
 
@@ -264,9 +264,9 @@ class Test_Scalar_fields_XYZ(object):
             logarithm=True,
             filename='{}_c{}'.format(newpath, func_name))
         # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
-        # uxyz.drawVolumen3D(logarithm=1, normalize='maximum', maxintensity=None)
+        # uxyz.draw_volume(logarithm=1, normalize='maximum', maxintensity=None)
         uxyz.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
 
         uxyz.video(filename=filename + '.avi', kind='intensity', frame=True)
 
@@ -315,13 +315,13 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.BPM()
 
         uxyz.draw_XYZ(logarithm=True, normalize='maximum')
-        uxyz.draw_refraction_index3D()
+        uxyz.draw_refraction_index()
         uxyz.draw_XZ(
             y0=0.01, logarithm=True, normalize='false', draw_borders=False)
 
-        # uxyz.drawVolumen3D(logarithm=True, normalize='maximum')
+        # uxyz.draw_volume(logarithm=True, normalize='maximum')
 
-        uxyz.save_data(filename=filename, method='savez_compressed')
+        uxyz.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
         return uxyz
@@ -357,7 +357,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.BPM()
 
         uxyz.video(filename=filename + '.avi', kind='intensity', frame=False)
-        uxyz.save_data(filename=filename, method='savez_compressed')
+        uxyz.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -392,10 +392,10 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(u2)
         uxyz.xy_2_xyz(fields_XY, z0)
 
-        # uxyz.drawVolumen3D()
+        # uxyz.draw_volume()
 
         uxyz.video(filename=filename + '.avi', kind='intensity', frame=True)
-        u3.save_data(filename=filename, method='savez_compressed')
+        u3.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -431,7 +431,7 @@ class Test_Scalar_fields_XYZ(object):
             refraction_index=2,
             angles=(0, 0, 0))
 
-        # uxyz.draw_refraction_index3D()
+        # uxyz.draw_refraction_index()
         uxyz.draw_XYZ()
         uxyz2 = uxyz.cut_resample(
             x_limits=(-25 * um, 25 * um),
@@ -442,7 +442,7 @@ class Test_Scalar_fields_XYZ(object):
             interp_kind=(3, 1))
 
         uxyz2.draw_XYZ()
-        # uxyz2.draw_refraction_index3D()
-        uxyz2.save_data(filename=filename, method='savez_compressed')
+        # uxyz2.draw_refraction_index()
+        uxyz2.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True

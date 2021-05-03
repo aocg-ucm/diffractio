@@ -51,7 +51,7 @@ class Test_Scalar_fields_X(object):
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.ones_like(x, dtype=complex)
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
 
         solution = np.zeros_like(t1.u)
         t1.clear_field()
@@ -73,10 +73,10 @@ class Test_Scalar_fields_X(object):
         t1.draw()
 
         save_figure_test(newpath, func_name, add_name='_saved')
-        t1.save_data(filename=filename, method='savez')
+        t1.save_data(filename=filename+'.npz')
 
         t2 = Scalar_field_X(x, wavelength)
-        t2.load_data(filename=filename, method='savez')
+        t2.load_data(filename=filename+'.npz')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_loaded')
 
@@ -93,7 +93,7 @@ class Test_Scalar_fields_X(object):
         t1.u = np.sin(2 * np.pi * x1 / 50)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename)
         save_figure_test(newpath, func_name, add_name='_1')
 
         t2 = t1.cut_resample(
@@ -103,7 +103,7 @@ class Test_Scalar_fields_X(object):
             interp_kind='quadratic')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_2')
-        t2.save_data(filename=filename + '2', method='savez_compressed')
+        t2.save_data(filename=filename + '2'+'.npz')
 
         solution = np.array((512, 1024))
         proposal = np.array((len(t1.u), len(t2.u)))
@@ -129,7 +129,7 @@ class Test_Scalar_fields_X(object):
             t2, x0_mask1=100 * um, clean=False, kind_position='center')
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True, func_name
 
@@ -155,7 +155,7 @@ class Test_Scalar_fields_X(object):
             kind_position='center')
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name, add_name='_1')
 
         assert True, func_name
@@ -188,7 +188,7 @@ class Test_Scalar_fields_X(object):
         print(type_transitions)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
 
         solution = np.linspace(-450 * um, 450 * um, 10)
@@ -219,7 +219,7 @@ class Test_Scalar_fields_X(object):
             verbose=False)
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_1')
-        t2.save_data(filename=filename, method='savez_compressed')
+        t2.save_data(filename=filename+'.npz')
         assert True
 
     def test_ifft(self):
@@ -234,7 +234,7 @@ class Test_Scalar_fields_X(object):
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100)
-        t1.save_data(filename=filename + '_direct', method='savez_compressed')
+        t1.save_data(filename=filename + '_direct'+'.npz')
 
         t2 = t1.fft(
             z=None,
@@ -255,7 +255,7 @@ class Test_Scalar_fields_X(object):
             verbose=False)
         t3.draw()
         save_figure_test(newpath, func_name, add_name='_ifft')
-        t3.save_data(filename=filename + '_ifft', method='savez_compressed')
+        t3.save_data(filename=filename + '_ifft'+'.npz')
 
         assert True
 
@@ -275,7 +275,7 @@ class Test_Scalar_fields_X(object):
 
         u1 = t1.RS(z=2000 * um, new_field=True)
         u1.draw(kind='intensity')
-        u1.save_data(filename=filename + '2', method='savez_compressed')
+        u1.save_data(filename=filename + '2'+'.npz')
 
         save_figure_test(newpath, func_name, add_name='_RS')
 
@@ -297,7 +297,7 @@ class Test_Scalar_fields_X(object):
 
         u1 = t1.RS(z=2000 * um, new_field=True, amplification=3)
         u1.draw(kind='intensity')
-        t1.save_data(filename=filename + '2', method='savez_compressed')
+        t1.save_data(filename=filename + '2'+'.npz')
 
         save_figure_test(newpath, func_name, add_name='_RS*3')
 
@@ -319,7 +319,7 @@ class Test_Scalar_fields_X(object):
         u0.u[np.bitwise_and(x > -4 * um, x < 4 * um)] = 1
         u0.draw(kind='intensity')
         save_figure_test(newpath, func_name, add_name='_mask')
-        u0.save_data(filename=filename + '_mask', method='savez_compressed')
+        u0.save_data(filename=filename + '_mask'+'.npz')
 
         u0.MTF(kind='mm', has_draw=True)
         plt.xlim(-250, 250)
@@ -352,7 +352,7 @@ class Test_Scalar_fields_X(object):
         save_figure_test(newpath, func_name, add_name='_fill')
         t1.draw(kind='field')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name, add_name='_field')
 
         assert True

@@ -89,7 +89,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                         refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
         """
         if isinstance(radius, (float, int, complex)):
-            radius = (radius[0], radius[0], radius[0])
+            radius = (radius, radius, radius)
 
         x0, y0, z0 = r0
         radiusx, radiusy, radiusz = radius

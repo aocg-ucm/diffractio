@@ -14,10 +14,11 @@
 """ Common functions to classes """
 
 import datetime
+import os
 
-import hickle
 import numpy as np
 import scipy as sp
+from scipy.io import loadmat, savemat
 
 
 def several_propagations(iluminacion, masks, distances):
@@ -54,7 +55,46 @@ def get_date():
     return date
 
 
-def save_data_common(cls, filename='', method='', description=''):
+def save_data_common(cls, filename, add_name='', description='', verbose=False):
+    """Common save data function to be used in all the modules.
+    The methods included are: npz, matlab
+
+
+    Parameters:
+        filename (str): filename
+        add_name= (str): sufix to the name, if 'date' includes a date
+        description (str): text to be stored in the dictionary to save.
+        verbose (bool): If verbose prints filename.
+
+    Returns:
+        (str): filename. If False, file could not be saved.
+    """
+
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d_%H_%M_%S")
+
+    if add_name == 'date':
+        add_name = "_" + date
+    extension = filename.split('.')[-1]
+    file = filename.split('.')[0]
+    final_filename = file + add_name + '.' + extension
+
+    if verbose:
+        print(final_filename)
+
+    cls.__dict__['date'] = date
+    cls.__dict__['description'] = description
+
+    if extension == 'npz':
+        np.savez_compressed(file=final_filename, dict=cls.__dict__)
+
+    elif extension == 'mat':
+        savemat(final_filename, cls.__dict__)
+
+    return final_filename
+
+
+def save_data_common_deprecated(cls, filename='', method='', description=''):
     """Common save data function to be used in all the modules.
 
     Parameters:
@@ -88,7 +128,49 @@ def save_data_common(cls, filename='', method='', description=''):
     #         f.attrs['date'] = date
 
 
-def load_data_common(cls, filename, method, verbose=False):
+def load_data_common(cls, filename, verbose=False):
+    """Common load data function to be used in all the modules.
+        The methods included are: npz, matlab
+
+
+    Parameters:
+        cls (class): class X, XY, XZ, XYZ, etc..
+        filename (str): filename
+        verbose (bool): If True prints data
+    """
+    def print_data_dict(dict0):
+        for k, v in dict0.items():
+            print("{:12} = {}".format(k, v))
+        print("\nnumber of data = {}".format(len(dict0['x'])))
+
+    extension = filename.split('.')[-1]
+
+    try:
+        if extension in ('npy', 'npz'):
+            npzfile = np.load(filename, allow_pickle=True)
+            dict0 = npzfile['dict'].tolist()
+
+        elif extension == 'mat':
+            dict0 = loadmat(file_name=filename, mdict=cls.__dict__)
+
+        else:
+            print("extension not supported")
+
+        if verbose is True:
+            print(dict0.keys())
+
+        return dict0
+
+    except IOError:
+        print('could not open {}'.format(filename))
+        return None
+
+    # with h5py.File('file.h5', 'r', libver='latest') as f:
+    #     x_read = f['dict']['X'][:]  # [:] syntax extracts numpy array into memory
+    #     y_read = f['dict']['Y'][:]
+
+
+def load_data_common_deprecated(cls, filename, method, verbose=False):
     """Common load data function to be used in all the modules.
 
     Parameters:

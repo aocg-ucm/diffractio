@@ -68,6 +68,9 @@ Alpha state
 * Improved documentation, tutorial and examples of vector_paraxial
 * Scalar_mask_XY: dots
 * Scalar_mask_X: dots
+* change save_data in all classes to simplify
+* Changes in docs to include WPM
+* Execution tests
 
 
 (% ejecution)

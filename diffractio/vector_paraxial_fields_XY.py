@@ -115,39 +115,45 @@ class Vector_paraxial_field_XY(object):
 
         return EM
 
-    def save_data(self, filename='', method='hickle', add_name=''):
-        """Save data of Scalar_field_X class to a dictionary.
+    def save_data(self, filename, add_name='', description='', verbose=False):
+        """Common save data function to be used in all the modules.
+        The methods included are: npz, matlab
+
 
         Parameters:
             filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
+            add_name= (str): sufix to the name, if 'date' includes a date
+            description (str): text to be stored in the dictionary to save.
+            verbose (bool): If verbose prints filename.
 
         Returns:
-            (bool): True if saving is performed, else False.
+            (str): filename. If False, file could not be saved.
         """
         try:
-            save_data_common(self, filename + add_name, method)
-            return True
+            final_filename = save_data_common(self,
+                                              filename, add_name, description, verbose)
+            return final_filename
         except:
             return False
 
-    def load_data(self, filename, method, verbose=False):
-        """Load data from a file to a Scalar_field_X.
+    def load_data(self, filename, verbose=False):
+        """Load data from a file to a Vector_paraxial_field_XY.
+            The methods included are: npz, matlab
 
         Parameters:
             filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
             verbose (bool): shows data process by screen
         """
-        dict0 = load_data_common(self, filename, method, verbose)
+        dict0 = load_data_common(self, filename)
 
-        if verbose:
-            print(dict0)
         if dict0 is not None:
             if isinstance(dict0, dict):
                 self.__dict__ = dict0
             else:
                 raise Exception('no dictionary in load_data')
+
+        if verbose is True:
+            print(dict0.keys())
 
     def clear(self):
         """simple - removes the field: self.E=0 """

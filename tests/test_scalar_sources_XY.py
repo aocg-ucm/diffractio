@@ -50,7 +50,7 @@ class Test_Scalar_sources_XY(object):
         # draw y guardar
         u.draw(kind='phase')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -82,7 +82,7 @@ class Test_Scalar_sources_XY(object):
         # draw y guardar
         u.draw(kind='field')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -109,7 +109,7 @@ class Test_Scalar_sources_XY(object):
         # draw la onda esferica
         u.draw(kind='field', normalize='maximum')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -151,7 +151,7 @@ class Test_Scalar_sources_XY(object):
         # draw la onda esferica
         u_salida.draw(kind='field', normalize='maximum')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -181,16 +181,14 @@ class Test_Scalar_sources_XY(object):
         title = '$m_{vortice}= %d$' % (m)
         u.draw(kind='field', title=title)
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
     def test_vortices(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        """
-        Generación de varios haces de Laguerre
-        """
+
 
         # tamaño de la matrix
         M = 5
@@ -206,11 +204,7 @@ class Test_Scalar_sources_XY(object):
         ID1 = plt.figure(figsize=(10, 4.5))
         plt.suptitle("$Vortices$", fontsize=20)
 
-        # Generación de la clase
-
-        # Doble bucle for para ubicar en el drawing N*K haces de Laguerre
         for m in range(M):
-            # carga del vórtice
             u.vortex_beam(r0=(0 * um, 0 * um), w0=100 * um, m=m)
 
             # carga de los drawings
@@ -226,7 +220,7 @@ class Test_Scalar_sources_XY(object):
             h2 = plt.imshow(np.angle(u.u))
             h2.set_cmap("seismic")
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -252,21 +246,21 @@ class Test_Scalar_sources_XY(object):
 
         # carga del haz de Laguerre
         u.laguerre_beam(
-            p=N, l=K, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
+            n=N, l=K, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
 
         # drawing
         title = r'$n=%d, k=%d$' % (N, K)
         u.draw(kind='field', title=title)
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
-    def test_laguerre(self):
+    def test_num_data(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
         """
-        Generación de varios haces de Laguerre
+        Generación de varios haces de num_data = 256
         """
 
         # tamaño de la matrix
@@ -288,15 +282,11 @@ class Test_Scalar_sources_XY(object):
 
         # Generación de la clase
 
-        # Doble bucle for para ubicar en el drawing N*K haces de Laguerre
         for n in range(N + 1):
             for k in range(K + 1):
-
-                # carga del haz de Laguerre
                 u.laguerre_beam(
-                    p=n, l=k, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
+                    n=n, l=k, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
 
-                # carga de los drawings
                 title = "(%d,%d)" % (n, k)
                 plt.figure(ID1.number)
                 plt.subplot(N + 1, K + 1, (N + 1) * (k) + n + 1)
@@ -315,7 +305,7 @@ class Test_Scalar_sources_XY(object):
         plt.figure(ID1.number)
         plt.figure(ID2.number)
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -333,10 +323,10 @@ class Test_Scalar_sources_XY(object):
 
         # u.hermite_gauss_beam(I0=1, w=100*um, n = [0,0,1,1,3],     m =[0,1,0,1,3],  c_mn=[1,1,1,1,1])
         u.hermite_gauss_beam(
-            A=1, r0=(0, 0), w0=100 * um, n=[1], m=[1], c_mn=[1])
+            A=1, r0=(0, 0), w0=100 * um, n=1, m=1, z=0, z0=(0,0))
         u.draw(kind='intensity')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -364,7 +354,7 @@ class Test_Scalar_sources_XY(object):
             A=1, r0=(0, 0), radius=length / 2, n=N, m=M, c_nm=c_nm, mask=True)
         u.draw(kind='field')
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -391,13 +381,11 @@ class Test_Scalar_sources_XY(object):
         # Generación de la clase
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
-        # Doble bucle for para ubicar en el drawing N*K haces de Laguerre
         for n in range(0, N + 1):
             pos = 0
             for m in range(-n, n + 1, 2):
                 pos = pos + 1
 
-                # carga del haz de Laguerre
                 u.zernike_beam(
                     A=1,
                     r0=(0, 0),
@@ -416,7 +404,7 @@ class Test_Scalar_sources_XY(object):
                 plt.clim(vmin=-np.pi, vmax=np.pi)
                 h2.set_cmap("seismic")
 
-        u.save_data(filename=filename, method='savez_compressed')
+        u.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -433,7 +421,7 @@ class Test_Scalar_sources_XY(object):
             A=1, num_beams=(5, 5), max_angle=(5 * degrees, 180 * degrees))
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -460,7 +448,7 @@ class Test_Scalar_sources_XY(object):
             phi=0 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -482,7 +470,7 @@ class Test_Scalar_sources_XY(object):
             max_angle=(10 * degrees, 180 * degrees))
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -516,7 +504,7 @@ class Test_Scalar_sources_XY(object):
         u3 = u1 + u2
         u3.draw(kind='intensity', title="$interferencias$")
 
-        u3.save_data(filename=filename, method='savez_compressed')
+        u3.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -573,6 +561,6 @@ class Test_Scalar_sources_XY(object):
 
         u_final.draw(kind='field')
 
-        u_final.save_data(filename=filename, method='savez_compressed')
+        u_final.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True

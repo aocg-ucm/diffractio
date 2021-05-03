@@ -47,7 +47,7 @@ class Test_Scalar_sources_X(object):
     #         print(filename)
     #
     #         u0 = f(inst, *args, **kwargs)
-    #         u0.save_data(filename=filename, method='savez_compressed')
+    #         u0.save_data(filename=filename+'.npz')
     #         save_figure_test(newpath, func_name)
     #         assert True
     #
@@ -65,7 +65,7 @@ class Test_Scalar_sources_X(object):
         u0.plane_wave(theta=1 * degrees, z0=0 * um)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -81,7 +81,7 @@ class Test_Scalar_sources_X(object):
 
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -97,7 +97,7 @@ class Test_Scalar_sources_X(object):
             A=1, x0=0 * um, z0=5 * mm, radius=200 * um, mask=True)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -113,7 +113,7 @@ class Test_Scalar_sources_X(object):
             A=1, x0=0 * um, z0=-5 * mm, radius=200 * um, mask=True)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -129,7 +129,7 @@ class Test_Scalar_sources_X(object):
             A=1, num_beams=5, max_angle=5 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -154,7 +154,7 @@ class Test_Scalar_sources_X(object):
             theta=0 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -175,7 +175,7 @@ class Test_Scalar_sources_X(object):
             max_angle=5 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -198,6 +198,6 @@ class Test_Scalar_sources_X(object):
         u0 = u1 + u2
         u0.draw(kind='intensity')
 
-        u0.save_data(filename=filename, method='savez_compressed')
+        u0.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True

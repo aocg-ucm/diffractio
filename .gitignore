@@ -17,6 +17,14 @@ __pycache__/
 # C extensions
 *.so
 
+# Checkpoints
+*checkpoint.ipynb
+.ipynb_checkpoints/
+
+# Tests
+tests/tests*/
+
+
 # Distribution / packaging
 .Python
 docs/_build/
@@ -36,6 +44,7 @@ distLM/
 *.egg-info/
 .installed.cfg
 *.egg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

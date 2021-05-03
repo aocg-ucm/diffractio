@@ -53,7 +53,7 @@ def __experiment_extended_source__(x0):
     red.ronchi_grating(x0=0 * um, period=period, fill_factor=0.5)
 
     lens = Scalar_mask_X(x, wavelength)
-    lens.lens(focal=focal, radius=30 * mm)
+    lens.lens(x0=0, focal=focal, radius=30 * mm)
 
     u1 = Scalar_source_X(x, wavelength)
 
@@ -157,7 +157,7 @@ class Test_Scalar_fields_X(object):
         red.ronchi_grating(x0=0 * um, period=period, fill_factor=0.5)
 
         lens = Scalar_mask_X(x, wavelength)
-        lens.lens(focal=focal, radius=30 * mm)
+        lens.lens(x0=0, focal=focal, radius=30 * mm)
 
         u1 = Scalar_source_X(x, wavelength)
 

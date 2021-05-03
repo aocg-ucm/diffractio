@@ -50,7 +50,7 @@ class Test_Scalar_masks_XY(object):
         t3.draw(title='suma')
 
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_1')
+            filename=filename + '.npz', add_name='_1')
         save_figure_test(newpath, func_name, add_name='_1')
 
         func_name = sys._getframe().f_code.co_name
@@ -80,7 +80,7 @@ class Test_Scalar_masks_XY(object):
         t3.draw(title='add')
 
         t3.save_data(
-            filename=filename, method='savez_compressed', add_name='_2')
+            filename=filename + '.npz', add_name='_2')
         save_figure_test(newpath, func_name, add_name='_2')
         assert True
 
@@ -107,7 +107,7 @@ class Test_Scalar_masks_XY(object):
         t3 = t2 - t1
         t3.draw(title='resta')
 
-        t3.save_data(filename=filename, method='savez_compressed')
+        t3.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -130,7 +130,7 @@ class Test_Scalar_masks_XY(object):
         t1.draw(kind='field')
         plt.title('(0,1)-sin binarizar')
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_wo_bin')
+            filename=filename + '.npz', add_name='_wo_bin')
         save_figure_test(newpath, func_name, '_wo_bin')
         t1.binarize(
             kind='amplitude',
@@ -143,7 +143,7 @@ class Test_Scalar_masks_XY(object):
         plt.suptitle('binarizada')
 
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_wi_bin')
+            filename=filename + '.npz', add_name='_wi_bin')
         save_figure_test(newpath, func_name, add_name='_wi_bin')
         assert True
 
@@ -161,7 +161,7 @@ class Test_Scalar_masks_XY(object):
         t1.slit(x0=0, size=100 * um, angle=0 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -183,7 +183,7 @@ class Test_Scalar_masks_XY(object):
             period=100 * um)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -204,7 +204,7 @@ class Test_Scalar_masks_XY(object):
             n=[0.5, 4])
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -225,7 +225,7 @@ class Test_Scalar_masks_XY(object):
             n=[0.5, 4])
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -244,7 +244,7 @@ class Test_Scalar_masks_XY(object):
             x0=0, size=5 * um, separation=15 * um, angle=0 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -260,7 +260,7 @@ class Test_Scalar_masks_XY(object):
         t1.triangle(r0=(0, 0), slope=1, height=50 * um, angle=0 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -284,7 +284,7 @@ class Test_Scalar_masks_XY(object):
             angle=90 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -303,7 +303,7 @@ class Test_Scalar_masks_XY(object):
             r0=(0 * um, 0 * um), size=(100 * um, 50 * um), angle=45 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -321,7 +321,7 @@ class Test_Scalar_masks_XY(object):
         t1.circle(r0=(0 * um, 0 * um), radius=(100 * um, 100 * um))
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -343,7 +343,7 @@ class Test_Scalar_masks_XY(object):
             potencia=22)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -368,7 +368,7 @@ class Test_Scalar_masks_XY(object):
         # t2 = t1.fft(remove0=False)
         # t2.draw(logarithm=True)
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -387,7 +387,7 @@ class Test_Scalar_masks_XY(object):
             r0=(0 * um, 0 * um), radius=(50 * um, 25 * um), angle=45 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -409,7 +409,7 @@ class Test_Scalar_masks_XY(object):
             angle=45 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -428,7 +428,7 @@ class Test_Scalar_masks_XY(object):
             r0=(0 * um, 0 * um), size=(200 * um, 75 * um), angle=0 * degrees)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -446,7 +446,7 @@ class Test_Scalar_masks_XY(object):
         t1.two_levels(level1=0, level2=.5, x_edge=0)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -466,7 +466,7 @@ class Test_Scalar_masks_XY(object):
     #
     #     t1.draw(kind='intensity')
     #
-    #     t1.save_data(filename=filename, method='savez_compressed')
+    #     t1.save_data(filename=filename+'.npz')
     #     save_figure_test(newpath, func_name)
     #     assert True
 
@@ -484,7 +484,7 @@ class Test_Scalar_masks_XY(object):
         t1.gray_scale(num_levels=128, levelMin=0, levelMax=1)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -509,7 +509,7 @@ class Test_Scalar_masks_XY(object):
             mask=True)
         t1.draw(kind='field')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -556,7 +556,7 @@ class Test_Scalar_masks_XY(object):
         t2 = t1.RS(z=focal)
         t2.draw(kind='field', logarithm=True)
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -578,7 +578,7 @@ class Test_Scalar_masks_XY(object):
             angle=0 * degrees)
         t0.draw(kind='phase')
 
-        t0.save_data(filename=filename, method='savez_compressed')
+        t0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
 
         t1 = Scalar_mask_XY(x, y, wavelength)
@@ -589,10 +589,7 @@ class Test_Scalar_masks_XY(object):
             angle=45 * degrees)
         t1.draw(kind='phase')
 
-        t1.save_data(
-            filename=filename,
-            method='savez_compressed',
-            add_name='_elliptical')
+        t1.save_data(filename=filename + '.npz',   add_name='_elliptical')
         save_figure_test(newpath, func_name, add_name='_elliptical')
         assert True
 
@@ -616,7 +613,7 @@ class Test_Scalar_masks_XY(object):
             phase=np.pi)
         t1.draw(kind='intensity')
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_int')
+            filename=filename + '.npz', add_name='_int')
         save_figure_test(newpath, func_name, add_name='_int')
 
         t1.fresnel_lens(
@@ -629,7 +626,7 @@ class Test_Scalar_masks_XY(object):
         t1.draw(kind='phase')
 
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_phase')
+            filename=filename + '.npz', add_name='_phase')
         save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
@@ -648,7 +645,7 @@ class Test_Scalar_masks_XY(object):
             r0=(0 * um, 0 * um), width=100 * um, height=5 * um, n=1.5)
         t1.draw(kind='field')
         save_figure_test(newpath, func_name)
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         assert True
 
     def test_axicon(self):
@@ -662,11 +659,12 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_XY(x, y, wavelength)
-        t1.axicon(r0=(0 * um, 0 * um), radius=100 * um, height=2 * um, n=1.5)
+        t1.axicon(r0=(0 * um, 0 * um), radius=100 * um,
+                  angle=2 * degrees, refraction_index=1.5)
         t1.draw(kind='phase')
 
         save_figure_test(newpath, func_name)
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         assert True
 
     def test_laguerre_gauss_spiral(self):
@@ -682,24 +680,24 @@ class Test_Scalar_masks_XY(object):
         t = Scalar_mask_XY(x, y, wavelength)
         t.laguerre_gauss_spiral(
             kind='intensity',
+            n=2,
             l=4,
             r0=(0 * um, 0 * um),
             w0=20 * um,
             z=0.01 * um)
         t.draw(kind='intensity')
         t.save_data(
-            filename=filename,
-            method='savez_compressed',
+            filename=filename + '.npz',
             add_name='_intensity')
         save_figure_test(newpath, func_name, add_name='_intensity')
 
         t2 = Scalar_mask_XY(x, y, wavelength)
         t2.laguerre_gauss_spiral(
-            kind='phase', l=4, r0=(0 * um, 0 * um), w0=20 * um, z=0.01 * um)
+            kind='phase',             n=2, l=4, r0=(0 * um, 0 * um), w0=20 * um, z=0.01 * um)
         t2.draw(kind='phase')
 
         t2.save_data(
-            filename=filename, method='savez_compressed', add_name='_phase')
+            filename=filename + '.npz', add_name='_phase')
         save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
@@ -723,7 +721,7 @@ class Test_Scalar_masks_XY(object):
             angle=0 * degrees)
         t.draw(kind='intensity')
 
-        t.save_data(filename=filename, method='savez_compressed')
+        t.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -741,7 +739,7 @@ class Test_Scalar_masks_XY(object):
         t1.roughness(t=(25 * um, 25 * um), s=1 * um)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -758,7 +756,7 @@ class Test_Scalar_masks_XY(object):
             period=period, amp_min=0, amp_max=1, x0=0 * um, angle=0 * degrees)
         red.draw(kind='intensity')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -774,7 +772,7 @@ class Test_Scalar_masks_XY(object):
             period=100 * um, x0=0 * um, angle=0 * degrees, fill_factor=0.333)
         red.draw(kind='intensity')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -796,7 +794,7 @@ class Test_Scalar_masks_XY(object):
             angle=0 * degrees)
         red.draw(kind='field')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -818,7 +816,7 @@ class Test_Scalar_masks_XY(object):
             angle=0 * degrees)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -835,7 +833,7 @@ class Test_Scalar_masks_XY(object):
             period=period, height=2 * um, index=1.5, x0=0, angle=0 * degrees)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -848,17 +846,16 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6238 * um
         period = 62.5 * um
         red = Scalar_mask_XY(x, y, wavelength)
-        red.grating_2D(
-            period=period,
-            amin=0,
-            amax=1.,
-            phase=0 * np.pi / 2,
-            x0=0,
-            fill_factor=0.5,
-            angle=0 * degrees)
+        red.grating_2D(r0=(0., 0.),
+                       period=period,
+                       amin=0,
+                       amax=1.,
+                       phase=0 * np.pi / 2,
+                       fill_factor=0.5,
+                       angle=0 * degrees)
         red.draw(kind='intensity')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -871,17 +868,16 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6238 * um
         period = 125 * um
         red = Scalar_mask_XY(x, y, wavelength)
-        red.grating_2D_chess(
-            period=period,
-            amin=0,
-            amax=1.,
-            phase=0 * np.pi / 2,
-            x0=0,
-            fill_factor=0.75,
-            angle=0 * degrees)
+        red.grating_2D_chess(r0=(0., 0.),
+                             period=period,
+                             amin=0,
+                             amax=1.,
+                             phase=0 * np.pi / 2,
+                             fill_factor=0.75,
+                             angle=0 * degrees)
         red.draw(kind='intensity')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -903,7 +899,7 @@ class Test_Scalar_masks_XY(object):
             sigma=4 * um,
             correlation_length=.1 * um)
         t.draw(kind='intensity')
-        t.save_data(filename=filename, method='savez_compressed')
+        t.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -925,7 +921,7 @@ class Test_Scalar_masks_XY(object):
             correlation_length=.1 * um)
         t.draw(kind='intensity')
 
-        t.save_data(filename=filename, method='savez_compressed')
+        t.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -947,8 +943,7 @@ class Test_Scalar_masks_XY(object):
             angle=45 * degrees)
         t1.draw()
         t1.save_data(
-            filename=filename,
-            method='savez_compressed',
+            filename=filename + '.npz',
             add_name='_no_widened')
         save_figure_test(newpath, func_name, add_name='_no_widened')
 
@@ -959,7 +954,7 @@ class Test_Scalar_masks_XY(object):
         t1.draw()
 
         t1.save_data(
-            filename=filename, method='savez_compressed', add_name='_widened')
+            filename=filename + '.npz', add_name='_widened')
         save_figure_test(newpath, func_name, add_name='_widened')
         assert True
 
@@ -985,6 +980,6 @@ class Test_Scalar_masks_XY(object):
         text1 = "The area is: {:2.4f} %".format(area * 100)
         plt.title(text1)
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True

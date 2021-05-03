@@ -185,11 +185,11 @@ class Test_Scalar_fields_XY(object):
 
         t1.draw()
         save_figure_test(newpath, func_name, add_name='_saved')
-        t1.save_data(filename=filename, method='savez')
+        t1.save_data(filename=filename+'.npz')
 
         time.sleep(1)
         t2 = Scalar_field_XY(x, y, wavelength)
-        t2.load_data(filename=filename, method='savez')
+        t2.load_data(filename=filename+'.npz')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_loaded')
         assert True
@@ -226,7 +226,7 @@ class Test_Scalar_fields_XY(object):
         fieldfft1.draw(kind='intensity')
 
         fieldfft1.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -257,7 +257,7 @@ class Test_Scalar_fields_XY(object):
         u4 = u3.RS(z=-2 * mm, new_field=True)
         u4.draw(kind='field')
 
-        u4.save_data(filename=filename, method='savez_compressed', add_name='')
+        u4.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -274,13 +274,11 @@ class Test_Scalar_fields_XY(object):
         y0 = np.linspace(-lengthy / 2, lengthy / 2, num_pixels)
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u1.laguerre_beam(
-            p=2, l=1, r0=(0 * um, 0 * um), w0=400 * um, z=0.01 * um)
-
+        u1.gauss_beam(r0=(0.,0.), w0=100*um, z0=0, A=1, theta=0, phi=0)
         u2 = u1.RS(amplification=(2, 3), z=1 * mm)
         u2.draw('field')
 
-        u2.save_data(filename=filename, method='savez_compressed', add_name='')
+        u2.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -414,7 +412,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field')
 
         field.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -445,7 +443,7 @@ class Test_Scalar_fields_XY(object):
         # no se ve nada, porque se ha quitado la amplitude y la phase
 
         field.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -467,7 +465,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field')
 
         field.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
 
         solution = np.angle(field.u).sum()
@@ -501,7 +499,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field', normalize=None)
 
         field.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -538,7 +536,7 @@ class Test_Scalar_fields_XY(object):
         field3.draw(kind='phase', normalize=None)
 
         field3.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -597,7 +595,7 @@ class Test_Scalar_fields_XY(object):
         fieldAmplitud.draw(kind='field')
 
         fieldAmplitud.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -643,7 +641,7 @@ class Test_Scalar_fields_XY(object):
         fieldFase.draw(kind='field')
 
         fieldFase.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -697,7 +695,7 @@ class Test_Scalar_fields_XY(object):
         fieldFase.draw(kind='field')
 
         fieldFase.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -716,7 +714,7 @@ class Test_Scalar_fields_XY(object):
         field1.draw(kind='intensity', normalize=False)
 
         field1.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -738,7 +736,7 @@ class Test_Scalar_fields_XY(object):
     #     field.draw(kind='field')
     #
     #     field.save_data(
-    #         filename=filename, method='savez_compressed', add_name='')
+    #         filename=filename+'.npz', add_name='')
     #     save_figure_test(newpath, func_name, add_name='')
     #     assert True
 
@@ -772,7 +770,7 @@ class Test_Scalar_fields_XY(object):
     #     scalar_fields_XYZ1.RS()
     #     scalar_fields_XYZ1.draw_XYZ()
     #
-    #     u2.save_data(filename=filename, method='savez_compressed', add_name='')
+    #     u2.save_data(filename=filename+'.npz', add_name='')
     #     save_figure_test(newpath, func_name, add_name='')
     #     assert True
 
@@ -797,12 +795,12 @@ class Test_Scalar_fields_XY(object):
             phi=0 * degrees)
 
         field3 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field3.laguerre_beam(r0=(0, 0), w0=10 * um, z=50 * um, p=1, l=1)
+        field3.laguerre_beam(r0=(0, 0), w0=10 * um, z=50 * um, n=1, l=1)
 
         draw_several_fields(
             fields=(field1, field2, field3), titulos=('(a)', '(b)', '(c)'))
 
         field3.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True

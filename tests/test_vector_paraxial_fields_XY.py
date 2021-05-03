@@ -58,14 +58,13 @@ class Test_Vector_paraxial_fields_XY(object):
             r0=(0 * um, 0 * um),
             radius=(125 * um, 125 * um),
             focal=(2 * mm, 2 * mm),
-            mask=True,
             kind='amplitude')
 
         vc = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        vc.apply_scalar_mask(mask=mask)
+        vc.apply_scalar_mask(u_mask=mask)
 
         vp = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        vp.polarizer_linear(angle=0 * degrees)
+        vp.polarizer_linear(azimuth=0 * degrees)
 
         EM = vp
         EM.draw(kind='intensities')
@@ -184,17 +183,13 @@ class Test_Vector_paraxial_fields_XY(object):
         y0 = np.linspace(-length / 2, length / 2, num_data)
         wavelength = 2 * um
 
-        u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u1.gauss_beam(
-            A=200,
-            r0=(0 * um, 0 * um),
-            w0=(25 * um, 25 * um),
-            z0=0 * um,
-            theta=0. * degrees,
-            phi=0 * degrees)
-
-        EM = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        EM.unique_mask(u1, v=v_lineal)
+        EM = Vector_paraxial_source_XY(x0, y0, wavelength)
+        EM.local_polarized_vector_wave_radial(u=1,
+                                              r0=(0 * um, 0 * um),
+                                              m=1,
+                                              fi0=0,
+                                              radius=0.)
+        EM.mask_circle()
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_1EH')

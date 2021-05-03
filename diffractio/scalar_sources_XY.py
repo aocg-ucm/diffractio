@@ -61,6 +61,7 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
@@ -219,8 +220,17 @@ class Scalar_source_XY(Scalar_field_XY):
 
         # Parameters
         r2 = sqrt(2)
-        w0x, w0y = w0
-        z0x, z0y = z0
+
+        if isinstance(w0, (float, int, complex)):
+            w0x, w0y = w0, w0
+        else:
+            w0x, w0y = w0
+
+        if isinstance(z0, (float, int, complex)):
+            z0x, z0y = z0, z0
+        else:
+            z0x, z0y = z0
+
         k = 2 * pi / self.wavelength
 
         # Calculate propagation
@@ -254,8 +264,6 @@ class Scalar_source_XY(Scalar_field_XY):
                                                              (zx + zy) / 2)
 
         self.u = A * Ex * Ey * Ef
-
-    
 
     def laguerre_beam(self, A=1, r0=(0, 0), w0=1 * um, n=0, l=0, z=0, z0=0):
         """Laguerre beam.
@@ -302,7 +310,6 @@ class Scalar_source_XY(Scalar_field_XY):
             exp(-1j * (1 + n) * np.arctan(z / zR))
 
         self.u = A * Er * Ef
-
 
     def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
         """Zernike beam.

@@ -35,55 +35,29 @@ polarization_m45 = [1, -1] / np.sqrt(2)
 
 
 class Test_vector_sources_XY(object):
-    def test_wave_from_scalar(self):
+
+    def test_constant_wave(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 25 * um
-        num_data = 1024
+        num_data = 256
         x0 = np.linspace(-length / 2, length / 2, num_data)
         y0 = np.linspace(-length / 2, length / 2, num_data)
         wavelength = 1 * um
 
-        u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u1.gauss_beam(
-            A=1,
-            r0=(0 * um, 0 * um),
-            w0=(6 * um, 6 * um),
-            z0=0 * um,
-            theta=0. * degrees,
-            phi=0 * degrees)
-
-        EM = Vector_paraxial_mask_XY(x0, y0, wavelength)
-        EM.unique_mask(u1, v=polarization_right)
-
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
-        assert True
-
-    def test_wave_plane_wave(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-
-        length = 500 * um
-        num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 0.6328
-
-        # con esto definimos el field E
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u=1, v=polarization_45)
+        EM.constant_wave(u=1,v=(1,1j))
 
-        EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_stokes')
-
         assert True
+
+
+
+
 
     def test_interferences(self):
         func_name = sys._getframe().f_code.co_name

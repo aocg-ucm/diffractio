@@ -65,6 +65,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -1328,7 +1329,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max - amp_min) * (1 + sin(2 * pi *
-                                                          (Xrot-x0) / period)) / 2
+                                                          (Xrot - x0) / period)) / 2
 
     def sine_edge_grating(self,
                           r0=(0 * um, 0 * um),
@@ -1478,9 +1479,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         # Red horizontal
-
-
-
 
         t1.binary_grating(period, amin, amax, phase, r0[0], fill_factor, angle)
         # Red vertical

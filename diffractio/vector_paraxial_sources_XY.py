@@ -27,7 +27,9 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 from diffractio import degrees, eps, np, um
+from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_optics import normalize
 from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from py_pol.jones_vector import Jones_vector
@@ -56,10 +58,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self._type = 'Vector_paraxial_source_XY'
 
     def constant_wave(self,
-                      u=None,
+                      u=1,
                       v=(1, 0),
                       has_normalization=False,
-                      radius=(0, 0)):
+                      radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -76,10 +78,9 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = v[0] * self.Ex
         self.Ey = v[1] * self.Ey
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(radius=radius)
+        self.mask_circle(radius=radius)
 
-    def radial_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+    def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -97,10 +98,9 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.sin(angle) * self.Ex
         self.Ey = -np.cos(angle) * self.Ey
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
-    def transversal_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+    def transversal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -118,10 +118,9 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.cos(angle) * self.Ex
         self.Ey = np.sin(angle) * self.Ey
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
-    def radial_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+    def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -139,10 +138,9 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.cos(angle) * self.Ex
         self.Ey = -np.sin(angle) * self.Ey
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
-    def transversal_inverse_wave(self, u=None, r0=(0, 0), radius=(0, 0)):
+    def transversal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -160,15 +158,14 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.sin(angle) * self.Ex
         self.Ey = np.cos(angle) * self.Ey
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_wave(self,
-                                    u,
-                                    r0=(0, 0),
+                                    u=1,
+                                    r0=(0., 0.),
                                     m=1,
                                     fi0=0,
-                                    radius=(0, 0)):
+                                    radius=0.):
         """"local radial polarized vector wave.
 
 
@@ -193,15 +190,14 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_wave_radial(self,
-                                           u,
+                                           u=1,
                                            r0=(0 * um, 0 * um),
                                            m=1,
                                            fi0=0,
-                                           radius=(0, 0)):
+                                           radius=0.):
         """local radial polarized vector wave.
 
 
@@ -216,6 +212,14 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             Qwien Zhan 'Vectorial Optial Fields' page 36
         """
 
+        if radius == 0:
+            radius_x = (self.x[-1] - self.x[0]) / 2
+            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius = (radius_x, radius_y)
+
+        elif isinstance(radius, (float, int, complex)):
+            radius = (radius, radius)
+
         self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
@@ -224,14 +228,13 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         radius_0 = min(radius[0], radius[1])
         delta = 2 * m * np.pi * r / (radius_0 + eps) + fi0
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
-
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
+        self.mask_circle(r0=r0, radius=radius)
+
     def local_polarized_vector_wave_hybrid(self,
-                                           u,
+                                           u=1,
                                            r0=(0 * um, 0 * um),
                                            m=1,
                                            n=1,
@@ -249,6 +252,14 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radius (float, float): Radius of a circular mask
         """
 
+        if radius == 0:
+            radius_x = (self.x[-1] - self.x[0]) / 2
+            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius = (radius_x, radius_y)
+
+        elif isinstance(radius, (float, int, complex)):
+            radius = (radius, radius)
+
         self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
@@ -261,11 +272,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
     def spiral_polarized_beam(self,
-                              u,
+                              u=1,
                               r0=(0 * um, 0 * um),
                               alpha=0,
                               radius=(0, 0)):
@@ -292,10 +302,9 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = -self.Ex * np.sin(theta + alpha)
         self.Ey = self.Ey * np.cos(theta + alpha)
 
-        if radius[0] * radius[1] > 0:
-            self.mask_circle(r0=r0, radius=radius)
+        self.mask_circle(r0=r0, radius=radius)
 
-    def mask_circle(self, r0=(0, 0), radius=(0, 0)):
+    def mask_circle(self, r0=(0., 0.), radius=0.):
         """Mask vector field using a circular mask.
 
         Parameters:
@@ -303,10 +312,16 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radius (float, float): radius of mask
         """
 
-        if radius in (0, None, '', []):
+        if radius == 0:
             radius_x = (self.x[-1] - self.x[0]) / 2
             radius_y = (self.y[-1] - self.y[0]) / 2
             radius = (radius_x, radius_y)
+
+        elif radius in (None, '', []):
+            return
+
+        elif isinstance(radius, (float, int, complex)):
+            radius = (radius, radius)
 
         if r0 in (0, None, '', []):
             r0_x = (self.x[-1] + self.x[0]) / 2
@@ -329,19 +344,23 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         return j0
 
 
-def define_initial_field(EM, u):
-    """Rewrites the initial field of EM in terms of u.
+def define_initial_field(EM, u=None):
+    """Defines the initial field EM = (Ex, Ey) in terms of u.
 
-    EM (vector_paraxial_source_XY):
-    u (scalar_source_XY, or None, or 1): if scalar_source it is written in Ex and Ey, is 1 Ex=1, Ey=1, if None, does nothing,
+        Parameters:
+            EM (vector_paraxial_source_XY):
+            u (scalar_source_XY, or None, or 1): if scalar_source it is written in Ex and Ey, is 1 Ex=1, Ey=1, if None, does nothing,
     """
 
     # check data size
-    if u == 1:
-        EM.Ex = np.ones_like(EM.Ex)
-        EM.Ey = np.ones_like(EM.Ey)
-    elif u not in ('', None, [], 0):
+    if isinstance(u, (float, int, complex)):
+        EM.Ex = u * np.ones_like(EM.Ex)
+        EM.Ey = u * np.ones_like(EM.Ey)
+    elif isinstance(u, (Scalar_mask_XY, Scalar_field_XY, Scalar_source_XY)):
         EM.Ex = u.u
         EM.Ey = u.u
+    if u in (0, None, '', []):
+        EM.Ex = np.ones_like(EM.Ex)
+        EM.Ey = np.ones_like(EM.Ey)
 
     return EM

@@ -55,5 +55,5 @@ class Test_Scalar_masks_XYZ(object):
             refraction_index=2,
             angles=(0 * degrees, 0 * degrees, 45 * degrees))
         uxyz.incident_field(t1)
-        # uxyz.draw_refraction_index3D()
+        # uxyz.draw_refraction_index()
         assert True

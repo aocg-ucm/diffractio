@@ -18,7 +18,7 @@ The main atributes are:
     * equal_masks
     * global_mask
     * complementary_masks
-    * apply_polarization
+    * from_py_pol
     * polarizer_linear
     * quarter_waveplate
     * half_wave
@@ -74,7 +74,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         #     m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
         #     m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
 
-        elif other._type in('Vector_paraxial_mask_XY','Vector_paraxial_field_XY'):
+        elif other._type in ('Vector_paraxial_mask_XY', 'Vector_paraxial_field_XY'):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
 
             m3.M00 = other.M00 * self.M00 + other.M01 * self.M10
@@ -129,29 +129,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         pass
 
-    def from_scalar_mask(self, u_mask):
-        """The same mask u_mask is applied to all the Jones Matrix.
 
-        Parameters:
-            u_mask (scalar_mask_XY): mask to apply.
-
-        """
-        self.M00 = u_mask.u
-        self.M01 = np.zeros_like(u_mask.u)
-        self.M10 = np.zeros_like(u_mask.u)
-        self.M11 = u_mask.u
-
-    def apply_scalar_mask(self, u_mask):
-        """The same mask u_mask is applied to all the Jones Matrix.
-
-        Parameters:
-            u_mask (scalar_mask_XY): mask to apply.
-
-        """
-        self.M00 = self.M00 * u_mask.u
-        self.M01 = self.M01 * u_mask.u
-        self.M10 = self.M10 * u_mask.u
-        self.M11 = self.M11 * u_mask.u
 
     def apply_circle(self, r0=None, radius=None):
         """The same circular mask is applied to all the Jones Matrix.
@@ -164,10 +142,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             x_min, x_max = self.x[0], self.x[-1]
             y_min, y_max = self.y[0], self.y[-1]
 
-            x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
             x_radius, y_radius = (x_max - x_min) / 2, (y_max - y_min) / 2
 
             radius = (x_radius, y_radius)
+
+        if r0 is None:
+            x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
             r0 = (x_center, y_center)
 
         u_mask_circle = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -177,6 +157,18 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         self.M01 = self.M01 * u_mask_circle.u
         self.M10 = self.M10 * u_mask_circle.u
         self.M11 = self.M11 * u_mask_circle.u
+
+    def apply_scalar_mask(self, u_mask):
+        """The same mask u_mask is applied to all the Jones Matrix.
+
+        Parameters:
+            u_mask (scalar_mask_XY): mask to apply.
+
+        """
+        self.M00 = self.M00 * u_mask.u
+        self.M01 = self.M01 * u_mask.u
+        self.M10 = self.M10 * u_mask.u
+        self.M11 = self.M11 * u_mask.u
 
     def complementary_masks(self,
                             mask,
@@ -206,9 +198,9 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         self.M10 = t * state_1[1, 0] + (1 - t) * state_0[0, 1]
         self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
 
-    def apply_polarization(self, polarizer):
+    def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
-        This is the most general function to obtain polarizer.
+        This is the most general function to obtain a polarizer.
 
         Parameters:
             polarizer (2x2 numpy.matrix): Jones_matrix
@@ -235,7 +227,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """
         PL = Jones_matrix('m0')
         PL.diattenuator_perfect(azimuth=azimuth)
-        self.apply_polarization(PL)
+        self.from_py_pol(PL)
 
     def quarter_waveplate(self, azimuth=0 * degrees):
         """Generates an XY quarter wave plate.
@@ -245,7 +237,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """
         PL = Jones_matrix('m0')
         PL.quarter_waveplate(azimuth=azimuth)
-        self.apply_polarization(PL)
+        self.from_py_pol(PL)
 
     def half_waveplate(self, azimuth=0 * degrees):
         """Generates an XY half wave plate.
@@ -255,25 +247,25 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """
         PL = Jones_matrix('m0')
         PL.half_waveplate(azimuth=azimuth)
-        self.apply_polarization(PL)
+        self.from_py_pol(PL)
 
     def polarizer_retarder(self,
-                           delay=0 * degrees,
+                           R=0 * degrees,
                            p1=1,
                            p2=1,
                            azimuth=0 * degrees):
         """Generates an XY retarder.
 
         Parameters:
-            delay (float): delay between Ex and Ey components.
+            R (float): retardance between Ex and Ey components.
             p1 (float): transmittance of fast axis.
             p2 (float): transmittance of slow axis.
             azimuth (float): linear polarizer angle
         """
         PL = Jones_matrix('m0')
         PL.diattenuator_retarder_linear(
-            delay=delay, p1=p1, p2=p1, azimuth=azimuth)
-        self.apply_polarization(PL)
+            R=R, p1=p1, p2=p1, azimuth=azimuth)
+        self.from_py_pol(PL)
 
     def to_py_pol(self):
         """Pass mask to py_pol.jones_matrix

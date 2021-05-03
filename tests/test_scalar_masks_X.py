@@ -42,7 +42,7 @@ class Test_Scalar_masks_X(object):
         t1.slit(x0=0, size=100 * um)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -59,7 +59,7 @@ class Test_Scalar_masks_X(object):
         t1.double_slit(x0=0, size=5 * um, separation=15 * um)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -76,7 +76,7 @@ class Test_Scalar_masks_X(object):
         t1.two_levels(level1=0, level2=.5, x_edge=0)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -91,7 +91,7 @@ class Test_Scalar_masks_X(object):
         t1.gray_scale(num_levels=16, levelMin=2, levelMax=3)
         t1.draw(kind='amplitude')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -108,7 +108,7 @@ class Test_Scalar_masks_X(object):
         t1.prism(x0=0, n=1.5, anglex=1 * degrees)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -126,7 +126,7 @@ class Test_Scalar_masks_X(object):
             angle=1 * degrees, x0=100 * um, radius=125, mask=True)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -143,7 +143,7 @@ class Test_Scalar_masks_X(object):
         t1.biprism_fresnel_nh(x0=0, width=100 * um, height=5 * um, n=1.5)
 
         t1.draw(kind='phase')
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         pass
 
     def test_lens(self):
@@ -159,7 +159,7 @@ class Test_Scalar_masks_X(object):
         t1.lens(x0=0 * um, radius=100 * um, focal=5 * mm)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -192,7 +192,7 @@ class Test_Scalar_masks_X(object):
             phase=np.pi)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name, '_phase')
         assert True
 
@@ -209,7 +209,7 @@ class Test_Scalar_masks_X(object):
         t1.roughness(t=15 * um, s=.2 * um)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -226,7 +226,7 @@ class Test_Scalar_masks_X(object):
         t1.dust_different_sizes(percentaje=0.2, size=20 * um, std=5 * um)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -242,7 +242,7 @@ class Test_Scalar_masks_X(object):
         t1.dust(percentaje=0.9, size=20 * um)
         t1.draw()
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -257,7 +257,7 @@ class Test_Scalar_masks_X(object):
         red.sine_grating(period=period, amp_min=0, amp_max=1, x0=0 * um)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -271,7 +271,7 @@ class Test_Scalar_masks_X(object):
         red.ronchi_grating(period=50 * um, x0=0 * um, fill_factor=0.75)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -291,7 +291,7 @@ class Test_Scalar_masks_X(object):
             fill_factor=0.25)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -312,7 +312,7 @@ class Test_Scalar_masks_X(object):
             fill_factor=0.5)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -327,7 +327,7 @@ class Test_Scalar_masks_X(object):
         red.blazed_grating(period=period, height=2 * um, n=1.5)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -364,7 +364,7 @@ class Test_Scalar_masks_X(object):
             mask=True)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -399,7 +399,7 @@ class Test_Scalar_masks_X(object):
 
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename, method='savez_compressed')
+        t1.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -423,7 +423,7 @@ class Test_Scalar_masks_X(object):
         red.chirped_grating_p(**conds)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -451,7 +451,7 @@ class Test_Scalar_masks_X(object):
         red.chirped_grating_q(**conds)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -476,7 +476,7 @@ class Test_Scalar_masks_X(object):
             phase_max=np.pi)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename, method='savez_compressed')
+        red.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -495,28 +495,28 @@ class Test_Scalar_masks_X(object):
         t1.binary_code(kind='normal', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t1.draw()
 
-        t1.save_data(filename=filename + '-normal', method='savez_compressed')
+        t1.save_data(filename=filename + '-normal'+'.npz')
         save_figure_test(newpath, func_name + '-normal')
 
         t2 = Scalar_mask_X(x, wavelength)
         t2.binary_code(kind='zeros', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t2.draw()
 
-        t2.save_data(filename=filename + '-zeros', method='savez_compressed')
+        t2.save_data(filename=filename + '-zeros'+'.npz')
         save_figure_test(newpath, func_name + '-zeros')
 
         t3 = Scalar_mask_X(x, wavelength)
         t3.binary_code(kind='ones', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t3.draw()
 
-        t3.save_data(filename=filename + '-ones', method='savez_compressed')
+        t3.save_data(filename=filename + '-ones'+'.npz')
         save_figure_test(newpath, func_name + '-ones')
 
         t4 = Scalar_mask_X(x, wavelength)
         t4.binary_code(kind='abs_fag', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t4.draw()
 
-        t4.save_data(filename=filename + '-fag', method='savez_compressed')
+        t4.save_data(filename=filename + '-fag'+'.npz')
         save_figure_test(newpath, func_name)
 
         assert True

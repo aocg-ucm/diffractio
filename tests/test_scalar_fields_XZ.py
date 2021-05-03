@@ -72,14 +72,8 @@ def generate_BPM_field():
     u0.plane_wave(A=1, theta=0 * degrees)
     u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
     u1.incident_field(u0)
-    #u1.mask_field(size_edge=5 * um)
     u1.sphere(
         r0=(0 * um, 0 * um), radius=(25 * um, 25 * um), refraction_index=2)
-    # u1.filter_refraction_index(
-    # type_filter=2,
-    # pixels_filtering=25,
-    # max_diff_filter=0.1,
-    # draw_check=False)
     u1.BPM(verbose=False)
 
     return u1
@@ -201,11 +195,11 @@ class Test_Scalar_fields_XZ(object):
             date: 170731
             purpose: check testing
             """
-        u1.save_data(filename=filename, method='savez', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         time.sleep(0.5)
 
         u2 = Scalar_field_XZ(x0, z0, wavelength)
-        u2.load_data(filename=filename, method='savez')
+        u2.load_data(filename=filename+'.npz')
         u2.draw(logarithm=True, normalize='maximum', draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_loaded')
         assert True
@@ -237,7 +231,7 @@ class Test_Scalar_fields_XZ(object):
             scale='equal')
         u1.draw(kind='phase', draw_borders=True, scale='equal')
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -267,12 +261,12 @@ class Test_Scalar_fields_XZ(object):
         u1.draw(kind='intensity', draw_borders=True)
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_before')
+            filename=filename+'.npz', add_name='_before')
         save_figure_test(newpath, func_name, add_name='_before')
 
         u1.draw_refraction_index(draw_borders=True)
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_after')
+            filename=filename+'.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_n_before')
 
         u1.cut_resample(
@@ -283,13 +277,13 @@ class Test_Scalar_fields_XZ(object):
         u1.draw(kind='intensity', draw_borders=True)
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_after')
+            filename=filename+'.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_after')
 
         u1.draw_refraction_index(draw_borders=True)
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_after')
+            filename=filename+'.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_n_after')
 
         assert True
@@ -318,7 +312,7 @@ class Test_Scalar_fields_XZ(object):
         u1.BPM()
         u1.draw(kind='intensity', logarithm=True)
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -348,14 +342,14 @@ class Test_Scalar_fields_XZ(object):
         u1.draw(kind='intensity', logarithm=True)
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_0')
+            filename=filename+'.npz', add_name='_0')
         save_figure_test(newpath, func_name, add_name='_0')
 
         u1.BPM()
         u1.draw(kind='intensity', logarithm=True)
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_prop')
+            filename=filename+'.npz', add_name='_prop')
         save_figure_test(newpath, func_name, add_name='_prop')
         assert True
 
@@ -387,14 +381,14 @@ class Test_Scalar_fields_XZ(object):
         u1.BPM()
         u1.draw(kind='intensity', draw_borders=True)
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_field')
+            filename=filename+'.npz', add_name='_field')
         save_figure_test(newpath, func_name, add_name='_field')
 
         u_final = u1.final_field()
         u_final.draw()
 
         u_final.save_data(
-            filename=filename, method='savez_compressed', add_name='_final')
+            filename=filename+'.npz', add_name='_final')
         save_figure_test(newpath, func_name, add_name='_final')
         assert True
 
@@ -423,7 +417,7 @@ class Test_Scalar_fields_XZ(object):
             x_f, z_f / mm)
         plt.title(text)
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -450,7 +444,34 @@ class Test_Scalar_fields_XZ(object):
         u1.BPM(verbose=False)
         u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
+        save_figure_test(newpath, func_name, add_name='')
+        assert True
+
+    def test_WPM(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        x0 = np.linspace(-100 * um, 100 * um, 512)
+        z0 = np.linspace(0 * um, 200 * um, 512)
+        wavelength = 5 * um
+        u0 = Scalar_source_X(x=x0, wavelength=wavelength)
+        u0.gauss_beam(
+            A=1, x0=0 * um, z0=0 * um, w0=10 * um, theta=0. * degrees)
+        u0.plane_wave(A=1, theta=0 * degrees)
+        u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
+        u1.incident_field(u0)
+        u1.rectangle(
+            r0=(0 * um, 100 * um),
+            size=(150 * um, 50 * um),
+            angle=45 * degrees,
+            refraction_index=1.5 - 0 * .00025j)
+
+        u1.draw_refraction_index()
+        u1.WPM(verbose=False)
+        u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
+
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -480,7 +501,7 @@ class Test_Scalar_fields_XZ(object):
         save_figure_test(newpath, func_name, add_name='_RS')
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_RS')
+            filename=filename+'.npz', add_name='_RS')
         u_RS = u1.u
 
         u1.clear_field()
@@ -494,7 +515,7 @@ class Test_Scalar_fields_XZ(object):
         save_figure_test(newpath, func_name, add_name='_BPM')
 
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_BPM')
+            filename=filename+'.npz', add_name='_BPM')
 
         u_BPM = u1.u
 
@@ -502,7 +523,7 @@ class Test_Scalar_fields_XZ(object):
         u1.u = diferencias
         u1.draw(kind='intensity', logarithm=False, normalize=False)
         u1.save_data(
-            filename=filename, method='savez_compressed', add_name='_diff')
+            filename=filename+'.npz', add_name='_diff')
         save_figure_test(newpath, func_name, add_name='_diff')
         assert True
 
@@ -582,7 +603,7 @@ class Test_Scalar_fields_XZ(object):
         u1.draw_profiles_interactive(
             kind='intensity', logarithm=True, normalize='maximum')
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -762,7 +783,7 @@ class Test_Scalar_fields_XZ(object):
             draw_borders=True,
             min_incr=0.001)
 
-        u2.save_data(filename=filename, method='savez_compressed', add_name='')
+        u2.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='_back')
         assert True
 
@@ -802,7 +823,7 @@ class Test_Scalar_fields_XZ(object):
             draw_borders=True,
             min_incr=0.001)
 
-        u2.save_data(filename=filename, method='savez_compressed', add_name='')
+        u2.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -847,7 +868,7 @@ class Test_Scalar_fields_XZ(object):
             draw_borders=True,
             scale='scaled')
 
-        u1.save_data(filename=filename, method='savez_compressed', add_name='')
+        u1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -883,7 +904,7 @@ class Test_Scalar_fields_XZ(object):
         save_figure_test(newpath, func_name, add_name='_int')
 
         u_poly.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         assert True
 
     def test_BPM_polychromatic(self):
@@ -907,5 +928,5 @@ class Test_Scalar_fields_XZ(object):
         save_figure_test(newpath, func_name, add_name='_int')
 
         u_poly.save_data(
-            filename=filename, method='savez_compressed', add_name='')
+            filename=filename+'.npz', add_name='')
         assert True

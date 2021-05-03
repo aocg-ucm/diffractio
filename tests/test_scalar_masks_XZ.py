@@ -36,8 +36,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = .55 * um
 
         t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
@@ -56,7 +56,7 @@ class Test_Scalar_masks_XZ(object):
             v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False, )
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -64,8 +64,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = .55 * um
 
         t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
@@ -80,7 +80,7 @@ class Test_Scalar_masks_XZ(object):
             t=t0, z0=z0, z1=z1, refraction_index=1.5, v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False, )
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -88,8 +88,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 500 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 500 * um, 256)
         wavelength = 0.6238 * um
 
         f1 = '50 * um'
@@ -109,7 +109,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -117,8 +117,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-15 * mm, 15 * mm, 512)
-        z = np.linspace(0 * mm, 15 * mm, 512)
+        x = np.linspace(-15 * mm, 15 * mm, 256)
+        z = np.linspace(0 * mm, 15 * mm, 256)
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_XZ(x, z, wavelength)
@@ -146,7 +146,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=False)
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -154,8 +154,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-20 * um, 20 * um, 512)
-        z0 = np.linspace(0 * um, 2000 * um, 512)
+        x0 = np.linspace(-20 * um, 20 * um, 256)
+        z0 = np.linspace(0 * um, 2000 * um, 256)
         wavelength = 2 * um
 
         r0 = (0, 0)
@@ -168,7 +168,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=True)
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -182,9 +182,9 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
         print("Dx={}".format(x0[1] - x0[0]))
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = 50 * um
 
         t0 = Scalar_mask_XZ(
@@ -207,7 +207,7 @@ class Test_Scalar_masks_XZ(object):
 
         t0.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t0.save_data(filename=filename, method='savez_compressed', add_name='')
+        t0.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -216,8 +216,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = .55 * um
 
         t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
@@ -236,7 +236,7 @@ class Test_Scalar_masks_XZ(object):
             v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False)
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -245,9 +245,9 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
         print("Dx={}".format(x0[1] - x0[0]))
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = 50 * um
 
         t0 = Scalar_mask_XZ(
@@ -272,7 +272,7 @@ class Test_Scalar_masks_XZ(object):
 
         t0.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t0.save_data(filename=filename, method='savez_compressed', add_name='')
+        t0.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -281,9 +281,9 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
         print("Dx={}".format(x0[1] - x0[0]))
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = 50 * um
 
         t0 = Scalar_mask_XZ(
@@ -312,7 +312,7 @@ class Test_Scalar_masks_XZ(object):
 
         t0.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t0.save_data(filename=filename, method='savez_compressed', add_name='')
+        t0.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -324,8 +324,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = 2 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
@@ -353,7 +353,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -365,8 +365,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = .55 * um
 
         t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
@@ -377,7 +377,7 @@ class Test_Scalar_masks_XZ(object):
             t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5 - 1.5j)
         t1.draw_refraction_index(draw_borders=True)
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -401,15 +401,15 @@ class Test_Scalar_masks_XZ(object):
             invert=False)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_semi_plane(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-400 * um, 400 * um, 512)
-        z0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-400 * um, 400 * um, 256)
+        z0 = np.linspace(-100 * um, 100 * um, 256)
         wavelength = .5 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -420,15 +420,15 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_layer(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-200 * um, 200 * um, 512)
-        z0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-200 * um, 200 * um, 256)
+        z0 = np.linspace(-100 * um, 100 * um, 256)
         wavelength = .5 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -440,15 +440,15 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_rectangle(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 200 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 200 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -459,15 +459,15 @@ class Test_Scalar_masks_XZ(object):
             refraction_index=1.5)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_slit(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512 * 4)
-        z0 = np.linspace(0 * um, 250 * um, 512 * 4)
+        x0 = np.linspace(-100 * um, 100 * um, 256 * 4)
+        z0 = np.linspace(0 * um, 250 * um, 256 * 4)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -482,15 +482,15 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_sphere(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 200 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 200 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -503,15 +503,15 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_semi_sphere(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-200 * um, 200 * um, 512)
-        z0 = np.linspace(-120 * um, 120 * um, 512)
+        x0 = np.linspace(-200 * um, 200 * um, 256)
+        z0 = np.linspace(-120 * um, 120 * um, 256)
         wavelength = .5 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -524,7 +524,7 @@ class Test_Scalar_masks_XZ(object):
         t1.draw_refraction_index(
             draw_borders=True, min_incr=0.01, scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -538,8 +538,8 @@ class Test_Scalar_masks_XZ(object):
 
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(0 * um, 200 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(0 * um, 200 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -553,14 +553,14 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_prism(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-150 * um, 150 * um, 512)
+        x0 = np.linspace(-150 * um, 150 * um, 256)
         z0 = np.linspace(0 * um, 500 * um, 4096)
         wavelength = 2 * um
 
@@ -573,14 +573,14 @@ class Test_Scalar_masks_XZ(object):
             angle=90 * degrees)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_biprism(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
         z0 = np.linspace(-5 * um, 395 * um, 4096)
         wavelength = 4 * um
 
@@ -593,15 +593,15 @@ class Test_Scalar_masks_XZ(object):
             angle=0)
         t1.draw_refraction_index(draw_borders=True, scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_ronchi_grating(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-500 * um, 500 * um, 512)
-        z0 = np.linspace(0 * um, 1400 * um, 512)
+        x0 = np.linspace(-500 * um, 500 * um, 256)
+        z0 = np.linspace(0 * um, 1400 * um, 256)
         wavelength = 0.5 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -620,7 +620,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -631,8 +631,8 @@ class Test_Scalar_masks_XZ(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 512)
-        z0 = np.linspace(0 * um, 400 * um, 512)
+        x0 = np.linspace(-500 * um, 500 * um, 256)
+        z0 = np.linspace(0 * um, 400 * um, 256)
         wavelength = .55 * um
 
         t0 = Scalar_mask_X(x=x0, wavelength=wavelength)
@@ -650,15 +650,15 @@ class Test_Scalar_masks_XZ(object):
 
         t2.draw_refraction_index(draw_borders=False)
 
-        t2.save_data(filename=filename, method='savez_compressed', add_name='')
+        t2.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_sine_grating(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-250 * um, 250 * um, 512)
-        z0 = np.linspace(0 * um, 1000 * um, 512)
+        x0 = np.linspace(-250 * um, 250 * um, 256)
+        z0 = np.linspace(0 * um, 1000 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -675,15 +675,15 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_probe(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-12 * um, 12 * um, 512)
-        z0 = np.linspace(0 * um, 500 * um, 512)
+        x0 = np.linspace(-12 * um, 12 * um, 256)
+        z0 = np.linspace(0 * um, 500 * um, 256)
         wavelength = .6 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -696,15 +696,15 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_lens_plane_convergent(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-100 * um, 100 * um, 512)
-        z0 = np.linspace(-100 * um, 200 * um, 512)
+        x0 = np.linspace(-100 * um, 100 * um, 256)
+        z0 = np.linspace(-100 * um, 200 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -720,15 +720,15 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_lens_convergent(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-200 * um, 200 * um, 512)
-        z0 = np.linspace(-100 * um, 600 * um, 512)
+        x0 = np.linspace(-200 * um, 200 * um, 256)
+        z0 = np.linspace(-100 * um, 600 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -744,15 +744,15 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_lens_plane_divergent(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-75 * um, 75 * um, 512)
-        z0 = np.linspace(-100 * um, 200 * um, 512)
+        x0 = np.linspace(-75 * um, 75 * um, 256)
+        z0 = np.linspace(-100 * um, 200 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -768,15 +768,15 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_lens_divergent(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-75 * um, 75 * um, 512)
-        z0 = np.linspace(-50 * um, 250 * um, 512)
+        x0 = np.linspace(-75 * um, 75 * um, 256)
+        z0 = np.linspace(-50 * um, 250 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -792,15 +792,15 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_rough_sheet(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-        x0 = np.linspace(-150 * um, 150 * um, 512)
-        z0 = np.linspace(-150 * um, 150 * um, 512)
+        x0 = np.linspace(-150 * um, 150 * um, 256)
+        z0 = np.linspace(-150 * um, 150 * um, 256)
         wavelength = 0.6238 * um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
@@ -814,6 +814,6 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename, method='savez_compressed', add_name='')
+        t1.save_data(filename=filename+'.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
