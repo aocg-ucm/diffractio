@@ -29,16 +29,23 @@ Features
 
 Diffractio is a Python library for Diffraction and Interference Optics.
 
-It implements Scalar and paraxial vector Optics. The main algorithms used are Rayleigh Sommerfeld (RS), Plane Wave Descomposition (PWD), Wave Propagation Method (WPM), Beam Propagation Method (BPM), and Vectorial Rayleigh-Sommerfeld (VRS). When possible, multiprocessing is implemented for a faster computation.
+It implements Scalar and paraxial vector Optics. The main algorithms used are:
+
+* Rayleigh Sommerfeld (RS).
+* Plane Wave Descomposition (PWD).
+* Wave Propagation Method (WPM).
+* Beam Propagation Method (BPM).
+* Vectorial Rayleigh-Sommerfeld (VRS).
+
+When possible, multiprocessing is implemented for a faster computation.
 
 
-The scalar propagations techniques are implemented to:
+The scalar propagations techniques are implemented in modules:
 
 * X - fields are defined in the x axis.
 * XZ - fields are defined in the xz plane, being z the propagation direction.
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
-* vector_paraxial_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
 
 Each technique present three modules:
 
@@ -46,9 +53,11 @@ Each technique present three modules:
 * masks: Masks and Diffractive Optical elements.
 * fields:  Propagation techniques, parameters and general functions.
 
-The paraxial vector propagation techniques are implemented to:
+The paraxial vector propagation techniques are implemented in modules:
 
-* XY - fields are defined in the xy transversal plane.
+* vector_paraxial_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
+
+For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
 
 
 Sources
@@ -82,7 +91,7 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 * Slits, double slits
 * Lenses, diffractive lenses, aspherical lenses.
 * Gratings, prisms, biprism
-* Rough surfaces, dust ks are defined as plane. However, in the XZ and XYZ frames, volumetric mask are also defined.
+* Rough surfaces, dust are defined as plane. However, in the XZ and XYZ frames, volumetric mask are also possible.
 
 
 .. image:: mask1.png
@@ -105,7 +114,6 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Wave Propagation Method (WPM)**. The WPM [Appl. Opt. 32, 4984 (1993) ] was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation
 
-
 * **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is M is computed according to the split-step propagation scheme.
 
 * **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS mehtod [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
@@ -121,8 +129,6 @@ In some modules, videos can be generated for a better analysis of optical fields
 
 .. image:: propagation.png
    :width: 400
-
-
 
 
 Paraxial vector beams

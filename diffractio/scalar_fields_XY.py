@@ -278,21 +278,6 @@ class Scalar_field_XY(object):
         except:
             return False
 
-    def save_data_deprecated(self, filename='', method='hickle', add_name=''):
-        """Save data of Scalar_field_X class to a dictionary.
-
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-
-        Returns:
-            (bool): True if saving is performed, else False.
-        """
-        try:
-            save_data_common(self, filename + add_name, method)
-            return True
-        except:
-            return False
 
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_X.
@@ -312,24 +297,6 @@ class Scalar_field_XY(object):
 
         if verbose is True:
             print(dict0.keys())
-
-    def load_data_deprecated(self, filename, method, verbose=False):
-        """Load data from a file to a Scalar_field_X.
-
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-            verbose (bool): shows data process by screen
-        """
-        dict0 = load_data_common(self, filename, method, verbose)
-
-        if verbose:
-            print(dict0)
-        if dict0 is not None:
-            if isinstance(dict0, dict):
-                self.__dict__ = dict0
-            else:
-                raise Exception('no dictionary in load_data')
 
     def save_mask(self, filename="", kind='amplitude', binarize=False, info=""):
         """Create a mask in a file, for example, ablation or litography engraver

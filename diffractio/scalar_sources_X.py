@@ -38,7 +38,7 @@ class Scalar_source_X(Scalar_field_X):
     Parameters:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of backgroudn
+        n_background (float): refraction index of background
         info (str): String with info about the simulation
 
     Attributes:

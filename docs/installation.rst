@@ -33,9 +33,14 @@ Additional packages
 
 Diffractio uses also the following non-standard modules:
 
-* hickle
-* mayavi
 * py-pol
+
+In some schemes, the following modules are also required:
+
+* screeninfo
+* PIL
+* mayavi, traits, tvtk
+* python-opencv
 
 They should previously be installed before Diffractio module.
 

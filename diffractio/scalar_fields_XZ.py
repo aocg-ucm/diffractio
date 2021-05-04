@@ -94,7 +94,7 @@ class Scalar_field_XZ(object):
             The number of data is preferibly :math:`2^n` .
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of backgroudn
+        n_background (float): refraction index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -619,8 +619,6 @@ class Scalar_field_XZ(object):
               0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
         self.quality = q1
 
-        # ECE 6006 Numerical Methods in Photonics
-
         k0 = 2 * np.pi / self.wavelength
 
         numz = len(self.z)  # distance en z
@@ -628,9 +626,8 @@ class Scalar_field_XZ(object):
         deltaz = self.z[1] - self.z[0]  # Tamaño del sampling
         rangox = self.x[-1] - self.x[0]
 
-        # Formamos el bloque de píxeles
         pixelx = np.linspace(-int(numx / 2), int(numx / 2), numx)
-        # Campo inicial
+        # initial field
         field_z = self.u0.u
         # Calculo de la phase 1 normalizada -------------------
         kx1 = np.linspace(0, int(numx / 2) + 1, int(numx / 2))
@@ -645,7 +642,7 @@ class Scalar_field_XZ(object):
         # Campo en el índice de refracción
         field = np.zeros(np.shape(self.n), dtype=complex)
         # Función supergausiana para eliminar rebotes en los edges
-        filtroBorde = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**90)  # 0.98
+        filter_edge = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**90)  # 0.98
 
         # --------------- main loop ------------------------
         field[:, 0] = field_z
@@ -667,9 +664,9 @@ class Scalar_field_XZ(object):
 
             field_z = ifft((fft(field_z) * phase1)) * phase2
             # Aplico el filtro para removeme los efectos del edge
-            # field_z = field_z * filtroBorde
+            # field_z = field_z * filter_edge
 
-            field_z = field_z * filtroBorde + self.u[:, k]
+            field_z = field_z * filter_edge + self.u[:, k]
             # Identifico el new field para reiniciar el bucle.
             # el ultimo es por si pongo la fuente al final
 

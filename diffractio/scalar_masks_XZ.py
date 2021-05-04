@@ -49,7 +49,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             The number of data is preferibly :math:`2^n` .
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of backgroudn
+        n_background (float): refraction index of background
         info (str): String with info about the simulation
 
     Attributes:

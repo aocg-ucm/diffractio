@@ -94,40 +94,6 @@ def save_data_common(cls, filename, add_name='', description='', verbose=False):
     return final_filename
 
 
-def save_data_common_deprecated(cls, filename='', method='', description=''):
-    """Common save data function to be used in all the modules.
-
-    Parameters:
-        filename (str): filename
-        method (str): saving method: savez, savez_compressed hickle, matlab, (h5py not yet)
-        description (str): text to be stored in the dictionary to save.
-    """
-
-    now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d_%H_%M_%S")
-
-    cls.__dict__['date'] = date
-    cls.__dict__['description'] = description
-
-    if method == 'savez':
-        np.savez(file=filename, dict=cls.__dict__)
-
-    elif method == 'savez_compressed':
-        np.savez_compressed(file=filename, dict=cls.__dict__)
-
-    elif method == 'hickle':
-        hickle.dump(cls.__dict__, filename, mode='w', compression='gzip')
-
-    elif method == 'matlab':
-        sp.io.savemat(filename, cls.__dict__)
-
-    # elif method == 'h5py':
-    #     with h5py.File(filename, 'w', libver='latest') as f:
-    #         for k, v in cls.__dict__.items():
-    #             f.create_dataset('dict/' + str(k), data=v, chunks=True)
-    #         f.attrs['date'] = date
-
-
 def load_data_common(cls, filename, verbose=False):
     """Common load data function to be used in all the modules.
         The methods included are: npz, matlab
@@ -169,42 +135,6 @@ def load_data_common(cls, filename, verbose=False):
     #     x_read = f['dict']['X'][:]  # [:] syntax extracts numpy array into memory
     #     y_read = f['dict']['Y'][:]
 
-
-def load_data_common_deprecated(cls, filename, method, verbose=False):
-    """Common load data function to be used in all the modules.
-
-    Parameters:
-        filename (str): filename
-        method (str): saving method: savez, savez_compressed hickle, matlab, (h5py not yet)
-        verbose (bool): If True prints data
-    """
-
-    def print_data_dict(dict0):
-        for k, v in dict0.items():
-            print("{:12} = {}".format(k, v))
-        print("\nnumber of data = {}".format(len(dict0['x'])))
-
-    try:
-        if method == 'hickle':
-            dict0 = hickle.load(filename)
-
-        elif method == 'savez' or 'savez_compressed':
-            npzfile = np.load(filename)
-
-            dict0 = npzfile['dict'].tolist()
-
-        if verbose is True:
-            print_data_dict(dict0)
-
-        return dict0
-
-    except IOError:
-        print('could not open {}'.format(filename))
-        return None
-
-    # with h5py.File('file.h5', 'r', libver='latest') as f:
-    #     x_read = f['dict']['X'][:]  # [:] syntax extracts numpy array into memory
-    #     y_read = f['dict']['Y'][:]
 
 
 def print_axis_info(cls, axis):

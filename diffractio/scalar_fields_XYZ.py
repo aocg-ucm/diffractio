@@ -83,7 +83,7 @@ class Scalar_field_XYZ(object):
     Parameters:
         u0 (Scalar_field_XY): Initial scalar field. wavelength, and x, y arrays are obtained from this field.
         z (numpy.array): linear array with equidistant positions.
-        n_background (float): refraction index of backgroudn
+        n_background (float): refraction index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -659,13 +659,13 @@ class Scalar_field_XYZ(object):
         phase1 = np.exp((1j * deltaz * (KX**2 + KY**2)) / (2 * k0))
         field = np.zeros(np.shape(self.n),
                          dtype=complex)  # el índice de refracción
-        filtroBorde = np.exp(-((pixelx) / (0.98 * 0.5 * numx))**90 -
+        filter_edge = np.exp(-((pixelx) / (0.98 * 0.5 * numx))**90 -
                              ((pixely) / (0.98 * 0.5 * numx))**90)
 
         gaussX = np.exp(-(self.X[:, :, 0] / (20 * self.x[0]))**2)
         gaussY = np.exp(-(self.Y[:, :, 0] / (20 * self.y[0]))**2)
 
-        filtroBorde = np.squeeze((gaussX * gaussY)**40)
+        filter_edge = np.squeeze((gaussX * gaussY)**40)
 
         # --------------- Ciclo principal del programa ------------------------
         field[:, :, 0] = modo
@@ -675,7 +675,7 @@ class Scalar_field_XYZ(object):
             phase2 = np.exp(-1j * self.n[:, :, k] * k0 * deltaz)
             # Aplicamos la Transformada Inversa
             modo = ifft2((fft2(modo) * phase1)) * phase2
-            modo = modo * filtroBorde
+            modo = modo * filter_edge
             field[:, :, k] = modo
             self.u = field
 

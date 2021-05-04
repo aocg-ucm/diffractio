@@ -2,7 +2,6 @@ numpy
 scipy
 matplotlib
 nbsphinx
-hickle
 Pillow
 opencv-python
 numexpr

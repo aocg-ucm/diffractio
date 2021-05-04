@@ -11,7 +11,7 @@ The main atributes are:
 *Class for unidimensional scalar masks*
 
 *Functions*
-    * mask_from_function, mask_from_array.
+    * mask_from_function, mask_from_array
     * slit, double slit
     * two_levels, gray_scale
     * prism, biprism_fresnel, biprism_fresnel_nh
@@ -24,11 +24,10 @@ The main atributes are:
 
 from scipy.interpolate import interp1d
 
-from diffractio import degrees, mm, np, plt, um
-from diffractio.scalar_fields_X import Scalar_field_X
-from diffractio.utils_math import (cut_function, fft_convolution1d, nearest,
-                                   nearest2)
-from diffractio.utils_optics import roughness_1D
+from . import degrees, mm, np, plt, um
+from .scalar_fields_X import Scalar_field_X
+from .utils_math import cut_function, fft_convolution1d, nearest, nearest2
+from .utils_optics import roughness_1D
 
 
 class Scalar_mask_X(Scalar_field_X):
@@ -38,7 +37,7 @@ class Scalar_mask_X(Scalar_field_X):
         x (numpy.array): linear array with equidistant positions.
             The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of backgroudn
+        n_background (float): refraction index of background
         info (str): String with info about the simulation
 
     Attributes:

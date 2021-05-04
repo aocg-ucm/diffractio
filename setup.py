@@ -11,7 +11,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 # requirements = [
-#     'Click>=6.0', 'numpy', 'scipy', 'matplotlib', 'hickle', 'nbsphinx', 'h5py'
+#     'Click>=6.0', 'numpy', 'scipy', 'matplotlib','nbsphinx', 'h5py'
 # ]
 
 requirements = []
