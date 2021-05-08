@@ -798,7 +798,7 @@ class Test_Scalar_fields_XY(object):
         field3.laguerre_beam(r0=(0, 0), w0=10 * um, z=50 * um, n=1, l=1)
 
         draw_several_fields(
-            fields=(field1, field2, field3), titulos=('(a)', '(b)', '(c)'))
+            fields=(field1, field2, field3), titles=('(a)', '(b)', '(c)'))
 
         field3.save_data(
             filename=filename+'.npz', add_name='')

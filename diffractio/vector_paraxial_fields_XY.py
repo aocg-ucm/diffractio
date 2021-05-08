@@ -467,7 +467,7 @@ class Vector_paraxial_field_XY(object):
         """Draws electromagnetic field
 
         Parameters:
-            kind (str):  'intensity', 'intensities', 'phases', field', 'stokes', 'param_ellipse', 'ellipses'
+            kind (str):  'intensity', 'intensities', 'phases', fields', 'stokes', 'param_ellipse', 'ellipses'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -490,6 +490,7 @@ class Vector_paraxial_field_XY(object):
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
+
             elif kind == 'fields':
                 id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
                                               **kwargs)
@@ -607,7 +608,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_phase is None:
-            color_phase = params_drawing['color_phase']
+            color_phase=params_drawing['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -787,9 +788,9 @@ class Vector_paraxial_field_XY(object):
         return (h1, h2, h3, h4)
 
     def __draw_ellipses__(self,
-                          logarithm,
-                          normalize,
-                          cut_value,
+                          logarithm=False,
+                          normalize=False,
+                          cut_value='',
                           num_ellipses=(21, 21),
                           amplification=0.75,
                           color_line='w',

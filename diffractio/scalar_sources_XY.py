@@ -172,10 +172,11 @@ class Scalar_source_XY(Scalar_field_XY):
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
 
-    def vortex_beam(self, r0, w0, m):
+    def vortex_beam(self, A, r0, w0, m):
         """Vortex beam.
 
         Parameters:
+            A (float): Amplitude
             r0 (float, float): (x,y) position of source
             w0 (float): width of the vortex beam
             m (int): order of the vortex beam
@@ -184,12 +185,17 @@ class Scalar_source_XY(Scalar_field_XY):
             vortex_beam(r0=(0 * um, 0 * um), w0=100 * um, m=1)
         """
 
+        if isinstance(w0, (float, int, complex)):
+            w0x, w0y = w0, w0
+        else:
+            w0x, w0y = w0
+
         x0, y0 = r0
-        # Definicion del vortice
-        amplitude = ((self.X - x0) + 1.j * sign(m) *
-                     (self.Y - y0))**np.abs(m) * exp(-(
-                         (self.X - x0)**2 + (self.Y - y0)**2) / w0**2)
-        self.u = amplitude
+        amplitude=((self.X - x0) + 1.j * sign(m) *
+                     (self.Y - y0))**np.abs(m) * np.exp(-(
+                         (self.X - x0)**2 / w0x**2 + (self.Y - y0)**2/ w0y**2) )
+
+        self.u= A * amplitude / np.abs(amplitude).max()
 
     def hermite_gauss_beam(self,
                            A=1,

@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """ General purpose optics functions """
 
+import pandas as pd
 from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
                    sin, sqrt, unwrap)
-
-import pandas as pd
 
 from . import degrees, np, plt
 from .utils_math import (fft_convolution1d, fft_convolution2d, find_extrema,
@@ -752,6 +751,7 @@ def field_parameters(u, has_amplitude_sign=False):
 
     intensity = np.abs(u)**2
     phase = np.angle(u)
+    
     if has_amplitude_sign is True:
         amplitude = np.sign(u) * np.abs(u)
     else:

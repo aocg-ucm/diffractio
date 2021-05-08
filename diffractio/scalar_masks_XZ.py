@@ -593,7 +593,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Fs = [cond1, cond2, cond3, cond4]
 
         ipasa = self.object_by_surfaces(
-            rotation_point, refraction_index, Fs, angle, v_globals={})
+            rotation_point, refraction_index, Fs, angle, v_globals={'np': np})
 
         return ipasa
 

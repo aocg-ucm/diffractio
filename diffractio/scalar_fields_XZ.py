@@ -68,20 +68,17 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import (degrees, eps, mm, np, num_max_processors,
-                        params_drawing, plt, seconds, um)
-from diffractio.scalar_fields_X import (PWD_kernel, Scalar_field_X,
-                                        WPM_schmidt_kernel, kernelRS,
-                                        kernelRSinverse)
-from diffractio.scalar_masks_X import Scalar_mask_X
-from diffractio.scalar_sources_X import Scalar_source_X
-from diffractio.utils_common import (get_date, load_data_common,
-                                     save_data_common)
-from diffractio.utils_drawing import (normalize_draw, prepare_drawing,
-                                      prepare_video)
-from diffractio.utils_math import get_k, ndgrid, nearest, rotate_image
-from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
-from diffractio.utils_optics import beam_width_1D, field_parameters
+from . import (degrees, eps, mm, np, num_max_processors, params_drawing, plt,
+               seconds, um)
+from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
+                              kernelRS, kernelRSinverse)
+from .scalar_masks_X import Scalar_mask_X
+from .scalar_sources_X import Scalar_source_X
+from .utils_common import get_date, load_data_common, save_data_common
+from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
+from .utils_math import get_k, ndgrid, nearest, rotate_image
+from .utils_multiprocessing import _pickle_method, _unpickle_method
+from .utils_optics import beam_width_1D, field_parameters
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -456,28 +453,6 @@ class Scalar_field_XZ(object):
         """
         dict0 = load_data_common(self, filename, verbose)
 
-        if dict0 is not None:
-            if isinstance(dict0, dict):
-                self.__dict__ = dict0
-
-                if verbose:
-                    print(dict0.keys())
-
-            else:
-                raise Exception('no dictionary in load_data')
-
-    def load_data_deprecated(self, filename, method, verbose=False):
-        """Load data from a file to a Scalar_field_XZ.
-
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-            verbose (bool): shows data process by screen
-        """
-        dict0 = load_data_common(self, filename, method, verbose)
-
-        if verbose:
-            print(dict0)
         if dict0 is not None:
             if isinstance(dict0, dict):
                 self.__dict__ = dict0
@@ -1477,7 +1452,8 @@ class Scalar_field_XZ(object):
                 self.z[0] / mm, self.z[-1] / mm, self.x[0], self.x[-1]
             ]
 
-        phase = phase / degrees
+
+        percentaje_intensity = params_drawing['percentaje_intensity']
 
         plt.figure()
 
@@ -1488,6 +1464,9 @@ class Scalar_field_XZ(object):
             I_drawing = amplitude
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
         elif kind == 'phase':
+            phase = phase / degrees
+            phase[intensity < percentaje_intensity * (intensity.max())] = 0
+
             I_drawing = phase
         elif kind == 'real':
             I_drawing = np.real(self.u)

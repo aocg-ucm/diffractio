@@ -9,9 +9,10 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import eps, mm
+from . import degrees, eps, mm, params_drawing
 from .utils_optics import field_parameters
 
+percentaje_intensity = params_drawing['percentaje_intensity']
 
 def view_image(filename):
     """reproduces image
@@ -142,17 +143,19 @@ def draw2D(
 
 
 def draw_several_fields(fields,
-                        titulos='',
+                        titles='',
                         title='',
                         figsize='',
+                        kinds='',
                         logarithm=False,
                         normalize=False):
     """Draws several fields in subplots
 
     Parameters:
         fields (list): list with several scalar_fields_XY
-        titulos (list): list with titles
+        titles (list): list with titles
         title (str): suptitle
+        kinds (list): list with kinds of figures (amplitude', 'intensity', 'phase', 'real_field', 'contour')
         logarithm (bool): If True, intensity is scaled in logarithm
         normalize (bool): If True, max(intensity)=1
     """
@@ -170,18 +173,47 @@ def draw_several_fields(fields,
     id_fig = plt.figure(figsize=figsize, facecolor='w', edgecolor='k')
     num_dibujos = len(fields)
 
+    percentaje_intensity = params_drawing['percentaje_intensity']
+
     for i in sorted(range(num_dibujos)):
         c = fields[i]
         id_fig.add_subplot(col, fil, i + 1)
         extension = [c.x.min(), c.x.max(), c.y.min(), c.y.max()]
+        amplitude, intensity, phase = field_parameters(
+            c.u, has_amplitude_sign=True)
 
-        image = np.abs(c.u)**2
+        if kinds == '':
+            image = intensity
+            colormap = params_drawing['color_intensity']
+            kind = 'intensity'
+        else:
+            kind = kinds[i]
+            if kinds[i] == 'intensity':
+                image = intensity
+                colormap = params_drawing['color_intensity']
+            elif kinds[i] == 'phase':
+                phase=phase / degrees
+                phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
-        if logarithm is True:
-            image = np.log(image + 1)
+                colormap = params_drawing['color_phase']
+                image=phase
+            elif kinds[i] == 'amplitude':
+                image = amplitude
+                colormap = params_drawing['color_amplitude']
+            elif kinds[i] == 'real':
+                percentaje_intensity = params_drawing['percentaje_intensity']
+                rf = np.real(c.u)
+                intensity = np.abs(c.u)**2
+                rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
-        if normalize == 'maximum':
-            image = image / image.max()
+                image = np.real(c.u)
+                colormap = params_drawing['color_real']
+
+            if logarithm is True and kinds[i] in ('intensity', 'amplitude', 'real'):
+                image = np.log(image + 1)
+
+            if normalize == 'maximum' and kinds[i] in ('intensity', 'amplitude', 'real'):
+                image = image / image.max()
 
         IDimage = plt.imshow(
             image,
@@ -189,12 +221,17 @@ def draw_several_fields(fields,
             aspect='auto',
             origin='lower',
             extent=extension)
-        plt.title(titulos[i], fontsize=24)
+
+        plt.set_cmap(colormap)
+        if titles != '':
+            plt.title(titles[i], fontsize=24)
+
         plt.suptitle(title, fontsize=26)
         plt.axis('scaled')
         plt.axis(extension)
         plt.colorbar(orientation='horizontal', shrink=0.5)
-        IDimage.set_cmap("gist_heat")
+        if kind == 'phase':
+            plt.clim(-180, 180)
 
 
 def change_image_size(image_name,
