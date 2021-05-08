@@ -111,7 +111,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
 def ndgrid(*args, **kwargs):
     """n-dimensional gridding like Matlab's NDGRID
 
-    Arguments:
+    Parameters:
         The input *args are an arbitrary number of numerical sequences, e.g. lists, arrays, or tuples.
         The i-th dimension of the i-th output argument
         has copies of the i-th input argument.
@@ -823,7 +823,7 @@ def laguerre_polynomial_nk(x, n=4, k=5):
 def get_k(x, flavour='-'):
     """provides k vector from x vector. Two flavours are provided (ordered + or disordered - )
 
-    Arguments:
+    Parameters:
         x (np.array): x array
         flavour (str): '+' or '-'
 
@@ -853,7 +853,7 @@ def get_k(x, flavour='-'):
 def filter_edge_1D(x, size=1.1, exponent=32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
-    Arguments:
+    Parameters:
         x (np.array): position
         size (float): related to relative position of x
         exponent (integer): related to shape of edges
@@ -870,7 +870,7 @@ def filter_edge_1D(x, size=1.1, exponent=32):
 def filter_edge_2D(x, y, size=1.1, exponent=32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
-    Arguments:
+    Parameters:
         x (np.array): x position
         y (np.array): y position
         size (float): related to relative position of x and y

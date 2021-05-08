@@ -1784,7 +1784,7 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
     """
     Step for scalar(TE) Plane wave decomposition(PWD) algorithm.
 
-    Arguments:
+    Parameters:
         u(np.array): field
         n(np.array): refraction index
         k0(float): wavenumber

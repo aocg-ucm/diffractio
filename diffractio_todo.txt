@@ -1,0 +1,16 @@
+## para instalar #matplotlib widgets
+
+pip3 install ipympl
+pip3 install nodejs
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
+jupyter labextension install jupyter-matplotlib
+
+## Comprobar que funciona notebook y widgets e inline, e qt5
+
+## Falla la generación de la ayuda del modulo
+- 5.1.4. diffractio.scalar_fields_XYZ module
+- 5.1.8. diffractio.scalar_masks_XYZ module
+- 5.1.17. diffractio.utils_slicer module
+- 5.1.20. diffractio.vector_paraxial_masks_XY module
+- 5.1.21. diffractio.vector_paraxial_sources_XY module
+

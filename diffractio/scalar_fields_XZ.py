@@ -426,21 +426,7 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    def save_data_deprecated(self, filename='', method='hickle', add_name=''):
-        """Save data of Scalar_field_XZ class to a dictionary.
-
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-
-        Returns:
-            (bool): True if saving is performed, else False.
-        """
-        try:
-            save_data_common(self, filename + add_name, method)
-            return True
-        except:
-            return False
+    
 
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
@@ -896,7 +882,7 @@ class Scalar_field_XZ(object):
         """
         Plane wave decomposition algorithm (PWD).
 
-        Arguments:
+        Parameters:
             n (np. array): refraction index, If None, it is n_background
             matrix (bool): if True returns a matrix else
             verbose (bool): If True prints state of algorithm
@@ -939,7 +925,7 @@ class Scalar_field_XZ(object):
         'schmidt method is very fast, only needs discrete number of refraction indexes'
 
 
-        Arguments:
+        Parameters:
             kind (str): 'schmidt, scalar, TE, TM
             filter (1, or np.array): filter for edges
             matrix (bool): if True returns a matrix else

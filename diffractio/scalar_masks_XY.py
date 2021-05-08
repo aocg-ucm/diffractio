@@ -483,7 +483,7 @@ class Scalar_mask_XY(Scalar_field_XY):
     def dots(self, r0):
         """Generates 1 or several point masks at positions r0
 
-        Arguments:
+        Parameters:
             r0 (float, float) or (np.array, np.array): (x,y) point or points where mask is 1
 
 
@@ -507,7 +507,7 @@ class Scalar_mask_XY(Scalar_field_XY):
     def dots_regular(self, xlim, ylim, num_data, verbose=False):
         """Generates n x m or several point masks.
 
-        Arguments:
+        Parameters:
             xlim (float, float): (xmin, xmax) positions
             ylim (float, float): (ymin, ymax) positions
             num_data (int, int): (x, y) number of points

@@ -26,11 +26,12 @@ The main atributes are:
 """
 import matplotlib
 
-from diffractio import degrees, np, number_types, plt
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
-from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 from py_pol.jones_matrix import Jones_matrix
+
+from . import degrees, np, number_types, params_drawing, plt
+from .scalar_masks_XY import Scalar_mask_XY
+from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
+from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 
 class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
@@ -56,23 +57,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             v_mask_XY (Vector_paraxial_mask_XY): Result.
         """
 
-        # Easy case, multiply by a number
-        # print(other._type)
         if isinstance(other, number_types):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
             m3.M00 = self.M00 * other
             m3.M01 = self.M01 * other
             m3.M10 = self.M10 * other
             m3.M11 = self.M11 * other
-            # print("Matrix * numero")
-
-        # elif other._type in ('Vector_paraxial_source_XY',
-        #                      'Vector_paraxial_field_XY'):
-        #
-        #     # print("Matrix * vector")
-        #     m3 = Vector_paraxial_source_XY(self.x, self.y, self.wavelength)
-        #     m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
-        #     m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
 
         elif other._type in ('Vector_paraxial_mask_XY', 'Vector_paraxial_field_XY'):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
@@ -120,6 +110,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         Parameters:
             angle (float): rotation angle in radians
             new_mask (bool): if True generates a new mask
+
         Returns:
             if new_mask is True: Vector_paraxial_mask_XY
         """
@@ -128,8 +119,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
 
         pass
-
-
 
     def apply_circle(self, r0=None, radius=None):
         """The same circular mask is applied to all the Jones Matrix.
@@ -281,10 +270,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         return m0
 
     def draw(self, kind='amplitude', z_scale='um'):
+        """Draws the mask. It must be different to sources.
 
+        Parameters:
+            kind (str): 'amplitude', 'amplitudes', 'phase', 'phases', 'all'
+        """
         # def draw_masks(self, kind='fields'):
-        # color_inicial = matplotlib.rc('image.cmap')
-        matplotlib.rc('image', cmap='hot')
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
         if z_scale == 'mm':
@@ -309,6 +300,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             im1.set_clim(0, 1)
             im1 = axs.flat[3].imshow(np.abs(self.M11), extent=extension)
             im1.set_clim(0, 1)
+            plt.set_cmap(params_drawing['color_intensity'])
 
             plt.suptitle("Amplitudes")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])
@@ -323,7 +315,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         if kind in ('phase', 'all'):
 
             plt.figure()
-            matplotlib.rc('image', cmap='RdBu')
 
             fig, axs = plt.subplots(
                 2,
@@ -334,17 +325,22 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                     'hspace': 0.1,
                     'wspace': 0.1
                 })
-            im1 = axs.flat[0].imshow(np.angle(self.M00), extent=extension)
-            im1.set_clim(-np.pi, np.pi)
-            im1 = axs.flat[1].imshow(np.angle(self.M01), extent=extension)
-            im1.set_clim(-np.pi, np.pi)
-            im1 = axs.flat[2].imshow(np.angle(self.M10), extent=extension)
-            im1.set_clim(-np.pi, np.pi)
-            im1 = axs.flat[3].imshow(np.angle(self.M11), extent=extension)
-            im1.set_clim(-np.pi, np.pi)
+            im1 = axs.flat[0].imshow(
+                np.angle(self.M00) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            im1 = axs.flat[1].imshow(
+                np.angle(self.M01) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            im1 = axs.flat[2].imshow(
+                np.angle(self.M10) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            im1 = axs.flat[3].imshow(
+                np.angle(self.M11) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
             plt.suptitle("phases")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])
             plt.colorbar(im1, cax=cax)
+            plt.set_cmap(params_drawing['color_phase'])
 
 
 def rotation_matrix_Jones(angle):

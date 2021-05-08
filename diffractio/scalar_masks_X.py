@@ -170,7 +170,7 @@ class Scalar_mask_X(Scalar_field_X):
     def dots(self, x0):
         """Generates 1 or several point masks at positions x0
 
-        Arguments:
+        Parameters:
             x0 float or np.array: x point or points where mask is 1.
         """
         u = np.zeros_like(self.x)

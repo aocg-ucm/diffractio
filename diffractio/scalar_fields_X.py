@@ -964,7 +964,7 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
     """
     Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
 
-    Arguments:
+    Parameters:
         u (np.array): fields
         n (np.array): refraction index
         k0 (float): wavenumber
@@ -988,7 +988,7 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
     """
     Kernel for fast propagation of WPM method
 
-    Arguments:
+    Parameters:
         u (np.array): fields
         n (np.array): refraction index
         k0 (float): wavenumber

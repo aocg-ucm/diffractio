@@ -61,12 +61,13 @@ no_date = False  # for test folder
 params_drawing = dict()
 params_drawing['color_intensity'] = cm.gist_heat  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.seismic
-params_drawing['color_phase'] = cm.twilight # cm.hsv  # cm.twilight #cm.twilight_shifted
+# cm.hsv  # cm.twilight #cm.twilight_shifted
+params_drawing['color_phase'] = cm.twilight
 params_drawing['color_real'] = cm.seismic
 params_drawing['color_stokes'] = cm.seismic
 params_drawing['percentaje_intensity'] = 0.005
-rcParams['figure.figsize']=[4,4]
-rcParams['figure.dpi']=150
+rcParams['figure.figsize'] = [4, 4]
+rcParams['figure.dpi'] = 125
 
 print("number of processors: {}".format(num_max_processors))
 

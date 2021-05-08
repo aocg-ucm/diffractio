@@ -322,21 +322,7 @@ class Scalar_field_XYZ(object):
         except:
             return False
 
-    def save_data_depracted(self, filename, method, add_name=''):
-        """Save data of Scalar_field_XZ class to a dictionary.
 
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-
-        Returns:
-            (bool): True if saving is performed, else False.
-        """
-        try:
-            save_data_common(self, filename + add_name, method)
-            return True
-        except:
-            return False
 
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
@@ -358,21 +344,7 @@ class Scalar_field_XYZ(object):
             else:
                 raise Exception('no dictionary in load_data')
 
-    def load_data_deprecated(self, filename, method, verbose=False):
-        """Load data from a file to a Scalar_field_XZ.
 
-        Parameters:
-            filename (str): filename
-            method (str): 'savez', 'savez_compressed' 'hickle', 'matlab'.
-            verbose (bool): shows data process by screen
-        """
-        dict0 = load_data_common(self, filename, method, verbose)
-
-        if dict0 is not None:
-            if isinstance(dict0, dict):
-                self.__dict__ = dict0
-            else:
-                raise Exception('no dictionary in load_data')
 
     def cut_resample(self,
                      x_limits='',
@@ -683,7 +655,7 @@ class Scalar_field_XYZ(object):
         """
         Plane wave decompostion algorithm.
 
-        Arguments:
+        Parameters:
             n (np. array): refraction index, If None, it is n_background
             verbose (bool): If True prints state of algorithm
 
