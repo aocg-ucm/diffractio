@@ -9,3 +9,4 @@ Scalar_XZ
    tutorial_xz.ipynb
    masks_xz.ipynb
    drawing_xz.ipynb
+   WPM_vs_BPM.ipynb

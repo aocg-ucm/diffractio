@@ -283,6 +283,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         if kind in ('amplitude', 'all'):
             plt.figure()
+            plt.set_cmap(params_drawing['color_intensity'])
             fig, axs = plt.subplots(
                 2,
                 2,
@@ -300,7 +301,6 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             im1.set_clim(0, 1)
             im1 = axs.flat[3].imshow(np.abs(self.M11), extent=extension)
             im1.set_clim(0, 1)
-            plt.set_cmap(params_drawing['color_intensity'])
 
             plt.suptitle("Amplitudes")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])
@@ -315,6 +315,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         if kind in ('phase', 'all'):
 
             plt.figure()
+            plt.set_cmap(params_drawing['color_phase'])
 
             fig, axs = plt.subplots(
                 2,
@@ -340,7 +341,8 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             plt.suptitle("phases")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])
             plt.colorbar(im1, cax=cax)
-            plt.set_cmap(params_drawing['color_phase'])
+
+            plt.set_cmap(params_drawing['color_intensity'])
 
 
 def rotation_matrix_Jones(angle):

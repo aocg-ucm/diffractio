@@ -293,7 +293,7 @@ def normalize_draw(u, logarithm=0, normalize=False, cut_value=None):
     """
 
     u = np.real(u)
-    u[u < 0] = 0
+    # u[u < 0] = 0
 
     if logarithm > 0:
         u = np.log(logarithm * u + 1)

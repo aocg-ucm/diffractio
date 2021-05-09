@@ -72,6 +72,11 @@ Alpha state
 * Changes in docs to include WPM
 * Execution tests
 
+0.0.12 (2021-05-09)
+--------------------------------
+Alpha state
+
+* Bug fix in drawing
 
 (% ejecution)
 --------------------------------
