@@ -20,6 +20,13 @@ import numpy as np
 import scipy as sp
 from scipy.io import loadmat, savemat
 
+def clear_all():
+	"""clear all variables"""
+    all = [var for var in globals() if var[0] != "_"]
+    for var in all:
+        del globals()[var]
+
+
 
 def several_propagations(iluminacion, masks, distances):
     '''performs RS propagation through several masks
