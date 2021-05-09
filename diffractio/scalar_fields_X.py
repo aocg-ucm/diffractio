@@ -91,7 +91,6 @@ class Scalar_field_X(object):
         self.type (str): Class of the field.
         self.date (str): Date when performed.
     """
-
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         self.x = x
         self.wavelength = wavelength
@@ -206,8 +205,8 @@ class Scalar_field_X(object):
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self,
-                                              filename, add_name, description, verbose)
+            final_filename = save_data_common(self, filename, add_name,
+                                              description, verbose)
             return final_filename
         except:
             return False
@@ -306,7 +305,6 @@ class Scalar_field_X(object):
     def filter(self, size=0):
         """
         """
-
 
         slit = Scalar_mask_X(self.x, self.wavelength)
         slit.slit(x0=0, size=size)
@@ -1035,7 +1033,7 @@ def polychromatic_multiprocessing(function_process,
         time_proc (float): time interval in the processing
     """
 
-    if spectrum in (None, '', 'linear'):
+    if not isinstance(spectrum, np.ndarray):
         spectrum = np.ones_like(wavelengths)
 
     if type(wavelengths) in (list, np.ndarray):

@@ -39,10 +39,9 @@ class Test_Scalar_sources_XY(object):
         npixels = 256
 
         # Generación de la clase
-        u = Scalar_source_XY(
-            x=np.linspace(-length / 2, length / 2, npixels),
-            y=np.linspace(-length / 2, length / 2, npixels),
-            wavelength=0.6328 * um)
+        u = Scalar_source_XY(x=np.linspace(-length / 2, length / 2, npixels),
+                             y=np.linspace(-length / 2, length / 2, npixels),
+                             wavelength=0.6328 * um)
 
         # carga de la onda plana
         u.plane_wave(phi=2 * degrees, theta=5 * degrees)
@@ -50,7 +49,7 @@ class Test_Scalar_sources_XY(object):
         # draw y guardar
         u.draw(kind='phase')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -71,18 +70,17 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del haz gaussiano
-        u.gauss_beam(
-            A=1,
-            r0=(0 * um, 0 * um),
-            z0=0,
-            w0=(25 * um, 25 * um),
-            phi=2 * degrees,
-            theta=5 * degrees)
+        u.gauss_beam(A=1,
+                     r0=(0 * um, 0 * um),
+                     z0=0,
+                     w0=(25 * um, 25 * um),
+                     phi=2 * degrees,
+                     theta=5 * degrees)
 
         # draw y guardar
         u.draw(kind='field')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -103,13 +101,16 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga de la onda esferica
-        u.spherical_wave(
-            A=1, r0=(0 * um, 0 * um), z0=-5 * mm, radius=300 * um, mask=True)
+        u.spherical_wave(A=1,
+                         r0=(0 * um, 0 * um),
+                         z0=-5 * mm,
+                         radius=300 * um,
+                         mask=True)
 
         # draw la onda esferica
         u.draw(kind='field', normalize='maximum')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -130,20 +131,18 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga de la onda esferica
-        u.spherical_wave(
-            A=1,
-            r0=(0 * um, 0 * um),
-            z0=-25.0 * mm,
-            radius=1300 * um,
-            mask=False)
+        u.spherical_wave(A=1,
+                         r0=(0 * um, 0 * um),
+                         z0=-25.0 * mm,
+                         radius=1300 * um,
+                         mask=False)
 
         t = Scalar_mask_XY(x0, y0, wavelength0)
-        t.lens(
-            r0=(0, 0),
-            radius=(300 * um, 300 * um),
-            focal=(25 * mm, 25 * mm),
-            angle=0,
-            mask=False)
+        t.lens(r0=(0, 0),
+               radius=(300 * um, 300 * um),
+               focal=(25 * mm, 25 * mm),
+               angle=0,
+               mask=False)
         u_salida = u * t
         u.draw(kind='field')
         t.draw(kind='field')
@@ -151,7 +150,7 @@ class Test_Scalar_sources_XY(object):
         # draw la onda esferica
         u_salida.draw(kind='field', normalize='maximum')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -175,20 +174,19 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del vortex_beam
-        u.vortex_beam(r0=(0, 0), w0=250 * um, m=m)
+        u.vortex_beam(A=1, r0=(0, 0), w0=250 * um, m=m)
 
         # draw el vortex_beam
         title = '$m_{vortice}= %d$' % (m)
         u.draw(kind='field', title=title)
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
     def test_vortices(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
-
 
         # tamaño de la matrix
         M = 5
@@ -205,7 +203,7 @@ class Test_Scalar_sources_XY(object):
         plt.suptitle("$Vortices$", fontsize=20)
 
         for m in range(M):
-            u.vortex_beam(r0=(0 * um, 0 * um), w0=100 * um, m=m)
+            u.vortex_beam(A=1, r0=(0 * um, 0 * um), w0=100 * um, m=m)
 
             # carga de los drawings
             title = "(%d)" % (m)
@@ -220,7 +218,7 @@ class Test_Scalar_sources_XY(object):
             h2 = plt.imshow(np.angle(u.u))
             h2.set_cmap("seismic")
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -245,14 +243,17 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del haz de Laguerre
-        u.laguerre_beam(
-            n=N, l=K, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
+        u.laguerre_beam(n=N,
+                        l=K,
+                        r0=(0 * um, 0 * um),
+                        w0=100 * um,
+                        z=0.01 * um)
 
         # drawing
         title = r'$n=%d, k=%d$' % (N, K)
         u.draw(kind='field', title=title)
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -284,8 +285,11 @@ class Test_Scalar_sources_XY(object):
 
         for n in range(N + 1):
             for k in range(K + 1):
-                u.laguerre_beam(
-                    n=n, l=k, r0=(0 * um, 0 * um), w0=100 * um, z=0.01 * um)
+                u.laguerre_beam(n=n,
+                                l=k,
+                                r0=(0 * um, 0 * um),
+                                w0=100 * um,
+                                z=0.01 * um)
 
                 title = "(%d,%d)" % (n, k)
                 plt.figure(ID1.number)
@@ -305,7 +309,7 @@ class Test_Scalar_sources_XY(object):
         plt.figure(ID1.number)
         plt.figure(ID2.number)
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -322,11 +326,16 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # u.hermite_gauss_beam(I0=1, w=100*um, n = [0,0,1,1,3],     m =[0,1,0,1,3],  c_mn=[1,1,1,1,1])
-        u.hermite_gauss_beam(
-            A=1, r0=(0, 0), w0=100 * um, n=1, m=1, z=0, z0=(0,0))
+        u.hermite_gauss_beam(A=1,
+                             r0=(0, 0),
+                             w0=100 * um,
+                             n=1,
+                             m=1,
+                             z=0,
+                             z0=(0, 0))
         u.draw(kind='intensity')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -350,11 +359,16 @@ class Test_Scalar_sources_XY(object):
         # creación del u
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
-        u.zernike_beam(
-            A=1, r0=(0, 0), radius=length / 2, n=N, m=M, c_nm=c_nm, mask=True)
+        u.zernike_beam(A=1,
+                       r0=(0, 0),
+                       radius=length / 2,
+                       n=N,
+                       m=M,
+                       c_nm=c_nm,
+                       mask=True)
         u.draw(kind='field')
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -386,14 +400,13 @@ class Test_Scalar_sources_XY(object):
             for m in range(-n, n + 1, 2):
                 pos = pos + 1
 
-                u.zernike_beam(
-                    A=1,
-                    r0=(0, 0),
-                    radius=length / 2,
-                    n=np.array([n]),
-                    m=np.array([m]),
-                    c_nm=np.array([1]),
-                    mask=True)
+                u.zernike_beam(A=1,
+                               r0=(0, 0),
+                               radius=length / 2,
+                               n=np.array([n]),
+                               m=np.array([m]),
+                               c_nm=np.array([1]),
+                               mask=True)
 
                 # carga de los drawings
                 title = "(%d,%d)" % (n, m)
@@ -404,7 +417,7 @@ class Test_Scalar_sources_XY(object):
                 plt.clim(vmin=-np.pi, vmax=np.pi)
                 h2.set_cmap("seismic")
 
-        u.save_data(filename=filename+'.npz')
+        u.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -417,11 +430,12 @@ class Test_Scalar_sources_XY(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u0.plane_waves_several_inclined(
-            A=1, num_beams=(5, 5), max_angle=(5 * degrees, 180 * degrees))
+        u0.plane_waves_several_inclined(A=1,
+                                        num_beams=(5, 5),
+                                        max_angle=(5 * degrees, 180 * degrees))
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -437,18 +451,17 @@ class Test_Scalar_sources_XY(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u0.gauss_beams_several_parallel(
-            A=1,
-            num_beams=(5, 5),
-            w0=50 * um,
-            z0=0 * um,
-            r0=(0 * um, 0 * um),
-            r_range=(750 * um, 750 * um),
-            theta=0 * degrees,
-            phi=0 * degrees)
+        u0.gauss_beams_several_parallel(A=1,
+                                        num_beams=(5, 5),
+                                        w0=50 * um,
+                                        z0=0 * um,
+                                        r0=(0 * um, 0 * um),
+                                        r_range=(750 * um, 750 * um),
+                                        theta=0 * degrees,
+                                        phi=0 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -461,16 +474,16 @@ class Test_Scalar_sources_XY(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u0.gauss_beams_several_inclined(
-            A=1,
-            num_beams=(5, 5),
-            w0=250 * um,
-            r0=(0 * um, 0 * um),
-            z0=0 * um,
-            max_angle=(10 * degrees, 180 * degrees))
+        u0.gauss_beams_several_inclined(A=1,
+                                        num_beams=(5, 5),
+                                        w0=250 * um,
+                                        r0=(0 * um, 0 * um),
+                                        z0=0 * um,
+                                        max_angle=(10 * degrees,
+                                                   180 * degrees))
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -486,25 +499,23 @@ class Test_Scalar_sources_XY(object):
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
         u2 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
-        u1.gauss_beam(
-            A=1,
-            r0=(0 * um, 0 * um),
-            w0=(500 * um, 500 * um),
-            z0=0 * um,
-            phi=2 * degrees,
-            theta=10 * degrees)
-        u2.gauss_beam(
-            A=1,
-            r0=(0 * um, 0 * um),
-            w0=(500 * um, 500 * um),
-            z0=0 * um,
-            phi=2 * degrees,
-            theta=-10 * degrees)
+        u1.gauss_beam(A=1,
+                      r0=(0 * um, 0 * um),
+                      w0=(500 * um, 500 * um),
+                      z0=0 * um,
+                      phi=2 * degrees,
+                      theta=10 * degrees)
+        u2.gauss_beam(A=1,
+                      r0=(0 * um, 0 * um),
+                      w0=(500 * um, 500 * um),
+                      z0=0 * um,
+                      phi=2 * degrees,
+                      theta=-10 * degrees)
 
         u3 = u1 + u2
         u3.draw(kind='intensity', title="$interferencias$")
 
-        u3.save_data(filename=filename+'.npz')
+        u3.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -555,12 +566,15 @@ class Test_Scalar_sources_XY(object):
         u_final = Scalar_source_XY(x, y, wavelength)
         u_temp = Scalar_source_XY(x, y, wavelength)
         for x_i, y_i in zip(xpos, ypos):
-            u_temp.spherical_wave(
-                A=1, r0=(x_i, y_i), z0=z0, radius=10000 * um, mask=False)
+            u_temp.spherical_wave(A=1,
+                                  r0=(x_i, y_i),
+                                  z0=z0,
+                                  radius=10000 * um,
+                                  mask=False)
             u_final = u_final + u_temp
 
         u_final.draw(kind='field')
 
-        u_final.save_data(filename=filename+'.npz')
+        u_final.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
