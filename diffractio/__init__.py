@@ -30,14 +30,30 @@ scalar bidimensional XY fields propagated in Z direction
 	* sources are acquired using scalar_sources_XY
 """
 
-
 import datetime
 import multiprocessing
+import psutil
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from matplotlib import cm, rcParams
+
+num_max_processors = multiprocessing.cpu_count()
+
+freq_max = psutil.cpu_freq()[2]
+battery = psutil.sensors_battery()[0]
+info_memory = psutil.virtual_memory()[0] / 1024**3
+memory_available = psutil.virtual_memory(
+).available * 100 / psutil.virtual_memory().total
+
+num_max_processors = multiprocessing.cpu_count()
+
+print("number of processors: {}".format(num_max_processors))
+print("total memory        : {:1.1f} Gb".format(info_memory))
+print("available memory    : {:1.0f} %".format(memory_available))
+print("max frequency       : {:1.0f} GHz".format(freq_max))
+print("battery		    : {:1.0f} %".format(battery))
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -54,7 +70,6 @@ seconds = 1.
 
 eps = 1e-6
 num_decimals = 4
-num_max_processors = multiprocessing.cpu_count()
 
 no_date = False  # for test folder
 
@@ -68,8 +83,6 @@ params_drawing['color_stokes'] = cm.seismic
 params_drawing['percentaje_intensity'] = 0.005
 rcParams['figure.figsize'] = [4, 4]
 rcParams['figure.dpi'] = 125
-
-print("number of processors: {}".format(num_max_processors))
 
 now = datetime.datetime.now()
 date_test = now.strftime("%Y-%m-%d_%H")

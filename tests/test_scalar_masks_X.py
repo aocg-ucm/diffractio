@@ -42,7 +42,7 @@ class Test_Scalar_masks_X(object):
         t1.slit(x0=0, size=100 * um)
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -59,7 +59,7 @@ class Test_Scalar_masks_X(object):
         t1.double_slit(x0=0, size=5 * um, separation=15 * um)
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -76,7 +76,7 @@ class Test_Scalar_masks_X(object):
         t1.two_levels(level1=0, level2=.5, x_edge=0)
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -91,7 +91,7 @@ class Test_Scalar_masks_X(object):
         t1.gray_scale(num_levels=16, levelMin=2, levelMax=3)
         t1.draw(kind='amplitude')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -108,7 +108,7 @@ class Test_Scalar_masks_X(object):
         t1.prism(x0=0, n=1.5, anglex=1 * degrees)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -122,11 +122,13 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.biprism_fresnel(
-            angle=1 * degrees, x0=100 * um, radius=125, mask=True)
+        t1.biprism_fresnel(angle=1 * degrees,
+                           x0=100 * um,
+                           radius=125,
+                           mask=True)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -143,7 +145,7 @@ class Test_Scalar_masks_X(object):
         t1.biprism_fresnel_nh(x0=0, width=100 * um, height=5 * um, n=1.5)
 
         t1.draw(kind='phase')
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         pass
 
     def test_lens(self):
@@ -159,7 +161,7 @@ class Test_Scalar_masks_X(object):
         t1.lens(x0=0 * um, radius=100 * um, focal=5 * mm)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -173,26 +175,24 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.fresnel_lens(
-            x0=0 * um,
-            radius=100 * um,
-            focal=.25 * mm,
-            mask=True,
-            kind='amplitude',
-            phase=np.pi)
+        t1.fresnel_lens(x0=0 * um,
+                        radius=100 * um,
+                        focal=.25 * mm,
+                        mask=True,
+                        kind='amplitude',
+                        phase=np.pi)
         t1.draw(kind='amplitude')
         save_figure_test(newpath, func_name, '_amplitude')
 
-        t1.fresnel_lens(
-            x0=0 * um,
-            radius=100 * um,
-            focal=.25 * mm,
-            mask=True,
-            kind='phase',
-            phase=np.pi)
+        t1.fresnel_lens(x0=0 * um,
+                        radius=100 * um,
+                        focal=.25 * mm,
+                        mask=True,
+                        kind='phase',
+                        phase=np.pi)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name, '_phase')
         assert True
 
@@ -209,7 +209,7 @@ class Test_Scalar_masks_X(object):
         t1.roughness(t=15 * um, s=.2 * um)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -226,7 +226,7 @@ class Test_Scalar_masks_X(object):
         t1.dust_different_sizes(percentaje=0.2, size=20 * um, std=5 * um)
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -242,7 +242,7 @@ class Test_Scalar_masks_X(object):
         t1.dust(percentaje=0.9, size=20 * um)
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -257,7 +257,7 @@ class Test_Scalar_masks_X(object):
         red.sine_grating(period=period, amp_min=0, amp_max=1, x0=0 * um)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -271,7 +271,7 @@ class Test_Scalar_masks_X(object):
         red.ronchi_grating(period=50 * um, x0=0 * um, fill_factor=0.75)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -282,16 +282,15 @@ class Test_Scalar_masks_X(object):
         x = np.linspace(-250 * um, 250 * um, 512)
         wavelength = 0.6238 * um
         red = Scalar_mask_X(x, wavelength)
-        red.binary_grating(
-            period=50 * um,
-            amin=0.25,
-            amax=0.5,
-            phase=np.pi,
-            x0=25 * um,
-            fill_factor=0.25)
+        red.binary_grating(period=50 * um,
+                           amin=0.25,
+                           amax=0.5,
+                           phase=np.pi,
+                           x0=25 * um,
+                           fill_factor=0.25)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -303,16 +302,15 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6238 * um
         period = 40 * um
         red = Scalar_mask_X(x, wavelength)
-        red.binary_grating(
-            period=period,
-            amin=1,
-            amax=1,
-            phase=np.pi / 2,
-            x0=0,
-            fill_factor=0.5)
+        red.binary_grating(period=period,
+                           amin=1,
+                           amax=1,
+                           phase=np.pi / 2,
+                           x0=0,
+                           fill_factor=0.5)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -327,7 +325,7 @@ class Test_Scalar_masks_X(object):
         red.blazed_grating(period=period, height=2 * um, n=1.5)
         red.draw(kind='phase')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -354,17 +352,16 @@ class Test_Scalar_masks_X(object):
         print(v_globals)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.mask_from_function(
-            x0=0 * um,
-            index=index,
-            f1=f1,
-            f2=f2,
-            v_globals=v_globals,
-            radius=100 * um,
-            mask=True)
+        t1.mask_from_function(x0=0 * um,
+                              index=index,
+                              f1=f1,
+                              f2=f2,
+                              v_globals=v_globals,
+                              radius=100 * um,
+                              mask=True)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -388,18 +385,17 @@ class Test_Scalar_masks_X(object):
 
         profile1 = loadtxt(abs_file_path1)
         profile2 = loadtxt(abs_file_path2)
-        t1.mask_from_array(
-            x0=0,
-            index=1.25,
-            array1=profile1 * mm,
-            array2=profile2 * mm,
-            interp_kind='quadratic',
-            radius=1.5 * mm,
-            mask=True)
+        t1.mask_from_array(x0=0,
+                           index=1.25,
+                           array1=profile1 * mm,
+                           array2=profile2 * mm,
+                           interp_kind='quadratic',
+                           radius=1.5 * mm,
+                           mask=True)
 
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -423,7 +419,7 @@ class Test_Scalar_masks_X(object):
         red.chirped_grating_p(**conds)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -451,7 +447,7 @@ class Test_Scalar_masks_X(object):
         red.chirped_grating_q(**conds)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -465,18 +461,17 @@ class Test_Scalar_masks_X(object):
         fx = '10+20*(self.x/length)**2'
 
         red = Scalar_mask_X(x, wavelength)
-        red.chirped_grating(
-            kind='amplitude_binary',
-            p_x=fx,
-            length=500 * um,
-            x0=0 * um,
-            amp_max=1,
-            amp_min=0,
-            delta_x=0,
-            phase_max=np.pi)
+        red.chirped_grating(kind='amplitude_binary',
+                            p_x=fx,
+                            length=500 * um,
+                            x0=0 * um,
+                            amp_max=1,
+                            amp_min=0,
+                            delta_x=0,
+                            phase_max=np.pi)
         red.draw(kind='amplitude')
 
-        red.save_data(filename=filename+'.npz')
+        red.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -495,28 +490,28 @@ class Test_Scalar_masks_X(object):
         t1.binary_code(kind='normal', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t1.draw()
 
-        t1.save_data(filename=filename + '-normal'+'.npz')
+        t1.save_data(filename=filename + '-normal' + '.npz')
         save_figure_test(newpath, func_name + '-normal')
 
         t2 = Scalar_mask_X(x, wavelength)
         t2.binary_code(kind='zeros', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t2.draw()
 
-        t2.save_data(filename=filename + '-zeros'+'.npz')
+        t2.save_data(filename=filename + '-zeros' + '.npz')
         save_figure_test(newpath, func_name + '-zeros')
 
         t3 = Scalar_mask_X(x, wavelength)
         t3.binary_code(kind='ones', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t3.draw()
 
-        t3.save_data(filename=filename + '-ones'+'.npz')
+        t3.save_data(filename=filename + '-ones' + '.npz')
         save_figure_test(newpath, func_name + '-ones')
 
         t4 = Scalar_mask_X(x, wavelength)
         t4.binary_code(kind='abs_fag', i0=i0, bit_width=anchura_bit, x0=0 * um)
         t4.draw()
 
-        t4.save_data(filename=filename + '-fag'+'.npz')
+        t4.save_data(filename=filename + '-fag' + '.npz')
         save_figure_test(newpath, func_name)
 
         assert True
