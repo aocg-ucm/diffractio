@@ -26,10 +26,9 @@ The magnitude is related to microns: `mifcron = 1.`
     * Polychromatic and extendes sources are defined in scalar_fields_X.py for multiprocessing purposes.
 """
 
-from numpy import cos, exp, pi, sign, sin, sqrt
-
 from diffractio import degrees, np, um
 from diffractio.scalar_fields_X import Scalar_field_X
+from numpy import cos, exp, pi, sign, sin, sqrt
 
 
 class Scalar_source_X(Scalar_field_X):

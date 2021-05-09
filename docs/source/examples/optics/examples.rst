@@ -10,6 +10,7 @@ Optical examples
    reflection_refraction.ipynb
    diffraction_slit.ipynb
    diffraction_objects.ipynb
+   gauss_beam.ipynb
    arago_point.ipynb
    fresnel_biprism.ipynb
    lenses.ipynb

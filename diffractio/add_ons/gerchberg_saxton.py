@@ -74,6 +74,71 @@ def GS_algorithm(source, target, num_steps=11):
     return mask_final, errors
 
 
+
+def GS_Fresnel_algorithm(source, target, z, num_steps=5, has_draw=False):
+    """
+    # TODO:
+    """
+
+    errors = np.zeros(num_steps)
+
+    x = target.x
+    y = target.y
+    wavelength = target.wavelength
+    num_x = len(x)
+    num_y = len(y)
+
+    radius_x = (x.max() - x.min()) / 2
+    radius_y = (y.max() - y.min()) / 2
+    x_mean = (x.max() + x.min()) / 2
+    y_mean = (y.max() + y.min()) / 2
+
+    circle = Scalar_mask_XY(x, y, wavelength)
+    circle.circle(r0=(x_mean, y_mean), radius=(radius_x, radius_y))
+
+    if source is None:
+        source = Scalar_source_XY(x, y, wavelength)
+        source.plane_wave()
+
+    DOE = Scalar_mask_XY(x, y, wavelength)
+    field_z = Scalar_mask_XY(x, y, wavelength)
+    # DOE.u=np.abs(target.u)*np.exp(1j*2*np.pi*np.random.rand(num_x,num_y))
+
+    u_target = np.abs(target.u)
+    I_result = np.abs(target.u)**2
+    I_result_mean = I_result.mean()
+
+    field_z.u = u_target * np.exp(2j * np.pi * np.random.rand(num_y, num_x))
+
+    for i in range(num_steps):
+        print("{}/{}".format(i, num_steps), end='\r')
+        DOE = field_z.RS(z=-z, new_field=True)
+        mask = np.angle(DOE.u)
+        DOE.u = np.exp(1j * mask)
+        field_z = (source * DOE).RS(z=z, new_field=True)
+        I_z = np.abs(field_z.u)**2
+        I_z = I_z * I_result_mean / I_z.mean()
+
+        field_z.u = u_target * np.exp(1j * np.angle(field_z.u))
+
+        # if has_mask:
+        #     DOE.u=np.exp(1j*np.pi*mask)*circle.u
+
+        errors[i] = compute_error(I_result, I_z)
+
+    mask = (mask + np.pi) / (2 * np.pi)
+    print(mask.max(), mask.min())
+
+    plt.plot(errors, 'k', lw=2)
+    plt.title('errors')
+
+    mask_final = Scalar_mask_XY(x, y, wavelength)
+    mask_final.u = mask
+
+    return mask_final, errors
+
+
+
 def Wyrowski_algorithm(source, target, num_steps=11):
     """
     # Para Ángela:
@@ -133,69 +198,6 @@ def Wyrowski_algorithm(source, target, num_steps=11):
 
     mask = np.fft.fftshift(mask)
     mask = (mask + np.pi) / (2 * np.pi)
-
-    mask_final = Scalar_mask_XY(x, y, wavelength)
-    mask_final.u = mask
-
-    return mask_final, errors
-
-
-def GS_Fresnel_algorithm(source, target, z, num_steps=5, has_draw=False):
-    """
-    # TODO:
-    """
-
-    errors = np.zeros(num_steps)
-
-    x = target.x
-    y = target.y
-    wavelength = target.wavelength
-    num_x = len(x)
-    num_y = len(y)
-
-    radius_x = (x.max() - x.min()) / 2
-    radius_y = (y.max() - y.min()) / 2
-    x_mean = (x.max() + x.min()) / 2
-    y_mean = (y.max() + y.min()) / 2
-
-    circle = Scalar_mask_XY(x, y, wavelength)
-    circle.circle(r0=(x_mean, y_mean), radius=(radius_x, radius_y))
-
-    if source is None:
-        source = Scalar_source_XY(x, y, wavelength)
-        source.plane_wave()
-
-    DOE = Scalar_mask_XY(x, y, wavelength)
-    field_z = Scalar_mask_XY(x, y, wavelength)
-    # DOE.u=np.abs(target.u)*np.exp(1j*2*np.pi*np.random.rand(num_x,num_y))
-
-    u_target = np.abs(target.u)
-    I_result = np.abs(target.u)**2
-    I_result_mean = I_result.mean()
-
-    field_z.u = u_target * np.exp(2j * np.pi * np.random.rand(num_y, num_x))
-
-    for i in range(num_steps):
-        print("{}/{}".format(i, num_steps), end='\r')
-        DOE = field_z.RS(z=-z, new_field=True)
-        mask = np.angle(DOE.u)
-        DOE.u = np.exp(1j * mask)
-        field_z = (source * DOE).RS(z=z, new_field=True)
-        I_z = np.abs(field_z.u)**2
-        I_z = I_z * I_result_mean / I_z.mean()
-
-        field_z.u = u_target * np.exp(1j * np.angle(field_z.u))
-
-        # if has_mask:
-        #     DOE.u=np.exp(1j*np.pi*mask)*circle.u
-
-        errors[i] = compute_error(I_result, I_z)
-
-    mask = (mask + np.pi) / (2 * np.pi)
-    print(mask.max(), mask.min())
-
-    plt.plot(errors, 'k', lw=2)
-    plt.title('errors')
 
     mask_final = Scalar_mask_XY(x, y, wavelength)
     mask_final.u = mask

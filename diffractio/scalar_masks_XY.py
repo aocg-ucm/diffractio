@@ -37,6 +37,7 @@ import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
                    ones_like, pi, shape, sin, sqrt, zeros, zeros_like)
+from PIL import Image
 from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
 
@@ -46,7 +47,6 @@ from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_math import (fft_convolution2d, laguerre_polynomial_nk,
                                    nearest, nearest2)
 from diffractio.utils_optics import roughness_2D
-from PIL import Image
 
 
 class Scalar_mask_XY(Scalar_field_XY):
@@ -749,15 +749,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
         """
 
-        # si solamente un numero, posiciones y radius son los mismos para ambos
-        # Definicion del origen y radius del ring
 
         ring1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring1.circle(r0, radius1, angle)
         ring2.circle(r0, radius2, angle)
 
-        # Al restar ring2.u-ring1.u se logra la transmitancia en el interior
         self.u = ring2.u - ring1.u
 
     def cross(self, r0, size, angle=0 * degrees):

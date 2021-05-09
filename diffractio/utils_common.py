@@ -14,18 +14,16 @@
 """ Common functions to classes """
 
 import datetime
-import os
 
 import numpy as np
-import scipy as sp
 from scipy.io import loadmat, savemat
 
+
 def clear_all():
-	"""clear all variables"""
+    """clear all variables"""
     all = [var for var in globals() if var[0] != "_"]
     for var in all:
         del globals()[var]
-
 
 
 def several_propagations(iluminacion, masks, distances):
@@ -141,7 +139,6 @@ def load_data_common(cls, filename, verbose=False):
     # with h5py.File('file.h5', 'r', libver='latest') as f:
     #     x_read = f['dict']['X'][:]  # [:] syntax extracts numpy array into memory
     #     y_read = f['dict']['Y'][:]
-
 
 
 def print_axis_info(cls, axis):

@@ -426,7 +426,7 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    
+
 
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
@@ -650,6 +650,8 @@ class Scalar_field_XZ(object):
            Algorithm in "Engineering optics with matlab" pag 119.
         """
 
+        t1 = time.time()
+
         if division is False:
             # standard BPM _algorithm
             self.__BPM__(matrix, verbose)
@@ -678,11 +680,15 @@ class Scalar_field_XZ(object):
 
                 ui.BPM()
                 uf = ui.final_field().u
-                # ui.draw_refraction_index(draw_borders=True)
-                # ui.draw(draw_borders=True, logarithm=True,scale='scaled')
                 self.u[:, sl] = ui.u
+
             if matrix is True:
                 return self.u
+        if verbose is True:
+            t2 = time.time()
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                    t2 - t1, (t2 - t1) / len(self.z) * 1000))
+
 
     def BPM_inverse(self, verbose=False):
         """
