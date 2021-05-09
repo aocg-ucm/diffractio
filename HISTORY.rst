@@ -59,7 +59,7 @@ Alpha state
 
 * Improvement to documentation (readthedocs)
 
-0.0.11 (2021-01-**)
+0.0.11 (2021-05-09)
 --------------------------------
 Alpha state
 
