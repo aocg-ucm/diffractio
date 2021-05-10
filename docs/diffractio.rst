@@ -1,6 +1,14 @@
 diffractio package
 ==================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   diffractio.add_ons
+
 Submodules
 ----------
 
@@ -163,7 +171,6 @@ diffractio.vector\_paraxial\_sources\_XY module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------
