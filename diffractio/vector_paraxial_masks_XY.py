@@ -25,7 +25,6 @@ The main atributes are:
     * polarizer_retarder
 """
 import matplotlib
-
 from py_pol.jones_matrix import Jones_matrix
 
 from . import degrees, np, number_types, params_drawing, plt

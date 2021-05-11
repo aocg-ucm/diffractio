@@ -26,13 +26,14 @@ The magnitude is related to microns: `micron = 1.`
     * local_polarized_vector_wave_hybrid
 """
 
+from py_pol.jones_vector import Jones_vector
+
 from . import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
 from .utils_optics import normalize
 from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
-from py_pol.jones_vector import Jones_vector
 
 
 class Vector_paraxial_source_XY(Vector_paraxial_field_XY):

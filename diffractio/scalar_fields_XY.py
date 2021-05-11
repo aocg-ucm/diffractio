@@ -63,13 +63,12 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_math import get_edges, ndgrid, nearest, rotate_image
-from .utils_optics import beam_width_2D, field_parameters
-
 from . import degrees, mm, np, params_drawing, plt, seconds, um
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
+from .utils_math import get_edges, ndgrid, nearest, rotate_image
+from .utils_optics import beam_width_2D, field_parameters
 
 try:
     import screeninfo
@@ -277,7 +276,6 @@ class Scalar_field_XY(object):
             return final_filename
         except:
             return False
-
 
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_X.
@@ -946,8 +944,8 @@ class Scalar_field_XY(object):
         fy = 1000 * np.linspace(-frec_nyquist_y, frec_nyquist_y, len(y))
 
         if kind == 'mm':
-            frec_x = fx
-            frec_y = fy
+            # frec_x = fx
+            # frec_y = fy
             text_x = "$f_x (cycles/mm)$"
             text_y = "$f_y (cycles/mm)$"
         elif kind == 'degrees':
@@ -1684,59 +1682,7 @@ def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
         return 1 / (2 * pi) * exp(1.j * k * R) / R * (1 / R - 1.j * k)
 
 
-def kernelRS_deprecated(X, Y, wavelength, z, n=1, kind='z'):
-    """Kernel for RS propagation
-
-    Parameters:
-        X(numpy.array): positions x
-        Y(numpy.array): positions y
-        wavelength(float): wavelength of incident fields
-        z(float): distance for propagation
-        n(float): refraction index of background
-        kind(str): 'z', 'x', '0': for simplifying vector propagation
-
-    Returns:
-        complex np.array: kernel
-    """
-    k = 2 * pi * n / wavelength
-    R = sqrt(X**2 + Y**2 + z**2)
-    if kind == 'z':
-        return 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-    elif kind == 'x':
-        return 1 / (2 * pi) * exp(1.j * k * R) * X / R**2 * (1 / R - 1.j * k)
-    elif kind == 'y':
-        return 1 / (2 * pi) * exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
-    elif kind == '0':
-        return 1 / (2 * pi) * exp(1.j * k * R) / R * (1 / R - 1.j * k)
-
-
 def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
-    """Kernel for inverse RS propagation
-
-    Parameters:
-        X(numpy.array): positions x
-        Y(numpy.array): positions y
-        wavelength(float): wavelength of incident fields
-        z(float): distance for propagation
-        n(float): refraction index of background
-        kind(str): 'z', 'x', '0': for simplifying vector propagation
-
-    Returns:
-        complex np.array: kernel
-    """
-    k = 2 * pi * n / wavelength
-    R = sqrt(X**2 + Y**2 + z**2)
-    if kind == 'z':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * z / R * (1 / R + 1.j * k)
-    elif kind == 'x':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * X / R * (1 / R + 1.j * k)
-    elif kind == 'y':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R * (1 / R + 1.j * k)
-    elif kind == '0':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
-
-
-def kernelRSinverse_deprecated(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     """Kernel for inverse RS propagation
 
     Parameters:

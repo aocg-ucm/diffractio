@@ -9,11 +9,10 @@ import sys
 import types
 
 import numpy as np
-
-from . import eps, no_date, plt, um
-from .scalar_fields_X import Scalar_field_X
-from .utils_multiprocessing import _pickle_method, _unpickle_method
-from .utils_tests import comparison, save_figure_test
+from diffractio import eps, no_date, plt, um
+from diffractio.scalar_fields_X import Scalar_field_X
+from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
+from diffractio.utils_tests import comparison, save_figure_test
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 

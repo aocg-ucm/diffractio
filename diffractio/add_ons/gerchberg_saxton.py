@@ -3,7 +3,7 @@
 
 from copy import deepcopy
 
-from . import mm, nm, np, plt, sp, um
+from . import mm, np, plt
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
 
@@ -141,7 +141,7 @@ def GS_Fresnel_algorithm(source, target, z, num_steps=5, has_draw=False):
 
 def Wyrowski_algorithm(source, target, num_steps=11):
     """
-    # Para Ángela:
+    # TODO
     """
 
     errors = np.zeros(num_steps)
@@ -211,6 +211,9 @@ def GS_Fresnel_algorithm_backup(source,
                                 is_binary,
                                 num_steps=5,
                                 has_draw=False):
+    """
+    # TODO:
+    """
 
     x = target.x
     y = target.y

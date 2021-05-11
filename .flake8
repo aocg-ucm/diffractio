@@ -1,6 +1,7 @@
 [flake8]
 ignore =
-    E501, W605
+    E501, W605, E226, W504, F401
+
     # Normal default
     # E121,E123,E126,E226,E24,E704,W503,W504,
     # Additional ignores:

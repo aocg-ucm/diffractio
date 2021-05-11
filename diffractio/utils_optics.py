@@ -223,8 +223,9 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
     principal_axis = 0.5 * np.arctan2(2 * xy_mean, x2_mean - y2_mean)
 
     if has_draw is True:
-        from .scalar_fields_XY import Scalar_field_XY
         from matplotlib.patches import Ellipse
+
+        from .scalar_fields_XY import Scalar_field_XY
 
         u0 = Scalar_field_XY(x, y, 1)
         u0.u = np.sqrt(intensity)
@@ -751,7 +752,7 @@ def field_parameters(u, has_amplitude_sign=False):
 
     intensity = np.abs(u)**2
     phase = np.angle(u)
-    
+
     if has_amplitude_sign is True:
         amplitude = np.sign(u) * np.abs(u)
     else:

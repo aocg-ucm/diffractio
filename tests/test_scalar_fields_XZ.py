@@ -6,13 +6,13 @@ import os
 import sys
 import time
 
-from . import (degrees, eps, mm, no_date, np, num_max_processors, plt,
+from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
                         sp, um)
-from .scalar_fields_XZ import Scalar_field_XZ
-from .scalar_masks_X import Scalar_mask_X
-from .scalar_masks_XZ import Scalar_mask_XZ
-from .scalar_sources_X import Scalar_source_X
-from .utils_tests import comparison, save_figure_test
+from diffractio.scalar_fields_XZ import Scalar_field_XZ
+from diffractio.scalar_masks_X import Scalar_mask_X
+from diffractio.scalar_masks_XZ import Scalar_mask_XZ
+from diffractio.scalar_sources_X import Scalar_source_X
+from diffractio.utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'
@@ -106,7 +106,7 @@ u_gauss = generate_BPM_gauss()
 class Test_Scalar_fields_XZ(object):
     def test_rotate_field(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         x0 = np.linspace(-200 * um, 200 * um, 512)
         z0 = np.linspace(-100 * um, 600 * um, 512)
@@ -161,7 +161,7 @@ class Test_Scalar_fields_XZ(object):
 
     def test_clear_field(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.hkl'.format(newpath, func_name)
+        # filename = '{}{}.hkl'.format(newpath, func_name)
 
         u0 = generate_BPM_gauss()
         proposal = 0 * u0.u
@@ -609,7 +609,7 @@ class Test_Scalar_fields_XZ(object):
 
     def test_BPM_profile_longitudinal(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         x0 = np.linspace(-25 * um, 25 * um, 512)
         z0 = np.linspace(0 * um, 75 * um, 512)
@@ -631,7 +631,7 @@ class Test_Scalar_fields_XZ(object):
 
     def test_BPM_profile_transversal(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         x0 = np.linspace(-25 * um, 25 * um, 512)
         z0 = np.linspace(0 * um, 75 * um, 512)
@@ -653,7 +653,7 @@ class Test_Scalar_fields_XZ(object):
 
     def test_find_focus(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         # dielectrico = 2
         # radius_sphere = 8 * um
@@ -691,7 +691,7 @@ class Test_Scalar_fields_XZ(object):
 
     def test_BPM_inverse(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         x0 = np.linspace(-25 * um, 25 * um, 512)
         z0 = np.linspace(0 * um, 75 * um, 512)
@@ -718,9 +718,7 @@ class Test_Scalar_fields_XZ(object):
 
         save_figure_test(newpath, func_name, add_name='_direct')
 
-        # Hago la inverse y drawing los resultados
         u2 = u1.BPM_inverse()
-        # u2.draw_refraction_index(draw_borders=True, min_incr=0.001)
         u2.draw(
             logarithm=True,
             normalize='maximum',

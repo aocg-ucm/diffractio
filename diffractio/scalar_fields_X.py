@@ -91,6 +91,7 @@ class Scalar_field_X(object):
         self.type (str): Class of the field.
         self.date (str): Date when performed.
     """
+
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         self.x = x
         self.wavelength = wavelength
@@ -305,6 +306,8 @@ class Scalar_field_X(object):
     def filter(self, size=0):
         """
         """
+
+        from .scalar_masks_X import Scalar_mask_X  # Do not write up
 
         slit = Scalar_mask_X(self.x, self.wavelength)
         slit.slit(x0=0, size=size)
@@ -654,49 +657,6 @@ class Scalar_field_X(object):
             self.x = x0
             self.u = u_field
             self.quality = qualities.min()
-
-    def BPM_deprecated(self, deltaz, n, matrix=False, verbose=False):
-        """Beam propagation method (BPM). Here this function is not very useful.
-
-        Parameters:
-            deltaz (float): propagation distance
-            n (numpy.array): refraction index
-            matrix (bool): if True returns matrix, else result in self.u
-            verbose (bool): shows data process by screen
-
-        References:
-           Algorithm in "Engineering optics with matlab" pag 119.
-
-        Note:
-            Axis were transposed in comparison to RS
-
-        """
-
-        k0 = 2 * pi / self.wavelength
-
-        numx = len(self.x)  # distance en x
-        rangox = self.x[-1] - self.x[0]
-        # Formamos el bloque de píxeles
-        pixelx = linspace(-int(numx / 2), int(numx / 2), numx)
-        # Campo inicial
-        field_z = self.u
-
-        kx1 = linspace(0, int(numx / 2) + 1, int(numx / 2))
-        kx2 = linspace(-int(numx / 2), -1, int(numx / 2))
-
-        kx = (2 * pi / rangox) * np.concatenate((kx1, kx2))
-
-        phase1 = exp((-1j * deltaz * kx**2) / (2 * k0))
-
-        filter_edge = exp(-((pixelx) / (0.98 * 0.5 * numx))**90)
-
-        phase2 = exp(1j * n * k0 * deltaz)
-        field_z = ifft((fft(field_z) * phase1)) * phase2
-
-        if matrix is True:
-            return field_z * filter_edge
-        else:
-            self.u = field_z * filter_edge
 
     def normalize(self, kind='intensity', new_field=False):
         """Normalizes the field so that intensity.max()=1.

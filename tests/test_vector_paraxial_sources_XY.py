@@ -5,12 +5,12 @@ import datetime
 import os
 import sys
 
-from . import degrees, eps, mm, no_date, np, um
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_sources_XY import Scalar_source_XY
-from .utils_tests import save_figure_test
-from .vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from diffractio import degrees, eps, mm, no_date, np, um
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
+from diffractio.utils_tests import save_figure_test
+from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
 path_class = "vector_paraxial_sources_XY"
@@ -38,7 +38,7 @@ class Test_vector_sources_XY(object):
 
     def test_constant_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 25 * um
         num_data = 256
@@ -47,7 +47,7 @@ class Test_vector_sources_XY(object):
         wavelength = 1 * um
 
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u=1,v=(1,1j))
+        EM.constant_wave(u=1, v=(1, 1j))
 
         save_figure_test(newpath, func_name, add_name='_fields')
 
@@ -55,13 +55,9 @@ class Test_vector_sources_XY(object):
         save_figure_test(newpath, func_name, add_name='_stokes')
         assert True
 
-
-
-
-
     def test_interferences(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 100 * um
         num_data = 256
@@ -93,7 +89,7 @@ class Test_vector_sources_XY(object):
 
     def test_radial_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -115,7 +111,7 @@ class Test_vector_sources_XY(object):
 
     def test_transversal_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -135,31 +131,10 @@ class Test_vector_sources_XY(object):
 
         assert True
 
-    def test_transversal_wave(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-
-        length = 250 * um
-        num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
-
-        EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.transversal_wave(
-            u=1, r0=(0 * um, 0 * um), radius=(length / 2, length / 2))
-
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
-
-        assert True
 
     def test_gauss(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 75 * um
         num_data = 256
@@ -186,7 +161,7 @@ class Test_vector_sources_XY(object):
 
     def test_gauss_radial(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 75 * um
         num_data = 256
@@ -213,7 +188,7 @@ class Test_vector_sources_XY(object):
 
     def test_local_polarized_vector_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 500 * um
         num_data = 256
@@ -235,7 +210,7 @@ class Test_vector_sources_XY(object):
 
     def test_local_polarized_vector_wave_radial(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 500 * um
         num_data = 256
@@ -257,7 +232,7 @@ class Test_vector_sources_XY(object):
 
     def test_local_polarized_vector_wave_hybrid(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 500 * um
         num_data = 256

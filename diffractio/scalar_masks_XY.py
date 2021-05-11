@@ -44,8 +44,8 @@ from scipy.special import eval_hermite
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_sources_XY import Scalar_source_XY
-from .utils_math import (fft_convolution2d, laguerre_polynomial_nk,
-                                   nearest, nearest2)
+from .utils_math import (fft_convolution2d, laguerre_polynomial_nk, nearest,
+                         nearest2)
 from .utils_optics import roughness_2D
 
 
@@ -71,28 +71,28 @@ class Scalar_mask_XY(Scalar_field_XY):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 
-    def set_amplitude(self, q=1, positivo=0, amp_min=0, amp_max=1):
+    def set_amplitude(self, q=1, positive=0, amp_min=0, amp_max=1):
         """makes that the mask has only amplitude.
 
         Parameters:
             q (int): 0 - amplitude as it is and phase is removed. 1 - take phase and convert to amplitude
 
-            positivo (int): 0 - value may be positivo or negative. 1 - value is only positive
+            positive (int): 0 - value may be positive or negative. 1 - value is only positive
         """
 
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
         if q == 0:
-            if positivo == 0:
+            if positive == 0:
                 self.u = amp_min + (amp_max -
                                     amp_min) * amplitude * np.sign(phase)
-            if positivo == 1:
+            if positive == 1:
                 self.u = amp_min + (amp_max - amp_min) * amplitude
         else:
-            if positivo == 0:
+            if positive == 0:
                 self.u = amp_min + (amp_max - amp_min) * phase
-            if positivo == 1:
+            if positive == 1:
                 self.u = amp_min + (amp_max - amp_min) * np.abs(phase)
 
         # hay que terminar
@@ -749,7 +749,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of rotation in radians
         """
 
-
         ring1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring1.circle(r0, radius1, angle)
@@ -785,30 +784,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3
 
-    def prism_deprecated(self,
-                         r0,
-                         index,
-                         angle_wedge_x,
-                         angle_wedge_y,
-                         angle=0 * degrees):
-        """prism with angles angle_wedge_x, angle_wedge_y
-
-        Parameters:
-            r0 (float, float): center wedge
-            index (float): refraction index
-            angle_wedge_x (float): angle of wedge in x direction
-            angle_wedge_y (float): angle of wedge in y direction
-            angle (float): angle of rotation in radians
-
-        """
-        # Vector de onda
-        k = 2 * pi / self.wavelength
-        x0, y0 = r0
-        Xrot, Yrot = self.__rotate__(angle)
-
-        self.u = exp(1j * k * (index - 1) *
-                     ((Xrot - x0) * sin(angle_wedge_x)) +
-                     (Yrot - y0) * sin(angle_wedge_y))
 
     def prism(self, r0, angle_wedge, angle=0 * degrees):
         """prism which produces a certain angle
@@ -966,37 +941,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                 np.exp(-1j * k * (refraction_index - 1)
                        * r * np.tan(angle)) * t_off_axis
 
-    def axicon_deprecated(self, r0, radius, height, n):
-        """Axicon,
 
-        Parameters:
-            r0 (float, float): (x0,y0) - center of lens
-            radius (float): radius of lens mask
-            height (float): height of axicon
-            n (float): refraction index
-
-        Example:
-            axicon(r0=(0 * um, 0 * um), radius=200 * um, height=5 * um,  n=1.5)
-        """
-        # Vector de onda
-        k = 2 * pi / self.wavelength
-        x0, y0 = r0
-
-        # distance de la generatriz al eje del cono
-        r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-
-        # Altura desde la base a la surface
-        h = -2 * height / radius * r + 2 * height
-        # No existencia de heights negativas
-        iremove = h < 0
-        h[iremove] = 0
-
-        # Region de transmitancia
-        u = zeros(shape(self.X))
-        ipasa = r < radius
-        u[ipasa] = 1
-
-        self.u = u * exp(1.j * k * (n - 1) * h)
 
     def biprism_fresnel(self, r0, width, height, n):
         """Fresnel biprism.

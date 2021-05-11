@@ -38,11 +38,12 @@ from math import factorial
 
 from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
 from scipy.special import eval_hermite, j0, j1, jv
-from scipy.special.orthogonal import hermite
 
 from . import degrees, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .utils_math import fZernike, laguerre_polynomial_nk
+
+# from scipy.special.orthogonal import hermite
 
 
 class Scalar_source_XY(Scalar_field_XY):
@@ -65,9 +66,6 @@ class Scalar_source_XY(Scalar_field_XY):
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
-
-    # ______________________________________________________________________
-    # pasamos a definir fuentes
 
     def plane_wave(self, A=1, theta=0 * degrees, phi=0 * degrees, z0=0 * um):
         """Plane wave. self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
@@ -191,11 +189,11 @@ class Scalar_source_XY(Scalar_field_XY):
             w0x, w0y = w0
 
         x0, y0 = r0
-        amplitude=((self.X - x0) + 1.j * sign(m) *
+        amplitude = ((self.X - x0) + 1.j * sign(m) *
                      (self.Y - y0))**np.abs(m) * np.exp(-(
-                         (self.X - x0)**2 / w0x**2 + (self.Y - y0)**2/ w0y**2) )
+                         (self.X - x0)**2 / w0x**2 + (self.Y - y0)**2 / w0y**2))
 
-        self.u= A * amplitude / np.abs(amplitude).max()
+        self.u = A * amplitude / np.abs(amplitude).max()
 
     def hermite_gauss_beam(self,
                            A=1,

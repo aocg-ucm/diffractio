@@ -17,11 +17,10 @@ import os
 import sys
 from functools import wraps
 
+from diffractio import degrees, mm, no_date, np, plt, um
+from diffractio.scalar_sources_X import Scalar_source_X
+from diffractio.utils_tests import comparison, save_figure_test
 from numpy import linspace
-
-from . import degrees, mm, no_date, np, plt, um
-from .scalar_sources_X import Scalar_source_X
-from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

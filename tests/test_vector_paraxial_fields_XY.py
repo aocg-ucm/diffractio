@@ -5,13 +5,13 @@ import datetime
 import os
 import sys
 
-from . import degrees, mm, nm, no_date, np, plt, sp, um
-from .scalar_fields_XY import Scalar_field_XY
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_sources_XY import Scalar_source_XY
-from .utils_tests import save_figure_test
-from .vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
+from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
+from diffractio.utils_tests import save_figure_test
+from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
 path_class = "Vector_paraxial_fields_XY"
@@ -34,17 +34,17 @@ v_circular = (1, 1j, 0) / np.sqrt(2)
 class Test_Vector_paraxial_fields_XY(object):
     def test_save_load(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
         assert True
 
     def test_clear_field(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
         assert True
 
     def test_mul(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -81,7 +81,7 @@ class Test_Vector_paraxial_fields_XY(object):
         de vueltas sucesivas a los fields E y H
         """
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 512
@@ -107,7 +107,7 @@ class Test_Vector_paraxial_fields_XY(object):
         """
 
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -127,18 +127,9 @@ class Test_Vector_paraxial_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='_1')
         assert True
 
-    def test_get(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-        assert True
-
-    def test_apply_mask(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-
     def test_plane_wave_generacion(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 500 * um
         num_data = 16
@@ -175,7 +166,7 @@ class Test_Vector_paraxial_fields_XY(object):
 
     def test_RS(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         num_data = 256
         length = 150 * um
@@ -205,18 +196,3 @@ class Test_Vector_paraxial_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='_4S_p')
 
         return True
-
-    def test_polarization_states(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-        assert True
-
-    def test_polarization_ellipse(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-        assert True
-
-    def test_draw(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
-        assert True

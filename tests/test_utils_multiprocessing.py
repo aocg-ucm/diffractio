@@ -16,9 +16,8 @@ import os
 import time
 
 import numpy as np
-
-from . import no_date
-from .utils_multiprocessing import auxiliar_multiprocessing
+from diffractio import no_date
+from diffractio.utils_multiprocessing import auxiliar_multiprocessing
 
 if no_date is True:
     date = '0'

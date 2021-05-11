@@ -5,13 +5,12 @@ import datetime
 import os
 import sys
 
+from diffractio import degrees, mm, no_date, np, plt, sp, um
+from diffractio.scalar_masks_X import Scalar_mask_X
+from diffractio.scalar_masks_XZ import Scalar_mask_XZ
+from diffractio.scalar_sources_X import Scalar_source_X
+from diffractio.utils_tests import comparison, save_figure_test
 from numpy import loadtxt
-
-from . import degrees, mm, no_date, np, plt, sp, um
-from .scalar_masks_X import Scalar_mask_X
-from .scalar_masks_XZ import Scalar_mask_XZ
-from .scalar_sources_X import Scalar_source_X
-from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

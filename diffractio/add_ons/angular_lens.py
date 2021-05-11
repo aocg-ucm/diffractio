@@ -4,7 +4,6 @@
 This module is related to FOCO project: development of Extended of Focus (EDOF) lenses
 
 
-
 Articles and books:
 
 *  K Uno  and I. Shimizu "Dual Focus Diﬀractive Optical Element with Extended Depth of Focus" * OPTICAL REVIEW Vol. 21, No. 5 (2014) 668–675
@@ -19,7 +18,7 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_math import binarize as func_binarize
 from .utils_math import cart2pol
-from .utils_optics import beam_width_1D, beam_width_2D
+from .utils_optics import beam_width_2D
 
 
 class Angular_lens(Scalar_field_XY):

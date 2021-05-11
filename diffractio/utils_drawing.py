@@ -14,6 +14,7 @@ from .utils_optics import field_parameters
 
 percentaje_intensity = params_drawing['percentaje_intensity']
 
+
 def view_image(filename):
     """reproduces image
 
@@ -192,11 +193,11 @@ def draw_several_fields(fields,
                 image = intensity
                 colormap = params_drawing['color_intensity']
             elif kinds[i] == 'phase':
-                phase=phase / degrees
+                phase = phase / degrees
                 phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
                 colormap = params_drawing['color_phase']
-                image=phase
+                image = phase
             elif kinds[i] == 'amplitude':
                 image = amplitude
                 colormap = params_drawing['color_amplitude']
@@ -215,7 +216,7 @@ def draw_several_fields(fields,
             if normalize == 'maximum' and kinds[i] in ('intensity', 'amplitude', 'real'):
                 image = image / image.max()
 
-        IDimage = plt.imshow(
+        plt.imshow(
             image,
             interpolation='bilinear',
             aspect='auto',

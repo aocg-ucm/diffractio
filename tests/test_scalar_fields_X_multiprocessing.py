@@ -10,19 +10,17 @@ import time
 import types
 
 import numpy as np
-
-from . import degrees, mm, no_date, num_max_processors, plt, um
-from .scalar_fields_X import (Scalar_field_X,
+from diffractio import degrees, mm, no_date, num_max_processors, plt, um
+from diffractio.scalar_fields_X import (Scalar_field_X,
                                         extended_polychromatic_source,
                                         extended_source_multiprocessing,
                                         polychromatic_multiprocessing)
-from .scalar_masks_X import Scalar_mask_X
-from .scalar_sources_X import Scalar_source_X
-from .utils_multiprocessing import (_pickle_method, _unpickle_method,
+from diffractio.scalar_masks_X import Scalar_mask_X
+from diffractio.scalar_sources_X import Scalar_source_X
+from diffractio.utils_multiprocessing import (_pickle_method, _unpickle_method,
                                               execute_multiprocessing)
-from .utils_optics import (gauss_spectrum, lorentz_spectrum,
-                                     uniform_spectrum)
-from .utils_tests import comparison, save_data_test, save_figure_test
+from diffractio.utils_optics import gauss_spectrum
+from diffractio.utils_tests import save_figure_test
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -93,47 +91,6 @@ def __experiment_grating_movement__(dict_params):
 
 
 class Test_Scalar_fields_X(object):
-    # def test_draw_varias_distances(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}'.format(newpath, func_name)
-    #
-    #     num_cores = num_max_processors  # el paralelizado no funciona
-    #     x = np.linspace(-250 * um, 250 * um, 1024 * 8)
-    #     wavelength = 0.6328 * um
-    #
-    #     t1 = Scalar_mask_X(x, wavelength)
-    #     t1.slit(x0=0, size=250 * um)
-    #     t1.draw()
-    #
-    #     distances = [1 * mm, 2 * mm, 3 * mm, 5 * mm]
-    #
-    #     dict_RS = dict(
-    #         z=distances,
-    #         n=1,
-    #         new_field=True,
-    #         fast=False,
-    #         kind='z',
-    #         xout=None,
-    #         verbose=True)
-    #
-    #     if num_cores == 1:
-    #         for z in distances:
-    #             u1 = t1.RS(z=z, new_field=True)
-    #             u1.draw()
-    #     else:
-    #
-    #         pool = Pool(num_cores)
-    #         data_pool = pool.map(t1.RS, dict_RS)
-    #         pool.close()
-    #         pool.join()
-    #
-    #         plt.figure()
-    #         for result in data_pool:
-    #             plt.plot(result.x, np.abs(result.u)**2)
-    #
-    #     save_figure_test(newpath, func_name)
-    #
-    #     assert True
 
     def test_extended_source_simple(self):
         """
@@ -142,7 +99,7 @@ class Test_Scalar_fields_X(object):
         Esquema: Fuente extensa, red, lens, vista en plano focal
         """
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         # definiciones
         x = np.linspace(-500 * um, 500 * um, 1024)
@@ -189,7 +146,7 @@ class Test_Scalar_fields_X(object):
 
     def test_polychromatic(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         wavelengths = np.linspace(.3 * um, .9 * um, 101)
         w_central = wavelengths.mean()
@@ -226,7 +183,7 @@ class Test_Scalar_fields_X(object):
             Esquema: Fuente extensa, red, lens, vista en plano focal
         """
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         x0s = np.linspace(-1500 * um, 1500 * um, 101)
         x0_central = 0 * um
@@ -252,7 +209,7 @@ class Test_Scalar_fields_X(object):
 
     def test_grating_movement(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(deltas_x, period, t1, t2):
             # create Parameters: for multiprocessing
@@ -386,7 +343,7 @@ def __experiment_extended_polychromatic_source__(dict_params):
 class Test_Scalar_fields_X_multiprocessing(object):
     def test_multiprocessing_dictionary(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(wavelengths, x0, z, slit_size, separation):
             # create Parameters: for multiprocessing
@@ -448,7 +405,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
 
     def test_multiprocessing_array(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         slit_sizes = np.linspace(5 * um, 50 * um, 10)
         num_processors = num_max_processors
@@ -482,7 +439,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
 
     def test_extended_polychromatic_source(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         x0s = np.linspace(-150 * um, 150 * um, 21)
         wavelengths = np.linspace(.45 * um, .65 * um, 11)

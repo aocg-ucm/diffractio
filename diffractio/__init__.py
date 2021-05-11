@@ -10,32 +10,32 @@ Contents
 diffractio presents the following subpackages:
 
 scalar unidimensional fields
-	* scalar_fields_X  (propagation and general functions)
-	* scalar_sources_X  (light sources)
-	* scalar_masks_X (scalar masks)
+    * scalar_fields_X  (propagation and general functions)
+    * scalar_sources_X  (light sources)
+    * scalar_masks_X (scalar masks)
 
 scalar unidimensional X fields propagated in Z direction
-	* scalar_fields_XZ  (propagation and general functions)
-	* scalar_masks_XZ (scalar masks)
-	* sources are acquired using scalar_sources_X
+    * scalar_fields_XZ  (propagation and general functions)
+    * scalar_masks_XZ (scalar masks)
+    * sources are acquired using scalar_sources_X
 
 scalar bidimensional XY fields
-	* scalar_fields_XY  (propagation and general functions)
-	* scalar_sources_XY  (light sources)
-	* scalar_masks_XY (scalar masks)
+    * scalar_fields_XY  (propagation and general functions)
+    * scalar_sources_XY  (light sources)
+    * scalar_masks_XY (scalar masks)
 
 scalar bidimensional XY fields propagated in Z direction
-	* scalar_fields_XYZ  (propagation and general functions)
-	* scalar_masks_XYZ (scalar masks)
-	* sources are acquired using scalar_sources_XY
+    * scalar_fields_XYZ  (propagation and general functions)
+    * scalar_masks_XYZ (scalar masks)
+    * sources are acquired using scalar_sources_XY
 """
 
 import datetime
 import multiprocessing
-import psutil
 
 import matplotlib.pyplot as plt
 import numpy as np
+import psutil
 import scipy as sp
 from matplotlib import cm, rcParams
 

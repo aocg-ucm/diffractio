@@ -53,12 +53,10 @@ from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 from scipy.signal import correlate2d
 
-from . import (degrees, eps, mm, np, num_max_processors,
-                        params_drawing, plt)
+from . import degrees, eps, mm, np, num_max_processors, params_drawing, plt
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
-from .utils_common import (get_date, load_data_common,
-                                     save_data_common)
+from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing
 from .utils_math import get_k, ndgrid, nearest
 from .utils_multiprocessing import _pickle_method, _unpickle_method

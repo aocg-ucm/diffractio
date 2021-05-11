@@ -6,12 +6,12 @@ import os
 import sys
 import time
 
-from . import degrees, eps, mm, no_date, np, plt, um
-from .scalar_fields_XY import Scalar_field_XY
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_sources_XY import Scalar_source_XY
-from .utils_drawing import draw_several_fields
-from .utils_tests import comparison, save_figure_test
+from diffractio import degrees, eps, mm, no_date, np, plt, um
+from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
+from diffractio.utils_drawing import draw_several_fields
+from diffractio.utils_tests import comparison, save_figure_test
 
 try:
     import screeninfo
@@ -87,7 +87,7 @@ plane_wave = plane_wave_test()
 class Test_Scalar_fields_XY(object):
     def test_add(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         t1 = field_gauss
         t2 = field_gauss
@@ -106,7 +106,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_sub(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         t1 = field_gauss
         t2 = field_gauss
@@ -125,7 +125,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_mult(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u0 = field_gauss
         t0 = square
@@ -139,7 +139,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_rotate(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         t0 = square
         t0.draw(kind='intensity', has_colorbar='horizontal')
@@ -154,7 +154,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_clear_field(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u0 = field_gauss
         proposal = 0 * u0.u
@@ -185,18 +185,18 @@ class Test_Scalar_fields_XY(object):
 
         t1.draw()
         save_figure_test(newpath, func_name, add_name='_saved')
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
 
         time.sleep(1)
         t2 = Scalar_field_XY(x, y, wavelength)
-        t2.load_data(filename=filename+'.npz')
+        t2.load_data(filename=filename + '.npz')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_loaded')
         assert True
 
     def test_cut_resample(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u0 = field_gauss_narrow
 
@@ -226,12 +226,9 @@ class Test_Scalar_fields_XY(object):
         fieldfft1.draw(kind='intensity')
 
         fieldfft1.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
-
-    def test_ifft(self):
-        pass
 
     def test_RS(self):
         func_name = sys._getframe().f_code.co_name
@@ -257,7 +254,7 @@ class Test_Scalar_fields_XY(object):
         u4 = u3.RS(z=-2 * mm, new_field=True)
         u4.draw(kind='field')
 
-        u4.save_data(filename=filename+'.npz', add_name='')
+        u4.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -274,17 +271,17 @@ class Test_Scalar_fields_XY(object):
         y0 = np.linspace(-lengthy / 2, lengthy / 2, num_pixels)
 
         u1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        u1.gauss_beam(r0=(0.,0.), w0=100*um, z0=0, A=1, theta=0, phi=0)
+        u1.gauss_beam(r0=(0., 0.), w0=100 * um, z0=0, A=1, theta=0, phi=0)
         u2 = u1.RS(amplification=(2, 3), z=1 * mm)
         u2.draw('field')
 
-        u2.save_data(filename=filename+'.npz', add_name='')
+        u2.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_profile(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         field = gauss_beam_test()
 
@@ -305,7 +302,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_profile_manual(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         field = gauss_beam_test()
 
@@ -326,7 +323,7 @@ class Test_Scalar_fields_XY(object):
 
     def test_search_focus(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u = gauss_beam_narrow_test()
         solution = np.array(u.search_focus())
@@ -337,21 +334,18 @@ class Test_Scalar_fields_XY(object):
     def test_MTF(self):
 
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u = gauss_beam_narrow_test()
         u.draw()
         save_figure_test(newpath, func_name, add_name='_field')
 
-        mtf = u.MTF(has_draw=True)
+        u.MTF(has_draw=True)
         save_figure_test(newpath, func_name, add_name='_mtf')
 
-    def test_intensity(self):
-        pass
-
     def test_average_intensity(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # func_name = sys._getframe().f_code.co_name
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         u = gauss_beam_narrow_test()
         inten1 = u.average_intensity(verbose=True)
@@ -360,10 +354,10 @@ class Test_Scalar_fields_XY(object):
 
     def test_send_image_screen(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         screens = screeninfo.get_monitors()
-        id_screen = 0  #1
+        id_screen = 0  # 1
         pixel_size_x = 20 * um
         pixel_size_y = 20 * um
         num_pixels_x = screens[id_screen].width
@@ -412,7 +406,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field')
 
         field.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -443,7 +437,7 @@ class Test_Scalar_fields_XY(object):
         # no se ve nada, porque se ha quitado la amplitude y la phase
 
         field.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -465,7 +459,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field')
 
         field.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
 
         solution = np.angle(field.u).sum()
@@ -499,7 +493,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field', normalize=None)
 
         field.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -536,7 +530,7 @@ class Test_Scalar_fields_XY(object):
         field3.draw(kind='phase', normalize=None)
 
         field3.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -595,7 +589,7 @@ class Test_Scalar_fields_XY(object):
         fieldAmplitud.draw(kind='field')
 
         fieldAmplitud.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -604,7 +598,7 @@ class Test_Scalar_fields_XY(object):
         filename = '{}{}.npz'.format(newpath, func_name)
 
         # phase
-        from .scalar_masks_XY import Scalar_mask_XY
+        from diffractio.scalar_masks_XY import Scalar_mask_XY
         length = 250 * um
         wavelength = 0.6 * um
         x0 = np.linspace(-length / 2, length / 2, 256)
@@ -641,7 +635,7 @@ class Test_Scalar_fields_XY(object):
         fieldFase.draw(kind='field')
 
         fieldFase.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -695,7 +689,7 @@ class Test_Scalar_fields_XY(object):
         fieldFase.draw(kind='field')
 
         fieldFase.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -714,65 +708,11 @@ class Test_Scalar_fields_XY(object):
         field1.draw(kind='intensity', normalize=False)
 
         field1.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    # def test_remove_amplitude(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}.npz'.format(newpath, func_name)
-    #
-    #     length = 250 * um
-    #     x0 = np.linspace(-length / 2, length / 2, 256)
-    #     y0 = np.linspace(-length / 2, length / 2, 256)
-    #     wavelength = 0.6 * um
-    #
-    #     # field total
-    #     field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-    #     field.spherical_wave()
-    #     field.draw(kind='field')
-    #
-    #     field.remove_amplitude()
-    #     field.draw(kind='field')
-    #
-    #     field.save_data(
-    #         filename=filename+'.npz', add_name='')
-    #     save_figure_test(newpath, func_name, add_name='')
-    #     assert True
 
-    # def test_several_propagations(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}.npz'.format(newpath, func_name)
-    #
-    #     length = 250 * um
-    #     num_data = 256
-    #     x0 = np.linspace(-length / 2, length / 2, num_data)
-    #     y0 = np.linspace(-length / 2, length / 2, num_data)
-    #     wavelength0 = 0.6238 * um
-    #
-    #     u_ilum = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
-    #     u_ilum.plane_wave(A=1, theta=0 * degrees, phi=0 * degrees)
-    #
-    #     t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength0)
-    #     t1.image(
-    #         filename='flecha.bmp',
-    #         normalize=True,
-    #         canal=0,
-    #         lengthImage=False,
-    #         angle=0)
-    #     z0 = 2 * mm
-    #
-    #     fieldZ1, fieldMascaraFinal = several_propagations(
-    #         u_ilum, (t1, ), (z0, ))
-    #     fieldMascaraFinal.draw()
-    #     scalar_fields_XYZ1 = scalar_fields_XYZ(fieldMascaraFinal,
-    #                                          np.linspace(0.2 * mm, z0, 64))
-    #     scalar_fields_XYZ1.RS()
-    #     scalar_fields_XYZ1.draw_XYZ()
-    #
-    #     u2.save_data(filename=filename+'.npz', add_name='')
-    #     save_figure_test(newpath, func_name, add_name='')
-    #     assert True
 
     def test_draw_several_fields(self):
         func_name = sys._getframe().f_code.co_name
@@ -801,6 +741,6 @@ class Test_Scalar_fields_XY(object):
             fields=(field1, field2, field3), titles=('(a)', '(b)', '(c)'))
 
         field3.save_data(
-            filename=filename+'.npz', add_name='')
+            filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True

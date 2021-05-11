@@ -6,12 +6,10 @@ import datetime
 import os
 import sys
 
+from diffractio import degrees, eps, mm, no_date, np, plt, sp, um
+from diffractio.scalar_masks_X import Scalar_mask_X
+from diffractio.utils_tests import save_figure_test
 from numpy import loadtxt
-
-from . import degrees, eps, mm, no_date, np, plt, sp, um
-from .scalar_masks_X import Scalar_mask_X
-from .utils_math import nearest2
-from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

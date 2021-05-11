@@ -7,10 +7,10 @@ import datetime
 import os
 import sys
 
-from . import degrees, no_date, np, um
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_masks_XYZ import Scalar_mask_XYZ
-from .utils_tests import comparison, save_figure_test
+from diffractio import degrees, no_date, np, um
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
+from diffractio.utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

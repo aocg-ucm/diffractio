@@ -5,12 +5,12 @@ import datetime
 import os
 import sys
 
-from . import degrees, mm, no_date, np, um
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_sources_XY import Scalar_source_XY
-from .utils_tests import save_figure_test
-from .vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from diffractio import degrees, mm, no_date, np, um
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
+from diffractio.utils_tests import save_figure_test
+from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 from py_pol.jones_matrix import Jones_matrix
 
 path_base = "tests_results"
@@ -39,7 +39,7 @@ class Test_vector_masks_XY(object):
 
     def test_equal_mask(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
         length = 250 * um
         num_data = 256
         wavelength = 0.6328 * um
@@ -67,7 +67,7 @@ class Test_vector_masks_XY(object):
 
     def test_complementary_mask(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -98,7 +98,7 @@ class Test_vector_masks_XY(object):
 
     def test_from_py_pol(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -122,7 +122,7 @@ class Test_vector_masks_XY(object):
 
     def test_polarizer_linear(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -143,7 +143,7 @@ class Test_vector_masks_XY(object):
 
     def test_quarter_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -164,7 +164,7 @@ class Test_vector_masks_XY(object):
 
     def test_half_wave(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
@@ -185,7 +185,7 @@ class Test_vector_masks_XY(object):
 
     def test_polarizer_retarder(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}.npz'.format(newpath, func_name)
+        # filename = '{}{}.npz'.format(newpath, func_name)
 
         length = 250 * um
         num_data = 256
