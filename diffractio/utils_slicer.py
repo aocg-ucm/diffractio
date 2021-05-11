@@ -75,6 +75,8 @@ class VolumeSlicer(HasTraits):
         _axis_names = dict(x=0, y=1, z=2)
 
     def __init__(self, **traits):
+        if is_traits is False:
+            return
         super(VolumeSlicer, self).__init__(**traits)
         # Force the creation of the image_plane_widgets:
         self.ipw_3d_x
