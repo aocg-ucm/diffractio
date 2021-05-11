@@ -3,9 +3,9 @@
 
 from copy import deepcopy
 
-from . import mm, np, plt
-from .scalar_masks_XY import Scalar_mask_XY
-from .scalar_sources_XY import Scalar_source_XY
+from diffractio import mm, np, plt
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.scalar_sources_XY import Scalar_source_XY
 
 
 def GS_algorithm(source, target, num_steps=11):

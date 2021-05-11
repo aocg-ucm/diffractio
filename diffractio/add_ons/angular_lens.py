@@ -10,15 +10,14 @@ Articles and books:
 * A. Sabathyan, M. Golbandi "Petal-like zone plate: long depth bifocal diffractive lens and star-like beam generator" Journal of the Optical Society of America A, 35(7) 1243 (20018)
 """
 
+from diffractio import degrees, mm, np, plt, sp
+from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
+from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio.utils_math import binarize as func_binarize
+from diffractio.utils_math import cart2pol
+from diffractio.utils_optics import beam_width_2D
 from numpy import exp, pi, sqrt
-
-from . import degrees, mm, np, plt, sp
-from .scalar_fields_XY import Scalar_field_XY
-from .scalar_fields_XYZ import Scalar_field_XYZ
-from .scalar_masks_XY import Scalar_mask_XY
-from .utils_math import binarize as func_binarize
-from .utils_math import cart2pol
-from .utils_optics import beam_width_2D
 
 
 class Angular_lens(Scalar_field_XY):

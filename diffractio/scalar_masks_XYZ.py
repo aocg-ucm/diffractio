@@ -25,8 +25,6 @@ The magnitude is related to microns: `micron = 1.`
 from . import degrees, np, um
 from .scalar_fields_XYZ import Scalar_field_XYZ
 
-# from .utils_volumenSlicerLM import slicerLM
-
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):
     def __init__(self, x, y, z, wavelength, n_background=1., info=''):

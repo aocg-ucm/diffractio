@@ -7,3 +7,6 @@ Pillow
 numexpr
 pandas
 psutil
+py_pol
+ipywidgets
+ipython
