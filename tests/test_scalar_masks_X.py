@@ -6,7 +6,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, eps, mm, no_date, np, plt, sp, um
+from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.utils_tests import save_figure_test
 from numpy import loadtxt

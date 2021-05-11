@@ -34,7 +34,7 @@ import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
 
-from . import degrees, mm, np, plt, sp, um
+from . import degrees, np, plt, sp, um
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_X import Scalar_mask_X
 from .utils_math import nearest, nearest2

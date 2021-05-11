@@ -85,7 +85,7 @@ def __experiment_grating_movement__(dict_params):
     period = dict_params['period']
     t1 = dict_params['t1']
     t2 = dict_params['t2']
-    t2.ronchi_grating(period, x0=delta_x, fill_factor=0.5)
+    t2.ronchi_grating(period=period, x0=delta_x, fill_factor=0.5)
     u2 = t1 * t2
     return u2
 

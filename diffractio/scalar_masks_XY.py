@@ -1355,7 +1355,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             binary_grating(period=40 * um, amin=0, amax=1, phase=0 * degrees, x0=0, fill_factor=0.5, angle=0 * degrees)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t.ronchi_grating(period, fill_factor, x0, angle)
+        t.ronchi_grating(
+            period=period, fill_factor=fill_factor, x0=x0, angle=angle)
         amplitud = amin + (amax - amin) * t.u
         self.u = amplitud * np.exp(1j * phase * t.u)
 
@@ -1551,17 +1552,17 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = lens.u
 
     def super_ellipse(self,
-                      r0=(0 * um, 0 * um),
-                      radius=(50 * um, 50 * um),
-                      angle=0 * degrees,
-                      n=(2, 2)):
-        """Super_ellipse. |(Xrot - x0) / radiusx|^n1 + |(Yrot - y0) / radiusy|=n2
+                      r0,
+                      radius,
+                      n=(2, 2),
+                      angle=0 * degrees):
+        """Super_ellipse. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
 
         Parameters:
             r0 (float, float): center of super_ellipse
             radius (float, float): radius of the super_ellipse
-            angle (float): angle of rotation in radians
             n (float, float) =  degrees of freedom of the next equation, n = (n1, n2)
+            angle (float): angle of rotation in radians
 
         Note:
             n1 = n2 = 1: for a square
@@ -1603,6 +1604,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
 
     def elliptical_phase(self, f1, f2, angle):
+        """Elliptical phase
+
+        Parameters:
+            f1 (float): focal f1
+            f2 (float): focal f2
+            angle (float): angle
+        """
 
         # Vector de onda
         k = 2 * pi / self.wavelength

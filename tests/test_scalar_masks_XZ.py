@@ -5,10 +5,9 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, no_date, np, plt, sp, um
+from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.scalar_masks_XZ import Scalar_mask_XZ
-from diffractio.scalar_sources_X import Scalar_source_X
 from diffractio.utils_tests import comparison, save_figure_test
 from numpy import loadtxt
 
@@ -55,7 +54,7 @@ class Test_Scalar_masks_XZ(object):
             v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False, )
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -79,7 +78,7 @@ class Test_Scalar_masks_XZ(object):
             t=t0, z0=z0, z1=z1, refraction_index=1.5, v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False, )
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -108,7 +107,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -145,7 +144,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=False)
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -167,7 +166,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=True)
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -206,7 +205,7 @@ class Test_Scalar_masks_XZ(object):
 
         t0.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t0.save_data(filename=filename+'.npz', add_name='')
+        t0.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -235,7 +234,7 @@ class Test_Scalar_masks_XZ(object):
             v_globals=v_globals)
         t1.draw_refraction_index(draw_borders=False)
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -271,11 +270,9 @@ class Test_Scalar_masks_XZ(object):
 
         t0.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t0.save_data(filename=filename+'.npz', add_name='')
+        t0.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
-
-
 
     def test_add_masks(self):
         """
@@ -314,7 +311,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index(draw_borders=False, scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -338,7 +335,7 @@ class Test_Scalar_masks_XZ(object):
             t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5 - 1.5j)
         t1.draw_refraction_index(draw_borders=True)
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -362,7 +359,7 @@ class Test_Scalar_masks_XZ(object):
             invert=False)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -381,7 +378,7 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -401,7 +398,7 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -420,7 +417,7 @@ class Test_Scalar_masks_XZ(object):
             refraction_index=1.5)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -443,7 +440,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -464,7 +461,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -485,7 +482,7 @@ class Test_Scalar_masks_XZ(object):
         t1.draw_refraction_index(
             draw_borders=True, min_incr=0.01, scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -514,7 +511,7 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -534,7 +531,7 @@ class Test_Scalar_masks_XZ(object):
             angle=90 * degrees)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -554,7 +551,7 @@ class Test_Scalar_masks_XZ(object):
             angle=0)
         t1.draw_refraction_index(draw_borders=True, scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -581,7 +578,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -611,7 +608,7 @@ class Test_Scalar_masks_XZ(object):
 
         t2.draw_refraction_index(draw_borders=False)
 
-        t2.save_data(filename=filename+'.npz', add_name='')
+        t2.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -636,7 +633,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -657,7 +654,7 @@ class Test_Scalar_masks_XZ(object):
 
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -681,7 +678,7 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -705,7 +702,7 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -729,7 +726,7 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -753,7 +750,7 @@ class Test_Scalar_masks_XZ(object):
         print("focus distance f={} um".format(focal))
         t1.draw_refraction_index(scale='equal')
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -775,6 +772,6 @@ class Test_Scalar_masks_XZ(object):
             rotation_point=None)
         t1.draw_refraction_index()
 
-        t1.save_data(filename=filename+'.npz', add_name='')
+        t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True

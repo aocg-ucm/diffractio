@@ -58,8 +58,8 @@ class Test_Scalar_fields_XYZ(object):
         assert True
 
     def test_clear_field(self):
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # func_name = sys._getframe().f_code.co_name
+        # filename = '{}{}'.format(newpath, func_name)
 
         length = 100 * um
         numdata = 32  # 256
@@ -183,7 +183,7 @@ class Test_Scalar_fields_XYZ(object):
 
     def test_propagacion_RS_focal_lens(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         length = 500 * um
         x0 = np.linspace(-length / 2, length / 2, 16)

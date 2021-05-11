@@ -30,7 +30,7 @@ if not os.path.exists(newpath):
 class Test_Scalar_masks_XYZ(object):
     def test_sphere(self):
         func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
+        # filename = '{}{}'.format(newpath, func_name)
 
         length = 100 * um
         numdataX = 64

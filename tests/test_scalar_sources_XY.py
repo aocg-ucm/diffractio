@@ -7,8 +7,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio import degrees, mm, no_date, np, plt, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_math import nearest2
@@ -199,7 +198,7 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # Dos drawings, uno para la amplitude y otro para phase
-        ID1 = plt.figure(figsize=(10, 4.5))
+        plt.figure(figsize=(10, 4.5))
         plt.suptitle("$Vortices$", fontsize=20)
 
         for m in range(M):
@@ -243,11 +242,8 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del haz de Laguerre
-        u.laguerre_beam(A=1, n=N,
-                        l=K,
-                        r0=(0 * um, 0 * um),
-                        w0=100 * um,
-                        z=0.01 * um, z0=0)
+        u.laguerre_beam(A=1, n=N, l=K, r0=(0 * um, 0 * um),
+                        w0=100 * um,  z=0.01 * um, z0=0)
 
         # drawing
         title = r'$n=%d, k=%d$' % (N, K)
@@ -543,10 +539,6 @@ class Test_Scalar_sources_XY(object):
         # distance between point sources (if possible all pixels)
         dist_sources_x = 2 * um
         dist_sources_y = 2 * um
-
-        # I create a empty matrix and I fill with dirac-deltas every dist_sources
-        X_mask = np.zeros_like(t_mask.X)
-        Y_mask = np.zeros_like(t_mask.X)
 
         pos_x = np.arange(x[0], x[-1], dist_sources_x)
         pos_y = np.arange(y[0], y[-1], dist_sources_y)

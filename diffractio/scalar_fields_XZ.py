@@ -426,8 +426,6 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-
-
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
             The methods included are: npz, matlab
@@ -605,7 +603,6 @@ class Scalar_field_XZ(object):
         # Función supergausiana para eliminar rebotes en los edges
         filter_edge = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**90)  # 0.98
 
-        # --------------- main loop ------------------------
         field[:, 0] = field_z
         for k in range(0, numz):
             if verbose is True:
@@ -615,22 +612,10 @@ class Scalar_field_XZ(object):
                 else:
                     print("BPM: {}/{}".format(k, numz).format(
                         i, num_executions))
-            # Función de transferencia para la propagación que es identica a la
-            # respuesta de frecuencia espacial en óptica de Fourier
-            # incorporando el termino (-j k0 z) para cada sampling.
-            # phase2 = np.exp(-1j * self.n[:, k] * k0 * deltaz)
+
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
-
-            # Calculo field en la nueva posición y vuelvo al espacio temporal
-
             field_z = ifft((fft(field_z) * phase1)) * phase2
-            # Aplico el filtro para removeme los efectos del edge
-            # field_z = field_z * filter_edge
-
             field_z = field_z * filter_edge + self.u[:, k]
-            # Identifico el new field para reiniciar el bucle.
-            # el ultimo es por si pongo la fuente al final
-
             field[:, k] = field_z
 
         if matrix is True:
@@ -687,8 +672,7 @@ class Scalar_field_XZ(object):
         if verbose is True:
             t2 = time.time()
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
-                    t2 - t1, (t2 - t1) / len(self.z) * 1000))
-
+                t2 - t1, (t2 - t1) / len(self.z) * 1000))
 
     def BPM_inverse(self, verbose=False):
         """
@@ -1443,7 +1427,6 @@ class Scalar_field_XZ(object):
             extension = [
                 self.z[0] / mm, self.z[-1] / mm, self.x[0], self.x[-1]
             ]
-
 
         percentaje_intensity = params_drawing['percentaje_intensity']
 

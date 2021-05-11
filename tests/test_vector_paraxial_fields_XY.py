@@ -5,8 +5,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
+from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_tests import save_figure_test
@@ -33,12 +32,12 @@ v_circular = (1, 1j, 0) / np.sqrt(2)
 
 class Test_Vector_paraxial_fields_XY(object):
     def test_save_load(self):
-        func_name = sys._getframe().f_code.co_name
+        # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
         assert True
 
     def test_clear_field(self):
-        func_name = sys._getframe().f_code.co_name
+        # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
         assert True
 

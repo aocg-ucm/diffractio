@@ -6,7 +6,7 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, no_date, np, plt, sp, um
+from diffractio import degrees, mm, no_date, np, plt, um
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.utils_tests import comparison, save_figure_test
 
@@ -277,7 +277,7 @@ class Test_Scalar_masks_XY(object):
             r0=(0 * um, 0 * um), size=(90 * um, 25 * um), angle=0 * degrees)
 
         t1 = Scalar_mask_XY(x, y, wavelength)
-        num_points = t1.insert_array_masks(
+        t1.insert_array_masks(
             t1=s,
             space=[100 * um, 100 * um],
             margin=50 * um,
@@ -589,7 +589,7 @@ class Test_Scalar_masks_XY(object):
             angle=45 * degrees)
         t1.draw(kind='phase')
 
-        t1.save_data(filename=filename + '.npz',   add_name='_elliptical')
+        t1.save_data(filename=filename + '.npz', add_name='_elliptical')
         save_figure_test(newpath, func_name, add_name='_elliptical')
         assert True
 
@@ -693,7 +693,7 @@ class Test_Scalar_masks_XY(object):
 
         t2 = Scalar_mask_XY(x, y, wavelength)
         t2.laguerre_gauss_spiral(
-            kind='phase',             n=2, l=4, r0=(0 * um, 0 * um), w0=20 * um, z=0.01 * um)
+            kind='phase', n=2, l=4, r0=(0 * um, 0 * um), w0=20 * um, z=0.01 * um)
         t2.draw(kind='phase')
 
         t2.save_data(

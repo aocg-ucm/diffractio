@@ -40,6 +40,7 @@ except ImportError:
 try:
     from traits.api import Array, HasTraits, Instance, on_trait_change
     from traitsui.api import Group, HGroup, Item, View
+    is_traits = True
 except ImportError:
     print("traits is not imported.")
     is_traits = False
@@ -51,28 +52,26 @@ except ImportError:
     print("tvtk is not imported.")
 
 
-
 class VolumeSlicer(HasTraits):
     # The data to plot
-    if is_traits is True:
 
-        data = Array()
+    data = Array()
 
-        # The 4 views displayed
-        scene3d = Instance(MlabSceneModel, ())
-        scene_x = Instance(MlabSceneModel, ())
-        scene_y = Instance(MlabSceneModel, ())
-        scene_z = Instance(MlabSceneModel, ())
+    # The 4 views displayed
+    scene3d = Instance(MlabSceneModel, ())
+    scene_x = Instance(MlabSceneModel, ())
+    scene_y = Instance(MlabSceneModel, ())
+    scene_z = Instance(MlabSceneModel, ())
 
-        # The data source
-        data_src3d = Instance(Source)
+    # The data source
+    data_src3d = Instance(Source)
 
-        # The image plane widgets of the 3D scene
-        ipw_3d_x = Instance(PipelineBase)
-        ipw_3d_y = Instance(PipelineBase)
-        ipw_3d_z = Instance(PipelineBase)
+    # The image plane widgets of the 3D scene
+    ipw_3d_x = Instance(PipelineBase)
+    ipw_3d_y = Instance(PipelineBase)
+    ipw_3d_z = Instance(PipelineBase)
 
-        _axis_names = dict(x=0, y=1, z=2)
+    _axis_names = dict(x=0, y=1, z=2)
 
     def __init__(self, **traits):
         if is_traits is False:

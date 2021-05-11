@@ -608,7 +608,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_phase is None:
-            color_phase=params_drawing['color_phase']
+            color_phase = params_drawing['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)

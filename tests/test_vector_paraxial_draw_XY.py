@@ -5,9 +5,8 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
+from diffractio import mm, no_date, np, um
 from diffractio.utils_tests import save_figure_test
-from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
 from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"

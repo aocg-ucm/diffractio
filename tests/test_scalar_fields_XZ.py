@@ -7,7 +7,7 @@ import sys
 import time
 
 from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
-                        sp, um)
+                        um)
 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.scalar_masks_XZ import Scalar_mask_XZ

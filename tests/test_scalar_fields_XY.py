@@ -322,7 +322,7 @@ class Test_Scalar_fields_XY(object):
         assert True
 
     def test_search_focus(self):
-        func_name = sys._getframe().f_code.co_name
+        # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         u = gauss_beam_narrow_test()
@@ -353,7 +353,7 @@ class Test_Scalar_fields_XY(object):
         assert True
 
     def test_send_image_screen(self):
-        func_name = sys._getframe().f_code.co_name
+        # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         screens = screeninfo.get_monitors()

@@ -5,11 +5,9 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, eps, mm, no_date, np, um
-from diffractio.scalar_masks_XY import Scalar_mask_XY
+from diffractio import degrees, no_date, np, um
 from diffractio.scalar_sources_XY import Scalar_source_XY
 from diffractio.utils_tests import save_figure_test
-from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
 from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
@@ -130,7 +128,6 @@ class Test_vector_sources_XY(object):
         save_figure_test(newpath, func_name, add_name='_stokes')
 
         assert True
-
 
     def test_gauss(self):
         func_name = sys._getframe().f_code.co_name

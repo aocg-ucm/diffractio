@@ -628,7 +628,7 @@ class Scalar_mask_X(Scalar_field_X):
         """
 
         t = Scalar_mask_X(self.x, self.wavelength)
-        t.ronchi_grating(period, x0, fill_factor)
+        t.ronchi_grating(period=period, x0=x0, fill_factor=fill_factor)
         self.u = amin + (amax - amin) * t.u
         self.u = self.u * np.exp(1j * phase * t.u)
         return t.u
