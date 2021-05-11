@@ -40,6 +40,8 @@ except:
 try:
     from traits.api import Array, HasTraits, Instance, on_trait_change
     from traitsui.api import Group, HGroup, Item, View
+    is_traits=False
+    HasTraits = object
 except:
     print("traits is not imported.")
 
