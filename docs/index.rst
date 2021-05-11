@@ -13,12 +13,12 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    readme
    installation
    usage
-   results
    modules
    tutorials
    examples
    contributing
    authors
+   results
    history
 
 Indices and tables
