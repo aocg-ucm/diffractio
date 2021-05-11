@@ -157,5 +157,5 @@ man_pages = [(master_doc, 'diffractio',
 texinfo_documents = [
     (master_doc, 'diffractio',
      u'Python diffraction and interference Documentation', author,
-     'diffractio', 'One line description of project.', 'Miscellaneous'),
+     'diffractio'),
 ]
