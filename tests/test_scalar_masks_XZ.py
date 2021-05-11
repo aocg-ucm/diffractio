@@ -275,45 +275,7 @@ class Test_Scalar_masks_XZ(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    def test_wessenplatten(self):
 
-        func_name = sys._getframe().f_code.co_name
-        filename = '{}{}'.format(newpath, func_name)
-
-        x0 = np.linspace(-100 * um, 100 * um, 256)
-        print("Dx={}".format(x0[1] - x0[0]))
-        z0 = np.linspace(0 * um, 400 * um, 256)
-        wavelength = 50 * um
-
-        t0 = Scalar_mask_XZ(
-            x=x0, z=z0, wavelength=wavelength, n_background=1.0)
-
-        pn = dict(
-            n_out=1.5, n_center=4, cx=0 * um, cz=100 * um, radius=75 * um)
-
-        center = (pn['cx'], pn['cz'])
-        radius = pn['radius']
-        # ref_index = '2*(((X-0)**2+(Z-300)**2)/75**2-0)'
-        ref_index = "{p[n_out]}+({p[n_center]}-{p[n_out]})*(1-((X-{p[cx]})**2+(Z-{p[cz]})**2)/{p[radius]}**2)".format(
-            p=pn)
-
-        t0.sphere(
-            r0=center,
-            radius=(radius, radius),
-            refraction_index=ref_index,
-            angle=0)
-
-        t0.wessenplatten(
-            n_layers=np.linspace(1.5, 4, 5),
-            sigma=10 * um,
-            correlation_length=25 * um,
-        )
-
-        t0.draw_refraction_index(draw_borders=False, scale='equal')
-
-        t0.save_data(filename=filename+'.npz', add_name='')
-        save_figure_test(newpath, func_name, add_name='')
-        assert True
 
     def test_add_masks(self):
         """

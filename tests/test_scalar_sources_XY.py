@@ -243,11 +243,11 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del haz de Laguerre
-        u.laguerre_beam(n=N,
+        u.laguerre_beam(A=1, n=N,
                         l=K,
                         r0=(0 * um, 0 * um),
                         w0=100 * um,
-                        z=0.01 * um)
+                        z=0.01 * um, z0=0)
 
         # drawing
         title = r'$n=%d, k=%d$' % (N, K)
@@ -285,11 +285,11 @@ class Test_Scalar_sources_XY(object):
 
         for n in range(N + 1):
             for k in range(K + 1):
-                u.laguerre_beam(n=n,
+                u.laguerre_beam(A=1, n=n,
                                 l=k,
                                 r0=(0 * um, 0 * um),
                                 w0=100 * um,
-                                z=0.01 * um)
+                                z=0.01 * um, z0=0)
 
                 title = "(%d,%d)" % (n, k)
                 plt.figure(ID1.number)

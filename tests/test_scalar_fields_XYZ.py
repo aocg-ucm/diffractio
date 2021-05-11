@@ -145,9 +145,9 @@ class Test_Scalar_fields_XYZ(object):
             radius=(20 * um, 20 * um),
             length=longitud,
             refraction_index=1.5,
-            eje=(0, 0, 0),
+            axis=(0, 0, 0),
             angle=0 * degrees)
-        # uxyz.draw_refraction_index()
+
         uxyz.save_data(filename=filename+'.npz')
         save_figure_test(newpath, func_name)
         assert True

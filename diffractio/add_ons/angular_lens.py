@@ -53,8 +53,6 @@ class Angular_lens(Scalar_field_XY):
         Example:
             lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
         """
-        # si solamente un numero, posiciones y radius son los mismos para ambos
-        # Definicion del origen, el radius y la focal
 
         # Vector de onda
         k = 2 * pi / self.wavelength
@@ -265,7 +263,7 @@ class Angular_lens(Scalar_field_XY):
         R = radius
         f = focal
 
-        k = 2 * pi / self.wavelength
+        # k = 2 * pi / self.wavelength
 
         x0, y0 = r0
         Xrot, Yrot = self.__rotate__(angle)

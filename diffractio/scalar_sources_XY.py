@@ -195,14 +195,13 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * amplitude / np.abs(amplitude).max()
 
-    def hermite_gauss_beam(self,
-                           A=1,
-                           r0=(0, 0),
-                           w0=(1 * um, 1 * um),
-                           n=0,
-                           m=0,
-                           z=0,
-                           z0=(0, 0)):
+    def hermite_gauss_beam(self, r0,
+                           A,
+                           w0,
+                           n,
+                           m,
+                           z,
+                           z0):
         """Hermite Gauss beam.
 
         Parameters:
@@ -269,7 +268,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Ex * Ey * Ef
 
-    def laguerre_beam(self, A=1, r0=(0, 0), w0=1 * um, n=0, l=0, z=0, z0=0):
+    def laguerre_beam(self, r0, A, w0, n, l, z, z0):
         """Laguerre beam.
 
         Parameters:
@@ -352,7 +351,7 @@ class Scalar_source_XY(Scalar_field_XY):
                     A,
                     r0,
                     alpha,
-                    n=0,
+                    n,
                     theta=0 * degrees,
                     phi=0 * degrees,
                     z0=0):
@@ -432,12 +431,12 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u = t
 
     def gauss_beams_several_parallel(self,
+                                     r0,
                                      A,
                                      num_beams,
                                      w0,
                                      z0,
-                                     r0=(0 * um, 0 * um),
-                                     r_range=100 * um,
+                                     r_range,
                                      theta=0 * degrees,
                                      phi=0 * degrees):
         """Several parallel gauss beams

@@ -784,7 +784,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3
 
-
     def prism(self, r0, angle_wedge, angle=0 * degrees):
         """prism which produces a certain angle
 
@@ -902,7 +901,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                r0,
                radius,
                angle,
-               refraction_index=1.5,
+               refraction_index,
                off_axis_angle=0 * degrees,
                reflective=False):
         """Axicon,
@@ -941,8 +940,6 @@ class Scalar_mask_XY(Scalar_field_XY):
                 np.exp(-1j * k * (refraction_index - 1)
                        * r * np.tan(angle)) * t_off_axis
 
-
-
     def biprism_fresnel(self, r0, width, height, n):
         """Fresnel biprism.
 
@@ -978,7 +975,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * exp(1.j * k * (n - 1) * h)
 
-    def radial_grating(self, r0, period, phase, radius, binaria=True):
+    def radial_grating(self, r0, period, phase, radius, is_binary=True):
         """Radial grating.
 
         Parameters:
@@ -986,30 +983,26 @@ class Scalar_mask_XY(Scalar_field_XY):
             period (float): period of the grating
             phase (float): initial phase
             radius (float): radius of the grating (masked)
-            binaria (bool): if True binary else, scaled
+            is_binary (bool): if True binary else, scaled
 
         Example:
-            radial_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, binaria=True)
+            radial_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, is_binary=True)
         """
 
-        # Vector de onda
         x0, y0 = r0
-        # distance de la generatriz al eje del cono
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-        # hago un seno y luego binarizo
         t = 0.5 * (1 + sin(2 * pi * (r - phase) / period))
-        if binaria is True:
+        if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
             i1 = t > 0.5
             t[i1] = 1
-        # Region de transmitancia
         u = zeros(shape(self.X))
         ipasa = r < radius
         u[ipasa] = 1
         self.u = u * t
 
-    def angular_grating(self, r0, period, phase, radius, binaria=True):
+    def angular_grating(self, r0, period, phase, radius, is_binary=True):
         """Angular grating.
 
         Parameters:
@@ -1017,10 +1010,10 @@ class Scalar_mask_XY(Scalar_field_XY):
             period (float): period of the grating
             phase (float): initial phase
             radius (float): radius of the grating (masked)
-            binaria (bool): if True binary else, scaled
+            is_binary (bool): if True binary else, scaled
 
         Example:
-            angular_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, binaria=True)
+            angular_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, is_binary=True)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
 
@@ -1030,7 +1023,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
         t = (1 + sin(2 * pi * (theta - phase) / period)) / 2
-        if binaria is True:
+        if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
             i1 = t > 0.5
@@ -1043,11 +1036,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u * t
 
     def hyperbolic_grating(self,
-                           r0=(0 * um, 0 * um),
-                           period=20 * degrees,
-                           phase=0 * degrees,
-                           radius=200 * um,
-                           binaria=True,
+                           r0,
+                           period,
+                           phase,
+                           radius,
+                           is_binary,
                            angle=0 * degrees):
         """Hyperbolic grating.
 
@@ -1056,11 +1049,11 @@ class Scalar_mask_XY(Scalar_field_XY):
             period (float): period of the grating
             phase (float): initial phase
             radius (float): radius of the grating (masked)
-            binaria (bool): if True binary else, scaled
+            is_binary (bool): if True binary else, scaled
             angle (float): angle of the grating in radians
 
         Example:
-            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, sfradius=400 * um, binaria=True)
+            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, sfradius=400 * um, is_binary=True)
         """
 
         x0, y0 = r0
@@ -1073,7 +1066,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         x_posiciones = sqrt(np.abs((Xrot)**2 - (Yrot)**2))
         # Region de transmitancia
         t = (1 + sin(2 * pi * x_posiciones / period)) / 2
-        if binaria is True:
+        if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
             i1 = t > 0.5
@@ -1140,7 +1133,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         t3[t3 > 0] = 1
         self.u = t3
 
-    def archimedes_spiral(self, r0, period, phase, p, radius, binaria):
+    def archimedes_spiral(self, r0, period, phase, p, radius, is_binary):
         """Archimedes spiral
 
         Parameters:
@@ -1149,10 +1142,10 @@ class Scalar_mask_XY(Scalar_field_XY):
             phase (float): initial phase of spiral
             p (int): power of spiral
             radius (float): radius of the mask
-            binaria (bool): if True binary mask
+            is_binary (bool): if True binary mask
 
         Example:
-            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees, phase=0 * degrees, p=1, radius=200 * um, binaria=True)
+            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees, phase=0 * degrees, p=1, radius=200 * um, is_binary=True)
         """
 
         x0, y0 = r0
@@ -1163,7 +1156,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Region de transmitancia
         t = 0.5 * (1 + sin(2 * pi * np.sign(self.X) *
                            ((r / period)**p + (theta - phase) / (2 * pi))))
-        if binaria is True:
+        if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
             i1 = t > 0.5
@@ -1194,7 +1187,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                                   y=self.y,
                                   wavelength=self.wavelength)
         # Haz de Laguerre
-        u_ilum.laguerre_beam(n=4, l=l, r0=r0, w0=w0, z=z)
+        u_ilum.laguerre_beam(A=1, n=n, l=l, r0=r0, w0=w0, z=z, z0=0)
 
         # Se define el length de la espiral
         length = (self.x.max() - self.x[0]) / 2
@@ -1250,18 +1243,18 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.u = exp(1.j * pi * phase)
 
     def sine_grating(self,
+                     x0,
                      period,
                      amp_min=0,
                      amp_max=1,
-                     x0=0 * um,
                      angle=0 * degrees):
         """Sinusoidal grating:  self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
         Parameters:
+            x0 (float): phase shift
             period (float): period of the grating
             amp_min (float): minimum amplitude
             amp_max (float): maximum amplitud
-            x0 (float): phase shift
             angle (float): angle of the grating in radians
 
         Example:
@@ -1274,13 +1267,13 @@ class Scalar_mask_XY(Scalar_field_XY):
                                                           (Xrot - x0) / period)) / 2
 
     def sine_edge_grating(self,
-                          r0=(0 * um, 0 * um),
-                          period=20 * degrees,
-                          lp=10 * um,
-                          ap=2 * um,
-                          phase=0 * degrees,
-                          radius=200 * um,
-                          binary=True):
+                          r0,
+                          period,
+                          lp,
+                          ap,
+                          phase,
+                          radius,
+                          is_binary):
         """
         TODO: function info
         """
@@ -1296,7 +1289,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         Desphase = phase + ap * sin(2 * pi * self.Y / lp)
 
         t = (1 + sin(2 * pi * (self.X - Desphase) / period)) / 2
-        if binary is True:
+        if is_binary:
             i0 = t <= 0.5
             t[i0] = 0
             i1 = t > 0.5
@@ -1308,13 +1301,13 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def ronchi_grating(self, period, fill_factor=0.5, x0=0 * um, angle=0):
+    def ronchi_grating(self, x0, period, fill_factor=0.5, angle=0):
         """Amplitude binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
         Parameters:
+            x0 (float):  phase shift
             period (float): period of the grating
             fill_factor (float): fill_factor
-            x0 (float):  phase shift
             angle (float): angle of the grating in radians
 
         Notes:
@@ -1340,12 +1333,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t.u
 
     def binary_grating(self,
+                       x0,
                        period,
+                       fill_factor=0.5,
                        amin=0,
                        amax=1,
                        phase=0 * degrees,
-                       x0=0,
-                       fill_factor=0.5,
                        angle=0 * degrees):
         """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
 
@@ -1399,20 +1392,20 @@ class Scalar_mask_XY(Scalar_field_XY):
     def grating_2D(self,
                    r0,
                    period,
+                   fill_factor,
                    amin=0,
                    amax=1.,
                    phase=0,
-                   fill_factor=0.15,
                    angle=0 * degrees):
         """2D binary grating
 
          Parameters:
             r0 (float, r0):  initial position
             period (float): period of the grating
+            fill_factor (float): fill_factor
             amin (float): minimum amplitude
             amax (float): maximum amplitude
             phase (float): max phase shift in phase gratings
-            fill_factor (float): fill_factor
             angle (float): angle of the grating in radians
 
         Example:
@@ -1426,26 +1419,26 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Red vertical
         t2.binary_grating(period, amin, amax, phase, r0[1], fill_factor,
                           angle + 90. * degrees)
-        # Red binaria
+        # Red is_binary
         self.u = t1.u * t2.u
 
     def grating_2D_chess(self,
                          r0,
                          period,
+                         fill_factor,
                          amin=0,
                          amax=1,
                          phase=0 * pi / 2,
-                         fill_factor=0.5,
                          angle=0 * degrees):
         """2D binary grating as chess
 
          Parameters:
             r0 (float, r0):  initial position
             period (float): period of the grating
+            fill_factor (float): fill_factor
             amin (float): minimum amplitude
             amax (float): maximum amplitude
             phase (float): max phase shift in phase gratings
-            fill_factor (float): fill_factor
             angle (float): angle of the grating in radians
 
         Example:
@@ -1707,7 +1700,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
-    def hermite_gauss_binary(self, r0=(0, 0), w0=(1 * um, 1 * um), n=0, m=0):
+    def hermite_gauss_binary(self, r0, w0, n, m):
         """Binary phase mask to generate an Hermite Gauss beam.
 
         Parameters:
@@ -1731,7 +1724,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = exp(1j * phase)
 
-    def laguerre_gauss_binary(self, r0=(0, 0), w0=1 * um, n=0, l=0):
+    def laguerre_gauss_binary(self, r0, w0, n, l):
         """Binary phase mask to generate an Hermite Gauss beam.
 
         Parameters:

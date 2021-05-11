@@ -74,7 +74,6 @@ def GS_algorithm(source, target, num_steps=11):
     return mask_final, errors
 
 
-
 def GS_Fresnel_algorithm(source, target, z, num_steps=5, has_draw=False):
     """
     # TODO:
@@ -136,7 +135,6 @@ def GS_Fresnel_algorithm(source, target, z, num_steps=5, has_draw=False):
     mask_final.u = mask
 
     return mask_final, errors
-
 
 
 def Wyrowski_algorithm(source, target, num_steps=11):

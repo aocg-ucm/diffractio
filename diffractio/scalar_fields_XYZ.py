@@ -64,15 +64,17 @@ from .utils_optics import FWHM2D, beam_width_2D, field_parameters
 
 try:
     from .utils_slicer import slicerLM
+    is_slicer = True
 except ImportError:
     print("slicerLM is not loaded.")
-    is_slicer=False
+    is_slicer = False
 
 try:
     from mayavi import mlab
+    is_mayavi = True
 except ImportError:
     print("mayavi.mlab is not imported.")
-    is_mayavi=False
+    is_mayavi = False
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -322,8 +324,6 @@ class Scalar_field_XYZ(object):
         except:
             return False
 
-
-
     def load_data(self, filename, verbose=False):
         """Load data from a file to a Scalar_field_XZ.
             The methods included are: npz, matlab
@@ -343,8 +343,6 @@ class Scalar_field_XYZ(object):
                 self.__dict__ = dict0
             else:
                 raise Exception('no dictionary in load_data')
-
-
 
     def cut_resample(self,
                      x_limits='',
@@ -1263,7 +1261,8 @@ class Scalar_field_XYZ(object):
             """
 
         if is_slicer:
-            u_xyz_r = self.cut_resample(num_points=(128, 128, 128), new_field=True)
+            u_xyz_r = self.cut_resample(
+                num_points=(128, 128, 128), new_field=True)
 
             if kind == 'intensity' or kind == '':
                 drawing = np.abs(u_xyz_r.u)**2

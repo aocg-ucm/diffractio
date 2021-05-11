@@ -171,8 +171,8 @@ class Scalar_source_X(Scalar_field_X):
                                      num_beams,
                                      w0,
                                      z0,
-                                     x_central=0 * um,
-                                     x_range=100 * um,
+                                     x_central,
+                                     x_range,
                                      theta=0 * degrees):
         """Several parallel gauss beams
 

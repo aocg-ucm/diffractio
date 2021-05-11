@@ -320,7 +320,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6238 * um
         period = 125 * um
         red = Scalar_mask_X(x, wavelength)
-        red.blazed_grating(period=period, height=2 * um, n=1.5)
+        red.blazed_grating(x0=0, period=period, height=2 * um, n=1.5)
         red.draw(kind='phase')
 
         red.save_data(filename=filename + '.npz')
@@ -473,40 +473,41 @@ class Test_Scalar_masks_X(object):
         save_figure_test(newpath, func_name)
         assert True
 
-    def test_I0(self):
+    def test_code(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
         num_data = 2048 * 8
 
         wavelength = 0.85 * um
-        i0 = [1, 1, 0, 0, 1, 0, 1, 1, 0, 1]
+        code = [1, 1, 0, 0, 1, 0, 1, 1, 0, 1]
         anchura_bit = 80 * um
-        x = np.linspace(0, anchura_bit * len(i0), num_data)
+        x = np.linspace(0, anchura_bit * len(code), num_data)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.binary_code(kind='normal', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t1.binary_code(kind='normal', code=code,
+                       bit_width=anchura_bit, x0=0 * um)
         t1.draw()
 
         t1.save_data(filename=filename + '-normal' + '.npz')
         save_figure_test(newpath, func_name + '-normal')
 
         t2 = Scalar_mask_X(x, wavelength)
-        t2.binary_code(kind='zeros', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t2.binary_code(x0=0 * um, kind='zeros', code=code, bit_width=anchura_bit)
         t2.draw()
 
         t2.save_data(filename=filename + '-zeros' + '.npz')
         save_figure_test(newpath, func_name + '-zeros')
 
         t3 = Scalar_mask_X(x, wavelength)
-        t3.binary_code(kind='ones', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t3.binary_code(x0=0, kind='ones', code=code, bit_width=anchura_bit)
         t3.draw()
 
         t3.save_data(filename=filename + '-ones' + '.npz')
         save_figure_test(newpath, func_name + '-ones')
 
         t4 = Scalar_mask_X(x, wavelength)
-        t4.binary_code(kind='abs_fag', i0=i0, bit_width=anchura_bit, x0=0 * um)
+        t4.binary_code(x0=0, kind='abs_fag', code=code, bit_width=anchura_bit)
         t4.draw()
 
         t4.save_data(filename=filename + '-fag' + '.npz')

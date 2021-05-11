@@ -24,7 +24,7 @@ The main atributes are:
 
 from scipy.interpolate import interp1d
 
-from . import degrees, mm, np, plt, um
+from . import degrees, np, plt, um
 from .scalar_fields_X import Scalar_field_X
 from .utils_math import cut_function, fft_convolution1d, nearest, nearest2
 from .utils_optics import roughness_1D
@@ -239,7 +239,7 @@ class Scalar_mask_X(Scalar_field_X):
         # el value del level2
         self.u[self.x > x_edge] = level2
 
-    def gray_scale(self, num_levels=4, levelMin=0, levelMax=1):
+    def gray_scale(self, num_levels, levelMin=0, levelMax=1):
         """Divides the mask in n, vertical levels.
 
         Parameters:
@@ -314,10 +314,10 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u * t
 
     def biprism_fresnel_nh(self,
-                           x0=0 * um,
-                           width=100 * um,
-                           height=5 * um,
-                           n=1.5):
+                           x0,
+                           width,
+                           height,
+                           n):
         """Fresnel biprism, uses height and refraction index.
 
         Parameters:
@@ -349,7 +349,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u * np.exp(1.j * k * (n - 1) * h)
         return h
 
-    def lens(self, x0, focal, radius=6 * mm, mask=True):
+    def lens(self, x0, focal, radius, mask=True):
         """Transparent lens.
 
         Parameters:
@@ -380,16 +380,16 @@ class Scalar_mask_X(Scalar_field_X):
         h = h / h.max()
         return t * h
 
-    def aspheric(self, c, k, a, n0=1, n1=1.5, x0=0 * um, radius=None):
+    def aspheric(self, x0, c, k, a, n0, n1, radius=None):
         """asferic surface.
 
         Parameters:
+            x0 (float): position of center
             c (float):
             k (float):
             a (list):
             n0 (float): refraction index of first medium
-            n1 (flaot): refraction index of second medium
-            x0 (float): position of center
+            n1 (float): refraction index of second medium
             radius (float): radius of aspheric surface
         """
         k = 2 * np.pi / self.wavelength
@@ -416,8 +416,8 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = mask * np.exp(1j * k * (n1 - n0) * t)
 
     def fresnel_lens(self,
-                     x0=0 * um,
-                     focal=5 * mm,
+                     x0,
+                     focal,
                      kind='amplitude',
                      binary=True,
                      phase=np.pi,
@@ -497,7 +497,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u
         return h_corr
 
-    def dust_different_sizes(self, percentaje, size=0, std=0):
+    def dust_different_sizes(self, percentaje, size, std=0):
         """Mask with dust particles of different sizes.
 
         Parameters:
@@ -577,14 +577,14 @@ class Scalar_mask_X(Scalar_field_X):
 
         return positions, percentaje_real
 
-    def sine_grating(self, period=40 * um, amp_min=0, amp_max=1, x0=0 * um):
+    def sine_grating(self, x0, period, amp_min=0, amp_max=1):
         """Sinusoidal grating
 
         Parameters:
+            x0 (float): shift of grating
             period (float): period of the grating
             amp_min (float): minimum amplitude
             amp_max (float): maximum amplitude
-            x0 (float): shift of grating
         """
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max - amp_min) * (
@@ -592,12 +592,12 @@ class Scalar_mask_X(Scalar_field_X):
 
         return self.u
 
-    def ronchi_grating(self, period, x0=0 * um, fill_factor=0.5):
+    def ronchi_grating(self, x0, period, fill_factor=0.5):
         """Amplitude binary grating, fill-factor can be defined. It is obtained as a sine_grating that after is binarized. Fill factor is determined as  y0=cos(pi*fill_factor)
 
         Parameters:
-            period (float): period of the grating
             x0 (float): shift of the grating
+            period (float): period of the grating
             fill_factor (float): (0,1) - fill factor of grating
         """
 
@@ -610,21 +610,21 @@ class Scalar_mask_X(Scalar_field_X):
         return t.u
 
     def binary_grating(self,
-                       period=40 * um,
-                       amin=0,
-                       amax=1,
-                       phase=0 * np.pi / 2,
-                       x0=0,
-                       fill_factor=0.5):
+                       x0,
+                       period,
+                       fill_factor,
+                       amin,
+                       amax,
+                       phase):
         """binary grating amplitude and/or phase
 
         Parameters:
+            x0 (float): shift of the grating
             period (float): period of the grating
+            fill_factor (float): (0,1) - fill factor of grating
             amin (float): minimum amplitude
             amax (float): maximum amplitude
             phase (float): phase shift (radians)
-            x0 (float): shift of the grating
-            fill_factor (float): (0,1) - fill factor of grating
         """
 
         t = Scalar_mask_X(self.x, self.wavelength)
@@ -633,14 +633,14 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = self.u * np.exp(1j * phase * t.u)
         return t.u
 
-    def blazed_grating(self, period=40 * um, height=2 * um, n=1.5, x0=0 * um):
+    def blazed_grating(self, x0, period, height, n, ):
         """Phase, blazed grating. The phase shift is determined by heigth and refraction index.
 
         Parameters:
+            x0 (float): shift of the grating
             period (float): period of the grating
             height (float): height of grating
             n (float): refraction index of grating
-            x0 (float): shift of the grating
         """
 
         k = 2 * np.pi / self.wavelength
@@ -949,33 +949,33 @@ class Scalar_mask_X(Scalar_field_X):
         return t
 
     def binary_code(self,
+                    x0=0 * um,
                     kind='standard',
-                    i0=[1, 1, 0, 0, 1, 0, 1],
-                    bit_width=20 * um,
-                    x0=0 * um):
+                    code=[1, 1, 0, 0, 1, 0, 1],
+                    bit_width=20 * um):
         """Binary code in form of 1's and 0's.
 
         Parameters:
-            kind (str): there are serveral types of IO
+            kind (str): there are serveral types of codes
                 'standard' - normal
                 'abs_fag' -  used in some abs encoders
-            i0 (numpy.array): array with values of i0
-            bit_width (float): size of each data of i0
+            code (numpy.array): array with values of code
+            bit_width (float): size of each data of code
             x0 (float): Initial position
         """
 
         if kind == 'abs_fag':
-            i0_ones = np.ones_like(i0)
-            i0_zeros = np.zeros_like(i0)
-            i0 = np.vstack((i0_zeros, i0_ones, i0, i0_ones)).reshape((-1, ),
-                                                                     order='F')
+            i0_ones = np.ones_like(code)
+            i0_zeros = np.zeros_like(code)
+            code = np.vstack((i0_zeros, i0_ones, code, i0_ones)).reshape((-1, ),
+                                                                         order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)
         t2 = Scalar_mask_X(self.x, self.wavelength)
         t.u = np.zeros(self.x.shape)
 
-        for i0j, j in zip(i0, list(range(len(i0)))):
+        for i0j, j in zip(code, list(range(len(code)))):
             t2.slit(x0 + (j + 0.5) * bit_width, bit_width)
             t.u = t.u + i0j * t2.u
         self.u[-1] = self.u[-2]

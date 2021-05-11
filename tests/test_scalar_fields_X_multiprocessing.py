@@ -228,12 +228,12 @@ class Test_Scalar_fields_X(object):
 
         t1 = Scalar_mask_X(
             x0, wavelength, info="__experiment_grating_movement__")
-        t1.ronchi_grating(period, x0=0 * um, fill_factor=0.5)
+        t1.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
         t1.RS(z=z0, new_field=False)
 
         t2 = Scalar_mask_X(
             x0, wavelength, info="__experiment_grating_movement__")
-        t2.ronchi_grating(period, x0=0 * um, fill_factor=0.5)
+        t2.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
 
         deltas_x = np.linspace(-60 * um, 60 * um, 51)  # 512
         num_processors = num_max_processors

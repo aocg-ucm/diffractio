@@ -712,8 +712,6 @@ class Test_Scalar_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-
-
     def test_draw_several_fields(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}.npz'.format(newpath, func_name)
@@ -735,7 +733,7 @@ class Test_Scalar_fields_XY(object):
             phi=0 * degrees)
 
         field3 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field3.laguerre_beam(r0=(0, 0), w0=10 * um, z=50 * um, n=1, l=1)
+        field3.laguerre_beam(A=1, r0=(0, 0), w0=10 * um, z=50 * um, z0=0, n=1, l=1)
 
         draw_several_fields(
             fields=(field1, field2, field3), titles=('(a)', '(b)', '(c)'))

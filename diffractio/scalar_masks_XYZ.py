@@ -99,9 +99,9 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
     def square(self,
-               r0=(0 * um, 0 * um, 0 * um),
-               length=(25 * um, 25 * um, 25 * um),
-               refraction_index=2,
+               r0,
+               length,
+               refraction_index,
                angles=None,
                rotation_point=None):
         """ Insert a rectangle in background. If something previous, is removed.
@@ -137,12 +137,12 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
     def cylinder(self,
-                 r0=(0 * um, 0 * um, 0 * um),
-                 radius=(25 * um, 25 * um),
-                 length=25 * um,
-                 refraction_index=2,
-                 eje=(1, 1, 1),
-                 angle=45 * degrees):
+                 r0,
+                 radius,
+                 length,
+                 refraction_index,
+                 axis,
+                 angle):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Parameters:
@@ -150,7 +150,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
-            eje (float float, float): axis direction
+            axis (float float, float): axis direction
             angle (float): angle of rotation of the semi-plane, in radians
         """
         # si solamente hay un numero, es que las posiciones y radius
@@ -175,7 +175,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         # if not (psi ==0 and phi==0 and sigma==0):
         if angle != 0:
             # Xrot, Yrot, Zrot = self.__rotate__(psi, phi, sigma)
-            Xrot, Yrot, Zrot = self..__rotate_axis__(eje, angle)
+            Xrot, Yrot, Zrot = self..__rotate_axis__(axis, angle)
         else:
 
             Xrot=self.X
