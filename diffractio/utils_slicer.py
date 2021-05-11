@@ -51,25 +51,28 @@ except ImportError:
     print("tvtk is not imported.")
 
 
+
 class VolumeSlicer(HasTraits):
     # The data to plot
-    data = Array()
+    if is_traits is True:
 
-    # The 4 views displayed
-    scene3d = Instance(MlabSceneModel, ())
-    scene_x = Instance(MlabSceneModel, ())
-    scene_y = Instance(MlabSceneModel, ())
-    scene_z = Instance(MlabSceneModel, ())
+        data = Array()
 
-    # The data source
-    data_src3d = Instance(Source)
+        # The 4 views displayed
+        scene3d = Instance(MlabSceneModel, ())
+        scene_x = Instance(MlabSceneModel, ())
+        scene_y = Instance(MlabSceneModel, ())
+        scene_z = Instance(MlabSceneModel, ())
 
-    # The image plane widgets of the 3D scene
-    ipw_3d_x = Instance(PipelineBase)
-    ipw_3d_y = Instance(PipelineBase)
-    ipw_3d_z = Instance(PipelineBase)
+        # The data source
+        data_src3d = Instance(Source)
 
-    _axis_names = dict(x=0, y=1, z=2)
+        # The image plane widgets of the 3D scene
+        ipw_3d_x = Instance(PipelineBase)
+        ipw_3d_y = Instance(PipelineBase)
+        ipw_3d_z = Instance(PipelineBase)
+
+        _axis_names = dict(x=0, y=1, z=2)
 
     def __init__(self, **traits):
         super(VolumeSlicer, self).__init__(**traits)
