@@ -6,3 +6,4 @@ screeninfo
 Pillow
 numexpr
 pandas
+psutil
