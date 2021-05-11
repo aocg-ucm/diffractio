@@ -5,12 +5,12 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, no_date, np, um
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_tests import save_figure_test
-from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from . import degrees, mm, no_date, np, um
+from .scalar_masks_XY import Scalar_mask_XY
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_tests import save_figure_test
+from .vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 from py_pol.jones_matrix import Jones_matrix
 
 path_base = "tests_results"

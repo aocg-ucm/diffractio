@@ -17,10 +17,10 @@ import sys
 
 import numpy as np
 
-from diffractio import eps, no_date
-from diffractio.utils_math import (amplitude2phase, binarize, distance, ndgrid,
+from . import eps, no_date
+from .utils_math import (amplitude2phase, binarize, distance, ndgrid,
                                    nearest, nearest2, normalize)
-from diffractio.utils_tests import comparison
+from .utils_tests import comparison
 
 if no_date is True:
     date = '0'

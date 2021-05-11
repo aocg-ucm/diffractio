@@ -7,12 +7,12 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_math import nearest2
-from diffractio.utils_tests import comparison, save_figure_test
+from . import degrees, mm, nm, no_date, np, plt, sp, um
+from .scalar_fields_XY import Scalar_field_XY
+from .scalar_masks_XY import Scalar_mask_XY
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_math import nearest2
+from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

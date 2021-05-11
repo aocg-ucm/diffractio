@@ -34,11 +34,11 @@ import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
 
-from diffractio import degrees, mm, np, plt, sp, um
-from diffractio.scalar_fields_XZ import Scalar_field_XZ
-from diffractio.scalar_masks_X import Scalar_mask_X
-from diffractio.utils_math import nearest, nearest2
-from diffractio.utils_optics import roughness_1D
+from . import degrees, mm, np, plt, sp, um
+from .scalar_fields_XZ import Scalar_field_XZ
+from .scalar_masks_X import Scalar_mask_X
+from .utils_math import nearest, nearest2
+from .utils_optics import roughness_1D
 
 
 class Scalar_mask_XZ(Scalar_field_XZ):

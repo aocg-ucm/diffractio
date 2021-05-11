@@ -47,11 +47,11 @@ The magnitude is related to microns: `micron = 1.`
 from matplotlib import rcParams
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio import degrees, eps, mm, np, params_drawing, plt
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.utils_common import load_data_common, save_data_common
-from diffractio.utils_drawing import normalize_draw, reduce_matrix_size
-from diffractio.utils_math import nearest
+from . import degrees, eps, mm, np, params_drawing, plt
+from .scalar_fields_XY import Scalar_field_XY
+from .utils_common import load_data_common, save_data_common
+from .utils_drawing import normalize_draw, reduce_matrix_size
+from .utils_math import nearest
 
 percentaje_intensity = params_drawing['percentaje_intensity']
 

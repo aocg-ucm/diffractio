@@ -22,10 +22,10 @@ The magnitude is related to microns: `micron = 1.`
     * cylinder
 """
 
-from diffractio import degrees, np, um
-from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
+from . import degrees, np, um
+from .scalar_fields_XYZ import Scalar_field_XYZ
 
-# from diffractio.utils_volumenSlicerLM import slicerLM
+# from .utils_volumenSlicerLM import slicerLM
 
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):

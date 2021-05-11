@@ -11,18 +11,18 @@ import types
 
 import numpy as np
 
-from diffractio import degrees, mm, no_date, num_max_processors, plt, um
-from diffractio.scalar_fields_X import (Scalar_field_X,
+from . import degrees, mm, no_date, num_max_processors, plt, um
+from .scalar_fields_X import (Scalar_field_X,
                                         extended_polychromatic_source,
                                         extended_source_multiprocessing,
                                         polychromatic_multiprocessing)
-from diffractio.scalar_masks_X import Scalar_mask_X
-from diffractio.scalar_sources_X import Scalar_source_X
-from diffractio.utils_multiprocessing import (_pickle_method, _unpickle_method,
+from .scalar_masks_X import Scalar_mask_X
+from .scalar_sources_X import Scalar_source_X
+from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                               execute_multiprocessing)
-from diffractio.utils_optics import (gauss_spectrum, lorentz_spectrum,
+from .utils_optics import (gauss_spectrum, lorentz_spectrum,
                                      uniform_spectrum)
-from diffractio.utils_tests import comparison, save_data_test, save_figure_test
+from .utils_tests import comparison, save_data_test, save_figure_test
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 

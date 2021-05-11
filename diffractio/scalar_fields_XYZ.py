@@ -53,19 +53,19 @@ from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 from scipy.signal import correlate2d
 
-from diffractio import (degrees, eps, mm, np, num_max_processors,
+from . import (degrees, eps, mm, np, num_max_processors,
                         params_drawing, plt)
-from diffractio.scalar_fields_XY import PWD_kernel, Scalar_field_XY
-from diffractio.scalar_fields_XZ import Scalar_field_XZ
-from diffractio.utils_common import (get_date, load_data_common,
+from .scalar_fields_XY import PWD_kernel, Scalar_field_XY
+from .scalar_fields_XZ import Scalar_field_XZ
+from .utils_common import (get_date, load_data_common,
                                      save_data_common)
-from diffractio.utils_drawing import normalize_draw, prepare_drawing
-from diffractio.utils_math import get_k, ndgrid, nearest
-from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
-from diffractio.utils_optics import FWHM2D, beam_width_2D, field_parameters
+from .utils_drawing import normalize_draw, prepare_drawing
+from .utils_math import get_k, ndgrid, nearest
+from .utils_multiprocessing import _pickle_method, _unpickle_method
+from .utils_optics import FWHM2D, beam_width_2D, field_parameters
 
 try:
-    from diffractio.utils_slicer import slicerLM
+    from .utils_slicer import slicerLM
 except ImportError:
     print("slicerLM is not loaded.")
 

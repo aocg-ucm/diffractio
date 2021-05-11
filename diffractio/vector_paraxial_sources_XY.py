@@ -26,12 +26,12 @@ The magnitude is related to microns: `micron = 1.`
     * local_polarized_vector_wave_hybrid
 """
 
-from diffractio import degrees, eps, np, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_optics import normalize
-from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
+from . import degrees, eps, np, um
+from .scalar_fields_XY import Scalar_field_XY
+from .scalar_masks_XY import Scalar_mask_XY
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_optics import normalize
+from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from py_pol.jones_vector import Jones_vector
 
 

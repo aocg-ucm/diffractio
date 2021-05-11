@@ -8,12 +8,12 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, eps, mm, no_date, np, um
-from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_tests import comparison, save_figure_test
+from . import degrees, eps, mm, no_date, np, um
+from .scalar_fields_XYZ import Scalar_field_XYZ
+from .scalar_masks_XY import Scalar_mask_XY
+from .scalar_masks_XYZ import Scalar_mask_XYZ
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

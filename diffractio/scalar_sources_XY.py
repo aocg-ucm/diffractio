@@ -40,9 +40,9 @@ from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
 from scipy.special import eval_hermite, j0, j1, jv
 from scipy.special.orthogonal import hermite
 
-from diffractio import degrees, np, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.utils_math import fZernike, laguerre_polynomial_nk
+from . import degrees, np, um
+from .scalar_fields_XY import Scalar_field_XY
+from .utils_math import fZernike, laguerre_polynomial_nk
 
 
 class Scalar_source_XY(Scalar_field_XY):

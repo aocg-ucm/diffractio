@@ -6,9 +6,9 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, no_date, np, plt, sp, um
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.utils_tests import comparison, save_figure_test
+from . import degrees, mm, no_date, np, plt, sp, um
+from .scalar_masks_XY import Scalar_mask_XY
+from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

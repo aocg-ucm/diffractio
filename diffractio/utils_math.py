@@ -10,7 +10,7 @@ import scipy.ndimage as ndimage
 from numpy import angle, array, exp, linspace, ones_like, pi, zeros
 from scipy.signal import fftconvolve
 
-from diffractio import mm
+from . import mm
 
 
 def distance(x1, x2):

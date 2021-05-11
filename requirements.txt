@@ -1,6 +1,7 @@
 numpy
 scipy
 matplotlib
+screeninfo
 nbsphinx
 Pillow
 opencv-python
@@ -8,3 +9,4 @@ numexpr
 mayavi
 pandas
 traits
+tvtk

@@ -63,8 +63,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio.utils_math import get_edges, ndgrid, nearest, rotate_image
-from diffractio.utils_optics import beam_width_2D, field_parameters
+from .utils_math import get_edges, ndgrid, nearest, rotate_image
+from .utils_optics import beam_width_2D, field_parameters
 
 from . import degrees, mm, np, params_drawing, plt, seconds, um
 from .utils_common import get_date, load_data_common, save_data_common

@@ -6,12 +6,12 @@ import os
 import sys
 import time
 
-from diffractio import degrees, eps, mm, no_date, np, plt, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.scalar_masks_XY import Scalar_mask_XY
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_drawing import draw_several_fields
-from diffractio.utils_tests import comparison, save_figure_test
+from . import degrees, eps, mm, no_date, np, plt, um
+from .scalar_fields_XY import Scalar_field_XY
+from .scalar_masks_XY import Scalar_mask_XY
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_drawing import draw_several_fields
+from .utils_tests import comparison, save_figure_test
 
 try:
     import screeninfo
@@ -604,7 +604,7 @@ class Test_Scalar_fields_XY(object):
         filename = '{}{}.npz'.format(newpath, func_name)
 
         # phase
-        from diffractio.scalar_masks_XY import Scalar_mask_XY
+        from .scalar_masks_XY import Scalar_mask_XY
         length = 250 * um
         wavelength = 0.6 * um
         x0 = np.linspace(-length / 2, length / 2, 256)

@@ -6,13 +6,13 @@ import os
 import sys
 import time
 
-from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
+from . import (degrees, eps, mm, no_date, np, num_max_processors, plt,
                         sp, um)
-from diffractio.scalar_fields_XZ import Scalar_field_XZ
-from diffractio.scalar_masks_X import Scalar_mask_X
-from diffractio.scalar_masks_XZ import Scalar_mask_XZ
-from diffractio.scalar_sources_X import Scalar_source_X
-from diffractio.utils_tests import comparison, save_figure_test
+from .scalar_fields_XZ import Scalar_field_XZ
+from .scalar_masks_X import Scalar_mask_X
+from .scalar_masks_XZ import Scalar_mask_XZ
+from .scalar_sources_X import Scalar_source_X
+from .utils_tests import comparison, save_figure_test
 
 if no_date is True:
     date = '0'

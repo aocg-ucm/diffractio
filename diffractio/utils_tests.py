@@ -13,8 +13,8 @@ import multiprocessing
 import sys
 import time
 
-from diffractio import mm, no_date, np, plt, um
-from diffractio.scalar_masks_XY import Scalar_mask_XY
+from . import mm, no_date, np, plt, um
+from .scalar_masks_XY import Scalar_mask_XY
 
 max_num_cores = multiprocessing.cpu_count()
 min_num_pixels = 8

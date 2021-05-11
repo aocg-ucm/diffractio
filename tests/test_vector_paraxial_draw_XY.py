@@ -5,10 +5,10 @@ import datetime
 import os
 import sys
 
-from diffractio import degrees, mm, nm, no_date, np, plt, sp, um
-from diffractio.utils_tests import save_figure_test
-from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from . import degrees, mm, nm, no_date, np, plt, sp, um
+from .utils_tests import save_figure_test
+from .vector_paraxial_masks_XY import Vector_paraxial_mask_XY
+from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 path_base = "tests_results"
 path_class = "Vector_paraxial_draw_XY"

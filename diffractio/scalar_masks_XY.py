@@ -41,12 +41,12 @@ from PIL import Image
 from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
 
-from diffractio import degrees, np, plt, sp, um
-from diffractio.scalar_fields_XY import Scalar_field_XY
-from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.utils_math import (fft_convolution2d, laguerre_polynomial_nk,
+from . import degrees, np, plt, sp, um
+from .scalar_fields_XY import Scalar_field_XY
+from .scalar_sources_XY import Scalar_source_XY
+from .utils_math import (fft_convolution2d, laguerre_polynomial_nk,
                                    nearest, nearest2)
-from diffractio.utils_optics import roughness_2D
+from .utils_optics import roughness_2D
 
 
 class Scalar_mask_XY(Scalar_field_XY):
