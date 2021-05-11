@@ -36,9 +36,9 @@ Alpha state
 
 * Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
 
- 0.0.6 (2019-10-22)
- ------------------------
- Alpha state
+0.0.6 (2019-10-22)
+------------------------
+Alpha state
 
 * Finished first version of examples and tutorial.
 
