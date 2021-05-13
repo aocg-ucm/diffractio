@@ -1352,7 +1352,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            binary_grating(period=40 * um, amin=0, amax=1, phase=0 * degrees, x0=0, fill_factor=0.5, angle=0 * degrees)
+            binary_grating( x0=0, period=40 * um, fill_factor=0.5, amin=0, amax=1, phase=0 * degrees, angle=0 * degrees)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t.ronchi_grating(
@@ -1414,13 +1414,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         """
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        # Red horizontal
 
-        t1.binary_grating(period, amin, amax, phase, r0[0], fill_factor, angle)
-        # Red vertical
-        t2.binary_grating(period, amin, amax, phase, r0[1], fill_factor,
+        t1.binary_grating(r0[0], period, fill_factor,
+                          amin, amax, phase, angle)
+        t2.binary_grating(r0[1], period, fill_factor, amin, amax, phase,
                           angle + 90. * degrees)
-        # Red is_binary
         self.u = t1.u * t2.u
 
     def grating_2D_chess(self,
@@ -1448,8 +1446,9 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t1.binary_grating(period, amin, amax, phase, r0[0], fill_factor, angle)
-        t2.binary_grating(period, amin, amax, phase, r0[1], fill_factor,
+        t1.binary_grating(r0[0], period, fill_factor,
+                          amin, amax, phase, angle)
+        t2.binary_grating(r0[1], period, fill_factor, amin, amax, phase,
                           angle + 90. * degrees)
         u = np.logical_xor(t1.u, t2.u)
         self.u = u.astype(float)
