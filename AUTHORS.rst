@@ -20,3 +20,7 @@ Contributors
 * Manuel Rapariz López-Neira (2019)
 
     * XY masks (hiperellipse and sinusoidal_slit)
+
+* Joaquín Andrés Porras (2021)
+
+    * XY masks (angular_aperture, edge_series, slit_series)

@@ -187,6 +187,28 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name)
         assert True
 
+    def test_slit_series(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        num_data = 256
+        length = 1000 * um
+        x0 = np.linspace(-length / 2, length / 2, num_data)
+        y0 = np.linspace(-length / 2, length / 2, num_data)
+        wavelength = 0.6328 * um
+
+        a_coef1 = np.array([[0, 1, 2], [0, 25, 25]])
+        a_coef2 = np.array([[0, 1, 2], [0, 25, 25]])
+
+        t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
+        t1.slit_series(x0=0, width=200, period1=100, period2=100, Dy=(0, 0),
+                       a_coef1=a_coef1, a_coef2=a_coef2, angle=0 * degrees)
+        t1.draw()
+
+        t1.save_data(filename=filename + '.npz')
+        save_figure_test(newpath, func_name)
+        assert True
+
     def test_hiperellipse(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -372,6 +394,25 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name)
         assert True
 
+    def test_angular_aperture(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        num_pixels = 512
+        length = 200 * um
+        x0 = np.linspace(-length / 2, length / 2, num_pixels)
+        y0 = np.linspace(-length / 2, length / 2, num_pixels)
+        wavelength = 0.6238 * um
+
+        t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
+        a_coef = np.array([[0, 4, 8], [50, 25, 25]])
+        t1.angular_aperture(a_coef=a_coef, angle=0 * degrees)
+        t1.draw()
+
+        t1.save_data(filename=filename + '.npz')
+        save_figure_test(newpath, func_name)
+        assert True
+
     def test_ellipse(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -450,25 +491,27 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name)
         assert True
 
-    # def test_image(self):
-    #     func_name = sys._getframe().f_code.co_name
-    #     filename = '{}{}'.format(newpath, func_name)
-    #
-    #     num_data = 1204
-    #     length = 250 * um
-    #     x = np.linspace(-length / 2, length / 2, num_data)
-    #     y = np.linspace(-length / 2, length / 2, num_data)
-    #     wavelength = 0.6328 * um
-    #
-    #     t1 = Scalar_mask_XY(x, y, wavelength)
-    #     # t1.image(nombre=*, normalize=True, canal=0, lengthImage=True, angle=45)
-    #     t1.image(filename="./images/spain.png")
-    #
-    #     t1.draw(kind='intensity')
-    #
-    #     t1.save_data(filename=filename+'.npz')
-    #     save_figure_test(newpath, func_name)
-    #     assert True
+    def test_edge_series(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        num_pixels = 512
+        length = 1000 * um
+        x0 = np.linspace(-length / 2, length / 2, num_pixels)
+        y0 = np.linspace(-length / 2, length / 2, num_pixels)
+        wavelength = 0.06238 * um
+
+        a_coef = np.array([[0, 1, 2], [0, 100, 25]])
+        b_coef = np.array([[0, 3], [0, 25]])
+
+        t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
+        t1.edge_series(r0=(0, 0), period=100, a_coef=a_coef, b_coef=b_coef,
+                       angle=0 * degrees, invert=False)
+        t1.draw()
+
+        t1.save_data(filename=filename + '.npz')
+        save_figure_test(newpath, func_name)
+        assert True
 
     def test_gray_scale(self):
         func_name = sys._getframe().f_code.co_name

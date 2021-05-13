@@ -1218,17 +1218,17 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point, refraction_index, Fs, angle, v_globals={})
         return ipasa
 
-    def ronchi_grating(self, period, fill_factor, length, height, r0, Dx,
+    def ronchi_grating(self, r0, period, fill_factor, length, height, Dx,
                        refraction_index, heigth_substrate,
                        refraction_index_substrate, angle):
         """Insert a ronchi grating in background.
 
         Parameters:
+            r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             period (float): period of the grating
             fill_factor (float): [0,1], fill factor of the grating
             length (float): length of the grating
             height (float): height of the grating
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             Dx (float): displacement of grating with respect x=0
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             heigth_substrate (float): height of the substrate
@@ -1241,7 +1241,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Xrot, Zrot = self.__rotate__(angle, r0)
 
         t0 = Scalar_mask_X(x=self.x, wavelength=self.wavelength)
-        t0.ronchi_grating(period=period, x0=Dx, fill_factor=fill_factor)
+        t0.ronchi_grating(x0=Dx, period=period, fill_factor=fill_factor)
 
         self.extrude_mask(
             t=t0,

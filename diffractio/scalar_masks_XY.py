@@ -532,6 +532,82 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return self
 
+    def one_level(self, level=0):
+        """Sets one level for all the image.
+
+        Parameters:
+            level (float): value
+        """
+        self.u = level * ones(self.X.shape)
+
+    def two_levels(self, level1=0, level2=1, x_edge=0, angle=0):
+        """Divides the field in two levels
+
+        Parameters:
+            level1 (float): value of first level
+            level2 (float): value of second level
+            x_edge (float): position of division
+            angle (float): angle of rotation in radians
+        """
+        Xrot, Yrot = self.__rotate__(angle, (x_edge, 0))
+        self.u = level1 * ones(self.X.shape)
+        self.u[Xrot > 0] = level2
+
+    def edge_series(self, r0, period, a_coef, b_coef=None, angle=0 * degrees, invert=True):
+        """Creates a linear aperture using the Fourier coefficients.
+
+            Parameters:
+                x0 (float): x-axis displacement (for 'fslit' function)
+                period (float): Function period
+
+                a_coef (np.array, 2 rows and x columns): coefficients that multiply the cosine function.
+                b_coef (np.array, 2 rows and x columns): coefficients that multiply the sine function.
+                angle (float): angle of rotation in radians
+                invert (bool): inverts transmittance values (for 'fslit' function)
+
+                For both arrays:
+                First row: coefficient orders
+                Second row: coefficient values
+
+            Example:
+                t1.edge_series(x0=0, period=50, a_coef=np.array([[0,1],[100,50]]), angle = 0 * degrees, invert=False)
+            """
+
+        Xrot, Yrot = self.__rotate__(angle)
+        Yrot = Yrot
+
+        x0, y0 = r0
+
+        # Definicion de la transmitancia
+        u = np.zeros_like(self.X)
+
+        asol = a_coef[1][0] / 2
+        bsol = 0
+
+        _, num_coefs_a = a_coef.shape
+        for i in range(num_coefs_a):
+            asol = asol + \
+                a_coef[1][i] * np.cos(2 * np.pi * a_coef[0]
+                                      [i] * (Yrot - y0) / period)
+
+        if b_coef is not None:
+            _, num_coefs_b = b_coef.shape
+            for i in range(num_coefs_b):
+                bsol = bsol + \
+                    b_coef[1][i] * np.sin(2 * np.pi *
+                                          b_coef[0][i] * (Yrot - y0) / period)
+
+        sol = asol + bsol
+
+        if invert is True:
+            u[(Xrot - x0 > sol)] = 1
+            u[(Xrot - x0 < sol)] = 0
+        else:
+            u[(Xrot - x0 < sol)] = 1
+            u[(Xrot - x0 > sol)] = 0
+
+        self.u = u
+
     def slit(self, x0, size, angle=0 * degrees):
         """Slit: 1 inside, 0 outside
 
@@ -552,6 +628,37 @@ class Scalar_mask_XY(Scalar_field_XY):
         ix = (Xrot < xmax) & (Xrot > xmin)
         u[ix] = 1
         self.u = u
+
+    def slit_series(self, x0, width, period1, period2, Dy, a_coef1, a_coef2, b_coef1=None, b_coef2=None, angle=None, simmetrycal=False):
+        """Creates a lineal function using the Fourier coefficients.
+
+            Parameters:
+                x0 (float): position of the center of the slit
+                width (float): slit width
+                period1 (float): Period of the first function
+                period2 (float): Period of the second function
+                Dy (float, float): Shifts of the edges
+                a_coef1 (np.array, 2 rows and x columns): coefficients that multiply the cosine in the first function.
+                a_coef2 (np.array, 2 rows and x columns): coefficients that multiply the cosine in the second function.
+                b_coef1 (np.array, 2 rows and x columns): coefficients that multiply the sine in the first function.
+                b_coef2 (np.array, 2 rows and x columns): coefficients that multiply the sine in the second function.
+                For the arrays: First row - coefficient orders, Second row - coefficient values
+                angle (float): angle of rotation in radians
+                simmetrical (bool): TODO - take edge 1 and repeat simmetrical y 2
+
+            Example:
+                t1.slit_series(x0=0, width=10, period1=50, period2=20, a_coef1=np.array([[0,1],[100,50]]) )
+            """
+        dy1, dy2 = Dy
+
+        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        t1.edge_series(r0=(x0 - width / 2, dy1), period=period1,
+                       a_coef=a_coef1, b_coef=b_coef1, angle=angle, invert=True)
+        t2 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        t2.edge_series(r0=(x0 + width / 2, dy2), period=period2,
+                       a_coef=a_coef2, b_coef=b_coef2, angle=angle, invert=False)
+
+        self.u = t1.u * t2.u
 
     def double_slit(self, x0, size, separation, angle=0 * degrees):
         """double slit: 1 inside, 0 outside
@@ -608,27 +715,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         ipasa = (Xrot < xmax) & (Xrot > xmin) & (Yrot < ymax) & (Yrot > ymin)
         u[ipasa] = 1
         self.u = u
-
-    def one_level(self, level=0):
-        """Sets one level for all the image.
-
-        Parameters:
-            level (float): value
-        """
-        self.u = level * ones(self.X.shape)
-
-    def two_levels(self, level1=0, level2=1, x_edge=0, angle=0):
-        """Divides the field in two levels
-
-        Parameters:
-            level1 (float): value of first level
-            level2 (float): value of second level
-            x_edge (float): position of division
-            angle (float): angle of rotation in radians
-        """
-        Xrot, Yrot = self.__rotate__(angle, (x_edge, 0))
-        self.u = level1 * ones(self.X.shape)
-        self.u[Xrot > 0] = level2
 
     def gray_scale(self, num_levels=4, levelMin=0, levelMax=1):
         """Generates a number of strips with different amplitude
@@ -738,6 +824,51 @@ class Scalar_mask_XY(Scalar_field_XY):
         Z = Z1 * t1.u
 
         self.u = Z
+
+    def angular_aperture(self, a_coef, b_coef=None, angle=0 * degrees):
+        """Creates a radial function using the Fourier coefficients.
+
+            Parameters:
+
+                a_coef (np.array, 2 rows and x columns): coefficients that multiply the cosine function.
+                b_coef (np.array, 2 rows and x columns): coefficients that multiply the sine function.
+                angle (float): angle of rotation in radians
+
+                For a_coef and b_coef, the first row are the coefficient orders  and the second row are coefficient values.
+
+
+            Example:
+
+                angular_aperture(t, a_coef=np.array([[0,1],[20,10]]),  angle= 0 * degrees)
+            """
+
+        Xrot, Yrot = self.__rotate__(angle)
+
+        # Definicion de la transmitancia
+        u = np.zeros_like(self.X)
+
+        r = np.sqrt(Xrot**2 + Yrot**2)
+
+        phi = np.arctan2(Yrot, Xrot)
+
+        asol = 0
+        bsol = 0
+
+        _, num_coefs_a = a_coef.shape
+        for i in range(num_coefs_a):
+            asol = asol + a_coef[1][i] * np.cos(a_coef[0][i] * phi)
+
+        if b_coef is not None:
+            _, num_coefs_b = b_coef.shape
+            for i in range(num_coefs_b):
+                bsol = bsol + b_coef[1][i] * np.sin(b_coef[0][i] * phi)
+
+        sol = asol + bsol
+
+        ipasa = r - abs(sol) < 0
+        u[ipasa] = 1
+        self.u = u
+        return ipasa
 
     def ring(self, r0, radius1, radius2, angle=0 * degrees):
         """ Ring.
@@ -1318,7 +1449,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             The equation to determine the position y0 is: y0=cos(pi*fill_factor)
 
         Example:
-            ronchi_grating(period=40*um, fill_factor=0.5, x0=0 * um, angle=0)
+            ronchi_grating(x0=0 * um, period=40*um, fill_factor=0.5,  angle=0)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         y0 = cos(pi * fill_factor)
