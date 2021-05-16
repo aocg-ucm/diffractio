@@ -89,7 +89,7 @@ class Test_Vector_paraxial_fields_XY(object):
         wavelength = 0.6328
 
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.radial_wave(
+        EM.azimuthal_wave(
             u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
 
         EM.draw(kind='stokes')
@@ -188,6 +188,39 @@ class Test_Vector_paraxial_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='_2S')
 
         EMz = EM.RS(z=.5 * mm)
+        EMz.draw(kind='intensities')
+        save_figure_test(newpath, func_name, add_name='_3EH_p')
+
+        EMz.draw(kind='intensities')
+        save_figure_test(newpath, func_name, add_name='_4S_p')
+
+        return True
+
+    def test_VRS(self):
+        func_name = sys._getframe().f_code.co_name
+        # filename = '{}{}.npz'.format(newpath, func_name)
+
+        num_data = 256
+        length = 150 * um
+        x0 = np.linspace(-length / 2, length / 2, num_data)
+        y0 = np.linspace(-length / 2, length / 2, num_data)
+        wavelength = 2 * um
+
+        EM = Vector_paraxial_source_XY(x0, y0, wavelength)
+        EM.local_polarized_vector_wave_radial(u=1,
+                                              r0=(0 * um, 0 * um),
+                                              m=1,
+                                              fi0=0,
+                                              radius=0.)
+        EM.mask_circle()
+
+        EM.draw(kind='stokes')
+        save_figure_test(newpath, func_name, add_name='_1EH')
+
+        EM.draw(kind='intensities')
+        save_figure_test(newpath, func_name, add_name='_2S')
+
+        EMz = EM.VRS(z=.5 * mm)
         EMz.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_3EH_p')
 

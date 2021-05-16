@@ -59,7 +59,7 @@ Alpha state
 
 * Improvement to documentation (readthedocs)
 
-0.0.11 (2021-05-09)
+0.0.11 and 0.0.12 (2021-05-09)
 --------------------------------
 Alpha state
 
@@ -72,18 +72,15 @@ Alpha state
 * Changes in docs to include WPM
 * Execution tests
 
-0.0.12 (2021-05-09)
+0.1.0 (2021-**-**)
 --------------------------------
-Alpha state
+Beta state
 
-* Bug fix in drawing
+* Fix bugs:
+  - (radial and azimuthal vector waves)
 
-(% ejecution)
---------------------------------
+* New Scalar_mask_XY: angular_aperture, edge_series, slit_series, rings
 
-* Modules	  = 9/10.
-* Functions 	= 9/10.
-* Tutorial 	= 8/10.
-* Examples 	= 7/10.
-* Tests 	    = 9/10.
-* Drawing 	  = 9/10.
+* New vector_paraxial_fields_XY: VRS (vectorial Rayleigh-Sommerfeld propagation)
+  - Modifications in drawing intensities and fields
+  - New Self.Ez 

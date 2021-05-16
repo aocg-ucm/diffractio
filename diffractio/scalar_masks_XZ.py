@@ -501,6 +501,29 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             image = image.max() - image
         self.n = n_min + image * (n_max - n_min)
 
+    def dots(self, positions, refraction_index=1):
+        """Generates 1 or several point masks at positions r0
+
+        Parameters:
+            positions (float, float) or (np.array, np.array): (x,z) point or points where mask is 1
+            refraction_index (float): refraction index
+        """
+        x0, z0 = positions
+        n = np.zeros_like(self.X)
+
+        if type(positions[0]) in (int, float):
+            i_x0, _, _ = nearest(self.x, x0)
+            i_z0, _, _ = nearest(self.z, z0)
+            n[i_x0, i_z0] = refraction_index
+        else:
+            i_x0s, _, _ = nearest2(self.x, x0)
+            i_z0s, _, _ = nearest2(self.z, z0)
+            for (i_x0, i_z0) in zip(i_x0s, i_z0s):
+                n[i_x0, i_z0] = refraction_index
+
+        self.n = n
+        return self
+
     def semi_plane(self, r0, refraction_index, angle=0, rotation_point=None):
         """Inserts a semi-sphere in background (x>x0). If it is something else previous, it is removed.
 

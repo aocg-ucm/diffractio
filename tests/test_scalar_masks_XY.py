@@ -454,6 +454,30 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name)
         assert True
 
+    def test_rings(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        length = 60 * um
+        num_data = 512
+        x = np.linspace(-length / 2, length / 2, num_data)
+        y = np.linspace(-length / 2, length / 2, num_data)
+        wavelength = 0.6328 * um
+
+        inner_radius = np.array([5., 10, 15, 20, 25])
+
+        outer_radius = np.array([6., 12, 17, 23, 29])
+
+        t1 = Scalar_mask_XY(x, y, wavelength)
+        t1.rings(r0=(0, 0), inner_radius=inner_radius,
+                 outer_radius=outer_radius, mask=True)
+        t1.draw(kind='intensity')
+
+        t1.save_data(filename=filename + '.npz')
+        save_figure_test(newpath, func_name)
+        assert True
+        num_data = 512
+
     def test_cross(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)

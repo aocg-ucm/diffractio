@@ -34,10 +34,10 @@ x0 = np.linspace(-length / 2, length / 2, num_data)
 y0 = np.linspace(-length / 2, length / 2, num_data)
 
 EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-EM.radial_wave(u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
+EM.azimuthal_wave(u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
 EM.RS(z=30 * mm, new_field=False)
 
-Ex, Ey = EM.get()
+Ex, Ey, _ = EM.get()
 
 EM.reduce_matrix = ''
 

@@ -81,7 +81,6 @@ class Vector_paraxial_field_XY(object):
 
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
-        self.Ez = np.zeros_like(self.X, dtype=complex)
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self._type = 'Vector_paraxial_field_XY'
@@ -174,7 +173,6 @@ class Vector_paraxial_field_XY(object):
 
         Ex_r = self.Ex
         Ey_r = self.Ey
-        Ez_r = self.Ez
 
         if kind == 'fields':
             Ex = Scalar_field_XY(
@@ -183,28 +181,24 @@ class Vector_paraxial_field_XY(object):
             Ey = Scalar_field_XY(
                 x=self.x, y=self.y, wavelength=self.wavelength)
             Ey.u = Ey_r
-            Ez = Scalar_field_XY(
-                x=self.x, y=self.y, wavelength=self.wavelength)
-            Ez.u = Ez_r
-            return Ex, Ey, Ez
+
+            return Ex, Ey
 
         elif kind == 'intensity':
-            intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2 + np.abs(Ez_r)**2
+            intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
             return intensity
 
         elif kind == 'intensities':
             intensity_x = np.abs(Ex_r)**2
             intensity_y = np.abs(Ey_r)**2
-            intensity_z = np.abs(Ez_r)**2
-            return intensity_x, intensity_y, intensity_z
+            return intensity_x, intensity_y
 
         elif kind == 'phases':
 
             phase_x = np.angle(Ex_r)
             phase_y = np.angle(Ey_r)
-            phase_z = np.angle(Ez_r)
 
-            return phase_x, phase_y, phase_z
+            return phase_x, phase_y
 
         elif kind == 'stokes':
             # S0, S1, S2, S3
@@ -252,7 +246,7 @@ class Vector_paraxial_field_XY(object):
             From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
         """
 
-        e0x, e0y, _ = self.get()
+        e0x, e0y = self.get()
 
         # estas son las components justo en la posicion pedida
         Ex = e0x.RS(z=z, n=n, new_field=True, kind='z',
@@ -264,7 +258,6 @@ class Vector_paraxial_field_XY(object):
             EM = Vector_paraxial_field_XY(Ex.x, Ex.y, self.wavelength)
             EM.Ex = Ex.u
             EM.Ey = Ey.u
-            EM.Ez = np.zeros_like(EM.X)
             EM.x = Ex.x
             EM.y = Ex.y
             return EM
@@ -272,65 +265,8 @@ class Vector_paraxial_field_XY(object):
         else:
             self.Ex = Ex.u
             self.Ey = Ey.u
-            self.Ez = np.zeros_like(EM.X)
             self.x = Ex.x
             self.y = Ex.y
-
-    def VRS(self, z, n=1, new_field=True, verbose=False, amplification=(1, 1)):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
-
-
-        Parameters:
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
-            n (float): refraction index
-            new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
-
-
-            verbose (bool): if True it writes to shell. Not implemented yet
-
-        Returns:
-            if New_field is True: Scalar_field_X
-            else None
-
-        References:
-
-            H. Ye, C.-W. Qiu, K. Huang, J. Teng, B. Luk’yanchuk, y S. P. Yeo, «Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: vectorial Rayleigh–Sommerfeld method», Laser Phys. Lett., vol. 10, n.º 6, p. 065004, jun. 2013.
-
-            DOI: 10.1088/1612-2011/10/6/065004
-
-            http://stacks.iop.org/1612-202X/10/i=6/a=065004?key=crossref.890761f053b56d7a9eeb8fc6da4d9b4e
-        """
-
-        e0x, e0y, _ = self.get()
-
-        e0z = Scalar_field_XY(
-            x=self.x, y=self.y, wavelength=self.wavelength)
-        e0z.u = 0
-
-        # estas son las components justo en la posicion pedida
-        Ex = e0x.RS(z=z, n=n, new_field=True, kind='z',
-                    verbose=verbose, amplification=amplification)
-        Ey = e0y.RS(z=z, n=n, new_field=True, kind='z',
-                    verbose=verbose, amplification=amplification)
-
-        r = np.sqrt(self.X**2 + self.Y**2 + z**2)
-        e0z.u = e0x.u * self.X / r + e0y.u * self.Y / r
-        Ez = e0z.RS(z=z, n=n, new_field=True, kind='0',
-                    verbose=verbose, amplification=amplification)
-
-        if new_field is True:
-            EM = Vector_paraxial_field_XY(self.x, self.y, self.wavelength)
-            EM.Ex = Ex.u
-            EM.Ey = Ey.u
-            EM.Ez = Ez.u
-            return EM
-
-        else:
-            self.Ex = Ex.u
-            self.Ey = Ey.u
-            self.Ez = Ez.u
 
     def polarization_states(self, matrix=False):
         """returns the Stokes parameters
@@ -483,11 +419,6 @@ class Vector_paraxial_field_XY(object):
             f_interp_phase_y = RectBivariateSpline(
                 self.x, self.y, np.angle(self.Ey), kx=kxu, ky=kxu, s=0)
 
-            f_interp_abs_z = RectBivariateSpline(
-                self.x, self.y, np.abs(self.Ez), kx=kxu, ky=kxu, s=0)
-            f_interp_phase_z = RectBivariateSpline(
-                self.x, self.y, np.angle(self.Ez), kx=kxu, ky=kxu, s=0)
-
             Ex_new_abs = f_interp_abs_x(x_new, y_new)
             Ex_new_phase = f_interp_phase_x(x_new, y_new)
             Ex_new = Ex_new_abs * np.exp(1j * Ex_new_phase)
@@ -495,10 +426,6 @@ class Vector_paraxial_field_XY(object):
             Ey_new_abs = f_interp_abs_y(x_new, y_new)
             Ey_new_phase = f_interp_phase_y(x_new, y_new)
             Ey_new = Ey_new_abs * np.exp(1j * Ey_new_phase)
-
-            Ez_new_abs = f_interp_abs_z(x_new, y_new)
-            Ez_new_phase = f_interp_phase_z(x_new, y_new)
-            Ez_new = Ez_new_abs * np.exp(1j * Ez_new_phase)
 
         else:
             i_s = slice(i_x0, i_x1)
@@ -508,23 +435,19 @@ class Vector_paraxial_field_XY(object):
             X_new, Y_new = np.meshgrid(x_new, y_new)
             Ex_new = self.Ex[i_s, j_s]
             Ey_new = self.Ey[i_s, j_s]
-            Ez_new = self.Ez[i_s, j_s]
 
         if new_field is False:
             self.x = x_new
             self.y = y_new
             self.Ex = Ex_new
             self.Ey = Ey_new
-            self.Ez = Ez_new
             self.X = X_new
             self.Y = Y_new
-
         elif new_field is True:
             field = Vector_paraxial_field_XY(
                 x=x_new, y=y_new, wavelength=self.wavelength)
             field.Ex = Ex_new
             field.Ey = Ey_new
-            field.Ez = Ez_new
             return field
 
     def draw(self,
@@ -540,7 +463,7 @@ class Vector_paraxial_field_XY(object):
         """Draws electromagnetic field
 
         Parameters:
-            kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes', 'param_ellipse', 'ellipses'
+            kind (str):  'intensity', 'intensities', 'phases', fields', 'stokes', 'param_ellipse', 'ellipses'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -560,10 +483,6 @@ class Vector_paraxial_field_XY(object):
             elif kind == 'intensities':
                 id_fig = self.__draw_intensities__(logarithm, normalize,
                                                    cut_value, **kwargs)
-
-            elif kind == 'intensities_rz':
-                id_fig = self.__draw_intensities_rz__(logarithm, normalize,
-                                                      cut_value, **kwargs)
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
@@ -645,7 +564,6 @@ class Vector_paraxial_field_XY(object):
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
-        Ez_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ez)
         tx, ty = rcParams['figure.figsize']
 
         intensity1 = np.abs(Ex_r)**2
@@ -656,98 +574,19 @@ class Vector_paraxial_field_XY(object):
         intensity2 = normalize_draw(intensity2, logarithm, normalize,
                                     cut_value)
 
-        intensity3 = np.abs(Ez_r)**2
-        intensity3 = normalize_draw(intensity3, logarithm, normalize,
-                                    cut_value)
-
-        intensity_max = np.max(
-            (intensity1.max(), intensity2.max(), intensity3.max()))
-
-        if intensity3.max() == 0:
-
-            plt.figure(figsize=(2 * tx, ty))
-
-            h1 = plt.subplot(1, 2, 1)
-
-            __draw1__(self, intensity1, color_intensity, "$I_x$")
-            plt.clim(0, intensity_max)
-
-            h2 = plt.subplot(1, 2, 2)
-
-            __draw1__(self, intensity2, color_intensity, "$I_y$")
-            plt.clim(0, intensity_max)
-
-            plt.subplots_adjust(
-                left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-            plt.tight_layout()
-
-            return h1, h2
-        else:
-
-            plt.figure(figsize=(3 * tx, ty))
-
-            h1 = plt.subplot(1, 3, 1)
-
-            __draw1__(self, intensity1, color_intensity, "$I_x$")
-            plt.clim(0, intensity_max)
-
-            h2 = plt.subplot(1, 3, 2)
-
-            __draw1__(self, intensity2, color_intensity, "$I_y$")
-            plt.clim(0, intensity_max)
-
-            h3 = plt.subplot(1, 3, 3)
-
-            __draw1__(self, intensity3, color_intensity, "$I_z$")
-            # plt.clim(0, intensity_max)
-
-            plt.subplots_adjust(
-                left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-            plt.tight_layout()
-
-            return h1, h2, h3
-
-    def __draw_intensities_rz__(self,
-                                logarithm,
-                                normalize,
-                                cut_value,
-                                color_intensity=None):
-        """internal funcion: draws intensity X,Y.
-
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            cut_value (float): If not None, cuts the maximum intensity to this value
-        """
-
-        if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
-
-        Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
-        Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
-        Ez_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ez)
-        tx, ty = rcParams['figure.figsize']
-
-        intensity_r = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
-        intensity_r = normalize_draw(intensity_r, logarithm, normalize,
-                                     cut_value)
-
-        intensity_z = np.abs(Ez_r)**2
-        intensity_z = normalize_draw(intensity_z, logarithm, normalize,
-                                     cut_value)
-
-        intensity_max = np.max((intensity_r, intensity_z))
+        intensity_max = np.max((intensity1.max(), intensity2.max()))
 
         plt.figure(figsize=(2 * tx, ty))
 
         h1 = plt.subplot(1, 2, 1)
 
-        __draw1__(self, intensity_r, color_intensity, "$I_r$")
+        __draw1__(self, intensity1, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(1, 2, 2)
 
-        __draw1__(self, intensity_z, color_intensity, "$I_z$")
+        __draw1__(self, intensity2, color_intensity, "$I_y$")
+        plt.clim(0, intensity_max)
 
         plt.subplots_adjust(
             left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
@@ -916,8 +755,7 @@ class Vector_paraxial_field_XY(object):
         if color_phase is None:
             color_phase = params_drawing['color_phase']
 
-        A, B, theta, h = self.polarization_ellipse(
-            pol_state=None, matrix=True)
+        A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
         A = reduce_matrix_size(self.reduce_matrix, self.x, self.y, A)
         B = reduce_matrix_size(self.reduce_matrix, self.x, self.y, B)
@@ -1148,14 +986,11 @@ def polarization_ellipse(self, pol_state=None, matrix=False):
     if matrix is True:
         return A, B, theta, h
     else:
-        CA = Scalar_field_XY(x=self.x, y=self.y,
-                             wavelength=self.wavelength)
-        CB = Scalar_field_XY(x=self.x, y=self.y,
-                             wavelength=self.wavelength)
+        CA = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        CB = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
         Ctheta = Scalar_field_XY(
             x=self.x, y=self.y, wavelength=self.wavelength)
-        Ch = Scalar_field_XY(x=self.x, y=self.y,
-                             wavelength=self.wavelength)
+        Ch = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
 
         CA.u = A
         CB.u = B

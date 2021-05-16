@@ -17,8 +17,8 @@ The magnitude is related to microns: `micron = 1.`
 
 *Functions*
     * plane_wave
+    * azimuthal_wave
     * radial_wave
-    * transversal_wave
     * gauss_wave
     * hermite_gauss_wave
     * local_polarized_vector_wave
@@ -81,7 +81,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         self.mask_circle(radius=radius)
 
-    def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
+    def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -101,7 +101,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         self.mask_circle(r0=r0, radius=radius)
 
-    def transversal_wave(self, u=1, r0=(0., 0.), radius=0.):
+    def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -141,7 +141,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
 
         self.mask_circle(r0=r0, radius=radius)
 
-    def transversal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
+    def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:

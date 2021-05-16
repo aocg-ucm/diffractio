@@ -570,7 +570,8 @@ class Scalar_mask_XY(Scalar_field_XY):
                 Second row: coefficient values
 
             Example:
-                t1.edge_series(x0=0, period=50, a_coef=np.array([[0,1],[100,50]]), angle = 0 * degrees, invert=False)
+                t1.edge_series(x0=0, period=50, a_coef=np.array(
+                    [[0,1],[100,50]]), angle = 0 * degrees, invert=False)
             """
 
         Xrot, Yrot = self.__rotate__(angle)
@@ -647,7 +648,8 @@ class Scalar_mask_XY(Scalar_field_XY):
                 simmetrical (bool): TODO - take edge 1 and repeat simmetrical y 2
 
             Example:
-                t1.slit_series(x0=0, width=10, period1=50, period2=20, a_coef1=np.array([[0,1],[100,50]]) )
+                t1.slit_series(x0=0, width=10, period1=50,
+                               period2=20, a_coef1=np.array([[0,1],[100,50]]) )
             """
         dy1, dy2 = Dy
 
@@ -689,7 +691,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Example:
 
-            m.square(r0=(0 * um, 0 * um), size=(250 * um, 120 * um), angle=0 * degrees)
+            m.square(r0=(0 * um, 0 * um), size=(250 * \
+                     um, 120 * um), angle=0 * degrees)
         """
 
         # si solamente un numero, posiciones y radius son los mismos para ambos
@@ -748,7 +751,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Example:
 
-            circle(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
+            circle(r0=(0 * um, 0 * um), radius=(250 * \
+                   um, 125 * um), angle=0 * degrees)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
         x0, y0 = r0
@@ -779,7 +783,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Example:
 
-            super_gauss(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees, potencia=2)
+            super_gauss(r0=(0 * um, 0 * um), radius=(250 * um,
+                        125 * um), angle=0 * degrees, potencia=2)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
 
@@ -839,7 +844,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
             Example:
 
-                angular_aperture(t, a_coef=np.array([[0,1],[20,10]]),  angle= 0 * degrees)
+                angular_aperture(t, a_coef=np.array(
+                    [[0,1],[20,10]]),  angle= 0 * degrees)
             """
 
         Xrot, Yrot = self.__rotate__(angle)
@@ -886,6 +892,46 @@ class Scalar_mask_XY(Scalar_field_XY):
         ring2.circle(r0, radius2, angle)
 
         self.u = ring2.u - ring1.u
+
+    def rings(self, r0, inner_radius, outer_radius, mask=True):
+        """Structure based on several rings, with radius given by inner_radius and outer_radius.
+
+        Parameters:
+            r0 (float, float): (x0,y0) - center of lens
+            inner_radius (np.array): inner radius
+            outer_radius (np.array): inner radius
+            mask (bool): if True, mask with size radius of maximum outer radius
+        """
+
+        x0, y0 = r0
+        angle = 0
+
+        # rotation de la lens
+        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
+
+        radius = outer_radius.max()
+
+        # Definicion de la amplitude y la phase
+        if mask is True:
+            amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            amplitude.circle(r0, radius, angle)
+            t = amplitude.u
+        else:
+            t = ones_like(self.X)
+
+        u = np.zeros_like(self.X)
+        ring = Scalar_mask_XY(self.x, self.y, self.wavelength)
+
+        num_rings = len(inner_radius)
+
+        for i in range(num_rings):
+            ring.ring(r0, inner_radius[i], outer_radius[i], angle)
+            u = u + ring.u
+
+        self.u = u
+
+        self.u[t == 0] = 0
+        return self
 
     def cross(self, r0, size, angle=0 * degrees):
         """ Cross

@@ -1502,7 +1502,7 @@ class Scalar_field_XZ(object):
                 border0 = self.borders[0]
                 border1 = self.borders[1]
 
-            plt.plot(border0, border1, 'w.', ms=1)
+            plt.plot(border0, border1, 'w.', ms=0.5)
 
         if not filename == '':
             plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)

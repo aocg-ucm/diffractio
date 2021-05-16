@@ -205,7 +205,7 @@ XY Vector paraxial fields
     phi=0 * degrees)
 
   EM0 = Vector_paraxial_source_XY(x0, y0, wavelength)
-  EM0.radial_wave(u=u0, r0=(0, 0), radius=(200, 200))
+  EM0.azimuthal_wave(u=u0, r0=(0, 0), radius=(200, 200))
   EM0.draw(kind='ellipses')
   plt.title('Before mask')
   plt.savefig('vector_E0_ellipses.png')

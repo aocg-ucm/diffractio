@@ -85,6 +85,28 @@ class Test_vector_sources_XY(object):
 
         assert True
 
+    def test_azimuthal_wave(self):
+        func_name = sys._getframe().f_code.co_name
+        # filename = '{}{}.npz'.format(newpath, func_name)
+
+        length = 250 * um
+        num_data = 256
+        x0 = np.linspace(-length / 2, length / 2, num_data)
+        y0 = np.linspace(-length / 2, length / 2, num_data)
+        wavelength = 2 * um
+
+        EM = Vector_paraxial_source_XY(x0, y0, wavelength)
+        EM.azimuthal_wave(
+            u=1, r0=(0 * um, 0 * um), radius=(length / 2, length / 2))
+
+        EM.draw(kind='fields')
+        save_figure_test(newpath, func_name, add_name='_fields')
+
+        EM.draw(kind='stokes')
+        save_figure_test(newpath, func_name, add_name='_stokes')
+
+        assert True
+
     def test_radial_wave(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -97,28 +119,6 @@ class Test_vector_sources_XY(object):
 
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
         EM.radial_wave(
-            u=1, r0=(0 * um, 0 * um), radius=(length / 2, length / 2))
-
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
-
-        assert True
-
-    def test_transversal_wave(self):
-        func_name = sys._getframe().f_code.co_name
-        # filename = '{}{}.npz'.format(newpath, func_name)
-
-        length = 250 * um
-        num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
-
-        EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.transversal_wave(
             u=1, r0=(0 * um, 0 * um), radius=(length / 2, length / 2))
 
         EM.draw(kind='fields')
@@ -173,7 +173,7 @@ class Test_vector_sources_XY(object):
             theta=0. * degrees,
             phi=0 * degrees)
         EM = Vector_paraxial_source_XY(x0, y0, wavelength)
-        EM.radial_wave(u)
+        EM.azimuthal_wave(u)
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
