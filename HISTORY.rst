@@ -76,11 +76,17 @@ Alpha state
 --------------------------------
 Beta state
 
+* WPM and BPM in 3D
+* WPM and BPM in 3D without storing intermediate planes
+
+
 * Fix bugs:
   - (radial and azimuthal vector waves)
 
 * New Scalar_mask_XY: angular_aperture, edge_series, slit_series, rings
 
-* New vector_paraxial_fields_XY: VRS (vectorial Rayleigh-Sommerfeld propagation)
+* New vector_paraxial_fields_XY:
+  - vector_paraxial_fields -> vector_fields
+  - VRS (vectorial Rayleigh-Sommerfeld propagation)
   - Modifications in drawing intensities and fields
-  - New Self.Ez 
+  - New Self.Ez

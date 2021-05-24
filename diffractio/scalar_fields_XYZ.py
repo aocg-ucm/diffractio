@@ -54,7 +54,7 @@ from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 from scipy.signal import correlate2d
 
 from . import degrees, eps, mm, np, num_max_processors, params_drawing, plt
-from .scalar_fields_XY import PWD_kernel, Scalar_field_XY
+from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing
@@ -98,7 +98,6 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
-
     def __init__(self,
                  x=None,
                  y=None,
@@ -318,8 +317,8 @@ class Scalar_field_XYZ(object):
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self,
-                                              filename, add_name, description, verbose)
+            final_filename = save_data_common(self, filename, add_name,
+                                              description, verbose)
             return final_filename
         except:
             return False
@@ -591,10 +590,12 @@ class Scalar_field_XYZ(object):
             # parametros.quality=quality
         return field_output
 
-    def BPM(self, verbose=False):
+    def BPM(self, has_edges=True, pow_edge=80, verbose=False):
         """3D Beam propagation method (BPM).
 
         Parameters:
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
             verbose (bool): shows data process by screen
 
 
@@ -610,12 +611,11 @@ class Scalar_field_XYZ(object):
         deltaz = self.z[1] - self.z[0]
         rangox = self.x[-1] - self.x[0]
         rangoy = self.y[-1] - self.y[0]
-        pixelx = np.linspace(-int(numx / 2), int(numx / 2), numx)
-        pixely = np.linspace(-numy / 2, numy / 2, numy)
+        # pixelx = np.linspace(-int(numx / 2), int(numx / 2), numx)
+        # pixely = np.linspace(-numy / 2, numy / 2, numy)
 
         modo = self.u0.u
 
-        # Calculo de la phase 1 normalizada -------------------
         kx1 = np.linspace(0, int(numx / 2) + 1, int(numx / 2))
         kx2 = np.linspace(-int(numx / 2), -1, int(numx / 2))
         kx = (2 * np.pi / rangox) * np.concatenate((kx1, kx2))
@@ -627,25 +627,22 @@ class Scalar_field_XYZ(object):
         KX, KY = ndgrid(kx, ky)
 
         phase1 = np.exp((1j * deltaz * (KX**2 + KY**2)) / (2 * k0))
-        field = np.zeros(np.shape(self.n),
-                         dtype=complex)  # el índice de refracción
-        filter_edge = np.exp(-((pixelx) / (0.98 * 0.5 * numx))**90 -
-                             ((pixely) / (0.98 * 0.5 * numx))**90)
+        field = np.zeros(np.shape(self.n), dtype=complex)
 
-        gaussX = np.exp(-(self.X[:, :, 0] / (20 * self.x[0]))**2)
-        gaussY = np.exp(-(self.Y[:, :, 0] / (20 * self.y[0]))**2)
+        if has_edges:
+            gaussX = np.exp(-(self.X[:, :, 0] / (self.x[0]))**pow_edge)
+            gaussY = np.exp(-(self.Y[:, :, 0] / (self.y[0]))**pow_edge)
+            filter_edge = (gaussX * gaussY)
 
-        filter_edge = np.squeeze((gaussX * gaussY)**40)
-
-        # --------------- Ciclo principal del programa ------------------------
         field[:, :, 0] = modo
         for k in range(0, numz):
             if verbose is True:
-                print(("BPM 3D: {}/{}".format(k, numz)))
+                print("BPM 3D: {}/{}".format(k, numz), end="\r")
             phase2 = np.exp(-1j * self.n[:, :, k] * k0 * deltaz)
             # Aplicamos la Transformada Inversa
             modo = ifft2((fft2(modo) * phase1)) * phase2
-            modo = modo * filter_edge
+            if has_edges:
+                modo = modo * filter_edge
             field[:, :, k] = modo
             self.u = field
 
@@ -690,77 +687,140 @@ class Scalar_field_XYZ(object):
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, :, i + 1] = result_next
             if verbose is True:
-                # print("{}/{}".format(i, num_steps), sep='\n', end='\n')
-                print("{}/{}".format(i, num_steps))
+                print("{}/{}".format(i, num_steps), end='\r')
 
         if matrix is True:
             return self.u
 
-    def M_xyz(self, j, kx, ky):
+    def WPM(self, has_edges=True, pow_edge=80, verbose=False):
         """
-        TODO: sin terminar
-        Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
-        “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+        WPM Methods.
+        'schmidt method is very fast, only needs discrete number of refraction indexes'
+
+
+        Parameters:
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
+            verbose (bool): If True prints information
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
         """
-        # simple parameters
 
         k0 = 2 * np.pi / self.wavelength
-
-        z = self.z
         x = self.x
         y = self.y
-
-        num_x = self.x.size
-        num_y = self.y.size
-        num_z = self.z.size
-
+        z = self.z
+        # dx = x[1] - x[0]
+        # dy = y[1] - y[0]
         dz = z[1] - z[0]
-        dx = x[1] - x[0]
-        dx = y[1] - y[0]
 
-        nj = self.n[:, j]
-        nj_1 = self.n[:, j - 1]
+        self.u[:, :, 0] = self.u0.u
+        kx = get_k(x, flavour='+')
+        ky = get_k(y, flavour='+')
 
-        n_med = nj.mean()
-        n_1_med = nj_1.mean()
+        KX, KY = np.meshgrid(kx, ky)
 
-        # parameters
-        NJ, KX = np.meshgrid(nj, kx)
-        NJ_1, KX = np.meshgrid(nj_1, kx)
+        k_perp2 = KX**2 + KY**2
+        # k_perp = np.sqrt(k_perp2)
 
-        k_perp = KX + eps
+        if has_edges is False:
+            filter_edge = 1
+        else:
+            gaussX = np.exp(-(self.X[:, :, 0] / (self.x[0]))**pow_edge)
+            gaussY = np.exp(-(self.Y[:, :, 0] / (self.y[0]))**pow_edge)
+            filter_edge = (gaussX * gaussY)
 
-        kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
-        kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
+        t1 = time.time()
 
-        tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
-        t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
+        num_steps = len(self.z)
+        for j in range(1, num_steps):
 
-        kj_1 = NJ_1 * k0
-        fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
-        # cuidado no es la misma definición, me parece que está repetido
-        e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
-        eg_xj_1 = fj_1 * e_xj_1
-        # cuidado no es la misma definición, me parece que está mal por no ser simétrica
+            self.u[:, :, j] = self.u[:, :, j] + WPM_schmidt_kernel(
+                self.u[:, :, j - 1], self.n[:, :, j - 1], k0, k_perp2,
+                dz) * filter_edge
 
-        p001 = 0
-        p002 = tg_TM * (1 - 1j * eg_xj_1)
-        p111 = t_TE
-        p112 = 0
+            if verbose is True:
+                if sys.version_info.major == 3:
+                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+                else:
+                    print("{}/{}".format(j, num_steps))
 
-        # M00
-        M00 = (p001 + p002)
+        t2 = time.time()
 
-        # M01
-        M01 = 0
+        if verbose is True:
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                t2 - t1, (t2 - t1) / len(self.z) * 1000))
 
-        # M10
-        M10 = 0
-
-        # M11
-        M11 = (p111 + p112)
-
-        return M00, M01, M10, M11
+    # def M_xyz(self, j, kx, ky):
+    #     """
+    #     TODO: sin terminar
+    #     Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
+    #     “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+    #     """
+    #     # simple parameters
+    #
+    #     k0 = 2 * np.pi / self.wavelength
+    #
+    #     z = self.z
+    #     x = self.x
+    #     y = self.y
+    #
+    #     num_x = self.x.size
+    #     num_y = self.y.size
+    #     num_z = self.z.size
+    #
+    #     dz = z[1] - z[0]
+    #     dx = x[1] - x[0]
+    #     dx = y[1] - y[0]
+    #
+    #     nj = self.n[:, j]
+    #     nj_1 = self.n[:, j - 1]
+    #
+    #     n_med = nj.mean()
+    #     n_1_med = nj_1.mean()
+    #
+    #     # parameters
+    #     NJ, KX = np.meshgrid(nj, kx)
+    #     NJ_1, KX = np.meshgrid(nj_1, kx)
+    #
+    #     k_perp = KX + eps
+    #
+    #     kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
+    #     kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
+    #
+    #     tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
+    #     t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
+    #
+    #     kj_1 = NJ_1 * k0
+    #     fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
+    #     # cuidado no es la misma definición, me parece que está repetido
+    #     e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
+    #     eg_xj_1 = fj_1 * e_xj_1
+    #     # cuidado no es la misma definición, me parece que está mal por no ser simétrica
+    #
+    #     p001 = 0
+    #     p002 = tg_TM * (1 - 1j * eg_xj_1)
+    #     p111 = t_TE
+    #     p112 = 0
+    #
+    #     # M00
+    #     M00 = (p001 + p002)
+    #
+    #     # M01
+    #     M01 = 0
+    #
+    #     # M10
+    #     M10 = 0
+    #
+    #     # M11
+    #     M11 = (p111 + p112)
+    #
+    #     return M00, M01, M10, M11
 
     def to_Scalar_field_XY(self,
                            iz0=None,
@@ -981,13 +1041,10 @@ class Scalar_field_XYZ(object):
             diff1 = diff(np.abs(self.n), axis=0)
             diff2 = diff(np.abs(self.n), axis=1)
             diff3 = diff(np.abs(self.n), axis=2)
-            # print diff1.shape, diff2.shape
             diff1 = np.append(diff1, np.zeros((len(self.x), 1, 1)), axis=0)
             diff2 = np.append(diff2, np.zeros((1, len(self.y), 1)), axis=1)
             diff2 = np.append(diff2, np.zeros(1, 1, len(self.z)), axis=2)
-            # print diff1.shape, diff2.shape
 
-        # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
         t = np.abs(diff1) + np.abs(diff2) + np.abs(diff3)
 
         ix, iy, iz = (t > min_incr).nonzero()
@@ -1261,8 +1318,8 @@ class Scalar_field_XYZ(object):
             """
 
         if is_slicer:
-            u_xyz_r = self.cut_resample(
-                num_points=(128, 128, 128), new_field=True)
+            u_xyz_r = self.cut_resample(num_points=(128, 128, 128),
+                                        new_field=True)
 
             if kind == 'intensity' or kind == '':
                 drawing = np.abs(u_xyz_r.u)**2
@@ -1447,8 +1504,6 @@ class Scalar_field_XYZ(object):
                 pass
 
             os.chdir(directory_name)
-            # let exception propagate if we just can't
-            # cd into the specified directory
 
             for i_prog in range(n_frames):
                 frame = self.to_Scalar_field_XY(iz0=i_prog,
@@ -1472,7 +1527,8 @@ class Scalar_field_XYZ(object):
                         print(
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}".format(
                                 i_prog, n_frames, self.z[i_prog] / mm,
-                                intensity.max(), intensity.min()), end='\r')
+                                intensity.max(), intensity.min()),
+                            end='\r')
                     else:
                         print((
                             "{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(

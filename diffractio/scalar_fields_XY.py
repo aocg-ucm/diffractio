@@ -53,6 +53,8 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 import datetime
+import sys
+import time
 
 import matplotlib.animation as animation
 import scipy.ndimage
@@ -67,7 +69,7 @@ from . import degrees, mm, np, params_drawing, plt, seconds, um
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import get_edges, ndgrid, nearest, rotate_image
+from .utils_math import get_edges, ndgrid, nearest, rotate_image, get_k
 from .utils_optics import beam_width_2D, field_parameters
 
 try:
@@ -99,7 +101,6 @@ class Scalar_field_XY(object):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         self.x = x
         self.y = y
@@ -271,8 +272,8 @@ class Scalar_field_XY(object):
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self,
-                                              filename, add_name, description, verbose)
+            final_filename = save_data_common(self, filename, add_name,
+                                              description, verbose)
             return final_filename
         except:
             return False
@@ -296,7 +297,11 @@ class Scalar_field_XY(object):
         if verbose is True:
             print(dict0.keys())
 
-    def save_mask(self, filename="", kind='amplitude', binarize=False, info=""):
+    def save_mask(self,
+                  filename="",
+                  kind='amplitude',
+                  binarize=False,
+                  info=""):
         """Create a mask in a file, for example, ablation or litography engraver
 
         Parameters:
@@ -411,10 +416,18 @@ class Scalar_field_XY(object):
             y_new = np.linspace(y0, y1, num_points_y)
             X_new, Y_new = np.meshgrid(x_new, y_new)
 
-            f_interp_abs = RectBivariateSpline(
-                self.y, self.x, np.abs(self.u), kx=kxu, ky=kxu, s=0)
-            f_interp_phase = RectBivariateSpline(
-                self.y, self.x, np.angle(self.u), kx=kxu, ky=kxu, s=0)
+            f_interp_abs = RectBivariateSpline(self.y,
+                                               self.x,
+                                               np.abs(self.u),
+                                               kx=kxu,
+                                               ky=kxu,
+                                               s=0)
+            f_interp_phase = RectBivariateSpline(self.y,
+                                                 self.x,
+                                                 np.angle(self.u),
+                                                 kx=kxu,
+                                                 ky=kxu,
+                                                 s=0)
             u_new_abs = f_interp_abs(x_new, y_new)
             u_new_phase = f_interp_phase(x_new, y_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
@@ -434,8 +447,9 @@ class Scalar_field_XY(object):
             self.X = X_new
             self.Y = Y_new
         elif new_field is True:
-            field = Scalar_field_XY(
-                x=x_new, y=y_new, wavelength=self.wavelength)
+            field = Scalar_field_XY(x=x_new,
+                                    y=y_new,
+                                    wavelength=self.wavelength)
             field.u = u_new
             return field
 
@@ -727,20 +741,19 @@ class Scalar_field_XY(object):
             U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
 
             # TODO: pass to multiprocessing
-            for i, xi in zip(
-                    list(range(len(posiciones_x))), flipud(posiciones_x)):
-                for j, yi in zip(
-                        list(range(len(posiciones_y))), flipud(posiciones_y)):
+            for i, xi in zip(list(range(len(posiciones_x))),
+                             flipud(posiciones_x)):
+                for j, yi in zip(list(range(len(posiciones_y))),
+                                 flipud(posiciones_y)):
                     # num_ventana = j * amplification_x + i + 1
-                    u3 = self._RS_(
-                        z=z,
-                        n=n,
-                        new_field=False,
-                        kind=kind,
-                        xout=xi,
-                        yout=yi,
-                        out_matrix=True,
-                        verbose=verbose)
+                    u3 = self._RS_(z=z,
+                                   n=n,
+                                   new_field=False,
+                                   kind=kind,
+                                   xout=xi,
+                                   yout=yi,
+                                   out_matrix=True,
+                                   verbose=verbose)
                     xshape = slice(i * num_pixels_x, (i + 1) * num_pixels_x)
                     yshape = slice(j * num_pixels_y, (j + 1) * num_pixels_y)
                     U_final.u[yshape, xshape] = u3
@@ -755,26 +768,107 @@ class Scalar_field_XY(object):
                     self.x = X0
                     self.y = Y0
         else:
-            u_s = self._RS_(
-                z,
-                n,
-                new_field=new_field,
-                out_matrix=True,
-                kind=kind,
-                xout=None,
-                yout=None,
-                verbose=verbose)
+            u_s = self._RS_(z,
+                            n,
+                            new_field=new_field,
+                            out_matrix=True,
+                            kind=kind,
+                            xout=None,
+                            yout=None,
+                            verbose=verbose)
 
             if matrix is True:
                 return u_s
             else:
                 if new_field is True:
-                    U_final = Scalar_field_XY(
-                        x=self.x, y=self.y, wavelength=self.wavelength)
+                    U_final = Scalar_field_XY(x=self.x,
+                                              y=self.y,
+                                              wavelength=self.wavelength)
                     U_final.u = u_s
                     return U_final
                 else:
                     self.u = u_s
+
+    def WPM(self,
+            fn,
+            z_ini,
+            z_end,
+            dz,
+            has_edges=True,
+            matrix=False,
+            verbose=False):
+        """
+        WPM Methods.
+        'schmidt method is very fast, only needs discrete number of refraction indexes'
+
+
+        Parameters:
+            fn - índice de refracción función:
+            kind (str): 'schmidt, scalar, TE, TM
+            filter (1, or np.array): filter for edges
+            matrix (bool): if True returns a matrix else
+            verbose (bool): If True prints information
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
+        """
+        z_now = z_ini
+        k0 = 2 * np.pi / self.wavelength
+        x = self.x
+        y = self.y
+        # dx = x[1] - x[0]
+        # dy = y[1] - y[0]
+
+        u_iter = Scalar_field_XY(self.x, self.y, self.wavelength)
+
+        kx = get_k(x, flavour='+')
+        ky = get_k(y, flavour='+')
+
+        KX, KY = np.meshgrid(kx, ky)
+
+        k_perp2 = KX**2 + KY**2
+        # k_perp = np.sqrt(k_perp2)
+
+        num_steps = int(z_end / dz)
+
+        if has_edges is False:
+            filter_edge = 1
+        else:
+            gaussX = np.exp(-(self.X / (self.x[0]))**86)
+            gaussY = np.exp(-(self.Y / (self.y[0]))**86)
+            filter_edge = (gaussX * gaussY)
+
+        t1 = time.time()
+
+        u_iter.u = self.u
+        for j in range(0, num_steps):
+            refraction_index = fn(x, y, np.array([
+                z_now,
+            ]), self.wavelength)
+
+            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0,
+                                          k_perp2, dz) * filter_edge
+
+            z_now = z_now + dz
+            if verbose is True:
+                if sys.version_info.major == 3:
+                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+                else:
+                    print("{}/{}".format(j, num_steps))
+
+        t2 = time.time()
+        if verbose is True:
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                t2 - t1, (t2 - t1) / num_steps * 1000))
+
+        if matrix is True:
+            return u_iter.u
+        else:
+            self.u = u_iter.u
 
     def profile(self,
                 point1='',
@@ -827,11 +921,10 @@ class Scalar_field_XY(object):
 
         h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = h - h[-1] / 2
-        # h = linspace(0, sqrt((y[iy2] - y[iy1])**2 + (x[ix2] - x[ix1])**2),
-        #              npixels)
 
-        z_profile = scipy.ndimage.map_coordinates(
-            image.transpose(), np.vstack((x, y)), order=order)
+        z_profile = scipy.ndimage.map_coordinates(image.transpose(),
+                                                  np.vstack((x, y)),
+                                                  order=order)
 
         return h, z_profile, point1, point2
 
@@ -840,7 +933,7 @@ class Scalar_field_XY(object):
                      point2='',
                      npixels=None,
                      kind='intensity',
-                     order=0):
+                     order=2):
         """Draws profile in image. If points are not given, then image is shown and points are obtained clicking.
 
         Parameters:
@@ -893,22 +986,32 @@ class Scalar_field_XY(object):
             self.x, self.u, kind_transition, min_step, verbose, filename)
         return pos_transitions, type_transitions, raising, falling
 
-    def search_focus(self, verbose=True):
+    def search_focus(self, kind='moments', verbose=True):
         """Search for location of .
 
         Parameters:
+            kind (str): 'moments' or 'maximum'
             verbose (bool): If True prints information.
 
         Returns:
             (x,y): positions of focus
         """
-        intensity = np.abs(self.u)**2
 
-        ix, iy = np.unravel_index(intensity.argmax(), intensity.shape)
+        if kind == 'maximum':
+            intensity = np.abs(self.u)**2
+            ix, iy = np.unravel_index(intensity.argmax(), intensity.shape)
+            pos_x, pos_y = self.x[ix], self.y[iy]
+        elif kind == 'moments':
+            _, _, _, moments = beam_width_2D(self.x,
+                                             self.y,
+                                             np.abs(self.u)**2,
+                                             has_draw=False)
+            pos_x, pos_y, _, _, _ = moments
+
         if verbose is True:
-            print(("x = {:2.3f} um, y = {:2.3f} um".format(
-                self.x[ix], self.y[iy])))
-        return self.x[ix], self.y[iy]
+            print(("x = {:2.3f} um, y = {:2.3f} um".format(pos_x, pos_y)))
+
+        return pos_x, pos_y
 
     def MTF(self, kind='mm', has_draw=True, is_matrix=True):
         """Computes the MTF of a field, If this field is near to focal point, the MTF will be wide
@@ -931,8 +1034,8 @@ class Scalar_field_XY(object):
         num_data_x, num_data_y = MTF_field.u.shape
 
         mtf_norm = np.abs(MTF_field.u) / np.abs(
-            MTF_field.u[int(num_data_x /
-                            2), int(num_data_y / 2)])
+            MTF_field.u[int(num_data_x / 2),
+                        int(num_data_y / 2)])
 
         delta_x = x[1] - x[0]
         delta_y = y[1] - y[0]
@@ -994,20 +1097,29 @@ class Scalar_field_XY(object):
             * https://en.wikipedia.org/wiki/Beam_diameter
             * http://www.auniontech.com/ueditor/file/20170921/1505982360689799.pdf
     """
-        dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean) = beam_width_2D(
-            self.x, self.y, np.abs(self.u)**2, has_draw=False)
+        dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean,
+                                 xy_mean) = beam_width_2D(self.x,
+                                                          self.y,
+                                                          np.abs(self.u)**2,
+                                                          has_draw=False)
 
         if has_draw is True:
             from matplotlib.patches import Ellipse
 
             self.draw()
-            ellipse = Ellipse(xy=(x_mean, y_mean), width=dy,
-                              height=dx, angle=-principal_axis / degrees)
-            ellipse2 = Ellipse(xy=(x_mean, y_mean), width=dy / 2,
-                               height=dx / 2, angle=-principal_axis / degrees)
+            ellipse = Ellipse(xy=(x_mean, y_mean),
+                              width=dy,
+                              height=dx,
+                              angle=-principal_axis / degrees)
+            ellipse2 = Ellipse(xy=(x_mean, y_mean),
+                               width=dy / 2,
+                               height=dx / 2,
+                               angle=-principal_axis / degrees)
 
-            ellipse3 = Ellipse(xy=(x_mean, y_mean), width=dy / 4,
-                               height=dx / 4, angle=-principal_axis / degrees)
+            ellipse3 = Ellipse(xy=(x_mean, y_mean),
+                               width=dy / 4,
+                               height=dx / 4,
+                               angle=-principal_axis / degrees)
 
             ax = plt.gca()
             ax.add_artist(ellipse)
@@ -1038,7 +1150,8 @@ class Scalar_field_XY(object):
             plt.plot(x0, y0, 'black', label='1$\sigma$')
             plt.legend()
 
-        return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
+        return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean,
+                                        xy_mean)
 
     def intensity(self):
         """Returns intensity."""
@@ -1403,8 +1516,10 @@ class Scalar_field_XY(object):
             plt.colorbar(orientation=has_colorbar, shrink=0.75)
 
         if not filename == '':
-            plt.savefig(
-                filename, dpi=300, bbox_inches='tight', pad_inches=0.05)
+            plt.savefig(filename,
+                        dpi=300,
+                        bbox_inches='tight',
+                        pad_inches=0.05)
 
         return id_fig, IDax, IDimage
 
@@ -1423,20 +1538,19 @@ class Scalar_field_XY(object):
             title(str): title for the drawing
             cut_value(float): if provided, maximum value to show
         """
-        amplitude, intensity, phase = field_parameters(
-            self.u, has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,
+                                                       has_amplitude_sign=True)
         if colormap_kind in ['', None, []]:
             colormap_kind = self.params_drawing["color_intensity"]
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
-        id_fig, IDax, IDimage = draw2D(
-            intensity,
-            self.x,
-            self.y,
-            xlabel="$x  (\mu m)$",
-            ylabel="$y  (\mu m)$",
-            title=title,
-            color=colormap_kind,
-            reduce_matrix=self.reduce_matrix)
+        id_fig, IDax, IDimage = draw2D(intensity,
+                                       self.x,
+                                       self.y,
+                                       xlabel="$x  (\mu m)$",
+                                       ylabel="$y  (\mu m)$",
+                                       title=title,
+                                       color=colormap_kind,
+                                       reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
 
@@ -1454,21 +1568,20 @@ class Scalar_field_XY(object):
             title(str): title for the drawing
             cut_value(float): if provided, maximum value to show
         """
-        amplitude, intensity, phase = field_parameters(
-            self.u, has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,
+                                                       has_amplitude_sign=True)
         amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
         max_amplitude = np.abs(amplitude).max()
         if colormap_kind in ['', None, []]:
             colormap_kind = self.params_drawing["color_amplitude"]
-        id_fig, IDax, IDimage = draw2D(
-            amplitude,
-            self.x,
-            self.y,
-            xlabel="$x  (\mu m)$",
-            ylabel="$y  (\mu m)$",
-            title=title,
-            color=colormap_kind,
-            reduce_matrix=self.reduce_matrix)
+        id_fig, IDax, IDimage = draw2D(amplitude,
+                                       self.x,
+                                       self.y,
+                                       xlabel="$x  (\mu m)$",
+                                       ylabel="$y  (\mu m)$",
+                                       title=title,
+                                       color=colormap_kind,
+                                       reduce_matrix=self.reduce_matrix)
         plt.clim(-max_amplitude, max_amplitude)
 
         return id_fig, IDax, IDimage
@@ -1479,8 +1592,8 @@ class Scalar_field_XY(object):
         Parameters:
             title(str): title for the drawing
         """
-        amplitude, intensity, phase = field_parameters(
-            self.u, has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,
+                                                       has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase / degrees
         phase[intensity < percentaje_intensity * (intensity.max())] = 0
@@ -1517,8 +1630,8 @@ class Scalar_field_XY(object):
             cut_value(float): if provided, maximum value to show
         """
 
-        amplitude, intensity, phase = field_parameters(
-            self.u, has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,
+                                                       has_amplitude_sign=True)
 
         intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
                                        intensity)
@@ -1536,12 +1649,11 @@ class Scalar_field_XY(object):
 
         plt.subplot(1, 2, 1)
 
-        h1 = plt.imshow(
-            intensity,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=extension)
+        h1 = plt.imshow(intensity,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
         plt.title("$intensity$")
@@ -1556,12 +1668,11 @@ class Scalar_field_XY(object):
         phase = phase / degrees
 
         # elimino la fase en la visualicion cuando no hay campo
-        h2 = plt.imshow(
-            phase,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=extension)
+        h2 = plt.imshow(phase,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
         plt.colorbar(orientation='horizontal', shrink=0.66)
@@ -1596,15 +1707,14 @@ class Scalar_field_XY(object):
         if colormap_kind in ['', None, []]:
             colormap_kind = self.params_drawing["color_real"]
 
-        id_fig, IDax, IDimage = draw2D(
-            rf,
-            self.x,
-            self.y,
-            xlabel="$x  (\mu m)$",
-            ylabel="$y  (\mu m)$",
-            title=title,
-            color=colormap_kind,
-            reduce_matrix=self.reduce_matrix)
+        id_fig, IDax, IDimage = draw2D(rf,
+                                       self.x,
+                                       self.y,
+                                       xlabel="$x  (\mu m)$",
+                                       ylabel="$y  (\mu m)$",
+                                       title=title,
+                                       color=colormap_kind,
+                                       reduce_matrix=self.reduce_matrix)
 
         return id_fig, IDax, IDimage
 
@@ -1642,12 +1752,12 @@ class Scalar_field_XY(object):
             ax.set_title("$z = {:2.0f} \mu m$".format(zs[i]))
             return i
 
-        ani = animation.FuncAnimation(
-            fig,
-            animate,
-            list(range(0, len(zs), frames_reduction)),
-            interval=25,
-            blit=False)
+        ani = animation.FuncAnimation(fig,
+                                      animate,
+                                      list(range(0, len(zs),
+                                                 frames_reduction)),
+                                      interval=25,
+                                      blit=False)
 
         fps = int(len(zs) / (time_video * frames_reduction))
 
@@ -1722,8 +1832,8 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z +
-                          (X**2 + Y**2) / (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z + (X**2 + Y**2) /
+                          (2 * z))) / (1.j * wavelength * z)
 
 
 def PWD_kernel(u, n, k0, k_perp2, dz):
@@ -1751,3 +1861,32 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
 
     result = (ifft2(fftshift(H * Ek)))
     return result
+
+
+def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
+    """
+    Kernel for fast propagation of WPM method
+
+    Parameters:
+        u (np.array): fields
+        n (np.array): refraction index
+        k0 (float): wavenumber
+        k_perp2 (np.array): transversal k**2
+        dz (float): increment in distances
+
+    References:
+
+        1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+        2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+    """
+    refraction_indexes = np.unique(n)
+
+    u_final = np.zeros_like(u, dtype=complex)
+    for m, n_m in enumerate(refraction_indexes):
+        # print (m, n_m)
+        u_temp = PWD_kernel(u, n_m, k0, k_perp2, dz)
+        Imz = (n == n_m)
+        u_final = u_final + Imz * u_temp
+
+    return u_final
