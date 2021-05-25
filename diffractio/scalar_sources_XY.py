@@ -122,12 +122,12 @@ class Scalar_source_XY(Scalar_field_XY):
         if z0 == 0:
             R = 1e10
         else:
-            R = z0 * (1 + (z_rayleigh / z0)**2)
+            R = - z0 * (1 + (z_rayleigh / z0)**2)
 
         amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2) -
                                      (self.Y - y0)**2 / (wy**2))
         phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi) +
-                                self.Y * cos(theta) * sin(phi)))  # rotation
+                                self.Y * cos(theta) * sin(phi)))
         phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
                            (2 * R)))
 

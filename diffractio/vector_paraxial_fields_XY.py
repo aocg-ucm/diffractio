@@ -757,12 +757,12 @@ class Vector_paraxial_field_XY(object):
             h1 = plt.subplot(1, 3, 1)
 
             __draw1__(self, intensity1, color_intensity, "$I_x$")
-            #plt.clim(0, intensity_max)
+            # plt.clim(0, intensity_max)
 
             h2 = plt.subplot(1, 3, 2)
 
             __draw1__(self, intensity2, color_intensity, "$I_y$")
-            #plt.clim(0, intensity_max)
+            # plt.clim(0, intensity_max)
 
             h3 = plt.subplot(1, 3, 3)
 
