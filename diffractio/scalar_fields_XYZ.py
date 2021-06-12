@@ -62,20 +62,6 @@ from .utils_math import get_k, ndgrid, nearest
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters
 
-try:
-    from .utils_slicer import slicerLM
-    is_slicer = True
-except ImportError:
-    print("slicerLM is not loaded.")
-    is_slicer = False
-
-try:
-    from mayavi import mlab
-    is_mayavi = True
-except ImportError:
-    print("mayavi.mlab is not imported.")
-    is_mayavi = False
-
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 
@@ -98,6 +84,7 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
+
     def __init__(self,
                  x=None,
                  y=None,
@@ -1316,6 +1303,19 @@ class Scalar_field_XYZ(object):
             normalize (bool): If True, max(intensity)=1
             pixel_size (float, float, float): pixels for drawing
             """
+        try:
+            from .utils_slicer import slicerLM
+            is_slicer = True
+        except ImportError:
+            print("slicerLM is not loaded.")
+            is_slicer = False
+
+        try:
+            from mayavi import mlab
+            is_mayavi = True
+        except ImportError:
+            print("mayavi.mlab is not imported.")
+            is_mayavi = False
 
         if is_slicer:
             u_xyz_r = self.cut_resample(num_points=(128, 128, 128),
@@ -1351,6 +1351,13 @@ class Scalar_field_XYZ(object):
             Simplify, drawing
             include kind and other parameters of draw
         """
+
+        try:
+            from mayavi import mlab
+            is_mayavi = True
+        except ImportError:
+            print("mayavi.mlab is not imported.")
+            is_mayavi = False
 
         if is_mayavi:
 
