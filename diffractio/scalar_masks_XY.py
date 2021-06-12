@@ -65,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -553,7 +552,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = level1 * ones(self.X.shape)
         self.u[Xrot > 0] = level2
 
-    def edge_series(self, r0, period, a_coef, b_coef=None, angle=0 * degrees, invert=True):
+    def edge_series(self,
+                    r0,
+                    period,
+                    a_coef,
+                    b_coef=None,
+                    angle=0 * degrees,
+                    invert=True):
         """Creates a linear aperture using the Fourier coefficients.
 
             Parameters:
@@ -630,7 +635,18 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ix] = 1
         self.u = u
 
-    def slit_series(self, x0, width, period1, period2, Dy, a_coef1, a_coef2, b_coef1=None, b_coef2=None, angle=None, simmetrycal=False):
+    def slit_series(self,
+                    x0,
+                    width,
+                    period1,
+                    period2,
+                    Dy,
+                    a_coef1,
+                    a_coef2,
+                    b_coef1=None,
+                    b_coef2=None,
+                    angle=None,
+                    simmetrycal=False):
         """Creates a lineal function using the Fourier coefficients.
 
             Parameters:
@@ -654,11 +670,19 @@ class Scalar_mask_XY(Scalar_field_XY):
         dy1, dy2 = Dy
 
         t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        t1.edge_series(r0=(x0 - width / 2, dy1), period=period1,
-                       a_coef=a_coef1, b_coef=b_coef1, angle=angle, invert=True)
+        t1.edge_series(r0=(x0 - width / 2, dy1),
+                       period=period1,
+                       a_coef=a_coef1,
+                       b_coef=b_coef1,
+                       angle=angle,
+                       invert=True)
         t2 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-        t2.edge_series(r0=(x0 + width / 2, dy2), period=period2,
-                       a_coef=a_coef2, b_coef=b_coef2, angle=angle, invert=False)
+        t2.edge_series(r0=(x0 + width / 2, dy2),
+                       period=period2,
+                       a_coef=a_coef2,
+                       b_coef=b_coef2,
+                       angle=angle,
+                       invert=False)
 
         self.u = t1.u * t2.u
 
@@ -1440,17 +1464,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
         # Definicion de la sinusoidal
-        self.u = amp_min + (amp_max - amp_min) * (1 + sin(2 * pi *
-                                                          (Xrot - x0) / period)) / 2
+        self.u = amp_min + (amp_max -
+                            amp_min) * (1 + sin(2 * pi *
+                                                (Xrot - x0) / period)) / 2
 
-    def sine_edge_grating(self,
-                          r0,
-                          period,
-                          lp,
-                          ap,
-                          phase,
-                          radius,
-                          is_binary):
+    def sine_edge_grating(self, r0, period, lp, ap, phase, radius, is_binary):
         """
         TODO: function info
         """
@@ -1532,8 +1550,10 @@ class Scalar_mask_XY(Scalar_field_XY):
             binary_grating( x0=0, period=40 * um, fill_factor=0.5, amin=0, amax=1, phase=0 * degrees, angle=0 * degrees)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t.ronchi_grating(
-            period=period, fill_factor=fill_factor, x0=x0, angle=angle)
+        t.ronchi_grating(period=period,
+                         fill_factor=fill_factor,
+                         x0=x0,
+                         angle=angle)
         amplitud = amin + (amax - amin) * t.u
         self.u = amplitud * np.exp(1j * phase * t.u)
 
@@ -1579,7 +1599,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
          Parameters:
             r0 (float, r0):  initial position
-            period (float): period of the grating
+            period (float, float): period of the grating
             fill_factor (float): fill_factor
             amin (float): minimum amplitude
             amax (float): maximum amplitude
@@ -1589,14 +1609,21 @@ class Scalar_mask_XY(Scalar_field_XY):
         Example:
             grating_2D(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
+        if isinstance(period, (float, int)):
+            period = period, period
+
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
 
-        t1.binary_grating(r0[0], period, fill_factor,
-                          amin, amax, phase, angle)
-        t2.binary_grating(r0[1], period, fill_factor, amin, amax, phase,
-                          angle + 90. * degrees)
-        self.u = t1.u * t2.u
+        t1.binary_grating(r0[0] + period[0] / 8, period[0], fill_factor, 0, 1,
+                          0, angle)
+        t2.binary_grating(r0[1] + period[1] / 4, period[1], fill_factor, 0, 1,
+                          0, angle + 90. * degrees)
+
+        t2_grating = t1 * t2
+
+        self.u = amin + (amax - amin) * t2_grating.u
+        self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
     def grating_2D_chess(self,
                          r0,
@@ -1621,14 +1648,22 @@ class Scalar_mask_XY(Scalar_field_XY):
             grating_2D_chess(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
 
+        if isinstance(period, (float, int)):
+            period = period, period
+
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t1.binary_grating(r0[0], period, fill_factor,
-                          amin, amax, phase, angle)
-        t2.binary_grating(r0[1], period, fill_factor, amin, amax, phase,
-                          angle + 90. * degrees)
-        u = np.logical_xor(t1.u, t2.u)
-        self.u = u.astype(float)
+
+        t1.binary_grating(r0[0] + period[0] / 8, period[0], fill_factor, 0, 1,
+                          0, angle)
+        t2.binary_grating(r0[1] + period[1] / 4, period[1], fill_factor, 0, 1,
+                          0, angle + 90. * degrees)
+
+        t2_grating = t1 * t2
+        t2_grating.u = np.logical_xor(t1.u, t2.u)
+
+        self.u = amin + (amax - amin) * t2_grating.u
+        self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
     def roughness(self, t, s):
         """Generation of a rough surface. According to Ogilvy p.224
@@ -1727,11 +1762,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             lens.u = lens.u + ring.u
         self.u = lens.u
 
-    def super_ellipse(self,
-                      r0,
-                      radius,
-                      n=(2, 2),
-                      angle=0 * degrees):
+    def super_ellipse(self, r0, radius, n=(2, 2), angle=0 * degrees):
         """Super_ellipse. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
 
         Parameters:

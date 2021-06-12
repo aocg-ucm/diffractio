@@ -1552,6 +1552,9 @@ class Scalar_field_XY(object):
                                        color=colormap_kind,
                                        reduce_matrix=self.reduce_matrix)
 
+        if self.type == 'Scalar_mask_XY':
+            plt.clim(0, 1)
+
         return id_fig, IDax, IDimage
 
     def __drawAmplitude__(self,
@@ -1662,6 +1665,8 @@ class Scalar_field_XY(object):
         plt.colorbar(orientation='horizontal', shrink=0.66)
         plt.axis(extension)
         h1.set_cmap(self.params_drawing["color_intensity"])
+        if self.type == 'Scalar_mask_XY':
+            plt.clim(0, 1)
 
         plt.subplot(1, 2, 2)
         phase[phase == 1] = -1
