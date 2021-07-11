@@ -78,7 +78,7 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
 from .utils_math import get_k, ndgrid, nearest, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
-from .utils_optics import beam_width_1D, field_parameters
+from .utils_optics import FWHM1D, beam_width_1D, field_parameters
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -1763,8 +1763,16 @@ class Scalar_field_XZ(object):
                 self.x[ix], self.z[iz])))
         return self.x[ix], self.z[iz]
 
-    def beam_widths(self):
+    def beam_widths(self, kind='FWHM1D',
+                    has_draw=[True, False],
+                    percentaje=0.5,
+                    remove_background=None,
+                    verbose=False):
         """Computes the beam width for all the distances z.
+        Parameters:
+            kind (str): kind of algorithm: 'sigma4', 'FWHM1D'
+            has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
+            verbose (bool): prints info
 
         Returns:
             (numpy.array) widths:  for each distance z
@@ -1774,9 +1782,24 @@ class Scalar_field_XZ(object):
         widths = np.zeros_like(self.z)
         positions_center = np.zeros_like(self.z)
 
-        for i in range(len(self.z)):
+        for i, zi in enumerate(self.z):
             field = np.abs(self.u[:, i])
-            widths[i], positions_center[i] = beam_width_1D(field, self.x)
+            if kind == 'sigma4':
+                widths[i], positions_center[i] = beam_width_1D(field, self.x)
+            elif kind == 'FWHM1D':
+                intensity = np.abs(field)**2
+                widths[i] = FWHM1D(self.x,
+                                   intensity,
+                                   percentaje=percentaje,
+                                   remove_background=remove_background,
+                                   has_draw=has_draw[1])
+
+        if has_draw[0] is True:
+            plt.figure()
+            plt.plot(self.z, widths, 'r', label='axis')
+            plt.xlabel("z ($\mu$m)")
+            plt.ylabel("widths ($\mu$m)")
+            plt.legend()
 
         return widths, positions_center
 
