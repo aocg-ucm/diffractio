@@ -84,7 +84,6 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
-
     def __init__(self,
                  x=None,
                  y=None,
@@ -1399,6 +1398,19 @@ class Scalar_field_XYZ(object):
         Parameters:
             kind (str): 'real', 'imag', 'abs'
         """
+        try:
+            from .utils_slicer import slicerLM
+            is_slicer = True
+        except ImportError:
+            print("slicerLM is not loaded.")
+            is_slicer = False
+
+        try:
+            from mayavi import mlab
+            is_mayavi = True
+        except ImportError:
+            print("mayavi.mlab is not imported.")
+            is_mayavi = False
 
         if is_slicer:
 

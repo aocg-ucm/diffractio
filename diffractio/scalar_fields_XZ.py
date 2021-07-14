@@ -105,7 +105,6 @@ class Scalar_field_XZ(object):
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
-
     def __init__(self,
                  x=None,
                  z=None,
@@ -126,8 +125,8 @@ class Scalar_field_XZ(object):
             self.X, self.Z = ndgrid(x, z)
             self.u0 = Scalar_field_X(x, wavelength)
             self.u = np.zeros_like(self.X, dtype=complex)
-            self.n = n_background * np.ones(
-                np.shape(self.X), dtype=complex)  # el indice de refracción
+            self.n = n_background * np.ones(np.shape(
+                self.X), dtype=complex)  # el indice de refracción
         else:
             self.X = None
             self.Z = None
@@ -226,10 +225,10 @@ class Scalar_field_XZ(object):
             # Definicion de la rotation
             x0, z0 = position
 
-        Xrot = x0 + (self.X - x0) * np.cos(angle) + (
-            self.Z - z0) * np.sin(angle)
-        Zrot = z0 - (self.X - x0) * np.sin(angle) + (
-            self.Z - z0) * np.cos(angle)
+        Xrot = x0 + (self.X - x0) * np.cos(angle) + (self.Z -
+                                                     z0) * np.sin(angle)
+        Zrot = z0 - (self.X - x0) * np.sin(angle) + (self.Z -
+                                                     z0) * np.cos(angle)
         return Xrot, Zrot
 
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
@@ -322,8 +321,8 @@ class Scalar_field_XZ(object):
             filtro1 = np.zeros_like(self.n)
             sizex, sizez = self.n.shape
             centerx, centerz = int(sizex / 2), int(sizez / 2)
-            filtro1[centerx - pixels_filtering:centerx +
-                    pixels_filtering, centerz - 1:centerz + 1] = 1
+            filtro1[centerx - pixels_filtering:centerx + pixels_filtering,
+                    centerz - 1:centerz + 1] = 1
             filtro1 = filtro1 / sum(sum(filtro1))
             self.n = fftshift(ifft2(fft2(self.n) * fft2(filtro1)))
         elif type_filter == 2:
@@ -334,8 +333,8 @@ class Scalar_field_XZ(object):
             centerx = (self.x[-1] + self.x[0]) / 2
             # i_centerx = int(sizex / 2)
             # filtro1[i_centerx - pixels_filtering:i_centerx + pixels_filtering] = 1
-            filtro1 = np.exp(
-                -(self.x - centerx)**2 / (2 * pixels_filtering**2))
+            filtro1 = np.exp(-(self.x - centerx)**2 /
+                             (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
                 max_diff = np.abs(np.diff(self.n[:, i])).max()
@@ -375,12 +374,11 @@ class Scalar_field_XZ(object):
 
             plt.figure()
 
-            h1 = plt.imshow(
-                diferencias_indice,
-                interpolation='bilinear',
-                aspect='auto',
-                origin='lower',
-                extent=extension)
+            h1 = plt.imshow(diferencias_indice,
+                            interpolation='bilinear',
+                            aspect='auto',
+                            origin='lower',
+                            extent=extension)
             plt.xlabel('z ($\mu m$)')
             plt.ylabel('x ($\mu m$)')
 
@@ -420,8 +418,8 @@ class Scalar_field_XZ(object):
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self,
-                                              filename, add_name, description, verbose)
+            final_filename = save_data_common(self, filename, add_name,
+                                              description, verbose)
             return final_filename
         except:
             return False
@@ -496,18 +494,34 @@ class Scalar_field_XZ(object):
             z_new = np.linspace(z0, z1, num_points_z)
             X_new, Z_new = np.meshgrid(x_new, z_new)
 
-            f_interp_abs = RectBivariateSpline(
-                self.x, self.z, np.abs(self.u), kx=kxu, ky=kxu, s=0)
-            f_interp_phase = RectBivariateSpline(
-                self.x, self.z, np.angle(self.u), kx=kxu, ky=kxu, s=0)
+            f_interp_abs = RectBivariateSpline(self.x,
+                                               self.z,
+                                               np.abs(self.u),
+                                               kx=kxu,
+                                               ky=kxu,
+                                               s=0)
+            f_interp_phase = RectBivariateSpline(self.x,
+                                                 self.z,
+                                                 np.angle(self.u),
+                                                 kx=kxu,
+                                                 ky=kxu,
+                                                 s=0)
             u_new_abs = f_interp_abs(x_new, z_new)
             u_new_phase = f_interp_phase(x_new, z_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
-            n_interp_real = RectBivariateSpline(
-                self.x, self.z, np.real(self.n), kx=kxn, ky=kxn, s=0)
-            n_interp_imag = RectBivariateSpline(
-                self.x, self.z, np.imag(self.n), kx=kxn, ky=kxn, s=0)
+            n_interp_real = RectBivariateSpline(self.x,
+                                                self.z,
+                                                np.real(self.n),
+                                                kx=kxn,
+                                                ky=kxn,
+                                                s=0)
+            n_interp_imag = RectBivariateSpline(self.x,
+                                                self.z,
+                                                np.imag(self.n),
+                                                kx=kxn,
+                                                ky=kxn,
+                                                s=0)
             n_new_real = n_interp_real(x_new, z_new)
             n_new_imag = n_interp_imag(x_new, z_new)
             n_new = n_new_real + 1j * n_new_imag
@@ -529,8 +543,9 @@ class Scalar_field_XZ(object):
             self.X = X_new
             self.Z = Z_new
         elif new_field is True:
-            field = Scalar_field_XZ(
-                x=x_new, z=z_new, wavelength=self.wavelength)
+            field = Scalar_field_XZ(x=x_new,
+                                    z=z_new,
+                                    wavelength=self.wavelength)
             field.u = u_new
             field.n = n_new
             return field
@@ -552,11 +567,11 @@ class Scalar_field_XZ(object):
     def final_field(self):
         """Returns the final field as a Scalar_field_X."""
 
-        u_final = Scalar_field_X(
-            x=self.x,
-            wavelength=self.wavelength,
-            n_background=self.n_background,
-            info="from final_field at z0= {} um".format(self.z[-1]))
+        u_final = Scalar_field_X(x=self.x,
+                                 wavelength=self.wavelength,
+                                 n_background=self.n_background,
+                                 info="from final_field at z0= {} um".format(
+                                     self.z[-1]))
         u_final.u = self.u[:, -1]
         return u_final
 
@@ -610,8 +625,8 @@ class Scalar_field_XZ(object):
                 if sys.version_info.major == 3:
                     print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
                 else:
-                    print("BPM: {}/{}".format(k, numz).format(
-                        i, num_executions))
+                    print("BPM: {}/{}".format(k,
+                                              numz).format(i, num_executions))
 
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
@@ -648,18 +663,16 @@ class Scalar_field_XZ(object):
             for i in range(num_executions):
                 if verbose is True:
                     if sys.version_info.major == 3:
-                        print(
-                            "{}/{}".format(i, num_executions),
-                            sep="\r",
-                            end="\r")
+                        print("{}/{}".format(i, num_executions),
+                              sep="\r",
+                              end="\r")
                     else:
                         print("{}/{}".format(i, num_executions))
                 sl = slice(i * division, (i + 1) * division)
-                ui = Scalar_field_XZ(
-                    x=self.x,
-                    z=self.z[sl],
-                    wavelength=self.wavelength,
-                    n_background=self.n_background)
+                ui = Scalar_field_XZ(x=self.x,
+                                     z=self.z[sl],
+                                     wavelength=self.wavelength,
+                                     n_background=self.n_background)
                 ui.n = self.n[:, sl]
                 ui.u0 = uf
 
@@ -685,11 +698,10 @@ class Scalar_field_XZ(object):
             Algorithm in "Engineering optics with matlab" pag 119
         """
 
-        c_inverse = Scalar_field_XZ(
-            x=self.x,
-            z=self.z,
-            wavelength=self.wavelength,
-            n_background=self.n_background)
+        c_inverse = Scalar_field_XZ(x=self.x,
+                                    z=self.z,
+                                    wavelength=self.wavelength,
+                                    n_background=self.n_background)
         c_inverse.n = np.fliplr(self.n)
         c_inverse.u0.u = np.conjugate(self.u[:, -1])
         c_inverse.u = np.zeros_like(self.u)
@@ -710,11 +722,10 @@ class Scalar_field_XZ(object):
             Algorithm in "Engineering optics with matlab" pag 119
         """
 
-        c_backpropagation = Scalar_field_XZ(
-            x=self.x,
-            z=self.z,
-            wavelength=self.wavelength,
-            n_background=self.n_background)
+        c_backpropagation = Scalar_field_XZ(x=self.x,
+                                            z=self.z,
+                                            wavelength=self.wavelength,
+                                            n_background=self.n_background)
         c_backpropagation.n = np.fliplr(self.n)
         c_backpropagation.u = np.fliplr(self.u)
         c_backpropagation.BPM(verbose)
@@ -729,21 +740,19 @@ class Scalar_field_XZ(object):
             It can be using a dict as input
         """
         if self.z.min() > 0:
-            H = kernelRS(
-                self.xtemp,
-                self.wavelength,
-                self.z[i],
-                self.n_background,
-                kind='z',
-                fast=self.fast)
+            H = kernelRS(self.xtemp,
+                         self.wavelength,
+                         self.z[i],
+                         self.n_background,
+                         kind='z',
+                         fast=self.fast)
         else:
-            H = kernelRSinverse(
-                self.xtemp,
-                self.wavelength,
-                self.z[i],
-                self.n_background,
-                kind='z',
-                fast=self.fast)
+            H = kernelRSinverse(self.xtemp,
+                                self.wavelength,
+                                self.z[i],
+                                self.n_background,
+                                kind='z',
+                                fast=self.fast)
 
         dx = self.x[1] - self.x[0]
 
@@ -792,10 +801,9 @@ class Scalar_field_XZ(object):
         else:
             if verbose is True:
                 if sys.version_info.major == 3:
-                    print(
-                        'Good result: factor {:2.2f}'.format(self.quality),
-                        sep="\r",
-                        end="\r")
+                    print('Good result: factor {:2.2f}'.format(self.quality),
+                          sep="\r",
+                          end="\r")
                 else:
                     print('Good result: factor {:2.2f}'.format(self.quality))
                 print()
@@ -827,21 +835,19 @@ class Scalar_field_XZ(object):
             for i_z, z in enumerate(self.z):
 
                 if z >= 0:
-                    H = kernelRS(
-                        xext,
-                        self.wavelength,
-                        z,
-                        self.n_background,
-                        kind='z',
-                        fast=self.fast)
+                    H = kernelRS(xext,
+                                 self.wavelength,
+                                 z,
+                                 self.n_background,
+                                 kind='z',
+                                 fast=self.fast)
                 else:
-                    H = kernelRSinverse(
-                        xext,
-                        self.wavelength,
-                        z,
-                        self.n_background,
-                        kind='z',
-                        fast=self.fast)
+                    H = kernelRSinverse(xext,
+                                        self.wavelength,
+                                        z,
+                                        self.n_background,
+                                        kind='z',
+                                        fast=self.fast)
 
                 # calculo de la transformada de Fourier
                 S = ifft(fft(U) * fft(H)) * dx
@@ -857,11 +863,10 @@ class Scalar_field_XZ(object):
 
         if verbose is True:
             if sys.version_info.major == 3:
-                print(
-                    "time in RS= {}. num proc= {}".format(
-                        time2 - time1, num_processors),
-                    sep="\r",
-                    end="\r")
+                print("time in RS= {}. num proc= {}".format(
+                    time2 - time1, num_processors),
+                      sep="\r",
+                      end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -909,7 +914,12 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
-    def WPM(self, kind='schmidt', filter=1, matrix=False, verbose=False):
+    def WPM(self,
+            kind='schmidt',
+            has_edges=True,
+            pow_edge=80,
+            matrix=False,
+            verbose=False):
         """
         WPM Methods.
         'schmidt method is very fast, only needs discrete number of refraction indexes'
@@ -917,7 +927,8 @@ class Scalar_field_XZ(object):
 
         Parameters:
             kind (str): 'schmidt, scalar, TE, TM
-            filter (1, or np.array): filter for edges
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns a matrix else
             verbose (bool): If True prints information
 
@@ -942,6 +953,11 @@ class Scalar_field_XZ(object):
 
         X, KP = np.meshgrid(x, k_perp)
 
+        if has_edges is False:
+            filter_edge = 1
+        else:
+            filter_edge = np.exp(-(self.x / (self.x[0]))**pow_edge)
+
         t1 = time.time()
 
         num_steps = len(self.z)
@@ -950,7 +966,7 @@ class Scalar_field_XZ(object):
             if kind == 'schmidt':
                 self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(
                     self.u[:, j - 1], self.n[:, j - 1], k0, k_perp2,
-                    dz) * filter
+                    dz) * filter_edge
             else:
                 print("{}".format(j), sep='\r', end='\r')
 
@@ -972,7 +988,7 @@ class Scalar_field_XZ(object):
                 WXj = M * UJ * np.exp(1j * KP * (X - x[0]))
 
                 uj = np.mean(WXj * Pj, 0)
-                self.u[:, j] = uj * filter + self.u[:, j]
+                self.u[:, j] = uj * filter_edge + self.u[:, j]
 
             if verbose is True:
                 if sys.version_info.major == 3:
@@ -1153,13 +1169,12 @@ class Scalar_field_XZ(object):
                 if verbose:
                     print(("i={}, distance = {:2.2f} um".format(
                         i_zone, distance)))
-                u_current.RS(
-                    z=distance,
-                    n=refr_index_RS[i_zone],
-                    kind='z',
-                    fast=self.fast,
-                    new_field=False,
-                    verbose=False)
+                u_current.RS(z=distance,
+                             n=refr_index_RS[i_zone],
+                             kind='z',
+                             fast=self.fast,
+                             new_field=False,
+                             verbose=False)
                 # u_current.draw()
             else:  # genero experimento para BPM
                 x0 = self.x
@@ -1449,12 +1464,11 @@ class Scalar_field_XZ(object):
             print("bad kind parameter")
             return
 
-        h1 = plt.imshow(
-            I_drawing,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=extension)
+        h1 = plt.imshow(I_drawing,
+                        interpolation='bilinear',
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension)
 
         if z_scale == 'um':
             plt.xlabel('z ($\mu m$)')
@@ -1545,12 +1559,11 @@ class Scalar_field_XZ(object):
             n_draw = np.imag(self.n)
 
         if reduce_matrix is False:
-            h1 = plt.imshow(
-                n_draw,
-                interpolation='bilinear',
-                aspect='auto',
-                origin='lower',
-                extent=extension)
+            h1 = plt.imshow(n_draw,
+                            interpolation='bilinear',
+                            aspect='auto',
+                            origin='lower',
+                            extent=extension)
         elif reduce_matrix == 'standard':
             num_x = len(self.x)
             num_z = len(self.z)
@@ -1562,20 +1575,18 @@ class Scalar_field_XZ(object):
             if reduction_z == 0:
                 reduction_z = 1
             n_new = n_draw[::reduction_z, ::reduction_x]
-            h1 = plt.imshow(
-                n_new,
-                interpolation='bilinear',
-                aspect='auto',
-                origin='lower',
-                extent=extension)
+            h1 = plt.imshow(n_new,
+                            interpolation='bilinear',
+                            aspect='auto',
+                            origin='lower',
+                            extent=extension)
         else:
             n_new = n_draw[::reduce_matrix[0], ::reduce_matrix[1]]
-            h1 = plt.imshow(
-                n_new,
-                interpolation='bilinear',
-                aspect='auto',
-                origin='lower',
-                extent=extension)
+            h1 = plt.imshow(n_new,
+                            interpolation='bilinear',
+                            aspect='auto',
+                            origin='lower',
+                            extent=extension)
 
         plt.xlabel('z ($\mu m$)')
         plt.ylabel('x ($\mu m$)')
@@ -1618,11 +1629,10 @@ class Scalar_field_XZ(object):
             filename (str): if not '' stores drawing in file,
         """
 
-        u_inc = Scalar_field_X(
-            x=self.x,
-            wavelength=self.wavelength,
-            n_background=1,
-            info="incident_field")
+        u_inc = Scalar_field_X(x=self.x,
+                               wavelength=self.wavelength,
+                               n_background=1,
+                               info="incident_field")
         u_inc.u = self.u0.u
         u_inc.draw(kind, logarithm, normalize, None, filename)
 
@@ -1667,8 +1677,10 @@ class Scalar_field_XZ(object):
             plt.ylabel(texto)
 
             if not filename == '':
-                plt.savefig(
-                    filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+                plt.savefig(filename,
+                            dpi=300,
+                            bbox_inches='tight',
+                            pad_inches=0.1)
 
         if kind == 'intensity':
             output = intensity
@@ -1725,8 +1737,10 @@ class Scalar_field_XZ(object):
             plt.ylabel(texto)
 
             if not filename == '':
-                plt.savefig(
-                    filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+                plt.savefig(filename,
+                            dpi=300,
+                            bbox_inches='tight',
+                            pad_inches=0.1)
                 # ,dpi=600,bbox_inches='tight',pad_inches=0
 
         if kind == 'intensity':
@@ -1918,13 +1932,13 @@ class Scalar_field_XZ(object):
             ax.set_title("$z = {:2.0f} \mu m$".format(self.z[i]))
             return i
 
-        ani = animation.FuncAnimation(
-            fig,
-            animate,
-            list(range(imin, imax, frames_reduction)),
-            interval=25,
-            blit=False,
-            init_func=init)
+        ani = animation.FuncAnimation(fig,
+                                      animate,
+                                      list(range(imin, imax,
+                                                 frames_reduction)),
+                                      interval=25,
+                                      blit=False,
+                                      init_func=init)
 
         fps = int(len(self.z) / (time_video * frames_reduction))
 
@@ -1970,8 +1984,11 @@ class Scalar_field_XZ(object):
         l2a, = plt.plot(self.x, I_drawing_actual, lw=2, color='k')
         axcolor = 'lightgoldenrodyellow'
         axS = plt.axes([0.15, 0.15, 0.75, 0.03], facecolor=axcolor)
-        zZ = plt.Slider(
-            axS, 'z (um)', self.z[0], self.z[-1], valinit=self.z.min())
+        zZ = plt.Slider(axS,
+                        'z (um)',
+                        self.z[0],
+                        self.z[-1],
+                        valinit=self.z.min())
         zZ.on_changed(__update__)
 
 
