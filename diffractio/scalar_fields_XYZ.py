@@ -967,6 +967,10 @@ class Scalar_field_XYZ(object):
             kind (str): kind of algorithm: 'sigma4', 'FWHM2D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
             verbose (bool): prints info
+        Returns:
+            beam_width_x (np.array)
+            beam_width_y (np.array)
+            principal_axis_z (np.array)
         """
 
         # u_zi = Scalar_field_XY(self.x, self.y, self.wavelength)
