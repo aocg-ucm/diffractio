@@ -489,3 +489,47 @@ def triangle_periodic(theta):
     # https://en.wikipedia.org/wiki/Triangle_wave
     p = 2 * np.pi
     return 4 * np.abs(theta / p - np.floor(theta / p + 0.5)) - 1
+
+
+num_zones = 50
+
+
+def focal_distribution_cubic(num_zones,
+                             focal,
+                             df,
+                             lambda1,
+                             lambda2,
+                             has_drawing=False):
+
+    x = np.linspace(0, 1, num_zones)
+    lineal = (focal - df / 2) + df * x
+    cuadratico = (focal - df / 2) + df * x**2
+    cubico = focal + 2**2 * df * (x - 0.5)**3
+    all_ = (1 - lambda1 -
+            lambda2) * lineal + lambda1 * cuadratico + lambda2 * cubico
+
+    if has_drawing:
+        plt.figure(figsize=(12, 5))
+        plt.subplot(1, 2, 1)
+        plt.plot(x * num_zones, lineal, 'rx', label='f$_{1,i}$')
+        plt.plot(x * num_zones, cuadratico, 'go', label='f$_{2,i}$')
+        plt.plot(x * num_zones, cubico, 'b^', label='f$_{3,i}$')
+        plt.xlim(0, num_zones)
+        plt.ylim(focal - df / 2, focal + df / 2)
+        plt.xlabel('i', fontsize=16)
+        plt.ylabel('f$_{α,i}$', fontsize=16)
+        plt.title('(a)', fontsize=22)
+        plt.legend()
+
+        plt.subplot(1, 2, 2)
+        texto = '$f_i$ : $k_1 ={}$,  $k_2 ={}$'.format(lambda1, lambda2)
+        plt.plot(x * num_zones, lineal, 'rx', label='f$_{1,i}$')
+        plt.plot(x * num_zones, all_, 'ko', label=texto)
+        plt.xlim(0, num_zones)
+        plt.ylim(focal - df / 2, focal + df / 2)
+        plt.xlabel('i', fontsize=16)
+        #plt.ylabel('f$_{i}$', fontsize=16)
+        plt.title('(b)', fontsize=22)
+        plt.legend()
+
+    return all_
