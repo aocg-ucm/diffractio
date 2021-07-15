@@ -21,7 +21,6 @@ from numpy import exp, pi, sqrt
 
 class Angular_lens(Scalar_field_XY):
     """Generates examples for star lenses"""
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         """equal than Scalar_field_XY"""
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -360,8 +359,9 @@ class Angular_lens(Scalar_field_XY):
         focals = np.linspace(focal_min, focal_max, num_focals)
         sectores_aleatorios = np.random.permutation(num_focals)
 
-        t_final = Scalar_mask_XY(
-            x=self.x, y=self.y, wavelength=self.wavelength)
+        t_final = Scalar_mask_XY(x=self.x,
+                                 y=self.y,
+                                 wavelength=self.wavelength)
         tf = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
         mask = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
 
@@ -378,17 +378,17 @@ class Angular_lens(Scalar_field_XY):
             fs_ = focals
 
         for i_focal, focal in enumerate(fs_):
-            mask = Scalar_mask_XY(
-                x=self.x, y=self.y, wavelength=self.wavelength)
+            mask = Scalar_mask_XY(x=self.x,
+                                  y=self.y,
+                                  wavelength=self.wavelength)
 
-            tf.fresnel_lens(
-                r0=r0,
-                radius=diameter / 2,
-                focal=focal,
-                kind='amplitude',
-                phase=0,
-                angle=angle,
-                mask=True)
+            tf.fresnel_lens(r0=r0,
+                            radius=diameter / 2,
+                            focal=focal,
+                            kind='amplitude',
+                            phase=0,
+                            angle=angle,
+                            mask=True)
 
             for i_sectors in range(num_sectors):
                 ang_0 = i_focal * delta_angle + i_sectors * delta_f
@@ -399,6 +399,58 @@ class Angular_lens(Scalar_field_XY):
 
             t_final.u = t_final.u + mask.u * tf.u
         self.u = t_final.u
+
+    def dartboard_lens_weighted(self,
+                                r0,
+                                diameter,
+                                focals,
+                                num_sectors=4,
+                                has_random_focals=True):
+        """
+        """
+
+        num_focals = len(focals)
+
+        t_final = Scalar_mask_XY(x=self.x,
+                                 y=self.y,
+                                 wavelength=self.wavelength)
+        tf = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        mask = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+
+        [rho, theta] = cart2pol(t_final.X - r0[0], t_final.Y - r0[1])
+        theta = theta + np.pi
+        delta_angle = 2 * np.pi / (num_focals * num_sectors)
+        delta_f = 2 * np.pi / (num_sectors)
+
+        if has_random_focals is True:
+            random_sectors = np.random.permutation(num_focals)
+            fs_ = focals[random_sectors]
+        else:
+            fs_ = focals
+
+        for i_focal, focal in enumerate(fs_):
+            mask = Scalar_mask_XY(x=self.x,
+                                  y=self.y,
+                                  wavelength=self.wavelength)
+
+            tf.fresnel_lens(r0=r0,
+                            radius=diameter / 2,
+                            focal=focal,
+                            kind='amplitude',
+                            phase=0,
+                            mask=True)
+
+            for i_sectors in range(num_sectors):
+                ang_0 = i_focal * delta_angle + i_sectors * delta_f
+                ang_1 = i_focal * delta_angle + i_sectors * delta_f + delta_angle
+
+                ix = (theta > ang_0) & (theta <= ang_1)
+                mask.u[ix] = 1
+
+            t_final.u = t_final.u + mask.u * tf.u
+            t_final.u[t_final.u > 1] = 1
+        self.u = t_final.u
+        return self
 
     def compute_beam_width(self,
                            u_xy,
