@@ -69,7 +69,7 @@ from . import degrees, mm, np, params_drawing, plt, seconds, um
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import get_edges, ndgrid, nearest, rotate_image, get_k
+from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image
 from .utils_optics import beam_width_2D, field_parameters
 
 try:
@@ -101,6 +101,7 @@ class Scalar_field_XY(object):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         self.x = x
         self.y = y
@@ -1550,7 +1551,7 @@ class Scalar_field_XY(object):
                                        ylabel="$y  (\mu m)$",
                                        title=title,
                                        color=colormap_kind,
-                                       reduce_matrix=self.reduce_matrix)
+                                       reduce_matrix=self.reduce_matrix, **kwargs)
 
         if self.type == 'Scalar_mask_XY':
             plt.clim(0, 1)

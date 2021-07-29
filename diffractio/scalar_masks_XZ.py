@@ -396,7 +396,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         # surface detection
         diff1a = np.diff(np.abs(self.n), axis=1)
-        diff1a = np.append(diff1a, np.zeros((len_z, 1)), axis=1)
+        diff1a = np.append(diff1a, np.zeros((len_x, 1)), axis=1)
 
         # cada uno de los lados
         ix_l, iz_l = (diff1a > min_incr).nonzero()

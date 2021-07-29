@@ -105,6 +105,7 @@ class Scalar_field_XZ(object):
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
+
     def __init__(self,
                  x=None,
                  z=None,
@@ -611,7 +612,6 @@ class Scalar_field_XZ(object):
         # Función de transferencia para la propagación que es identica
         # a la respuesta de frecuencia espacial en óptica de Fourier
         # incorporando el termino (-j k0 z).
-        # phase1 = np.exp((1j * deltaz * kx**2) / (2 * k0))
         phase1 = np.exp((-1j * deltaz * kx**2) / (2 * k0))
         # Campo en el índice de refracción
         field = np.zeros(np.shape(self.n), dtype=complex)
@@ -621,12 +621,11 @@ class Scalar_field_XZ(object):
         field[:, 0] = field_z
         for k in range(0, numz):
             if verbose is True:
-
                 if sys.version_info.major == 3:
                     print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
                 else:
                     print("BPM: {}/{}".format(k,
-                                              numz).format(i, num_executions))
+                                              numz).format(k, numz))
 
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
@@ -706,6 +705,7 @@ class Scalar_field_XZ(object):
         c_inverse.u0.u = np.conjugate(self.u[:, -1])
         c_inverse.u = np.zeros_like(self.u)
         c_inverse.BPM(verbose)
+
         # ATENCIÓN, HAGO LA INVERSA Y LA REPRESENTACIÓN ES IGUAL QUE LA DIRECTA
         c_inverse.n = (np.fliplr(c_inverse.n))
         c_inverse.u = (np.fliplr(c_inverse.u))
@@ -865,8 +865,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                      sep="\r",
-                      end="\r")
+                    sep="\r",
+                    end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -1398,7 +1398,8 @@ class Scalar_field_XZ(object):
              colormap_kind="",
              z_scale='um',
              edge_matrix=None,
-             interpolation='spline36'):
+             interpolation='spline36',
+             **kwargs):
         """Draws  XZ field.
 
         Parameters:
@@ -1465,10 +1466,10 @@ class Scalar_field_XZ(object):
             return
 
         h1 = plt.imshow(I_drawing,
-                        interpolation='bilinear',
+                        interpolation=interpolation,
                         aspect='auto',
                         origin='lower',
-                        extent=extension)
+                        extent=extension, **kwargs)
 
         if z_scale == 'um':
             plt.xlabel('z ($\mu m$)')
