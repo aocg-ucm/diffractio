@@ -25,7 +25,7 @@ The magnitude is related to microns: `micron = 1.`
     * image
     * point_maks, slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
     * mask_from_function
-    * prism, lens, fresnel_lens
+    * prism, lens, aspheric, fresnel_lens
     * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
     * axicon, biprism_fresnel,
     * radial_grating, angular_grating, hyperbolic_grating, archimedes_spiral, laguerre_gauss_spiral
