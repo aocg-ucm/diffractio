@@ -380,40 +380,52 @@ class Scalar_mask_X(Scalar_field_X):
         h = h / h.max()
         return t * h
 
-    def aspheric(self, x0, c, k, a, n0, n1, radius=None):
+    def aspheric(self, x0, c, k, a, n0, n1, radius, mask=True):
         """asferic surface.
+
+        $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
 
         Parameters:
             x0 (float): position of center
-            c (float):
-            k (float):
-            a (list):
+            c (float): base curvature at vertex, inverse of radius
+            k (float): conic constant
+            a (list): order aspheric coefficients: A4, A6, A8, ...
             n0 (float): refraction index of first medium
             n1 (float): refraction index of second medium
             radius (float): radius of aspheric surface
+
+
+        Conic Constant    Surface Type
+        k = 0             spherical
+        k = -1            Paraboloid
+        k < -1            Hyperboloid
+        -1 < k < 0        Ellipsoid
+        k > 0             Oblate eliposid
+
+        References:
+            https://www.edmundoptics.com/knowledge-center/application-notes/optics/all-about-aspheric-lenses/
         """
-        k = 2 * np.pi / self.wavelength
-        t1 = c * (self.x - x0)**2 / (1 - np.sqrt(1 - (1 + k) * c**2 *
-                                                 (self.x - x0)**2))
+
+        s2 = (self.x - x0)**2
+        t1 = c * s2 / (1 + np.sqrt(1 - (1 + k) * c**2 * s2))
 
         t2 = 0
-        for i, ai in enumerate(a):
-            t2 = t2 + ai * self.x**(2 * (1 + i))
+        if a is not None:
+            for i, ai in enumerate(a):
+                t2 = t2 + ai * s2 ** (2 + i)
 
         t = t1 + t2
 
-        # TODO mal los radios
-        if radius in (None, '', 0):
-            mask = 1
+        if mask is True:
+            m1 = np.zeros_like(self.x, dtype=int)
+            ix = (self.x < x0 + radius) & (self.x > x0 - radius)
+            m1[ix] = 1
         else:
-            mask = np.zeros_like(self.x)
-            ix = (self.x - x0 < -radius) & (self.x - x0 > radius)
-            mask[ix] = 1
+            m1 = np.ones_like(self.x, dtype=int)
 
-        plt.figure()
-        plt.plot(self.x, mask)
-
-        self.u = mask * np.exp(1j * k * (n1 - n0) * t)
+        self.u = m1 * np.exp(1j * 2 * np.pi * (n1 - n0) * t / self.wavelength)
+        self.u[m1 == 0] = 0
+        return t
 
     def fresnel_lens(self,
                      x0,
