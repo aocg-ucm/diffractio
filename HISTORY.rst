@@ -72,6 +72,14 @@ Alpha state
 * Changes in docs to include WPM
 * Execution tests
 
+0.0.13 (2021-08-11)
+--------------------------------
+Alpha state
+
+* wpm bpm 3d, wpm without storing,  xy search focus
+* fix bug 2D gratings
+* fix bug aspheric X and new aspheric XY 
+
 0.1.0 (2021-**-**)
 --------------------------------
 Beta state
