@@ -36,6 +36,7 @@ It implements Scalar and paraxial vector Optics. The main algorithms used are:
 * Wave Propagation Method (WPM).
 * Beam Propagation Method (BPM).
 * Vectorial Rayleigh-Sommerfeld (VRS).
+* Vector Fast Fourier Tranform (VFFT).
 
 When possible, multiprocessing is implemented for a faster computation.
 
@@ -200,6 +201,7 @@ References
 * Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
 * Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
 * Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
+* K. Jahn and N. Bokor, “Intensity control of the focal spot by vectorial beam shaping,” Opt. Commun., vol. 283, no. 24, pp. 4859–4865, 2010, doi: 10.1016/j.optcom.2010.07.030. 
 
 **Other references**
 
