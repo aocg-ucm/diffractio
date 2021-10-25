@@ -78,7 +78,7 @@ Alpha state
 
 * wpm bpm 3d, wpm without storing,  xy search focus
 * fix bug 2D gratings
-* fix bug aspheric X and new aspheric XY 
+* fix bug aspheric X and new aspheric XY
 
 0.1.0 (2021-**-**)
 --------------------------------
@@ -86,6 +86,7 @@ Beta state
 
 * WPM and BPM in 3D
 * WPM and BPM in 3D without storing intermediate planes
+* Vector FFT
 
 
 * Fix bugs:
