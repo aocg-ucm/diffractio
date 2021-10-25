@@ -2068,7 +2068,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             x_new = x_new  - x_new[0] + x0[0]
             y_new = y_new  - y_new[0] + y0[0]
 
-        elif isinstance(position, np.array):
+        elif isinstance(position, np.ndarray):
             x_new = x_new  - x_new[0] + position[0]
             y_new = y_new  - y_new[0] + position[1]
 
