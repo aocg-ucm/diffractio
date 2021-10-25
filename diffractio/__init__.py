@@ -75,7 +75,7 @@ params_drawing = dict()
 params_drawing['color_intensity'] = cm.gist_heat  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.jet
 # cm.hsv  # cm.twilight #cm.twilight_shifted
-params_drawing['color_phase'] = cm.twilight
+params_drawing['color_phase'] = cm.hsv  # .twilight
 params_drawing['color_real'] = cm.seismic
 params_drawing['color_stokes'] = cm.seismic
 params_drawing['percentaje_intensity'] = 0.005
