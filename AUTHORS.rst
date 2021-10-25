@@ -14,6 +14,14 @@ Development Lead
     Plaza de las ciencias 1,
     ES-28040 Madrid (Spain)
 
+Authors
+----------------------------
+
+* Ángela Soria García (2021)
+
+    * XY optimizations
+    * XY arrays of masks
+
 Contributors
 --------------
 
