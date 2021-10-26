@@ -55,7 +55,7 @@ print("max frequency       : {:1.0f} GHz".format(freq_max))
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.0.12'
+__version__ = '0.0.13'
 
 name = 'diffractio'
 
