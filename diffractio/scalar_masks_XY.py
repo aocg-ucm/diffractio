@@ -162,7 +162,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         if normalize is True:
             f1 = f1 / f1.sum()
 
-        covolved_image = fft_convolution2d(f1,np.abs(self.u))
+        covolved_image = fft_convolution2d(f1, np.abs(self.u))
         if binarize is not False:
             covolved_image[covolved_image > binarize] = 1
             covolved_image[covolved_image <= binarize] = 0
@@ -633,7 +633,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Definicion de la transmitancia
         u = zeros(shape(self.X))
         ix = (Xrot < xmax) & (Xrot > xmin)
-        print(ix)
         u[ix] = 1
         self.u = u
 
@@ -959,7 +958,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u[t == 0] = 0
         return self
 
-
     def cross(self, r0, size, angle=0 * degrees):
         """ Cross
 
@@ -1015,7 +1013,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             mask (bool): if True, mask with size radius
 
         Example:
-            lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
+            lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um),
+                 focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -1119,7 +1118,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             mask (bool): if True, mask with size radius
 
         Example:
-            fresnel_lens( r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True, kind='amplitude',phase=pi)
+            fresnel_lens( r0=(0 * um, 0 * um), radius=(100 * um, 200 * um), focal=(
+                5 * mm, 10 * mm), angle=0 * degrees, mask=True, kind='amplitude',phase=pi)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -1194,8 +1194,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         else:
             self.u = u_mask * \
-                np.exp(-1j * k * (refraction_index - 1)
-                       * r * np.tan(angle)) * t_off_axis
+                np.exp(-1j * k * (refraction_index - 1) *
+                       r * np.tan(angle)) * t_off_axis
 
     def biprism_fresnel(self, r0, width, height, n):
         """Fresnel biprism.
@@ -1207,7 +1207,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             n (float): refraction index
 
         Example:
-            biprism_fresnel(r0=(0 * um, 0 * um), width=100 * um, height=5 * um, n=1.5)
+            biprism_fresnel(r0=(0 * um, 0 * um), width=100 * \
+                            um, height=5 * um, n=1.5)
         """
 
         # Vector de onda
@@ -1243,7 +1244,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             is_binary (bool): if True binary else, scaled
 
         Example:
-            radial_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, is_binary=True)
+            radial_grating(r0=(0 * um, 0 * um), period=20 * um,
+                           phase=0 * um, radius=400 * um, is_binary=True)
         """
 
         x0, y0 = r0
@@ -1270,7 +1272,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             is_binary (bool): if True binary else, scaled
 
         Example:
-            angular_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, radius=400 * um, is_binary=True)
+            angular_grating(r0=(0 * um, 0 * um), period=20 * um,
+                            phase=0 * um, radius=400 * um, is_binary=True)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
 
@@ -1310,7 +1313,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * um, phase=0 * um, sfradius=400 * um, is_binary=True)
+            hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * \
+                               um, phase=0 * um, sfradius=400 * um, is_binary=True)
         """
 
         x0, y0 = r0
@@ -1345,7 +1349,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-             hammer(r0=(0 * um, 0 * um), size=(250 * um, 120 * um), hammer_width=5 * um, angle=0 * degrees)
+             hammer(r0=(0 * um, 0 * um), size=(250 * um, 120 * um),
+                    hammer_width=5 * um, angle=0 * degrees)
         """
         # si solamente hay 1, las posiciones y radius son los mismos para ambos
         # Origen
@@ -1402,7 +1407,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             is_binary (bool): if True binary mask
 
         Example:
-            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees, phase=0 * degrees, p=1, radius=200 * um, is_binary=True)
+            archimedes_spiral(r0=(0 * um, 0 * um), period=20 * degrees,
+                              phase=0 * degrees, p=1, radius=200 * um, is_binary=True)
         """
 
         x0, y0 = r0
@@ -1437,7 +1443,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             z (float): propagation distance
 
         Example:
-            laguerre_gauss_spiral(r0=(0 * um, 0 * um), kind='amplitude', l=1, w0=625 * um, z=0.01 * um)
+            laguerre_gauss_spiral(
+                r0=(0 * um, 0 * um), kind='amplitude', l=1, w0=625 * um, z=0.01 * um)
         """
 
         u_ilum = Scalar_source_XY(x=self.x,
@@ -1479,7 +1486,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            forked_grating(r0=(0 * um, 0 * um), period=20 * um, l=2, alpha=1, angle=0 * degrees)
+            forked_grating(r0=(0 * um, 0 * um), period=20 * \
+                           um, l=2, alpha=1, angle=0 * degrees)
         """
         x0, y0 = r0
 
@@ -1515,7 +1523,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-             sine_grating(period=40 * um, amp_min=0, amp_max=1, x0=0 * um, angle=0 * degrees)
+             sine_grating(period=40 * um, amp_min=0, amp_max=1,
+                          x0=0 * um, angle=0 * degrees)
         """
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
@@ -1603,7 +1612,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            binary_grating( x0=0, period=40 * um, fill_factor=0.5, amin=0, amax=1, phase=0 * degrees, angle=0 * degrees)
+            binary_grating( x0=0, period=40 * um, fill_factor=0.5,
+                           amin=0, amax=1, phase=0 * degrees, angle=0 * degrees)
         """
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t.ronchi_grating(period=period,
@@ -1663,7 +1673,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            grating_2D(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
+            grating_2D(period=40. * um, amin=0, amax=1., phase=0. * \
+                       pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
         if isinstance(period, (float, int)):
             period = period, period
@@ -1701,7 +1712,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of the grating in radians
 
         Example:
-            grating_2D_chess(period=40. * um, amin=0, amax=1., phase=0. * pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
+            grating_2D_chess(period=40. * um, amin=0, amax=1., phase=0. * \
+                             pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
         """
 
         if isinstance(period, (float, int)):
@@ -1836,7 +1848,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             https://en.wikipedia.org/wiki/Superellipse
 
         Example:
-            super_ellipse(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
+            super_ellipse(r0=(0 * um, 0 * um), radius=(250 * \
+                          um, 125 * um), angle=0 * degrees)
         """
 
         if isinstance(r0, (float, int)):
@@ -1904,7 +1917,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): Angle to be rotated the sinusoidal slit
 
         Example:
-            sinusoidal_slit(y0=(10 * um, -10 * um), amplitude=(10 * um, 20 * um), phase=0 * degrees, angle=0 * degrees, period=(50 * um, 35 * um))
+            sinusoidal_slit(y0=(10 * um, -10 * um), amplitude=(10 * um, 20 * um),
+                            phase=0 * degrees, angle=0 * degrees, period=(50 * um, 35 * um))
         """
 
         if isinstance(amplitude, (int, float)):
@@ -1938,7 +1952,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): Angle of rotation of the slit
 
         Example:
-            crossed_slits(r0 = (-10 * um, 20 * um), slope = 2.5, angle = 30 * degrees)
+            crossed_slits(r0 = (-10 * um, 20 * um),
+                          slope = 2.5, angle = 30 * degrees)
         """
         if isinstance(slope, (float, int)):
             slope_x, slope_y = (slope, slope)
@@ -2019,9 +2034,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = exp(1j * (phase + l * Th))
 
-
-
-    def repeat_structure(self,num_repetitions, position='center', new_field=True):
+    def repeat_structure(self, num_repetitions, position='center', new_field=True):
         """Repeat the structure n times.
 
         Parameters:
@@ -2034,59 +2047,54 @@ class Scalar_mask_XY(Scalar_field_XY):
         u0 = self.u
         x0 = self.x
         y0 = self.y
-        wavelength=self.wavelength
+        wavelength = self.wavelength
 
-        u_new=np.tile(u0, num_repetitions)
+        u_new = np.tile(u0, num_repetitions)
 
         print(u0.shape, u_new.shape)
-        x_min=x0[0]
-        x_max=x0[-1]
-        dx=x0[1]-x0[0]
+        x_min = x0[0]
+        x_max = x0[-1]
+        dx = x0[1] - x0[0]
 
+        y_min = y0[0]
+        y_max = y0[-1]
+        dy = y0[1] - y0[0]
 
-        y_min=y0[0]
-        y_max=y0[-1]
-        dy=y0[1]-y0[0]
+        x_new = np.linspace(
+            num_repetitions[0] * x_min, num_repetitions[0] * x_max, num_repetitions[0] * len(x0))
+        y_new = np.linspace(
+            num_repetitions[1] * y_min, num_repetitions[1] * y_max, num_repetitions[1] * len(y0))
 
-        x_new=np.linspace(num_repetitions[0]*x_min, num_repetitions[0]*x_max, num_repetitions[0]*len(x0))
-        y_new=np.linspace(num_repetitions[1]*y_min, num_repetitions[1]*y_max, num_repetitions[1]*len(y0))
+        range_x = x_new[-1] - x_new[0]
+        center_x = (x_new[-1] + x_new[0]) / 2
 
+        range_y = y_new[-1] - y_new[0]
+        center_y = (y_new[-1] + y_new[0]) / 2
 
-        range_x = x_new[-1]-x_new[0]
-        center_x = (x_new[-1]+x_new[0])/2
-
-        range_y = y_new[-1]-y_new[0]
-        center_y = (y_new[-1]+y_new[0])/2
-
-
-        if position =='center':
-            x_new=x_new-center_x
-            y_new=y_new-center_y
-
+        if position == 'center':
+            x_new = x_new - center_x
+            y_new = y_new - center_y
 
         elif position == 'previous':
-            x_new = x_new  - x_new[0] + x0[0]
-            y_new = y_new  - y_new[0] + y0[0]
+            x_new = x_new - x_new[0] + x0[0]
+            y_new = y_new - y_new[0] + y0[0]
 
-        elif isinstance(position, np.ndarray):
-            x_new = x_new  - x_new[0] + position[0]
-            y_new = y_new  - y_new[0] + position[1]
-
+        elif isinstance(position, np.array):
+            x_new = x_new - x_new[0] + position[0]
+            y_new = y_new - y_new[0] + position[1]
 
         if new_field is True:
-            t_new=Scalar_mask_XY(x=x_new, y=y_new, wavelength=wavelength)
-            t_new.u=u_new
+            t_new = Scalar_mask_XY(x=x_new, y=y_new, wavelength=wavelength)
+            t_new.u = u_new
 
             return t_new
 
         else:
-            self.u=u_new
-            self.x=x_new
-            self.y=y_new
+            self.u = u_new
+            self.x = x_new
+            self.y = y_new
 
-
-
-    def masks_to_positions(self,pos,new_field=True,binarize=False,normalize=False):
+    def masks_to_positions(self, pos, new_field=True, binarize=False, normalize=False):
         """
         Place a certain mask on several positions.
 
@@ -2106,8 +2114,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         f1 = self.u
 
         if normalize is True:
-                f1 = f1 / f1.sum()
-
+            f1 = f1 / f1.sum()
 
         covolved_image = fft_convolution2d(f1, lens_array.u)
 

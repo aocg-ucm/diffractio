@@ -71,6 +71,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             normalize (bool): If True, normalize polarization vector
         """
 
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
         self = define_initial_field(self, u)
 
         if has_normalization:
@@ -79,7 +85,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = v[0] * self.Ex
         self.Ey = v[1] * self.Ey
 
-        self.mask_circle(radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(radius=radius)
 
     def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -89,6 +96,11 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
         """
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
 
         self = define_initial_field(self, u)
 
@@ -99,7 +111,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.sin(angle) * self.Ex
         self.Ey = -np.cos(angle) * self.Ey
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -109,6 +122,11 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
         """
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
 
         self = define_initial_field(self, u)
 
@@ -119,7 +137,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.cos(angle) * self.Ex
         self.Ey = np.sin(angle) * self.Ey
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -129,6 +148,11 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
         """
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
 
         self = define_initial_field(self, u)
 
@@ -139,7 +163,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.cos(angle) * self.Ex
         self.Ey = -np.sin(angle) * self.Ey
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -149,6 +174,11 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
         """
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
 
         self = define_initial_field(self, u)
 
@@ -159,7 +189,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = np.sin(angle) * self.Ex
         self.Ey = np.cos(angle) * self.Ey
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_wave(self,
                                     u=1,
@@ -181,6 +212,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             Qwien Zhan 'Vectorial Optical Fields' page 33
         """
 
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
         self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
@@ -191,7 +228,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_wave_radial(self,
                                            u=1,
@@ -213,6 +251,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             Qwien Zhan 'Vectorial Optial Fields' page 36
         """
 
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
         if radius == 0:
             radius_x = (self.x[-1] - self.x[0]) / 2
             radius_y = (self.y[-1] - self.y[0]) / 2
@@ -232,7 +276,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def local_polarized_vector_wave_hybrid(self,
                                            u=1,
@@ -253,7 +298,13 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radius (float, float): Radius of a circular mask
         """
 
-        if radius == 0:
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
+        if radiusx * radiusy == 0:
             radius_x = (self.x[-1] - self.x[0]) / 2
             radius_y = (self.y[-1] - self.y[0]) / 2
             radius = (radius_x, radius_y)
@@ -273,7 +324,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = self.Ex * np.cos(delta)
         self.Ey = self.Ey * np.sin(delta)
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def spiral_polarized_beam(self,
                               u=1,
@@ -293,6 +345,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             V. Ramirez-Sanchez, G. Piquero, and M. Santarsiero,“Generation and characterization of spirally polarized fields,” J. Opt. A11,085708 (2009)
         """
 
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
         self = define_initial_field(self, u)
 
         vx = (self.X - r0[0])
@@ -303,7 +361,8 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
         self.Ex = -self.Ex * np.sin(theta + alpha)
         self.Ey = self.Ey * np.cos(theta + alpha)
 
-        self.mask_circle(r0=r0, radius=radius)
+        if radiusx * radiusy > 0:
+            self.mask_circle(r0=r0, radius=radius)
 
     def mask_circle(self, r0=(0., 0.), radius=0.):
         """Mask vector field using a circular mask.
@@ -313,7 +372,13 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radius (float, float): radius of mask
         """
 
-        if radius == 0:
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
+        if radiusx * radiusy > 0:
             radius_x = (self.x[-1] - self.x[0]) / 2
             radius_y = (self.y[-1] - self.y[0]) / 2
             radius = (radius_x, radius_y)
@@ -329,11 +394,12 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             r0_y = (self.y[-1] + self.y[0]) / 2
             r0 = (r0_x, r0_y)
 
-        if radius[0] * radius[1] > 0:
+        if radiusx * radiusy > 0:
             t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
             t1.circle(r0=r0, radius=radius, angle=0 * degrees)
             self.Ex = t1.u * self.Ex
             self.Ey = t1.u * self.Ey
+            self.Ez = t1.u * self.Ez
 
     def to_py_pol(self):
         """Pass Ex, Ey field to py_pol package for software analysis

@@ -86,8 +86,9 @@ Beta state
 
 * WPM and BPM in 3D
 * WPM and BPM in 3D without storing intermediate planes
-* Vector FFT
-
+* Vector FFT and inverse FFT
+* pupil function in XY and vector XY
+* 
 
 * Fix bugs:
   - (radial and azimuthal vector waves)
