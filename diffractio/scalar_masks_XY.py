@@ -27,7 +27,7 @@ The magnitude is related to microns: `micron = 1.`
     * mask_from_function
     * prism, lens, aspheric, fresnel_lens
     * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
-    * axicon, biprism_fresnel,
+    * axicon, axicon_binary, biprism_fresnel,
     * radial_grating, angular_grating, hyperbolic_grating, archimedes_spiral, laguerre_gauss_spiral
     * hammer
     * roughness, circle_rough, ring_rough, fresnel_lens_rough,
@@ -65,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -1081,7 +1080,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         t2 = 0
         if a is not None:
             for i, ai in enumerate(a):
-                t2 = t2 + ai * s2 ** (2 + i)
+                t2 = t2 + ai * s2**(2 + i)
 
         t = t1 + t2
 
@@ -1196,6 +1195,34 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.u = u_mask * \
                 np.exp(-1j * k * (refraction_index - 1) *
                        r * np.tan(angle)) * t_off_axis
+
+    def axicon_binary(self, r0, radius, period):
+        """axicon_binary. Rings with equal period
+
+        Parameters:
+            r0 (float, float): (x0,y0) - center of lens
+            radius (float): radius of lens mask
+            period (float): distance of rings
+
+        Example:
+            axicon_binary(r0=(0 * um, 0 * um), radius=200 * um, period=20 * um)
+        """
+
+        x0, y0 = r0
+
+        r = np.sqrt((self.X - x0)**2 + (self.Y - y0)**2)
+
+        if radius > 0:
+            u_mask = np.zeros_like(self.X)
+            ipasa = r < radius
+            u_mask[ipasa] = 1
+
+        t = np.cos(2 * np.pi * r / period) * u_mask
+
+        t[t <= 0] = 0
+        t[t > 0] = 1
+
+        self.u = t
 
     def biprism_fresnel(self, r0, width, height, n):
         """Fresnel biprism.
@@ -2034,7 +2061,10 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = exp(1j * (phase + l * Th))
 
-    def repeat_structure(self, num_repetitions, position='center', new_field=True):
+    def repeat_structure(self,
+                         num_repetitions,
+                         position='center',
+                         new_field=True):
         """Repeat the structure n times.
 
         Parameters:
@@ -2060,10 +2090,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         y_max = y0[-1]
         dy = y0[1] - y0[0]
 
-        x_new = np.linspace(
-            num_repetitions[0] * x_min, num_repetitions[0] * x_max, num_repetitions[0] * len(x0))
-        y_new = np.linspace(
-            num_repetitions[1] * y_min, num_repetitions[1] * y_max, num_repetitions[1] * len(y0))
+        x_new = np.linspace(num_repetitions[0] * x_min,
+                            num_repetitions[0] * x_max,
+                            num_repetitions[0] * len(x0))
+        y_new = np.linspace(num_repetitions[1] * y_min,
+                            num_repetitions[1] * y_max,
+                            num_repetitions[1] * len(y0))
 
         range_x = x_new[-1] - x_new[0]
         center_x = (x_new[-1] + x_new[0]) / 2
@@ -2094,7 +2126,11 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.x = x_new
             self.y = y_new
 
-    def masks_to_positions(self, pos, new_field=True, binarize=False, normalize=False):
+    def masks_to_positions(self,
+                           pos,
+                           new_field=True,
+                           binarize=False,
+                           normalize=False):
         """
         Place a certain mask on several positions.
 
