@@ -494,12 +494,12 @@ class Scalar_mask_XY(Scalar_field_XY):
         if type(r0[0]) in (int, float):
             i_x0, _, _ = nearest(self.x, x0)
             i_y0, _, _ = nearest(self.y, y0)
-            u[i_x0, i_y0] = 1
+            u[i_y0, i_x0] = 1
         else:
             i_x0s, _, _ = nearest2(self.x, x0)
             i_y0s, _, _ = nearest2(self.y, y0)
             for (i_x0, i_y0) in zip(i_x0s, i_y0s):
-                u[i_x0, i_y0] = 1
+                u[i_y0, i_x0] = 1
 
         self.u = u
         return self
