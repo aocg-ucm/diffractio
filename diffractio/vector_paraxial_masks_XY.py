@@ -162,13 +162,13 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                             state_0=np.array([[1, 0], [0, 0]]),
                             state_1=np.array([[0, 0], [0, 1]]),
                             is_binarized=True):
-        """Creates two different fields Ex and Ey from a mask and its complementary.
-        For generality, is mask is a decimal number between 0 and 1, it takes the linear interpolation.
+        """Creates a vector mask from a scalar mask. It assign an state_0 to 0 values and a state_1 to 1 values..
+        For generality, ik mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
         Parameters:
             mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
-            state_0 (2x1 numpy.array): polarization matrix for 0s.
-            state_1 (2x1 numpy.array): polarization matrix for 1s.
+            state_0 (2x2 numpy.array): Jones matrix for 0s.
+            state_1 (2x2 numpy.array): Jones matrix for 1s.
 
         Warning:
             TODO: Mask should be binary. Else the function should binarize it.

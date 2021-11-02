@@ -56,7 +56,6 @@ from .scalar_masks_XY import Scalar_mask_XY
 from .utils_common import load_data_common, save_data_common
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image
-from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
 percentaje_intensity = params_drawing['percentaje_intensity']
 
@@ -413,6 +412,7 @@ class Vector_paraxial_field_XY(object):
         TODO:
              some inconsistency in the radius of the circle lower than the size of the field.
         """
+        from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
         dx = self.x[1] - self.x[0]
         dy = self.y[1] - self.y[0]
