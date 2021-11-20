@@ -384,7 +384,7 @@ class Vector_paraxial_field_XY(object):
             self.x = Ex.x
             self.y = Ex.y
 
-    def VFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=True):
+    def VFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -475,7 +475,7 @@ class Vector_paraxial_field_XY(object):
         Esz = factor * fftshift(fft2(apodization_factor * G * E0z))
 
         if matrix is True:
-            return Esx, Esy, Esz
+            return np.stack((Esx, Esy, Esz), axis=2)
 
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
@@ -515,7 +515,7 @@ class Vector_paraxial_field_XY(object):
             if has_draw:
                 self.draw(kind='intensities')
 
-    def IVFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=True):
+    def IVFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
         """Inverse Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -543,6 +543,9 @@ class Vector_paraxial_field_XY(object):
         TODO:
             radius of the circle lower than the size of the field.
         """
+
+        from diffractio.vector_paraxial_sources_XY import \
+            Vector_paraxial_source_XY
 
         # numerical aperture
         sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
@@ -613,7 +616,7 @@ class Vector_paraxial_field_XY(object):
         Esz = E0z
 
         if matrix is True:
-            return Esx, Esy, Esz
+            return np.stack((Esx, Esy, Esz), axis=2)
 
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
