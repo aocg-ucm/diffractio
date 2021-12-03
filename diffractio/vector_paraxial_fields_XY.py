@@ -322,6 +322,14 @@ class Vector_paraxial_field_XY(object):
         self.Ey = self.Ey * u.u
         self.Ez = self.Ez * u.u
 
+    def intensity(self):
+        """"Returns intensity.
+        """
+        intensity = np.abs(self.Ex)**2 + \
+            np.abs(self.Ey)**2 + np.abs(self.Ez)**2
+
+        return intensity
+
     def RS(self,
            z=10 * mm,
            n=1,
@@ -814,10 +822,12 @@ class Vector_paraxial_field_XY(object):
 
     def normalize(self):
         """Normalizes the field"""
-        max_amplitude = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2) + eps
+        max_amplitude = np.sqrt(np.abs(self.Ex)**2 +
+                                np.abs(self.Ey)**2 + np.abs(self.Ez)**2).max()
 
         self.Ex = self.Ex / max_amplitude
         self.Ey = self.Ey / max_amplitude
+        self.Ez = self.Ez / max_amplitude
 
     def cut_resample(self,
                      x_limits='',
@@ -1224,17 +1234,17 @@ class Vector_paraxial_field_XY(object):
             h1 = plt.subplot(1, 3, 1)
 
             __draw1__(self, intensity1, color_intensity, "$I_x$")
-            #plt.clim(0, intensity_max)
+            # plt.clim(0, intensity_max)
 
             h2 = plt.subplot(1, 3, 2)
 
             __draw1__(self, intensity2, color_intensity, "$I_y$")
-            #plt.clim(0, intensity_max)
+            # plt.clim(0, intensity_max)
 
             h3 = plt.subplot(1, 3, 3)
 
             __draw1__(self, intensity3, color_intensity, "$I_z$")
-            #plt.clim(0, intensity_max)
+            # plt.clim(0, intensity_max)
 
             plt.subplots_adjust(left=0,
                                 bottom=0,

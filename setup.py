@@ -8,7 +8,7 @@ with open('README.rst') as readme_file:
     readme = readme_file.read(encoding='utf8')
 
 with open('HISTORY.rst') as history_file:
-    history = history_file.read()
+    history = history_file.read(encoding='utf8')
 
 # requirements = [
 #     'Click>=6.0', 'numpy', 'scipy', 'matplotlib','nbsphinx',

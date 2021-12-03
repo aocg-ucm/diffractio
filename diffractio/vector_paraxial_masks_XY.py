@@ -37,12 +37,12 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self._type = 'Vector_paraxial_mask_XY'
 
-        self.M00 = np.zeros_like(self.X)
-        self.M01 = np.zeros_like(self.X)
-        self.M10 = np.zeros_like(self.X)
-        self.M11 = np.zeros_like(self.X)
+        self.M00 = np.zeros_like(self.X, dtype=complex)
+        self.M01 = np.zeros_like(self.X, dtype=complex)
+        self.M10 = np.zeros_like(self.X, dtype=complex)
+        self.M11 = np.zeros_like(self.X, dtype=complex)
 
-        del self.Ex, self.Ey
+        del self.Ex, self.Ey, self.Ez
 
     def __mul__(self, other):
         """
