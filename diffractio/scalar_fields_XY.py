@@ -30,7 +30,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for XY scalar fields*
 
 *Definition of a scalar field*
-    * instatiation,
+    * instatiation, duplicate
     * save, load data
     * cut_resample, binarize, discretize
     * get_phase, get_amplitude, remove_amplitude, remove_phase, amplitude2phase, phase2amplitude
@@ -204,6 +204,12 @@ class Scalar_field_XY(object):
         Xrot = (self.X - x0) * cos(angle) + (self.Y - y0) * sin(angle)
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
+
+    def duplicate(self):
+        """Duplicates the instance"""
+        new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
+        new_field.u = self.u
+        return new_field
 
     def add(self, other, kind='standard'):
         """adds two Scalar_field_x. For example two light sources or two masks
@@ -512,7 +518,7 @@ class Scalar_field_XY(object):
         """Fast Fourier Transform (FFT) of the field.
         Parameters:
             z (float): distance to the observation plane or focal of lens
-                       if z==0, no x,y scaled y produced
+                       if z==0, no x,y scaled is produced
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
             matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X
@@ -1650,10 +1656,11 @@ class Scalar_field_XY(object):
         """
 
         if kind == 'intensity':
-            intensity = abs(self.u**2)
+            intensity = abs(self.u)**2
             maximum = sqrt(intensity.max())
             self.u = self.u / maximum
-        if kind == 'area':
+
+        elif kind == 'area':
             intensity = abs(self.u**2)
             maximum = intensity.sum()
             self.u = self.u / maximum

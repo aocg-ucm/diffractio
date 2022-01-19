@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for XZ scalar fields*
 
 *Definition of a scalar field*
-    * instatiation, clean_refraction_index
+    * instatiation, duplicate, clean_refraction_index
     * save, load data
     * rotate_field, cut_resample,
 
@@ -231,6 +231,14 @@ class Scalar_field_XZ(object):
         Zrot = z0 - (self.X - x0) * np.sin(angle) + (self.Z -
                                                      z0) * np.cos(angle)
         return Xrot, Zrot
+
+    def duplicate(self):
+        """Duplicates the instance"""
+        new_field = Scalar_field_XZ(self.x, self.z, self.wavelength,
+                                    self.n_background)
+        new_field.n = self.n
+        new_field.u = self.u
+        return new_field
 
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
         """Rotate all the image a certain angle

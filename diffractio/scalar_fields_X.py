@@ -18,7 +18,7 @@ There are also some secondary atributes:
 *Class for unidimensional scalar fields*
 
 *Definition of a scalar field*
-    * instantiation, clear_field, print
+    * instantiation, duplicate,  clear_field, print
     * add, substract sources
     * multiply masks and sources
     * save and load data
@@ -185,6 +185,12 @@ class Scalar_field_X(object):
 
         new_field = Scalar_field_X(self.x, self.wavelength)
         new_field.u = self.u * other.u
+        return new_field
+
+    def duplicate(self):
+        """Duplicates the instance"""
+        new_field = Scalar_field_X(self.x, self.wavelength)
+        new_field.u = self.u
         return new_field
 
     def clear_field(self):

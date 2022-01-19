@@ -19,6 +19,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for unidimensional scalar fields*
 
 *Definition of a scalar field*
+    * instantiation, duplicate
     * load and save data
     * to_Scalar_field_XY
     * xy_2_xyz
@@ -84,6 +85,7 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
+
     def __init__(self,
                  x=None,
                  y=None,
@@ -277,6 +279,14 @@ class Scalar_field_XYZ(object):
             v * w * (1 - ct) + u * st) + self.Z * (w**2 + (u**2 + v**2) * ct)
 
         return Xrot, Yrot, Zrot
+
+    def duplicate(self):
+        """Duplicates the instance"""
+        new_field = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
+                                     self.n_background)
+        new_field.n = self.n
+        new_field.u = self.u
+        return new_field
 
     def clear_field(self):
         """clear field."""

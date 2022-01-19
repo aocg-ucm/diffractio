@@ -65,6 +65,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -150,7 +151,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         """Widens a field using a mask
 
         Parameters:
-            mask (diffractio.Scalar_mask_X): filter
+            mask (diffractio.Scalar_mask_XY): filter
             new_field (bool): If True, develope new Field
             binarize (bool, float): If False nothing, else binarize in level
             normalize (bool): If True divides the mask by sum.
