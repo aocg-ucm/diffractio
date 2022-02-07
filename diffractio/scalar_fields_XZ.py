@@ -105,7 +105,6 @@ class Scalar_field_XZ(object):
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
-
     def __init__(self,
                  x=None,
                  z=None,
@@ -632,8 +631,7 @@ class Scalar_field_XZ(object):
                 if sys.version_info.major == 3:
                     print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
                 else:
-                    print("BPM: {}/{}".format(k,
-                                              numz).format(k, numz))
+                    print("BPM: {}/{}".format(k, numz).format(k, numz))
 
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
@@ -873,8 +871,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                    sep="\r",
-                    end="\r")
+                      sep="\r",
+                      end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -1206,6 +1204,23 @@ class Scalar_field_XZ(object):
 
         return np.abs(self.u)**2
 
+    def average_intensity(self, has_draw=False):
+        """Returns average intensity as: (np.abs(self.u)**2).mean()
+
+        Parameters:
+            has_draw(bool): If True draws data.
+
+        Returns:
+            intensity_mean (np.array): z array with average intensity at each plane z.
+
+        """
+        intensity_mean = (np.abs(self.u)**2).mean(axis=0)
+        if has_draw is True:
+            plt.figure()
+            plt.plot(self.x, intensity_mean)
+
+        return intensity_mean
+
     def check_intensity(self, draw=True, normalized=True):
         """
         Checks that intensity distribution is not lost by edges. It can be executed after a RS or BPM propagation.
@@ -1477,7 +1492,8 @@ class Scalar_field_XZ(object):
                         interpolation=interpolation,
                         aspect='auto',
                         origin='lower',
-                        extent=extension, **kwargs)
+                        extent=extension,
+                        **kwargs)
 
         if z_scale == 'um':
             plt.xlabel('z ($\mu m$)')
@@ -1786,7 +1802,8 @@ class Scalar_field_XZ(object):
                 self.x[ix], self.z[iz])))
         return self.x[ix], self.z[iz]
 
-    def beam_widths(self, kind='FWHM1D',
+    def beam_widths(self,
+                    kind='FWHM1D',
                     has_draw=[True, False],
                     percentaje=0.5,
                     remove_background=None,

@@ -91,7 +91,6 @@ class Scalar_field_X(object):
         self.type (str): Class of the field.
         self.date (str): Date when performed.
     """
-
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         self.x = x
         self.wavelength = wavelength
@@ -747,8 +746,7 @@ class Scalar_field_X(object):
         Returns:
             (float): average intensity.
         """
-        num_data = len(self.x)
-        average_intensity = (np.abs(self.u)**2).sum() / (num_data)
+        average_intensity = (np.abs(self.u)**2).mean()
         if verbose is True:
             print("average intensity={} W/m").format(average_intensity)
 
