@@ -102,7 +102,6 @@ class Scalar_field_XY(object):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         self.x = x
         self.y = y
@@ -648,7 +647,12 @@ class Scalar_field_XY(object):
                 self.y = ky
                 self.X, self.Y = ndgrid(self.x, self.y)
 
-    def ifft(self, z=0 * mm, shift=True, remove0=True, matrix=False, new_field=False):
+    def ifft(self,
+             z=0 * mm,
+             shift=True,
+             remove0=True,
+             matrix=False,
+             new_field=False):
         """Fast Fourier Transform (fft) of the field.
 
         Parameters:
@@ -711,7 +715,12 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
 
-    def ifft_backup(self, z=10 * mm, shift=True, remove0=True, matrix=False, new_field=False):
+    def ifft_backup(self,
+                    z=10 * mm,
+                    shift=True,
+                    remove0=True,
+                    matrix=False,
+                    new_field=False):
         """Fast Fourier Transform (fft) of the field.
 
         Parameters:
@@ -727,8 +736,8 @@ class Scalar_field_XY(object):
         k = 2 * np.pi / self.wavelength
 
         ttf1 = ifft2(self.u)
-        ttf1 = ttf1 * np.exp(-1j * k * (z + (self.X**2 +
-                                             self.Y**2) / (2 * z))) / (-1j * self.wavelength * z)
+        ttf1 = ttf1 * np.exp(-1j * k * (z + (self.X**2 + self.Y**2) /
+                                        (2 * z))) / (-1j * self.wavelength * z)
 
         if remove0 is True:
             ttf1[0, 0] = 0
@@ -745,13 +754,11 @@ class Scalar_field_XY(object):
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
-        kx = linspace(-freq_nyquist_x, freq_nyquist_x,
-                      num_x) * self.wavelength
+        kx = linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * self.wavelength
         num_y = self.y.size
         delta_y = self.y[1] - self.y[0]
         freq_nyquist_y = 1 / (2 * delta_y)
-        ky = linspace(-freq_nyquist_y, freq_nyquist_y,
-                      num_y) * self.wavelength
+        ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * self.wavelength
 
         u3.x = kx
         u3.y = ky
@@ -1377,8 +1384,7 @@ class Scalar_field_XY(object):
         Parameters:
             verbose(bool): If True prints data.
         """
-        num_data = len(self.x) * len(self.y)
-        average_intensity = (np.abs(self.u)**2).sum() / num_data
+        average_intensity = (np.abs(self.u)**2).mean()
         if verbose is True:
             print(("average intensity={} W/m").format(average_intensity))
 
@@ -1659,9 +1665,6 @@ class Scalar_field_XY(object):
 
         Parameters:
             kind(str): 'intensity' 'area'
-
-        TODO:
-            pass to utils  # esto lo he puesto a última hora
         """
 
         if kind == 'intensity':
@@ -1763,7 +1766,8 @@ class Scalar_field_XY(object):
                                        ylabel="$y  (\mu m)$",
                                        title=title,
                                        color=colormap_kind,
-                                       reduce_matrix=self.reduce_matrix, **kwargs)
+                                       reduce_matrix=self.reduce_matrix,
+                                       **kwargs)
 
         # if self.type == 'Scalar_mask_XY':
         #    plt.clim(0, 1)

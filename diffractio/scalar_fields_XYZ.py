@@ -85,7 +85,6 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
-
     def __init__(self,
                  x=None,
                  y=None,
@@ -971,6 +970,23 @@ class Scalar_field_XYZ(object):
             plt.ylabel(kind)
 
         return self.z, y
+
+    def average_intensity(self, has_draw=False):
+        """Returns average intensity as: (np.abs(self.u)**2).mean()
+
+        Parameters:
+            verbose(bool): If True prints data.
+
+        Returns:
+            intensity_mean (np.array): z array with average intensity at each plane z.
+
+        """
+        intensity_mean = (np.abs(self.u)**2).mean(axis=2)
+        if has_draw is True:
+            plt.figure()
+            plt.imshow(intensity_mean)
+
+        return intensity_mean
 
     def beam_widths(self,
                     kind='FWHM2D',
