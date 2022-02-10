@@ -13,6 +13,17 @@ from scipy.signal import fftconvolve
 from . import mm
 
 
+def reduce_to_1(class_diffractio):
+    """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
+    Parameters:
+        class (class): Scalar_field_X, XY ,....
+
+    """
+    class_diffractio.u[np.abs(class_diffractio.u > 1)] = 1
+
+    return class_diffractio
+
+
 def distance(x1, x2):
     """Compute distance between two vectors.
 

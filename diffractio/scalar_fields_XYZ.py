@@ -59,7 +59,7 @@ from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing
-from .utils_math import get_k, ndgrid, nearest
+from .utils_math import get_k, ndgrid, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters
 
@@ -287,6 +287,12 @@ class Scalar_field_XYZ(object):
         new_field.n = self.n
         new_field.u = self.u
         return new_field
+
+    def reduce_to_1(self):
+        """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
+        """
+
+        self = reduce_to_1(self)
 
     def clear_field(self):
         """clear field."""

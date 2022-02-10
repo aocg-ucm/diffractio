@@ -76,7 +76,7 @@ from .scalar_masks_X import Scalar_mask_X
 from .scalar_sources_X import Scalar_source_X
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
-from .utils_math import get_k, ndgrid, nearest, rotate_image
+from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters
 
@@ -231,6 +231,12 @@ class Scalar_field_XZ(object):
         Zrot = z0 - (self.X - x0) * np.sin(angle) + (self.Z -
                                                      z0) * np.cos(angle)
         return Xrot, Zrot
+
+    def reduce_to_1(self):
+        """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
+        """
+
+        self = reduce_to_1(self)
 
     def duplicate(self):
         """Duplicates the instance"""

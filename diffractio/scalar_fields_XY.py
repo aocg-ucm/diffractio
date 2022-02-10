@@ -69,7 +69,8 @@ from . import degrees, mm, np, params_drawing, plt, seconds, um
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image
+from .utils_math import (get_edges, get_k, ndgrid, nearest, reduce_to_1,
+                         rotate_image)
 from .utils_optics import beam_width_2D, field_parameters
 
 try:
@@ -209,7 +210,15 @@ class Scalar_field_XY(object):
         """Duplicates the instance"""
         new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         new_field.u = self.u
+        tipo = type(self)
+        new_field = tipo(self)
         return new_field
+
+    def reduce_to_1(self):
+        """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
+        """
+
+        self = reduce_to_1(self)
 
     def add(self, other, kind='standard'):
         """adds two Scalar_field_x. For example two light sources or two masks
@@ -1756,8 +1765,8 @@ class Scalar_field_XY(object):
                                        color=colormap_kind,
                                        reduce_matrix=self.reduce_matrix, **kwargs)
 
-        if self.type == 'Scalar_mask_XY':
-            plt.clim(0, 1)
+        # if self.type == 'Scalar_mask_XY':
+        #    plt.clim(0, 1)
 
         return id_fig, IDax, IDimage
 

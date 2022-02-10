@@ -184,18 +184,20 @@ class Scalar_mask_XY(Scalar_field_XY):
         """
 
         filter = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        filter.circle(r0=(0 * um, 0 * um),
-                      radius=(radius, radius),
-                      angle=0 * degrees)
+        filter.circle(r0=(0 * um, 0 * um), radius=radius, angle=0 * degrees)
 
         image = np.abs(self.u)
+        image_max = image.max()
         filtrado = np.abs(filter.u) / np.abs(filter.u.sum())
 
         covolved_image = fft_convolution2d(image, filtrado)
-        average = (covolved_image.max()) / 2
+        minimum = 0.01 * covolved_image.max()
+
         if binarize is True:
-            covolved_image[covolved_image > average] = 1
-            covolved_image[covolved_image <= average] = 0
+            covolved_image[covolved_image > minimum] = 1
+            covolved_image[covolved_image <= minimum] = 0
+        else:
+            covolved_image = covolved_image / covolved_image.max()
 
         if new_field is True:
             filter.u = covolved_image
