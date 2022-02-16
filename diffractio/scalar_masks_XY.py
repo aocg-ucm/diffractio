@@ -778,10 +778,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Example:
 
-            circle(r0=(0 * um, 0 * um), radius=(250 * \
-                   um, 125 * um), angle=0 * degrees)
+            circle(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
         """
-        # si solamente un numero, posiciones y radius son los mismos para ambos
         x0, y0 = r0
 
         if isinstance(radius, (float, int, complex)):
@@ -789,13 +787,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             radiusx, radiusy = radius
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
-        # Definicion de la transmitancia
         u = zeros(shape(self.X))
-        ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
-            (Yrot)**2 / (radiusy**2 + 1e-15) < 1
+        ipasa = Xrot**2 / radiusx**2 + Yrot**2 / radiusy**2 < 1
         u[ipasa] = 1
         self.u = u
 
