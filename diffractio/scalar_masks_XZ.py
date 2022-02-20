@@ -870,8 +870,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 refraction_index=mask_refraction_index,
                 refraction_index_center='',
                 angle=angle)
-        focus_1 = (refraction_index - 1) * (
-            1 / radius1 - 1 / radius2) - thickness / (radius1 * radius2)
+
+        focus_1 = (refraction_index - 1) * ((1 / radius1 - 1 / radius2) -
+                                            (refraction_index - 1) * thickness / (refraction_index * radius1 * radius2))
         return 1 / focus_1, ipasa
 
     def lens_plane_divergent(self,
@@ -1009,8 +1010,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 refraction_index_center='',
                 angle=angle,
                 rotation_point=rotation_point)
-        focus_1 = (refraction_index - 1) * (
-            1 / radius1 - 1 / radius2) - thickness / (radius1 * radius2)
+        focus_1 = (refraction_index - 1) * ((1 / radius1 - 1 / radius2) -
+                                            (refraction_index - 1) * thickness / (refraction_index * radius1 * radius2))
         return 1 / focus_1, ipasa
 
     def aspheric_surface_z(self, r0, refraction_index, cx, Qx, a2, a3, a4,
