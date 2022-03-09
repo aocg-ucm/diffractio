@@ -391,7 +391,7 @@ def discretize(u,
         fieldDiscretizado = discretized_image * phase
 
     if kind == 'phase':
-        ang = angle(get_phase(UnboundLocalError)) + phase0 + pi
+        ang = angle(get_phase(u)) + phase0 + pi
         ang = ang % (2 * pi)
         amplitude = get_amplitude(u)
 
@@ -564,14 +564,12 @@ def get_edges(x,
         print(np.array([raising, falling]).T)
 
     if not filename == '':
-        np.savetxt(
-            "{}_pos_transitions.txt".format(filename),
-            pos_transitions,
-            fmt='%10.6f')
-        np.savetxt(
-            "{}_type_transitions.txt".format(filename),
-            type_transitions,
-            fmt='%10.6f')
+        np.savetxt("{}_pos_transitions.txt".format(filename),
+                   pos_transitions,
+                   fmt='%10.6f')
+        np.savetxt("{}_type_transitions.txt".format(filename),
+                   type_transitions,
+                   fmt='%10.6f')
         np.savetxt("{}_raising.txt".format(filename), raising, fmt='%10.6f')
         np.savetxt("{}_falling.txt".format(filename), falling, fmt='%10.6f')
 
@@ -639,9 +637,8 @@ def fft_filter(x, y, normalize=False):
 
     y = y / y.sum()
 
-    return fftconvolve(
-        x, y, mode='same') / fftconvolve(
-            x, np.ones_like(y) / sum(y), mode='same')
+    return fftconvolve(x, y, mode='same') / fftconvolve(
+        x, np.ones_like(y) / sum(y), mode='same')
 
 
 def fft_correlation1d(x, y):
@@ -776,10 +773,10 @@ def fZernike(X, Y, n, m, radius=5 * mm):
 
     Z = zeros(R.shape, dtype=np.float)
     for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(
-            np.abs(n - s)) / (factorial(np.abs(s)) * factorial(
-                np.abs(round(0.5 * (n + np.abs(m)) - s))) * factorial(
-                    np.abs(round(0.5 * (n - np.abs(m)) - s))))
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
+            factorial(np.abs(s)) *
+            factorial(np.abs(round(0.5 * (n + np.abs(m)) - s))) *
+            factorial(np.abs(round(0.5 * (n - np.abs(m)) - s))))
 
     if m >= 0:
         fz1 = N * Z * np.cos(m * THETA)
@@ -826,8 +823,8 @@ def laguerre_polynomial_nk(x, n=4, k=5):
     f = factorial
     summation = np.zeros_like(x, dtype=float)
     for m in range(n + 1):
-        summation = summation + (-1)**m * f(n + k) / (
-            f(n - m) * f(k + m) * f(m)) * x**m
+        summation = summation + (-1)**m * f(n + k) / (f(n - m) * f(k + m) *
+                                                      f(m)) * x**m
     return summation
 
 

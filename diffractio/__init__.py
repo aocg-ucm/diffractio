@@ -30,7 +30,6 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
-
 import datetime
 import multiprocessing
 
@@ -75,6 +74,8 @@ no_date = False  # for test folder
 params_drawing = dict()
 params_drawing['color_intensity'] = cm.gist_heat  # cm.gist_heat  #cm.hot
 params_drawing['color_amplitude'] = cm.jet
+params_drawing['color_amplitude_sign'] = cm.seismic
+
 # cm.hsv  # cm.twilight #cm.twilight_shift
 params_drawing['color_phase'] = cm.twilight  # .twilight hsv
 params_drawing['color_real'] = cm.seismic

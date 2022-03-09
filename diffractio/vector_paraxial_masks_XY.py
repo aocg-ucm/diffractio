@@ -30,6 +30,7 @@ from . import degrees, np, number_types, params_drawing, plt
 from .scalar_masks_XY import Scalar_mask_XY
 from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
+from .utils_optics import field_parameters
 
 
 class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
@@ -62,7 +63,8 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             m3.M10 = self.M10 * other
             m3.M11 = self.M11 * other
 
-        elif other._type in ('Vector_paraxial_mask_XY', 'Vector_paraxial_field_XY'):
+        elif other._type in ('Vector_paraxial_mask_XY',
+                             'Vector_paraxial_field_XY'):
             m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
 
             m3.M00 = other.M00 * self.M00 + other.M01 * self.M10
@@ -185,6 +187,46 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         self.M10 = t * state_1[1, 0] + (1 - t) * state_0[0, 1]
         self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
 
+    def multilevel_mask(self, mask, states, discretize=True, normalize=True):
+        """Generates a multilevel vector mask, based in a scalar_mask_XY. The levels should be integers in amplitude (0,1,..., N).
+            If it is not like this, discretize generates N levels.
+            Usually masks are 0-1. Then normalize generates levels 0-N.
+
+            Arguments:
+                mask (scalar_mask_XY): 0-N discrete scalar mask.
+                states (np.array or Jones_matrix): Jones matrices to assign to each level
+                discretize (bool): If True, a continuous mask is converted to N levels.
+                normalize (bool): If True, levels are 0,1,.., N.
+
+        """
+        num_levels = len(states)
+        mask_new = mask.duplicate()
+
+        if type(states) == np.ndarray:
+            jones_0 = Jones_matrix()
+            jones_0.from_matrix(states)
+            states = jones_0
+
+        states = states.get_list()
+
+        if discretize is True:
+            mask_new.discretize(num_levels=num_levels, new_field=False)
+
+        if normalize is True:
+            mask_new.u = mask_new.u / mask_new.u.max()
+            mask_new.u = mask_new.u * num_levels - 0.5
+
+        mask_new.u = np.real(mask_new.u)
+        mask_new.u = mask_new.u.astype(np.int)
+
+        for i, state in enumerate(states):
+            i_level = (mask_new.u == i)
+
+            self.M00[i_level] = state[0, 0]
+            self.M01[i_level] = state[0, 1]
+            self.M10[i_level] = state[1, 0]
+            self.M11[i_level] = state[1, 1]
+
     def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
         This is the most general function to obtain a polarizer.
@@ -250,8 +292,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             azimuth (float): linear polarizer angle
         """
         PL = Jones_matrix('m0')
-        PL.diattenuator_retarder_linear(
-            R=R, p1=p1, p2=p1, azimuth=azimuth)
+        PL.diattenuator_retarder_linear(R=R, p1=p1, p2=p1, azimuth=azimuth)
         self.from_py_pol(PL)
 
     def to_py_pol(self):
@@ -264,6 +305,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         m0 = Jones_matrix(name="from Diffractio")
         m0.from_components((self.M00, self.M01, self.M10, self.M11))
+        m0.shape = self.M00.shape
 
         return m0
 
@@ -271,7 +313,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """Draws the mask. It must be different to sources.
 
         Parameters:
-            kind (str): 'amplitude', 'amplitudes', 'phase', 'phases', 'all'
+            kind (str): 'amplitude', 'phase', 'all'
         """
         # def draw_masks(self, kind='fields'):
 
@@ -279,26 +321,38 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         if z_scale == 'mm':
             extension = extension / 1000.
 
+        a00, int00, phase00 = field_parameters(self.M00,
+                                               has_amplitude_sign=True)
+
+        a01, int01, phase01 = field_parameters(self.M01,
+                                               has_amplitude_sign=True)
+        a10, int10, phase10 = field_parameters(self.M10,
+                                               has_amplitude_sign=True)
+        a11, int11, phase11 = field_parameters(self.M11,
+                                               has_amplitude_sign=True)
+
+        a_max = np.abs((a00, a01, a10, a11)).max()
+
         if kind in ('amplitude', 'all'):
             plt.figure()
-            plt.set_cmap(params_drawing['color_intensity'])
-            fig, axs = plt.subplots(
-                2,
-                2,
-                sharex='col',
-                sharey='row',
-                gridspec_kw={
-                    'hspace': 0.05,
-                    'wspace': 0.05
-                })
-            im1 = axs.flat[0].imshow(np.abs(self.M00), extent=extension)
-            im1.set_clim(0, 1)
-            im1 = axs.flat[1].imshow(np.abs(self.M01), extent=extension)
-            im1.set_clim(0, 1)
-            im1 = axs.flat[2].imshow(np.abs(self.M10), extent=extension)
-            im1.set_clim(0, 1)
-            im1 = axs.flat[3].imshow(np.abs(self.M11), extent=extension)
-            im1.set_clim(0, 1)
+            plt.set_cmap(params_drawing['color_amplitude_sign'])
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.05,
+                                        'wspace': 0.05
+                                    })
+
+            im1 = axs.flat[0].imshow(a00, extent=extension)
+            im1.set_clim(-a_max, a_max)
+            im1 = axs.flat[1].imshow(a01, extent=extension)
+            im1.set_clim(-a_max, a_max)
+            im1 = axs.flat[2].imshow(a10, extent=extension)
+            im1.set_clim(-a_max, a_max)
+            im1 = axs.flat[3].imshow(a11, extent=extension)
+            im1.set_clim(-a_max, a_max)
 
             plt.suptitle("Amplitudes")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])
@@ -315,26 +369,25 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             plt.figure()
             plt.set_cmap(params_drawing['color_phase'])
 
-            fig, axs = plt.subplots(
-                2,
-                2,
-                sharex='col',
-                sharey='row',
-                gridspec_kw={
-                    'hspace': 0.1,
-                    'wspace': 0.1
-                })
-            im1 = axs.flat[0].imshow(
-                np.angle(self.M00) / degrees, extent=extension)
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.1,
+                                        'wspace': 0.1
+                                    })
+            im1 = axs.flat[0].imshow(np.angle(self.M00) / degrees,
+                                     extent=extension)
             im1.set_clim(-180, 180)
-            im1 = axs.flat[1].imshow(
-                np.angle(self.M01) / degrees, extent=extension)
+            im1 = axs.flat[1].imshow(np.angle(self.M01) / degrees,
+                                     extent=extension)
             im1.set_clim(-180, 180)
-            im1 = axs.flat[2].imshow(
-                np.angle(self.M10) / degrees, extent=extension)
+            im1 = axs.flat[2].imshow(np.angle(self.M10) / degrees,
+                                     extent=extension)
             im1.set_clim(-180, 180)
-            im1 = axs.flat[3].imshow(
-                np.angle(self.M11) / degrees, extent=extension)
+            im1 = axs.flat[3].imshow(np.angle(self.M11) / degrees,
+                                     extent=extension)
             im1.set_clim(-180, 180)
             plt.suptitle("phases")
             cax = plt.axes([.95, 0.15, 0.05, 0.7])

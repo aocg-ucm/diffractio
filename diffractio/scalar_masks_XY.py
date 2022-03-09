@@ -65,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -913,7 +912,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         ring1.circle(r0, radius1, angle)
         ring2.circle(r0, radius2, angle)
 
-        self.u = ring2.u - ring1.u
+        self.u = np.abs(ring2.u - ring1.u)
 
     def rings(self, r0, inner_radius, outer_radius, mask=True):
         """Structure based on several rings, with radius given by inner_radius and outer_radius.

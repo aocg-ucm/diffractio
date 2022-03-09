@@ -55,6 +55,7 @@ The magnitude is related to microns: `micron = 1.`
 import datetime
 import sys
 import time
+import copy
 
 import matplotlib.animation as animation
 import scipy.ndimage
@@ -207,10 +208,11 @@ class Scalar_field_XY(object):
 
     def duplicate(self):
         """Duplicates the instance"""
-        new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
-        new_field.u = self.u
-        tipo = type(self)
-        new_field = tipo(self)
+        # new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
+        # new_field.u = self.u
+        # tipo = type(self)
+        # new_field = tipo(self)
+        new_field = copy.deepcopy(self)
         return new_field
 
     def reduce_to_1(self):
