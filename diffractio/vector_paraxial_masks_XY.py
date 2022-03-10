@@ -28,9 +28,9 @@ from py_pol.jones_matrix import Jones_matrix
 
 from . import degrees, np, number_types, params_drawing, plt
 from .scalar_masks_XY import Scalar_mask_XY
+from .utils_optics import field_parameters
 from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
 from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
-from .utils_optics import field_parameters
 
 
 class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
@@ -207,7 +207,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             jones_0.from_matrix(states)
             states = jones_0
 
-        states = states.get_list()
+            states = states.get_list()
 
         if discretize is True:
             mask_new.discretize(num_levels=num_levels, new_field=False)
