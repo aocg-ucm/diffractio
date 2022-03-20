@@ -49,6 +49,7 @@ There are also some secondary atributes:
 
 """
 
+import copy
 import copyreg
 import time
 import types
@@ -91,6 +92,7 @@ class Scalar_field_X(object):
         self.type (str): Class of the field.
         self.date (str): Date when performed.
     """
+
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         self.x = x
         self.wavelength = wavelength
@@ -186,10 +188,15 @@ class Scalar_field_X(object):
         new_field.u = self.u * other.u
         return new_field
 
-    def duplicate(self):
+    def duplicate(self, clear=False):
         """Duplicates the instance"""
-        new_field = Scalar_field_X(self.x, self.wavelength)
-        new_field.u = self.u
+        # new_field = Scalar_field_X(self.x, self.wavelength)
+        # if clear is False:
+        #     new_field.u = self.u
+        # return new_field
+        new_field = copy.deepcopy(self)
+        if clear is True:
+            new_field.clear_field()
         return new_field
 
     def reduce_to_1(self):
@@ -543,8 +550,8 @@ class Scalar_field_X(object):
         # parametro de quality
         dr_real = sqrt(dx**2)
         rmax = sqrt((xout**2).max())
-        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
-                        (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
+        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2
+                        * (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
         self.quality = dr_ideal / dr_real
 
         if verbose is True:

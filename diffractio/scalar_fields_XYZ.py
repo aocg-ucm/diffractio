@@ -41,6 +41,7 @@ The magnitude is related to microns: `micron = 1.`
     * video
 
 """
+import copy
 import copyreg
 import os
 import sys
@@ -85,6 +86,7 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
+
     def __init__(self,
                  x=None,
                  y=None,
@@ -279,12 +281,16 @@ class Scalar_field_XYZ(object):
 
         return Xrot, Yrot, Zrot
 
-    def duplicate(self):
+    def duplicate(self, clear=False):
         """Duplicates the instance"""
-        new_field = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
-                                     self.n_background)
-        new_field.n = self.n
-        new_field.u = self.u
+        # new_field = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
+        #                              self.n_background)
+        # new_field.n = self.n
+        # new_field.u = self.u
+        # return new_field
+        new_field = copy.deepcopy(self)
+        if clear is True:
+            new_field.clear_field()
         return new_field
 
     def reduce_to_1(self):

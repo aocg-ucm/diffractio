@@ -65,6 +65,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -362,6 +363,110 @@ class Scalar_mask_XY(Scalar_field_XY):
         u = u + imagen1
 
         self.u = 1 - u
+
+    def repeat_structure(self,
+                         num_repetitions,
+                         position='center',
+                         new_field=True):
+        """Repeat the structure n times.
+
+        Parameters:
+            num_repetitions (int, int): Number of repetitions of the mask
+            position (string or number,number): 'center', 'previous' or initial position. Initial x
+            new_field (bool): If True, a new mask is produced, else, the mask is modified.
+
+        """
+
+        u0 = self.u
+        x0 = self.x
+        y0 = self.y
+        wavelength = self.wavelength
+
+        u_new = np.tile(u0, (num_repetitions[1], num_repetitions[0]))
+
+        print(u0.shape, u_new.shape)
+        x_min = x0[0]
+        x_max = x0[-1]
+        dx = x0[1] - x0[0]
+
+        y_min = y0[0]
+        y_max = y0[-1]
+        dy = y0[1] - y0[0]
+
+        x_new = np.linspace(num_repetitions[0] * x_min,
+                            num_repetitions[0] * x_max,
+                            num_repetitions[0] * len(x0))
+        y_new = np.linspace(num_repetitions[1] * y_min,
+                            num_repetitions[1] * y_max,
+                            num_repetitions[1] * len(y0))
+
+        range_x = x_new[-1] - x_new[0]
+        center_x = (x_new[-1] + x_new[0]) / 2
+
+        range_y = y_new[-1] - y_new[0]
+        center_y = (y_new[-1] + y_new[0]) / 2
+
+        if position == 'center':
+            x_new = x_new - center_x
+            y_new = y_new - center_y
+
+        elif position == 'previous':
+            x_new = x_new - x_new[0] + x0[0]
+            y_new = y_new - y_new[0] + y0[0]
+
+        elif isinstance(position, np.array):
+            x_new = x_new - x_new[0] + position[0]
+            y_new = y_new - y_new[0] + position[1]
+
+        if new_field is True:
+            t_new = Scalar_mask_XY(x=x_new, y=y_new, wavelength=wavelength)
+            t_new.u = u_new
+
+            return t_new
+
+        else:
+            self.u = u_new
+            self.x = x_new
+            self.y = y_new
+
+    def masks_to_positions(self,
+                           pos,
+                           new_field=True,
+                           binarize=False,
+                           normalize=False):
+        """
+        Place a certain mask on several positions.
+
+        Parameters:
+        pos (float, float) or (np.array, np.array): (x,y) point or points where mask is placed.
+        new_field (bool): If True, a new mask is produced, else, the mask is modified. Default: True.
+        binarize (bool, float): If False nothing, else binarize in level. Default: False.
+        normalize (bool): If True divides the mask by sum. Default: False.
+
+        Example:
+            masks_to_positions(np.array([[0,100,100],[0,-100,100]]),new_field=True)
+        """
+
+        lens_array = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        lens_array.dots(r0=pos)
+
+        f1 = self.u
+
+        if normalize is True:
+            f1 = f1 / f1.sum()
+
+        covolved_image = fft_convolution2d(f1, lens_array.u)
+
+        if binarize is not False:
+            covolved_image[covolved_image > binarize] = 1
+            covolved_image[covolved_image <= binarize] = 0
+
+        if new_field is True:
+            new = Scalar_field_XY(self.x, self.y, self.wavelength)
+            new.u = covolved_image
+            return new
+        else:
+            self.u = covolved_image
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
@@ -2057,107 +2162,3 @@ class Scalar_mask_XY(Scalar_field_XY):
         phase = pi * (E > 0)
 
         self.u = exp(1j * (phase + l * Th))
-
-    def repeat_structure(self,
-                         num_repetitions,
-                         position='center',
-                         new_field=True):
-        """Repeat the structure n times.
-
-        Parameters:
-            num_repetitions (int, int): Number of repetitions of the mask
-            position (string or number,number): 'center', 'previous' or initial position. Initial x
-            new_field (bool): If True, a new mask is produced, else, the mask is modified.
-
-        """
-
-        u0 = self.u
-        x0 = self.x
-        y0 = self.y
-        wavelength = self.wavelength
-
-        u_new = np.tile(u0, num_repetitions)
-
-        print(u0.shape, u_new.shape)
-        x_min = x0[0]
-        x_max = x0[-1]
-        dx = x0[1] - x0[0]
-
-        y_min = y0[0]
-        y_max = y0[-1]
-        dy = y0[1] - y0[0]
-
-        x_new = np.linspace(num_repetitions[0] * x_min,
-                            num_repetitions[0] * x_max,
-                            num_repetitions[0] * len(x0))
-        y_new = np.linspace(num_repetitions[1] * y_min,
-                            num_repetitions[1] * y_max,
-                            num_repetitions[1] * len(y0))
-
-        range_x = x_new[-1] - x_new[0]
-        center_x = (x_new[-1] + x_new[0]) / 2
-
-        range_y = y_new[-1] - y_new[0]
-        center_y = (y_new[-1] + y_new[0]) / 2
-
-        if position == 'center':
-            x_new = x_new - center_x
-            y_new = y_new - center_y
-
-        elif position == 'previous':
-            x_new = x_new - x_new[0] + x0[0]
-            y_new = y_new - y_new[0] + y0[0]
-
-        elif isinstance(position, np.array):
-            x_new = x_new - x_new[0] + position[0]
-            y_new = y_new - y_new[0] + position[1]
-
-        if new_field is True:
-            t_new = Scalar_mask_XY(x=x_new, y=y_new, wavelength=wavelength)
-            t_new.u = u_new
-
-            return t_new
-
-        else:
-            self.u = u_new
-            self.x = x_new
-            self.y = y_new
-
-    def masks_to_positions(self,
-                           pos,
-                           new_field=True,
-                           binarize=False,
-                           normalize=False):
-        """
-        Place a certain mask on several positions.
-
-        Parameters:
-        pos (float, float) or (np.array, np.array): (x,y) point or points where mask is placed.
-        new_field (bool): If True, a new mask is produced, else, the mask is modified. Default: True.
-        binarize (bool, float): If False nothing, else binarize in level. Default: False.
-        normalize (bool): If True divides the mask by sum. Default: False.
-
-        Example:
-            masks_to_positions(np.array([[0,100,100],[0,-100,100]]),new_field=True)
-        """
-
-        lens_array = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        lens_array.dots(r0=pos)
-
-        f1 = self.u
-
-        if normalize is True:
-            f1 = f1 / f1.sum()
-
-        covolved_image = fft_convolution2d(f1, lens_array.u)
-
-        if binarize is not False:
-            covolved_image[covolved_image > binarize] = 1
-            covolved_image[covolved_image <= binarize] = 0
-
-        if new_field is True:
-            new = Scalar_field_XY(self.x, self.y, self.wavelength)
-            new.u = covolved_image
-            return new
-        else:
-            self.u = covolved_image

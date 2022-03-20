@@ -54,6 +54,7 @@ The magnitude is related to microns: `micron = 1.`
     * profile_transversal
 """
 
+import copy
 import copyreg
 import sys
 import time
@@ -105,6 +106,7 @@ class Scalar_field_XZ(object):
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
+
     def __init__(self,
                  x=None,
                  z=None,
@@ -225,10 +227,10 @@ class Scalar_field_XZ(object):
             # Definicion de la rotation
             x0, z0 = position
 
-        Xrot = x0 + (self.X - x0) * np.cos(angle) + (self.Z -
-                                                     z0) * np.sin(angle)
-        Zrot = z0 - (self.X - x0) * np.sin(angle) + (self.Z -
-                                                     z0) * np.cos(angle)
+        Xrot = x0 + (self.X - x0) * np.cos(angle) + (self.Z
+                                                     - z0) * np.sin(angle)
+        Zrot = z0 - (self.X - x0) * np.sin(angle) + (self.Z
+                                                     - z0) * np.cos(angle)
         return Xrot, Zrot
 
     def reduce_to_1(self):
@@ -237,12 +239,16 @@ class Scalar_field_XZ(object):
 
         self = reduce_to_1(self)
 
-    def duplicate(self):
+    def duplicate(self, clear=False):
         """Duplicates the instance"""
-        new_field = Scalar_field_XZ(self.x, self.z, self.wavelength,
-                                    self.n_background)
-        new_field.n = self.n
-        new_field.u = self.u
+        # new_field = Scalar_field_XZ(self.x, self.z, self.wavelength,
+        #                             self.n_background)
+        # new_field.n = self.n
+        # new_field.u = self.u
+        # return new_field
+        new_field = copy.deepcopy(self)
+        if clear is True:
+            new_field.clear_field()
         return new_field
 
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
@@ -347,8 +353,8 @@ class Scalar_field_XZ(object):
             centerx = (self.x[-1] + self.x[0]) / 2
             # i_centerx = int(sizex / 2)
             # filtro1[i_centerx - pixels_filtering:i_centerx + pixels_filtering] = 1
-            filtro1 = np.exp(-(self.x - centerx)**2 /
-                             (2 * pixels_filtering**2))
+            filtro1 = np.exp(-(self.x - centerx)**2
+                             / (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
                 max_diff = np.abs(np.diff(self.n[:, i])).max()
@@ -801,9 +807,9 @@ class Scalar_field_XZ(object):
         # parametro de quality
         dr_real = sqrt(dx**2)
         rmax = sqrt((xout**2).max())
-        dr_ideal = sqrt((self.wavelength / self.n_background)**2 + rmax**2 +
-                        2 * (self.wavelength / self.n_background) *
-                        sqrt(rmax**2 + self.z.min()**2)) - rmax
+        dr_ideal = sqrt((self.wavelength / self.n_background)**2 + rmax**2
+                        + 2 * (self.wavelength / self.n_background)
+                        * sqrt(rmax**2 + self.z.min()**2)) - rmax
         self.quality = dr_ideal / dr_real
 
         # when computation is performed: quality is determined
@@ -877,8 +883,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                      sep="\r",
-                      end="\r")
+                    sep="\r",
+                    end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))

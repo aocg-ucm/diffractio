@@ -14,9 +14,46 @@
 """ Common functions to classes """
 
 import datetime
+import multiprocessing
 
 import numpy as np
+import psutil
 from scipy.io import loadmat, savemat
+
+
+def computer_parameters(verbose=True):
+    """Determine several computer parameters:
+        - number of processors
+        - available memory
+        - total memory
+        - max frequency
+
+    Arguments:
+        verbose (bool): If True prints data
+
+    Returns:
+        num_max_processors (int): number of processors
+        info_memory (int) : Gbytes
+        memory_available (int): % available memory
+        freq_max (int): Maximum frequency (GHz)
+    """
+
+    num_max_processors = multiprocessing.cpu_count()
+
+    freq_max = psutil.cpu_freq()
+    info_memory = psutil.virtual_memory()[0] / 1024**3
+    memory_available = psutil.virtual_memory(
+    ).available * 100 / psutil.virtual_memory().total
+
+    num_max_processors = multiprocessing.cpu_count()
+
+    if verbose:
+        print("number of processors: {}".format(num_max_processors))
+        print("total memory        : {:1.1f} Gb".format(info_memory))
+        print("available memory    : {:1.0f} %".format(memory_available))
+        print("max frequency       : {:1.0f} GHz".format(freq_max[2]))
+
+    return num_max_processors, info_memory, memory_available, freq_max[2]
 
 
 def clear_all():
@@ -64,12 +101,11 @@ def save_data_common(cls, filename, add_name='', description='', verbose=False):
     """Common save data function to be used in all the modules.
     The methods included are: npz, matlab
 
-
     Parameters:
-        filename (str): filename
-        add_name= (str): sufix to the name, if 'date' includes a date
-        description (str): text to be stored in the dictionary to save.
-        verbose (bool): If verbose prints filename.
+        filename(str): filename
+        add_name = (str): sufix to the name, if 'date' includes a date
+        description(str): text to be stored in the dictionary to save.
+        verbose(bool): If verbose prints filename.
 
     Returns:
         (str): filename. If False, file could not be saved.
@@ -103,11 +139,10 @@ def load_data_common(cls, filename, verbose=False):
     """Common load data function to be used in all the modules.
         The methods included are: npz, matlab
 
-
     Parameters:
-        cls (class): class X, XY, XZ, XYZ, etc..
-        filename (str): filename
-        verbose (bool): If True prints data
+        cls(class): class X, XY, XZ, XYZ, etc..
+        filename(str): filename
+        verbose(bool): If True prints data
     """
     def print_data_dict(dict0):
         for k, v in dict0.items():
@@ -145,8 +180,8 @@ def print_axis_info(cls, axis):
     """Prints info about axis
 
     Parameters:
-        cls (class): class of the modulus.
-        axis (): axis x, y, z... etc.
+        cls(class): class of the modulus.
+        axis(): axis x, y, z... etc.
     """
 
     x0 = eval("cls.{}[0]".format(axis))
@@ -162,7 +197,7 @@ def date_in_name(filename):
     """introduces a date in the filename.
 
     Parameters:
-        filename (str): filename
+        filename(str): filename
 
     Returns:
         (str): filename with current date

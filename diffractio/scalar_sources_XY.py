@@ -77,9 +77,9 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float): constant value for phase shift
         """
         k = 2 * pi / self.wavelength
-        self.u = A * exp(1.j * k *
-                         (self.X * sin(theta) * sin(phi) +
-                          self.Y * cos(theta) * sin(phi)) + z0 * cos(phi))
+        self.u = A * exp(1.j * k
+                         * (self.X * sin(theta) * sin(phi)
+                            + self.Y * cos(theta) * sin(phi)) + z0 * cos(phi))
 
     def gauss_beam(self,
                    r0,
@@ -124,12 +124,12 @@ class Scalar_source_XY(Scalar_field_XY):
         else:
             R = - z0 * (1 + (z_rayleigh / z0)**2)
 
-        amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2) -
-                                     (self.Y - y0)**2 / (wy**2))
-        phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi) +
-                                self.Y * cos(theta) * sin(phi)))
-        phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
-                           (2 * R)))
+        amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2)
+                                     - (self.Y - y0)**2 / (wy**2))
+        phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi)
+                                + self.Y * cos(theta) * sin(phi)))
+        phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2)
+                           / (2 * R)))
 
         self.u = amplitude * phase1 * phase2
 
@@ -189,8 +189,8 @@ class Scalar_source_XY(Scalar_field_XY):
             w0x, w0y = w0
 
         x0, y0 = r0
-        amplitude = ((self.X - x0) + 1.j * sign(m) *
-                     (self.Y - y0))**np.abs(m) * np.exp(-(
+        amplitude = ((self.X - x0) + 1.j * sign(m)
+                     * (self.Y - y0))**np.abs(m) * np.exp(-(
                          (self.X - x0)**2 / w0x**2 + (self.Y - y0)**2 / w0y**2))
 
         self.u = A * amplitude / np.abs(amplitude).max()
@@ -254,17 +254,17 @@ class Scalar_source_XY(Scalar_field_XY):
             Ry = zy + zRy**2 / zy
 
         # Calculate amplitude
-        A = A * sqrt(2**(1 - n - m) /
-                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y /
-                                                                (wx * wy))
+        A = A * sqrt(2**(1 - n - m)
+                     / (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y
+                                                                  / (wx * wy))
         Ex = eval_hermite(n, r2 * X / wx) * exp(-X**2 / wx**2)
         Ey = eval_hermite(m, r2 * Y / wy) * exp(-Y**2 / wy**2)
 
         # Calculate phase
         Ef = exp(1j * k * (X**2 / Rx + Y**2 / Ry)) * exp(
             -1j * (0.5 + n) * np.arctan(zx / zRx)) * exp(
-                -1j * (0.5 + m) * np.arctan(zy / zRy)) * exp(1j * k *
-                                                             (zx + zy) / 2)
+                -1j * (0.5 + m) * np.arctan(zy / zRy)) * exp(1j * k
+                                                             * (zx + zy) / 2)
 
         self.u = A * Ex * Ey * Ef
 
@@ -318,7 +318,7 @@ class Scalar_source_XY(Scalar_field_XY):
         """Zernike beam.
 
         Parameters:
-            A (float): amplitude of the Hermite Gauss beam
+            A (float): amplitude of the Zernike beam beam
             r0 (float, float): (x,y) position of source
             radius (float): width of the beam
             n (list): list of integers with orders
@@ -330,7 +330,7 @@ class Scalar_source_XY(Scalar_field_XY):
              zernike_beam(A=1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1], mask=True)
         """
 
-        # normalizing for radius 1
+        # normalizing to radius 1
         x0, y0 = r0
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2) / radius
 
@@ -358,7 +358,7 @@ class Scalar_source_XY(Scalar_field_XY):
         """Bessel beam produced by an axicon. Bessel-beams are generated using 2D axicons.
 
         Parameters:
-            A (float): amplitude of the Hermite Gauss beam
+            A (float): amplitude of the Bessel beam
             r0 (float, float): (x,y) position of source
             alpha (float): angle of the beam generator
             n (int): order of the beam
@@ -383,9 +383,9 @@ class Scalar_source_XY(Scalar_field_XY):
             jbessel = jv(n, k * np.sin(alpha) * R)
 
         self.u = A * jbessel * np.exp(1j * beta * z0) * np.exp(
-            1.j * k *
-            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)) +
-            z0 * cos(phi))
+            1.j * k
+            * (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi))
+            + z0 * cos(phi))
 
     def plane_waves_dict(self, params):
         """Several plane waves with parameters defined in dictionary
@@ -403,9 +403,9 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u = np.zeros_like(self.u, dtype=complex)
         for p in params:
             self.u = self.u + p['A'] * exp(
-                1.j * k *
-                (self.X * sin(p['theta']) * sin(p['phi']) + self.Y *
-                 cos(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
+                1.j * k
+                * (self.X * sin(p['theta']) * sin(p['phi']) + self.Y *
+                   cos(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle, z0=0):
         """Several paralel plane waves

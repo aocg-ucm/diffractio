@@ -30,28 +30,14 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
+
 import datetime
 import multiprocessing
 
 import matplotlib.pyplot as plt
 import numpy as np
-import psutil
 import scipy as sp
 from matplotlib import cm, rcParams
-
-num_max_processors = multiprocessing.cpu_count()
-
-freq_max = psutil.cpu_freq()[2]
-info_memory = psutil.virtual_memory()[0] / 1024**3
-memory_available = psutil.virtual_memory(
-).available * 100 / psutil.virtual_memory().total
-
-num_max_processors = multiprocessing.cpu_count()
-
-print("number of processors: {}".format(num_max_processors))
-print("total memory        : {:1.1f} Gb".format(info_memory))
-print("available memory    : {:1.0f} %".format(memory_available))
-print("max frequency       : {:1.0f} GHz".format(freq_max))
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
