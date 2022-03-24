@@ -523,6 +523,151 @@ class Vector_paraxial_field_XY(object):
             if has_draw:
                 self.draw(kind='intensities')
 
+    def VFFT_ASG(self, radius, focal, n=1, new_field=False,remove0=True,shift=True, matrix=False, has_draw=False):
+        """Vector Fast Fourier Transform (FFT) of the field.
+
+        The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
+        having a focal length fand collecting light under a convergence angle theta_max.
+        Denoting the refractive index of the medium in the focal region with n, the NA of the lens can be written as NA= n sin theta_max.
+        The polarization changes on the lens surfaces described by the Fresnel formulae have been neglected.
+
+        Ei = (Eix, Eiy, Eiz) is the local electric field vector.
+
+        Parameters:
+            radius (float): radius of lens
+            focal (float): focal
+            n (float): refraction index
+            matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X.
+            new_field (bool): if True returns Vector_field_XY, else it puts in self.
+            has_draw (bool): if True draw the field.
+
+        Returns:
+            (np.array or vector_paraxial_fields_XY or None): FFT of the input field.
+
+        Reference:
+            Jahn, Kornél, and Nándor Bokor. 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
+
+
+        TODO:
+             some inconsistency in the radius of the circle lower than the size of the field.
+        """
+        from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
+
+        dx = self.x[1] - self.x[0]
+        dy = self.y[1] - self.y[0]
+        num_x, num_y = self.X.shape
+
+        # numerical aperture
+        sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
+        NA = n * sin_theta_max
+
+        r = np.sqrt(self.X**2 + self.Y**2)
+        phi = np.arctan2(self.Y, self.X)
+        theta = r / focal
+
+        u = self.X / radius
+        v = self.Y / radius
+
+        # X_obs = sin_theta_max * self.X / self.wavelength
+        # Y_obs = sin_theta_max * self.Y / self.wavelength
+
+        circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        circle_mask.circle(r0=(0, 0), radius=radius)
+
+        self.mask_circle(r0=(0., 0.), radius=radius)
+
+        cos_theta = np.cos(theta)
+        sin_theta = np.sin(theta)
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+
+        apodization_factor = np.sqrt(np.abs(np.cos(theta)))
+
+        G = 1 / sqrt(np.abs(1 - sin_theta_max**2 * (u**2 + v**2)))
+        G = G * circle_mask.u
+        G = np.real(G)
+
+        M00 = cos_phi**2 * cos_theta + sin_phi**2
+        M01 = sin_phi * cos_phi * cos_theta - sin_phi * cos_phi
+        M02 = - sin_theta * cos_phi
+
+        M10 = sin_phi * cos_phi * cos_theta - sin_phi * cos_phi
+        M11 = sin_phi**2 * cos_theta + cos_phi**2
+        M12 = - sin_theta * sin_phi
+
+        M20 = sin_theta * cos_phi
+        M21 = sin_theta * sin_phi
+        M22 = cos_theta
+
+        Eix = self.Ex
+        Eiy = self.Ey
+        Eiz = self.Ez
+
+        E0x = M00 * Eix + M01 * Eiy + M02 * Eiz
+        E0y = M10 * Eix + M11 * Eiy + M12 * Eiz
+        E0z = M20 * Eix + M21 * Eiy + M22 * Eiz
+
+        factor = -(1j * sin_theta_max**2 / (focal * self.wavelength))
+        Ep_x =  fft2(apodization_factor * G * E0x)
+        Ep_y =  fft2(apodization_factor * G * E0y)
+        Ep_z =  fft2(apodization_factor * G * E0z)
+
+        if remove0:
+            Ep_x[0,0] = 0
+            Ep_y[0,0] = 0
+            #Ep_z[0,0] = 0
+
+        if shift:
+            Ep_x = fftshift(Ep_x)
+            Ep_y = fftshift(Ep_y)
+            Ep_z = fftshift(Ep_z)
+
+        Esx = factor * Ep_x
+        Esy = factor * Ep_y
+        Esz = factor * Ep_z
+
+        if matrix is True:
+            return np.stack((Esx, Esy, Esz), axis=2)
+
+        num_x = self.x.size
+        delta_x = self.x[1] - self.x[0]
+        freq_nyquist_x = 1 / (2 * delta_x)
+
+        kx = linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * focal
+        num_y = self.y.size
+        delta_y = self.y[1] - self.y[0]
+        freq_nyquist_y = 1 / (2 * delta_y)
+        ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * focal
+
+        if new_field is True:
+            field_output = Vector_paraxial_source_XY(
+                self.x, self.y, self.wavelength)
+            field_output.x = kx
+            field_output.y = ky
+
+            field_output.X, field_output.Y = ndgrid(
+                field_output.x, field_output.y)
+            field_output.Ex = Esx
+            field_output.Ey = Esy
+            field_output.Ez = Esz
+
+            if has_draw:
+                field_output.draw(kind='intensities')
+
+            return field_output
+
+        else:
+            self.Ex = Esx
+            self.Ey = Esy
+            self.Ez = Esz
+            self.x = kx
+            self.y = ky
+            self.X, self.Y = ndgrid(self.x, self.y)
+
+            if has_draw:
+                self.draw(kind='intensities')
+
+
     def IVFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
         """Inverse Vector Fast Fourier Transform (FFT) of the field.
 
