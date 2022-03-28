@@ -21,7 +21,7 @@ import psutil
 from scipy.io import loadmat, savemat
 
 
-def computer_parameters(verbose=True):
+def computer_parameters(verbose=False):
     """Determine several computer parameters:
         - number of processors
         - available memory
@@ -37,8 +37,6 @@ def computer_parameters(verbose=True):
         memory_available (int): % available memory
         freq_max (int): Maximum frequency (GHz)
     """
-
-    num_max_processors = multiprocessing.cpu_count()
 
     freq_max = psutil.cpu_freq()
     info_memory = psutil.virtual_memory()[0] / 1024**3

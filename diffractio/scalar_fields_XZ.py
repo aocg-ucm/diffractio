@@ -56,6 +56,7 @@ The magnitude is related to microns: `micron = 1.`
 
 import copy
 import copyreg
+import multiprocessing
 import sys
 import time
 import types
@@ -69,8 +70,7 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import (degrees, eps, mm, np, num_max_processors, params_drawing, plt,
-               seconds, um)
+from . import degrees, eps, mm, np, params_drawing, plt, seconds, um
 from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
                               kernelRS, kernelRSinverse)
 from .scalar_masks_X import Scalar_mask_X
@@ -82,6 +82,7 @@ from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
+num_max_processors = multiprocessing.cpu_count()
 
 
 class Scalar_field_XZ(object):
