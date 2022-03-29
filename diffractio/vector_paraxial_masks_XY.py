@@ -334,66 +334,67 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         a_max = np.abs((a00, a01, a10, a11)).max()
 
         if kind in ('amplitude', 'all'):
-            plt.figure()
-            plt.set_cmap(params_drawing['color_amplitude_sign'])
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.05,
-                                        'wspace': 0.05
-                                    })
+            plt.set_cmap(params_drawing['color_intensity'])
+            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.025})
+            im1 = axs[0, 0].imshow(a00, extent=extension)
+            im1.set_clim(0, a_max)
+            axs[0, 0].set_title("J00")
 
-            im1 = axs.flat[0].imshow(a00, extent=extension)
-            im1.set_clim(-a_max, a_max)
-            im1 = axs.flat[1].imshow(a01, extent=extension)
-            im1.set_clim(-a_max, a_max)
-            im1 = axs.flat[2].imshow(a10, extent=extension)
-            im1.set_clim(-a_max, a_max)
-            im1 = axs.flat[3].imshow(a11, extent=extension)
-            im1.set_clim(-a_max, a_max)
+            im1 = axs[0, 1].imshow(a01, extent=extension)
+            im1.set_clim(0, a_max)
+            axs[0, 1].set_title("J01")
 
-            plt.suptitle("Amplitudes")
-            cax = plt.axes([.95, 0.15, 0.05, 0.7])
-            plt.colorbar(im1, cax=cax)
+            im1 = axs[1, 0].imshow(a10, extent=extension)
+            im1.set_clim(0, a_max)
+            axs[1, 0].set_title("J10")
+
+            im1 = axs[1, 1].imshow(a11, extent=extension)
+            im1.set_clim(0, a_max)
+            axs[1, 1].set_title("J11")
+
+            plt.suptitle("Amplitudes", fontsize=20)
+            cax = plt.axes([.89, 0.2, 0.03, 0.6])
+            cbar = plt.colorbar(im1, cax=cax)
+            cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
+
             if z_scale == 'um':
-                axs.flat[2].set_xlabel(r'x ($\mu$m)')
-                axs.flat[2].set_ylabel(r'y($\mu$m)')
+                axs[1, 0].set_xlabel(r'x ($\mu$m)')
+                axs[1, 0].set_ylabel(r'y($\mu$m)')
             elif z_scale == 'mm':
-                axs.flat[2].set_xlabel(r'x (mm)')
-                axs.flat[2].set_ylabel(r'y (mm)')
+                axs[1, 0].set_xlabel(r'x (mm)')
+                axs[1, 0].set_ylabel(r'y (mm)')
 
         if kind in ('phase', 'all'):
-
-            plt.figure()
             plt.set_cmap(params_drawing['color_phase'])
 
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.1,
-                                        'wspace': 0.1
-                                    })
-            im1 = axs.flat[0].imshow(np.angle(self.M00) / degrees,
-                                     extent=extension)
+            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.00})
+            im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees, extent=extension)
             im1.set_clim(-180, 180)
-            im1 = axs.flat[1].imshow(np.angle(self.M01) / degrees,
-                                     extent=extension)
-            im1.set_clim(-180, 180)
-            im1 = axs.flat[2].imshow(np.angle(self.M10) / degrees,
-                                     extent=extension)
-            im1.set_clim(-180, 180)
-            im1 = axs.flat[3].imshow(np.angle(self.M11) / degrees,
-                                     extent=extension)
-            im1.set_clim(-180, 180)
-            plt.suptitle("phases")
-            cax = plt.axes([.95, 0.15, 0.05, 0.7])
-            plt.colorbar(im1, cax=cax)
+            axs[0, 0].set_title("J00")
 
-            plt.set_cmap(params_drawing['color_intensity'])
+            im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            axs[0, 1].set_title("J01")
+
+            im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            axs[1, 0].set_title("J10")
+
+            im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees, extent=extension)
+            im1.set_clim(-180, 180)
+            axs[1, 1].set_title("J11")
+
+            plt.suptitle("Phases", fontsize=20)
+            cax = plt.axes([.89, 0.2, 0.03, 0.6])
+            cbar = plt.colorbar(im1, cax=cax)
+            cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+
+            if z_scale == 'um':
+                axs[1, 0].set_xlabel(r'x ($\mu$m)')
+                axs[1, 0].set_ylabel(r'y($\mu$m)')
+            elif z_scale == 'mm':
+                axs[1, 0].set_xlabel(r'x (mm)')
+                axs[1, 0].set_ylabel(r'y (mm)')
 
 
 def rotation_matrix_Jones(angle):

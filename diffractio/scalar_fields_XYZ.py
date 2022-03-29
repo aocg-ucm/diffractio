@@ -43,6 +43,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 import copyreg
+import multiprocessing
 import os
 import sys
 import time
@@ -55,7 +56,7 @@ from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 from scipy.signal import correlate2d
 
-from . import degrees, eps, mm, np, num_max_processors, params_drawing, plt
+from . import degrees, eps, mm, np, params_drawing, plt
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -65,6 +66,8 @@ from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
+
+num_max_processors = multiprocessing.cpu_count()
 
 
 class Scalar_field_XYZ(object):
