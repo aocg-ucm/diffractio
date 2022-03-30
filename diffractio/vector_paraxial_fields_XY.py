@@ -393,7 +393,7 @@ class Vector_paraxial_field_XY(object):
             self.x = Ex.x
             self.y = Ex.y
 
-    def VFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
+    def VFFT_deprecated(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -524,7 +524,7 @@ class Vector_paraxial_field_XY(object):
             if has_draw:
                 self.draw(kind='intensities')
 
-    def VFFT_ASG(self, radius, focal, n=1, new_field=False, remove0=True, shift=True, matrix=False, has_draw=False):
+    def VFFT(self, radius, focal, n=1, new_field=False,shift=True,remove0=True, matrix=False, has_draw=False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -540,6 +540,8 @@ class Vector_paraxial_field_XY(object):
             n (float): refraction index
             matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X.
             new_field (bool): if True returns Vector_field_XY, else it puts in self.
+            shift (bool):  if True, fftshift is performed.
+            remove0 (bool): if True, central point is removed.
             has_draw (bool): if True draw the field.
 
         Returns:
