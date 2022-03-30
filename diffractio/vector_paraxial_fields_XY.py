@@ -610,13 +610,13 @@ class Vector_paraxial_field_XY(object):
         E0z = M20 * Eix + M21 * Eiy + M22 * Eiz
 
         factor = -(1j * sin_theta_max**2 / (focal * self.wavelength))
-        Ep_x =  fft2(apodization_factor * G * E0x)
-        Ep_y =  fft2(apodization_factor * G * E0y)
-        Ep_z =  fft2(apodization_factor * G * E0z)
+        Ep_x = fft2(apodization_factor * G * E0x)
+        Ep_y = fft2(apodization_factor * G * E0y)
+        Ep_z = fft2(apodization_factor * G * E0z)
 
         if remove0:
-            Ep_x[0,0] = 0
-            Ep_y[0,0] = 0
+            Ep_x[0, 0] = 0
+            Ep_y[0, 0] = 0
             #Ep_z[0,0] = 0
 
         if shift:
@@ -668,7 +668,6 @@ class Vector_paraxial_field_XY(object):
 
             if has_draw:
                 self.draw(kind='intensities')
-
 
     def IVFFT(self, radius, focal, n=1, new_field=False, matrix=False, has_draw=False):
         """Inverse Vector Fast Fourier Transform (FFT) of the field.
@@ -1117,6 +1116,7 @@ class Vector_paraxial_field_XY(object):
              amplification=0.5,
              filename='',
              draw=True,
+             only_image=False,
              **kwargs):
         """Draws electromagnetic field
 
@@ -1137,24 +1137,24 @@ class Vector_paraxial_field_XY(object):
 
             if kind == 'intensity':
                 id_fig = self.__draw_intensity__(logarithm, normalize,
-                                                 cut_value, **kwargs)
+                                                 cut_value, only_image, **kwargs)
             elif kind == 'intensities':
                 id_fig = self.__draw_intensities__(logarithm, normalize,
-                                                   cut_value, **kwargs)
+                                                   cut_value, only_image, **kwargs)
 
             elif kind == 'intensities_rz':
                 id_fig = self.__draw_intensities_rz__(logarithm, normalize,
-                                                      cut_value, **kwargs)
+                                                      cut_value, only_image, **kwargs)
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
 
             elif kind == 'fields':
-                id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
+                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, only_image,
                                               **kwargs)
 
             elif kind == 'stokes':
-                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value,
+                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, only_image,
                                               **kwargs)
 
             elif kind == 'param_ellipse':
@@ -1183,6 +1183,7 @@ class Vector_paraxial_field_XY(object):
                            logarithm,
                            normalize,
                            cut_value,
+                           only_image=False,
                            color_intensity=None):
         """Draws the intensity
 
@@ -1204,13 +1205,9 @@ class Vector_paraxial_field_XY(object):
 
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
-        __draw1__(self, intensity, color_intensity, "$Intensity$")
-        plt.subplots_adjust(left=0,
-                            bottom=0,
-                            right=1,
-                            top=1,
-                            wspace=0.05,
-                            hspace=0)
+        __draw1__(self, intensity, color_intensity, "", only_image=only_image)
+        plt.subplots_adjust(left=0, bottom=0, right=1,
+                            top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
         return h1
 
@@ -1702,7 +1699,7 @@ class Vector_paraxial_field_XY(object):
                 #           percentaje_intensity * intensity_max)
 
 
-def __draw1__(hdl, image, colormap, title='', has_max=False):
+def __draw1__(hdl, image, colormap=None, title='', has_max=False, only_image=False):
     """Draws image
 
     Parameters:
@@ -1717,6 +1714,13 @@ def __draw1__(hdl, image, colormap, title='', has_max=False):
                    aspect='auto',
                    origin='lower',
                    extent=extension)
+    h.set_cmap(colormap)
+    plt.axis('scaled')
+    plt.axis(extension)
+
+    if only_image is True:
+        plt.axis('off')
+        return h
 
     plt.title(title, fontsize=16)
 
@@ -1737,12 +1741,9 @@ def __draw1__(hdl, image, colormap, title='', has_max=False):
 
     plt.xlabel("$x  (\mu m)$")
     plt.ylabel("$y  (\mu m)$")
-    plt.colorbar(orientation='horizontal', shrink=0.66)
-
-    h.set_cmap(colormap)
-    h.set_clim(0, image.max())
-    plt.axis('scaled')
-    plt.axis(extension)
+    if colormap is not None:
+        plt.colorbar(orientation='horizontal', shrink=0.66)
+        h.set_clim(0, image.max())
 
     return h
 

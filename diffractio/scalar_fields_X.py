@@ -51,6 +51,7 @@ There are also some secondary atributes:
 
 import copy
 import copyreg
+import multiprocessing
 import time
 import types
 
@@ -61,7 +62,7 @@ from scipy.fftpack import fft, fftshift, ifft
 from scipy.interpolate import interp1d
 from scipy.special import hankel1
 
-from . import degrees, mm, np, num_max_processors, plt
+from . import degrees, mm, np, plt
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import fft_filter, get_edges, nearest, reduce_to_1
@@ -70,6 +71,8 @@ from .utils_multiprocessing import (_pickle_method, _unpickle_method,
 from .utils_optics import field_parameters, normalize
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
+
+num_max_processors = multiprocessing.cpu_count()
 
 
 class Scalar_field_X(object):
