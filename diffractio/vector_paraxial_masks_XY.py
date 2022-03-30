@@ -26,7 +26,8 @@ The main atributes are:
 """
 from py_pol.jones_matrix import Jones_matrix
 
-from . import degrees, np, number_types, params_drawing, plt
+from . import degrees, np, number_types, plt
+from .config import CONF_DRAWING
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_optics import field_parameters
 from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
@@ -334,7 +335,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         a_max = np.abs((a00, a01, a10, a11)).max()
 
         if kind in ('amplitude', 'all'):
-            plt.set_cmap(params_drawing['color_intensity'])
+            plt.set_cmap(CONF_DRAWING['color_intensity'])
             fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.025})
             im1 = axs[0, 0].imshow(a00, extent=extension)
             im1.set_clim(0, a_max)
@@ -365,7 +366,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                 axs[1, 0].set_ylabel(r'y (mm)')
 
         if kind in ('phase', 'all'):
-            plt.set_cmap(params_drawing['color_phase'])
+            plt.set_cmap(CONF_DRAWING['color_phase'])
 
             fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.00})
             im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees, extent=extension)

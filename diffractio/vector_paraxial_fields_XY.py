@@ -50,14 +50,15 @@ from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import degrees, eps, mm, np, params_drawing, plt
+from . import degrees, eps, mm, np, plt
+from .config import CONF_DRAWING
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_common import load_data_common, save_data_common
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image
 
-percentaje_intensity = params_drawing['percentaje_intensity']
+percentaje_intensity = CONF_DRAWING['percentaje_intensity']
 
 
 class Vector_paraxial_field_XY(object):
@@ -1192,7 +1193,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
 
         intensity = self.get('intensity')
 
@@ -1219,7 +1220,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_phase is None:
-            color_phase = params_drawing['color_phase']
+            color_phase = CONF_DRAWING['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1324,7 +1325,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1412,7 +1413,7 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1467,9 +1468,9 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
         if color_phase is None:
-            color_phase = params_drawing['color_phase']
+            color_phase = CONF_DRAWING['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1531,9 +1532,9 @@ class Vector_paraxial_field_XY(object):
         tx, ty = rcParams['figure.figsize']
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
         if color_stokes is None:
-            color_stokes = params_drawing['color_stokes']
+            color_stokes = CONF_DRAWING['color_stokes']
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
@@ -1574,9 +1575,9 @@ class Vector_paraxial_field_XY(object):
         """
 
         if color_intensity is None:
-            color_intensity = params_drawing['color_intensity']
+            color_intensity = CONF_DRAWING['color_intensity']
         if color_phase is None:
-            color_phase = params_drawing['color_phase']
+            color_phase = CONF_DRAWING['color_phase']
 
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
@@ -1624,7 +1625,7 @@ class Vector_paraxial_field_XY(object):
             num_ellipses (int): number of ellipses for parameters_ellipse
         """
 
-        percentaje_intensity = params_drawing['percentaje_intensity']
+        percentaje_intensity = CONF_DRAWING['percentaje_intensity']
         intensity_max = (np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
 
         Dx = self.x[-1] - self.x[0]

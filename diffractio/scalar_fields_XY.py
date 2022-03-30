@@ -13,6 +13,7 @@ X,Y fields are defined using ndgrid (not with meshgrid, it is different).
 
 It is required also for generating masks and fields.
 
+
 The main atributes are:
     * self.x - x positions of the field
     * self.y - y positions of the field
@@ -66,7 +67,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import degrees, mm, np, params_drawing, plt, seconds, um
+from . import degrees, mm, np, plt, seconds, um
+from .config import CONF_DRAWING
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
@@ -84,7 +86,7 @@ try:
 except:
     print("cv2 not imported. Function send_image_screen cannot be used")
 
-percentaje_intensity = params_drawing['percentaje_intensity']
+percentaje_intensity = CONF_DRAWING['percentaje_intensity']
 
 
 class Scalar_field_XY(object):
@@ -120,7 +122,7 @@ class Scalar_field_XY(object):
         self.type = 'Scalar_field_XY'
         self.date = get_date()
         self.quality = 0
-        self.params_drawing = params_drawing
+        self.CONF_DRAWING = CONF_DRAWING
 
     def __str__(self):
         """Represents main data of the atributes"""
@@ -884,8 +886,8 @@ class Scalar_field_XY(object):
         k = 2 * np.pi / self.wavelength
 
         ttf1 = ifft2(self.u)
-        ttf1 = ttf1 * np.exp(-1j * k * (z + (self.X**2 + self.Y**2)
-                                        / (2 * z))) / (-1j * self.wavelength * z)
+        ttf1 = ttf1 * np.exp(-1j * k * (z + (self.X**2 + self.Y**2) /
+                                        (2 * z))) / (-1j * self.wavelength * z)
 
         if remove0 is True:
             ttf1[0, 0] = 0
@@ -989,8 +991,8 @@ class Scalar_field_XY(object):
         # parametro de quality
         dr_real = sqrt(dx**2 + dy**2)
         rmax = sqrt((xout**2).max() + (yout**2).max())
-        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2
-                        * (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
+        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
+                        (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
         self.quality = dr_ideal / dr_real
         if verbose is True:
             if (self.quality.min() > 1):
@@ -1905,7 +1907,7 @@ class Scalar_field_XY(object):
         amplitude, intensity, phase = field_parameters(self.u,
                                                        has_amplitude_sign=True)
         if colormap_kind in ['', None, []]:
-            colormap_kind = self.params_drawing["color_intensity"]
+            colormap_kind = self.CONF_DRAWING["color_intensity"]
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
         id_fig, IDax, IDimage = draw2D(intensity,
                                        self.x,
@@ -1941,7 +1943,7 @@ class Scalar_field_XY(object):
         amplitude = normalize_draw(amplitude, logarithm, normalize, cut_value)
         max_amplitude = np.abs(amplitude).max()
         if colormap_kind in ['', None, []]:
-            colormap_kind = self.params_drawing["color_amplitude"]
+            colormap_kind = self.CONF_DRAWING["color_amplitude"]
         id_fig, IDax, IDimage = draw2D(amplitude,
                                        self.x,
                                        self.y,
@@ -1967,7 +1969,7 @@ class Scalar_field_XY(object):
         phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
-            colormap_kind = self.params_drawing["color_phase"]
+            colormap_kind = self.CONF_DRAWING["color_phase"]
 
         id_fig, IDax, IDimage = draw2D(
             phase,
@@ -2029,12 +2031,12 @@ class Scalar_field_XY(object):
         plt.axis(extension)
         plt.colorbar(orientation='horizontal', shrink=0.66)
         plt.axis(extension)
-        h1.set_cmap(self.params_drawing["color_intensity"])
+        h1.set_cmap(self.CONF_DRAWING["color_intensity"])
         if self.type == 'Scalar_mask_XY':
             plt.clim(0, 1)
 
         plt.subplot(1, 2, 2)
-        phase[phase == 1] = -1
+        # phase[phase == 1] = -1
         phase = phase / degrees
 
         # elimino la fase en la visualicion cuando no hay campo
@@ -2050,7 +2052,7 @@ class Scalar_field_XY(object):
         plt.axis(extension)
         plt.title("$phase$")
         plt.clim(-180, 180)
-        h2.set_cmap(self.params_drawing["color_phase"])  #
+        h2.set_cmap(self.CONF_DRAWING["color_phase"])  #
         plt.subplots_adjust(0, 0, 1, 1, 0, 0)
 
         return (h1, h2)
@@ -2075,7 +2077,7 @@ class Scalar_field_XY(object):
         rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
-            colormap_kind = self.params_drawing["color_real"]
+            colormap_kind = self.CONF_DRAWING["color_real"]
 
         id_fig, IDax, IDimage = draw2D(rf,
                                        self.x,
@@ -2202,8 +2204,8 @@ def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
         complex np.array: kernel
     """
     k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z + (X**2 + Y**2)
-                          / (2 * z))) / (1.j * wavelength * z)
+    return exp(1.j * k * (z + (X**2 + Y**2) /
+                          (2 * z))) / (1.j * wavelength * z)
 
 
 def PWD_kernel(u, n, k0, k_perp2, dz):

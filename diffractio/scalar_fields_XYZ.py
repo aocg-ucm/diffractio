@@ -56,7 +56,8 @@ from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
 from scipy.signal import correlate2d
 
-from . import degrees, eps, mm, np, params_drawing, plt
+from . import degrees, eps, mm, np, plt
+from .config import CONF_DRAWING
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -106,7 +107,7 @@ class Scalar_field_XYZ(object):
         self.fast = True
         self.quality = 0
         self.borders = None
-        self.params_drawing = params_drawing
+        self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:
             self.X, self.Y, self.Z = ndgrid(x, y, z)
@@ -1263,7 +1264,7 @@ class Scalar_field_XYZ(object):
         plt.ylabel('x $(um)$', fontsize=16)
         plt.title('intensity XZ', fontsize=20)
         h1.set_cmap(
-            self.params_drawing['color_intensity'])  # OrRd # Reds_r gist_heat
+            self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
         # -----------------     no functiona de momento -----------------
@@ -1320,7 +1321,7 @@ class Scalar_field_XYZ(object):
         plt.ylabel('y $(um)$', fontsize=16)
         plt.title('intensity YZ', fontsize=20)
         h1.set_cmap(
-            self.params_drawing['color_intensity'])  # OrRd # Reds_r gist_heat
+            self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
         # -----------------     no functiona de momento -----------------
@@ -1508,12 +1509,12 @@ class Scalar_field_XYZ(object):
                 return "no correct kind in video"
 
         if kind == 'intensity':
-            cmap1 = self.params_drawing['color_intensity']
+            cmap1 = self.CONF_DRAWING['color_intensity']
         elif kind == 'phase':
-            cmap1 = self.params_drawing['color_phase']
+            cmap1 = self.CONF_DRAWING['color_phase']
 
         elif kind == 'real':
-            cmap1 = self.params_drawing['color_real']
+            cmap1 = self.CONF_DRAWING['color_real']
 
         else:
             return "no correct kind in video"

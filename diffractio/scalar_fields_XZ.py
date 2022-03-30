@@ -70,7 +70,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import degrees, eps, mm, np, params_drawing, plt, seconds, um
+from . import degrees, eps, mm, np, plt, seconds, um
+from .config import CONF_DRAWING
 from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
                               kernelRS, kernelRSinverse)
 from .scalar_masks_X import Scalar_mask_X
@@ -122,7 +123,7 @@ class Scalar_field_XZ(object):
         self.fast = False
         self.quality = 0
         self.borders = None  # borders at refraction index
-        self.params_drawing = params_drawing
+        self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:
             self.X, self.Z = ndgrid(x, z)
@@ -1480,7 +1481,7 @@ class Scalar_field_XZ(object):
                 self.z[0] / mm, self.z[-1] / mm, self.x[0], self.x[-1]
             ]
 
-        percentaje_intensity = params_drawing['percentaje_intensity']
+        percentaje_intensity = CONF_DRAWING['percentaje_intensity']
 
         plt.figure()
 
@@ -1517,13 +1518,13 @@ class Scalar_field_XZ(object):
 
         if colormap_kind in ('', [], None, True):
             if kind == 'intensity':
-                colormap_kind = self.params_drawing["color_intensity"]
+                colormap_kind = self.CONF_DRAWING["color_intensity"]
             if kind == 'amplitude':
-                colormap_kind = self.params_drawing["color_amplitude"]
+                colormap_kind = self.CONF_DRAWING["color_amplitude"]
             if kind == 'phase':
-                colormap_kind = self.params_drawing["color_phase"]
+                colormap_kind = self.CONF_DRAWING["color_phase"]
             if kind == 'real':
-                colormap_kind = self.params_drawing["color_real"]
+                colormap_kind = self.CONF_DRAWING["color_real"]
 
         if kind == 'intensity':
             climits = I_drawing.min(), I_drawing.max()

@@ -39,6 +39,8 @@ import numpy as np
 import scipy as sp
 from matplotlib import cm, rcParams
 
+from .config import CONF_DRAWING
+
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
 __version__ = '0.0.13'
@@ -57,18 +59,10 @@ num_decimals = 4
 
 no_date = False  # for test folder
 
-params_drawing = dict()
-params_drawing['color_intensity'] = cm.gist_heat  # cm.gist_heat  #cm.hot
-params_drawing['color_amplitude'] = cm.jet
-params_drawing['color_amplitude_sign'] = cm.seismic
 
-# cm.hsv  # cm.twilight #cm.twilight_shift
-params_drawing['color_phase'] = cm.twilight  # .twilight hsv
-params_drawing['color_real'] = cm.seismic
-params_drawing['color_stokes'] = cm.seismic
-params_drawing['percentaje_intensity'] = 0.005
 rcParams['figure.figsize'] = [4, 4]
 rcParams['figure.dpi'] = 125
+
 
 now = datetime.datetime.now()
 date_test = now.strftime("%Y-%m-%d_%H")

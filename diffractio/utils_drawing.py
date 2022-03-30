@@ -9,10 +9,11 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import degrees, eps, mm, params_drawing
+from . import degrees, eps, mm
+from .config import CONF_DRAWING
 from .utils_optics import field_parameters
 
-percentaje_intensity = params_drawing['percentaje_intensity']
+percentaje_intensity = CONF_DRAWING['percentaje_intensity']
 
 
 def view_image(filename):
@@ -174,7 +175,7 @@ def draw_several_fields(fields,
     id_fig = plt.figure(figsize=figsize, facecolor='w', edgecolor='k')
     num_dibujos = len(fields)
 
-    percentaje_intensity = params_drawing['percentaje_intensity']
+    percentaje_intensity = CONF_DRAWING['percentaje_intensity']
 
     for i in sorted(range(num_dibujos)):
         c = fields[i]
@@ -185,30 +186,30 @@ def draw_several_fields(fields,
 
         if kinds == '':
             image = intensity
-            colormap = params_drawing['color_intensity']
+            colormap = CONF_DRAWING['color_intensity']
             kind = 'intensity'
         else:
             kind = kinds[i]
             if kinds[i] == 'intensity':
                 image = intensity
-                colormap = params_drawing['color_intensity']
+                colormap = CONF_DRAWING['color_intensity']
             elif kinds[i] == 'phase':
                 phase = phase / degrees
                 phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
-                colormap = params_drawing['color_phase']
+                colormap = CONF_DRAWING['color_phase']
                 image = phase
             elif kinds[i] == 'amplitude':
                 image = amplitude
-                colormap = params_drawing['color_amplitude']
+                colormap = CONF_DRAWING['color_amplitude']
             elif kinds[i] == 'real':
-                percentaje_intensity = params_drawing['percentaje_intensity']
+                percentaje_intensity = CONF_DRAWING['percentaje_intensity']
                 rf = np.real(c.u)
                 intensity = np.abs(c.u)**2
                 rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
                 image = np.real(c.u)
-                colormap = params_drawing['color_real']
+                colormap = CONF_DRAWING['color_real']
 
             if logarithm is True and kinds[i] in ('intensity', 'amplitude', 'real'):
                 image = np.log(image + 1)
