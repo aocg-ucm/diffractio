@@ -546,7 +546,7 @@ class Scalar_field_XY(object):
         k = 2 * np.pi / self.wavelength
         num_x = self.x.size
         num_y = self.y.size
-        print(num_x, num_y, np.bitwise_and(num_x != num_y, cut_square == True))
+        #print(num_x, num_y, np.bitwise_and(num_x != num_y, cut_square == True))
         u_field = self.u
         range_x = self.x[1] - self.x[0]
         range_y = self.y[1] - self.y[0]
@@ -557,7 +557,7 @@ class Scalar_field_XY(object):
         #     u_field = u_field[0:num_final, 0:num_final]
 
         ttf1 = np.fft.fft2(u_field)
-        print(ttf1.shape)
+        #print(ttf1.shape)
 
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
