@@ -45,8 +45,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 from matplotlib import rcParams
-from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
-                   matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
+from numpy import cos, linspace, shape, sin, sqrt, zeros
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
@@ -423,13 +422,13 @@ class Vector_paraxial_field_XY(object):
         """
         from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
-        dx = self.x[1] - self.x[0]
-        dy = self.y[1] - self.y[0]
+        # dx = self.x[1] - self.x[0]
+        # dy = self.y[1] - self.y[0]
         num_x, num_y = self.X.shape
 
         # numerical aperture
         sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
-        NA = n * sin_theta_max
+        # NA = n * sin_theta_max
 
         r = np.sqrt(self.X**2 + self.Y**2)
         phi = np.arctan2(self.Y, self.X)
@@ -524,7 +523,7 @@ class Vector_paraxial_field_XY(object):
             if has_draw:
                 self.draw(kind='intensities')
 
-    def VFFT(self, radius, focal, n=1, new_field=False,shift=True,remove0=True, matrix=False, has_draw=False):
+    def VFFT(self, radius, focal, n=1, new_field=False, shift=True, remove0=True, matrix=False, has_draw=False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -556,13 +555,13 @@ class Vector_paraxial_field_XY(object):
         """
         from .vector_paraxial_sources_XY import Vector_paraxial_source_XY
 
-        dx = self.x[1] - self.x[0]
-        dy = self.y[1] - self.y[0]
+        # dx = self.x[1] - self.x[0]
+        # dy = self.y[1] - self.y[0]
         num_x, num_y = self.X.shape
 
         # numerical aperture
         sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
-        NA = n * sin_theta_max
+        # NA = n * sin_theta_max
 
         r = np.sqrt(self.X**2 + self.Y**2)
         phi = np.arctan2(self.Y, self.X)
@@ -618,7 +617,7 @@ class Vector_paraxial_field_XY(object):
         if remove0:
             Ep_x[0, 0] = 0
             Ep_y[0, 0] = 0
-            #Ep_z[0,0] = 0
+            # Ep_z[0,0] = 0
 
         if shift:
             Ep_x = fftshift(Ep_x)
@@ -704,10 +703,10 @@ class Vector_paraxial_field_XY(object):
 
         # numerical aperture
         sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
-        NA = n * sin_theta_max
+        # NA = n * sin_theta_max
 
-        dx = self.x[1] - self.x[0]
-        dy = self.y[1] - self.y[0]
+        # dx = self.x[1] - self.x[0]
+        # dy = self.y[1] - self.y[0]
         num_x, num_y = self.X.shape
 
         r = np.sqrt(self.X**2 + self.Y**2)
@@ -730,7 +729,7 @@ class Vector_paraxial_field_XY(object):
         cos_phi = np.cos(phi)
         sin_phi = np.sin(phi)
 
-        apodization_factor = np.sqrt(np.abs(np.cos(theta)))
+        #  apodization_factor = np.sqrt(np.abs(np.cos(theta)))
 
         G = sqrt(np.abs(1 - sin_theta_max**2 * (u**2 + v**2)))
         G = G * circle_mask.u
@@ -1229,12 +1228,12 @@ class Vector_paraxial_field_XY(object):
         Ez_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ez)
         tx, ty = rcParams['figure.figsize']
 
-        intensity1 = np.abs(Ex_r)**2
-        intensity2 = np.abs(Ey_r)**2
+        # intensity1 = np.abs(Ex_r)**2
+        # intensity2 = np.abs(Ey_r)**2
         intensity3 = np.abs(Ez_r)**2
 
-        intensity_max = np.max(
-            (intensity1.max(), intensity2.max(), intensity3.max()))
+        # intensity_max = np.max(
+        #     (intensity1.max(), intensity2.max(), intensity3.max()))
 
         if intensity3.max() < 1e-15:
 

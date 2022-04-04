@@ -24,6 +24,8 @@ The main atributes are:
     * half_wave
     * polarizer_retarder
 """
+import copy
+
 from py_pol.jones_matrix import Jones_matrix
 
 from . import degrees, np, number_types, plt
@@ -105,6 +107,13 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         return m3
 
+    def duplicate(self, clear=False):
+        """Duplicates the instance"""
+        new_field = copy.deepcopy(self)
+        if clear is True:
+            new_field.clear_field()
+        return new_field
+
     def rotate(self, angle, new_mask=False):
         """Rotates the mask a certain angle.abs
 
@@ -147,6 +156,49 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         self.M01 = self.M01 * u_mask_circle.u
         self.M10 = self.M10 * u_mask_circle.u
         self.M11 = self.M11 * u_mask_circle.u
+
+    def pupil(self, r0=None, radius=None, angle=0 * degrees):
+        """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.
+
+        Parameters:
+            r0 (float, float): center of circle/ellipse
+            radius (float, float) or (float): radius of circle/ellipse
+            angle (float): angle of rotation in radians
+
+        Example:
+
+            pupil(r0=(0 * um, 0 * um), radius=(250*um, 125*um), angle=0*degrees)
+        """
+
+        if r0 is None:
+            x0 = (self.x[-1] + self.x[0]) / 2
+            y0 = (self.y[-1] + self.y[0]) / 2
+            r0 = (x0, y0)
+
+        if radius is None:
+            radiusx = (self.x[-1] - self.x[0]) / 2
+            radiusy = (self.y[-1] - self.y[0]) / 2
+            radius = (radiusx, radiusy)
+
+        x0, y0 = r0
+
+        if isinstance(radius, (float, int, complex)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+
+        # Rotacion del circula/elipse
+        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
+
+        # Definicion de la transmitancia
+        pupil0 = np.zeros(np.shape(self.X))
+        ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
+            (Yrot)**2 / (radiusy**2 + 1e-15) < 1
+        pupil0[ipasa] = 1
+        self.M00 = self.M00 * pupil0
+        self.M01 = self.M01 * pupil0
+        self.M10 = self.M10 * pupil0
+        self.M11 = self.M11 * pupil0
 
     def apply_scalar_mask(self, u_mask):
         """The same mask u_mask is applied to all the Jones Matrix.
@@ -200,15 +252,18 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                 normalize (bool): If True, levels are 0,1,.., N.
 
         """
-        num_levels = len(states)
         mask_new = mask.duplicate()
 
         if type(states) == np.ndarray:
+            states_new = []
+            num_levels = len(states)
             jones_0 = Jones_matrix()
-            jones_0.from_matrix(states)
-            states = jones_0
-
-            states = states.get_list()
+            for i, state in states:
+                jones_0.from_matrix(state)
+                states_new.append(jones_0)
+            states = states_new
+        # elif type(list) == list:
+        #     states = states.get_list()
 
         if discretize is True:
             mask_new.discretize(num_levels=num_levels, new_field=False)
@@ -222,11 +277,10 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         for i, state in enumerate(states):
             i_level = (mask_new.u == i)
-
-            self.M00[i_level] = state[0, 0]
-            self.M01[i_level] = state[0, 1]
-            self.M10[i_level] = state[1, 0]
-            self.M11[i_level] = state[1, 1]
+            self.M00[i_level] = state.M[0, 0]
+            self.M01[i_level] = state.M[0, 1]
+            self.M11[i_level] = state.M[1, 1]
+            self.M10[i_level] = state.M[1, 0]
 
     def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
