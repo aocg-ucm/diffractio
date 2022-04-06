@@ -114,21 +114,21 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             new_field.clear_field()
         return new_field
 
-    def rotate(self, angle, new_mask=False):
-        """Rotates the mask a certain angle.abs
-
-        Parameters:
-            angle (float): rotation angle in radians
-            new_mask (bool): if True generates a new mask
-
-        Returns:
-            if new_mask is True: Vector_paraxial_mask_XY
-        """
-
-        # TODO:
-        # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
-
-        pass
+    # def rotate(self, angle, new_mask=False):
+    #     """Rotates the mask a certain angle.abs
+    #
+    #     Parameters:
+    #         angle (float): rotation angle in radians
+    #         new_mask (bool): if True generates a new mask
+    #
+    #     Returns:
+    #         if new_mask is True: Vector_paraxial_mask_XY
+    #     """
+    #
+    #     # TODO:
+    #     # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
+    #
+    #     pass
 
     def apply_circle(self, r0=None, radius=None):
         """The same circular mask is applied to all the Jones Matrix.
@@ -254,16 +254,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         """
         mask_new = mask.duplicate()
 
-        if type(states) == np.ndarray:
-            states_new = []
-            num_levels = len(states)
-            jones_0 = Jones_matrix()
-            for i, state in states:
-                jones_0.from_matrix(state)
-                states_new.append(jones_0)
-            states = states_new
-        # elif type(list) == list:
-        #     states = states.get_list()
+        num_levels = len(states)
 
         if discretize is True:
             mask_new.discretize(num_levels=num_levels, new_field=False)
@@ -390,7 +381,14 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         if kind in ('amplitude', 'all'):
             plt.set_cmap(CONF_DRAWING['color_intensity'])
-            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.025})
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.25,
+                                        'wspace': 0.025
+                                    })
             im1 = axs[0, 0].imshow(a00, extent=extension)
             im1.set_clim(0, a_max)
             axs[0, 0].set_title("J00")
@@ -422,20 +420,31 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         if kind in ('phase', 'all'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
 
-            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.00})
-            im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees, extent=extension)
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.25,
+                                        'wspace': 0.00
+                                    })
+            im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
+                                   extent=extension)
             im1.set_clim(-180, 180)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees, extent=extension)
+            im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees,
+                                   extent=extension)
             im1.set_clim(-180, 180)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees, extent=extension)
+            im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees,
+                                   extent=extension)
             im1.set_clim(-180, 180)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees, extent=extension)
+            im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees,
+                                   extent=extension)
             im1.set_clim(-180, 180)
             axs[1, 1].set_title("J11")
 
