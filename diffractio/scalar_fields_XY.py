@@ -559,7 +559,7 @@ class Scalar_field_XY(object):
         #     u_field = u_field[0:num_final, 0:num_final]
 
         ttf1 = np.fft.fft2(u_field)
-        #print(ttf1.shape)
+        # print(ttf1.shape)
 
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
@@ -1929,7 +1929,8 @@ class Scalar_field_XY(object):
                           normalize='maximum',
                           title='intensity',
                           cut_value=1,
-                          colormap_kind=''):
+                          colormap_kind='',
+                          **kwargs):
         """Draws amplitude  XY field.
 
         Parameters:
@@ -1951,12 +1952,13 @@ class Scalar_field_XY(object):
                                        ylabel="$y  (\mu m)$",
                                        title=title,
                                        color=colormap_kind,
-                                       reduce_matrix=self.reduce_matrix)
+                                       reduce_matrix=self.reduce_matrix,
+                                       **kwargs)
         plt.clim(-max_amplitude, max_amplitude)
 
         return id_fig, IDax, IDimage
 
-    def __draw_phase__(self, title=r'phase/pi', colormap_kind=''):
+    def __draw_phase__(self, title=r'phase/pi', colormap_kind='', **kwargs):
         """Draws phase of  XY field
 
         Parameters:
@@ -1979,7 +1981,7 @@ class Scalar_field_XY(object):
             ylabel="$y  (\mu m)$",
             title=title,
             color=colormap_kind,
-            reduce_matrix=self.reduce_matrix)  # seismic gist_heat
+            reduce_matrix=self.reduce_matrix, **kwargs)  # seismic gist_heat
         plt.clim(vmin=-180, vmax=180)
 
         return id_fig, IDax, IDimage
@@ -2062,7 +2064,7 @@ class Scalar_field_XY(object):
                             normalize='maximum',
                             cut_value=1,
                             title="",
-                            colormap_kind=''):
+                            colormap_kind='', **kwargs):
         """Draws real field  XY field.
 
         Parameters:
@@ -2086,7 +2088,7 @@ class Scalar_field_XY(object):
                                        ylabel="$y  (\mu m)$",
                                        title=title,
                                        color=colormap_kind,
-                                       reduce_matrix=self.reduce_matrix)
+                                       reduce_matrix=self.reduce_matrix, **kwargs)
 
         return id_fig, IDax, IDimage
 
