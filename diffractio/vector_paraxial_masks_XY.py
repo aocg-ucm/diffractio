@@ -355,7 +355,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         return m0
 
-    def draw(self, kind='amplitude', z_scale='um'):
+    def draw(self, kind='amplitude', range_scale='um'):
         """Draws the mask. It must be different to sources.
 
         Parameters:
@@ -364,7 +364,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         # def draw_masks(self, kind='fields'):
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
-        if z_scale == 'mm':
+        if range_scale == 'mm':
             extension = extension / 1000.
 
         a00, int00, phase00 = field_parameters(self.M00,
@@ -410,10 +410,10 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             cbar = plt.colorbar(im1, cax=cax)
             cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
 
-            if z_scale == 'um':
+            if range_scale == 'um':
                 axs[1, 0].set_xlabel(r'x ($\mu$m)')
                 axs[1, 0].set_ylabel(r'y($\mu$m)')
-            elif z_scale == 'mm':
+            elif range_scale == 'mm':
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
@@ -453,10 +453,10 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             cbar = plt.colorbar(im1, cax=cax)
             cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
 
-            if z_scale == 'um':
+            if range_scale == 'um':
                 axs[1, 0].set_xlabel(r'x ($\mu$m)')
                 axs[1, 0].set_ylabel(r'y($\mu$m)')
-            elif z_scale == 'mm':
+            elif range_scale == 'mm':
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
