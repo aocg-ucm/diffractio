@@ -389,19 +389,19 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                                         'hspace': 0.25,
                                         'wspace': 0.025
                                     })
-            im1 = axs[0, 0].imshow(a00, extent=extension)
+            im1 = axs[0, 0].imshow(a00, extent=extension, origin='lower')
             im1.set_clim(0, a_max)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(a01, extent=extension)
+            im1 = axs[0, 1].imshow(a01, extent=extension, origin='lower')
             im1.set_clim(0, a_max)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(a10, extent=extension)
+            im1 = axs[1, 0].imshow(a10, extent=extension, origin='lower')
             im1.set_clim(0, a_max)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(a11, extent=extension)
+            im1 = axs[1, 1].imshow(a11, extent=extension, origin='lower')
             im1.set_clim(0, a_max)
             axs[1, 1].set_title("J11")
 
@@ -429,22 +429,22 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
                                         'wspace': 0.00
                                     })
             im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
-                                   extent=extension)
+                                   extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 0].set_title("J00")
 
             im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees,
-                                   extent=extension)
+                                   extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 1].set_title("J01")
 
             im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees,
-                                   extent=extension)
+                                   extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 0].set_title("J10")
 
             im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees,
-                                   extent=extension)
+                                   extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 1].set_title("J11")
 
