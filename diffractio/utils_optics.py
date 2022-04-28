@@ -735,6 +735,17 @@ def normalize(u, kind='intensity'):
 
     return u
 
+def normalize_vector(u):
+    """Normalizes a vector to have intensity or amplitude, etc. 1
+
+    Parameters:
+        u (numpy.array): vector (last dimension should have size 2 or 3)
+
+    Returns
+        u (numpy.array): normalized optical field
+    """
+    return u / np.linalg.norm(u)
+
 
 def field_parameters(u, has_amplitude_sign=False):
     """Determines main parameters of field: amplitude intensity phase. All this parameters have the same dimension as u.
@@ -754,7 +765,7 @@ def field_parameters(u, has_amplitude_sign=False):
     phase = np.angle(u)
 
     if has_amplitude_sign is True:
-        amplitude = np.sign(u) * np.abs(u)
+        amplitude = np.sign(np.real(u)) * np.abs(u)
     else:
         amplitude = np.abs(u)
 

@@ -267,11 +267,13 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
         mask_new.u = mask_new.u.astype(np.int)
 
         for i, state in enumerate(states):
+            # print(state)
             i_level = (mask_new.u == i)
-            self.M00[i_level] = state.M[0, 0]
-            self.M01[i_level] = state.M[0, 1]
-            self.M11[i_level] = state.M[1, 1]
-            self.M10[i_level] = state.M[1, 0]
+            self.M00[i_level] = state.M[0, 0, 0]
+            self.M01[i_level] = state.M[0, 1, 0]
+            self.M11[i_level] = state.M[1, 1, 0]
+            self.M10[i_level] = state.M[1, 0, 0]
+            # print(self.M00[i_level][0], self.M01[i_level][0], self.M10[i_level][0], self.M11[i_level][0])
 
     def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
@@ -368,14 +370,14 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             extension = extension / 1000.
 
         a00, int00, phase00 = field_parameters(self.M00,
-                                               has_amplitude_sign=True)
+                                               has_amplitude_sign=False)
 
         a01, int01, phase01 = field_parameters(self.M01,
-                                               has_amplitude_sign=True)
+                                               has_amplitude_sign=False)
         a10, int10, phase10 = field_parameters(self.M10,
-                                               has_amplitude_sign=True)
+                                               has_amplitude_sign=False)
         a11, int11, phase11 = field_parameters(self.M11,
-                                               has_amplitude_sign=True)
+                                               has_amplitude_sign=False)
 
         a_max = np.abs((a00, a01, a10, a11)).max()
 

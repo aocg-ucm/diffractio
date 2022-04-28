@@ -32,7 +32,7 @@ from . import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
-from .utils_optics import normalize
+from .utils_optics import normalize, normalize_vector
 from .vector_paraxial_fields_XY import Vector_paraxial_field_XY
 
 
@@ -77,10 +77,10 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radiusx, radiusy = radius
         radius = (radiusx, radiusy)
 
-        self = define_initial_field(self, u)
+        self = define_initial_field(self)
 
         if has_normalization:
-            v = normalize(v)
+            v = normalize_vector(v)
 
         self.Ex = v[0] * self.Ex
         self.Ey = v[1] * self.Ey
