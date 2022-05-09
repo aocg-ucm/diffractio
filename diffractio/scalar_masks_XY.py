@@ -65,7 +65,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
-
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -1246,7 +1245,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             t1 = ones_like(self.X)
 
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
+        #t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
+        t2.u = sin(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
         t2.u[t2.u > 0] = levels[0]
         t2.u[t2.u <= 0] = levels[1]
 
@@ -1718,13 +1718,10 @@ class Scalar_mask_XY(Scalar_field_XY):
                        x0=x0,
                        angle=angle)
 
-
-
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
 
         self.u = t.u
-
 
     def ronchi_grating(self, x0, period, fill_factor=0.5, angle=0):
         """Amplitude binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
@@ -1754,35 +1751,32 @@ class Scalar_mask_XY(Scalar_field_XY):
                        x0=x0,
                        angle=angle)
 
-
-
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
 
         #Correction 1 (90 degress)
         #Mitad de linea blanca, mitad negra.
         #Nos quedamos con el valor mayor (e-15) para que en ese tramo valga 1.
-        if ((t.u[0,0]!=t.u[0,-1]) and angle == 90*degrees):
+        if ((t.u[0, 0] != t.u[0, -1]) and angle == 90 * degrees):
             #print(t.u[0].max())
             t.u[0] = t.u[0].max()
 
-
         #Correction 2 (0 degrees)
-        if angle==0*degrees:
+        if angle == 0 * degrees:
             ind = 0
-            times = int(2*t.x.max()/period)
+            times = int(2 * t.x.max() / period)
             pixel_size = int(t.x[1] - t.x[0])
-            index = np.where(t.u[0,:] == 0)[0]
-            distancia_minimos = int(period/pixel_size)
+            index = np.where(t.u[0, :] == 0)[0]
+            distancia_minimos = int(period / pixel_size)
 
-            for i in range(times-1):
-                D_index = index[ind+int(distancia_minimos/2)] -index[ind]
+            for i in range(times - 1):
+                D_index = index[ind + int(distancia_minimos / 2)] - index[ind]
 
                 if D_index != distancia_minimos:
                     #print('Correcion_Error del periodo')
-                    t.u[:,ind] = 1
+                    t.u[:, ind] = 1
 
-                ind += int(distancia_minimos/2)
+                ind += int(distancia_minimos / 2)
 
         self.u = t.u
 
@@ -1881,20 +1875,19 @@ class Scalar_mask_XY(Scalar_field_XY):
         t2.binary_grating(r0[1] + period[1] / 4, period[1], fill_factor, 0, 1,
                           0, angle + 90. * degrees)
 
-
         t2_grating = t1 * t2
 
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
     def grating_2D_chess_deprecated(self,
-                         r0,
-                         period,
-                         fill_factor,
-                         amin=0,
-                         amax=1,
-                         phase=0 * pi / 2,
-                         angle=0 * degrees):
+                                    r0,
+                                    period,
+                                    fill_factor,
+                                    amin=0,
+                                    amax=1,
+                                    phase=0 * pi / 2,
+                                    angle=0 * degrees):
         """2D binary grating as chess
 
          Parameters:
@@ -1928,7 +1921,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
-
     def grating_2D_chess(self,
                          r0,
                          period,
@@ -1959,11 +1951,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
 
-
-        t1.binary_grating(r0[0], period[0], fill_factor, 0, 1,
-                          0, angle)
-        t2.binary_grating(r0[1], period[1], fill_factor, 0, 1,
-                          0, angle + 90. * degrees)
+        t1.binary_grating(r0[0], period[0], fill_factor, 0, 1, 0, angle)
+        t2.binary_grating(r0[1], period[1], fill_factor, 0, 1, 0,
+                          angle + 90. * degrees)
 
         t2_grating = t1 * t2
         t2_grating.u = np.logical_xor(t1.u, t2.u)

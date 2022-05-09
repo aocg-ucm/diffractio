@@ -50,7 +50,6 @@ class Scalar_mask_X(Scalar_field_X):
         self.type (str): Class of the field
         self.date (str): date when performed
     """
-
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         """equal than Scalar_field_X"""
         super(self.__class__, self).__init__(x, wavelength, n_background, info)
@@ -148,18 +147,16 @@ class Scalar_mask_X(Scalar_field_X):
         else:
             t = np.ones_like(self.x)
 
-        f1_interp = interp1d(
-            array1[:, 0],
-            array1[:, 1],
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=0)
-        f2_interp = interp1d(
-            array2[:, 0],
-            array2[:, 1],
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=0)  # interpolates all the range
+        f1_interp = interp1d(array1[:, 0],
+                             array1[:, 1],
+                             kind=interp_kind,
+                             bounds_error=False,
+                             fill_value=0)
+        f2_interp = interp1d(array2[:, 0],
+                             array2[:, 1],
+                             kind=interp_kind,
+                             bounds_error=False,
+                             fill_value=0)  # interpolates all the range
 
         F1 = f1_interp(self.x)
         F2 = f2_interp(self.x)
@@ -313,11 +310,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         self.u = u * t
 
-    def biprism_fresnel_nh(self,
-                           x0,
-                           width,
-                           height,
-                           n):
+    def biprism_fresnel_nh(self, x0, width, height, n):
         """Fresnel biprism, uses height and refraction index.
 
         Parameters:
@@ -412,7 +405,7 @@ class Scalar_mask_X(Scalar_field_X):
         t2 = 0
         if a is not None:
             for i, ai in enumerate(a):
-                t2 = t2 + ai * s2 ** (2 + i)
+                t2 = t2 + ai * s2**(2 + i)
 
         t = t1 + t2
 
@@ -463,11 +456,13 @@ class Scalar_mask_X(Scalar_field_X):
 
         if kind == 'amplitude' and binary is True:
             u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
+            u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
             u_fresnel[u_fresnel <= 0] = 0
 
         elif kind == 'phase' and binary is True:
             u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
+            u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
             u_fresnel[u_fresnel <= 0] = 0
             u_fresnel = np.exp(1j * u_fresnel * phase)
@@ -479,6 +474,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         elif kind == 'amplitude' and binary is False:
             u_fresnel = (1 + np.cos(k * ((self.x - x0)**2 / (2 * focal)))) / 2
+            u_fresnel = (1 + np.sin(k * ((self.x - x0)**2 / (2 * focal)))) / 2
 
         h = u_fresnel
         h = h - h.min()
@@ -599,8 +595,9 @@ class Scalar_mask_X(Scalar_field_X):
             amp_max (float): maximum amplitude
         """
         # Definicion de la sinusoidal
-        self.u = amp_min + (amp_max - amp_min) * (
-            1 + np.cos(2 * np.pi * (self.x - x0) / period)) / 2
+        self.u = amp_min + (amp_max -
+                            amp_min) * (1 + np.cos(2 * np.pi *
+                                                   (self.x - x0) / period)) / 2
 
         return self.u
 
@@ -621,13 +618,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = t.u
         return t.u
 
-    def binary_grating(self,
-                       x0,
-                       period,
-                       fill_factor,
-                       amin,
-                       amax,
-                       phase):
+    def binary_grating(self, x0, period, fill_factor, amin, amax, phase):
         """binary grating amplitude and/or phase
 
         Parameters:
@@ -645,7 +636,13 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = self.u * np.exp(1j * phase * t.u)
         return t.u
 
-    def blazed_grating(self, x0, period, height, n, ):
+    def blazed_grating(
+        self,
+        x0,
+        period,
+        height,
+        n,
+    ):
         """Phase, blazed grating. The phase shift is determined by heigth and refraction index.
 
         Parameters:
@@ -896,8 +893,8 @@ class Scalar_mask_X(Scalar_field_X):
 
         period = eval(p_x)
         q_x = 2 * np.pi / period
-        t = amp_min + (amp_max - amp_min) * (
-            1 + np.cos(q_x * (self.x - delta_x))) / 2
+        t = amp_min + (amp_max -
+                       amp_min) * (1 + np.cos(q_x * (self.x - delta_x))) / 2
         # plt.figure()
         # plt.plot(t)
 
@@ -921,7 +918,10 @@ class Scalar_mask_X(Scalar_field_X):
 
         return t
 
-    def binary_code_positions(self, x_transitions, start='down', has_draw=True):
+    def binary_code_positions(self,
+                              x_transitions,
+                              start='down',
+                              has_draw=True):
         """
         Genenerates a binary code, using the positions given in x_transitions
 
@@ -979,8 +979,8 @@ class Scalar_mask_X(Scalar_field_X):
         if kind == 'abs_fag':
             i0_ones = np.ones_like(code)
             i0_zeros = np.zeros_like(code)
-            code = np.vstack((i0_zeros, i0_ones, code, i0_ones)).reshape((-1, ),
-                                                                         order='F')
+            code = np.vstack((i0_zeros, i0_ones, code, i0_ones)).reshape(
+                (-1, ), order='F')
             bit_width = bit_width / 4
 
         t = Scalar_mask_X(self.x, self.wavelength)
