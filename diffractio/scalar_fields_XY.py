@@ -996,9 +996,9 @@ class Scalar_field_XY(object):
         self.quality = dr_ideal / dr_real
         if verbose is True:
             if (self.quality.min() > 1):
-                print('Good result: factor {:2.2f}'.format(self.quality))
+                print('Good result: factor {:2.2f}'.format(self.quality), end='\r')
             else:
-                print('- Needs denser sampling: factor {:2.2f}'.format(
+                print('- Needs denser sampling: factor {:2.2f}\n'.format(
                     self.quality))
 
         a = [2, 4]
