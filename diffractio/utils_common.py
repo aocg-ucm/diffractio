@@ -28,7 +28,7 @@ def computer_parameters(verbose=False):
         - total memory
         - max frequency
 
-    Arguments:
+    Parameters:
         verbose (bool): If True prints data
 
     Returns:
