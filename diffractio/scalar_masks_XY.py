@@ -97,9 +97,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         # hay que terminar
 
     def set_phase(self, q=1, phase_min=0, phase_max=pi):
-        """Obliga a la mask a ser de phase,
-            q=0: toma la phase que hay y hace la amplitude=1
-            q=1: la amplitude la pasa a phase"""
+        """Makes the mask as phase,
+            q=0: Pass amplitude to 1.
+            q=1: amplitude pass to phase
+            """
 
         amplitude = np.abs(self.u)
         phase = angle(self.u)
@@ -204,7 +205,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
-    # __MASCARAS PROPIAMENTE DICHAS____________________________________________
+    # __MASKS____________________________________________
 
     def extrude_mask_x(self,
                        mask_X,
