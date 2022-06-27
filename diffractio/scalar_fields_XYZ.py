@@ -924,13 +924,13 @@ class Scalar_field_XYZ(object):
             if ix0 is None:
                 ix, tmp1, tmp2 = nearest(self.x, x0)
             else:
-                iy = iy0
+                iy = ix0
             field_output.u = np.squeeze(self.u[ix, :, :])
             return field_output
 
         if matrix is True:
             if ix0 is None:
-                ix, tmp1, tmp2 = nearest(self.x, x0)
+                ix, _, _ = nearest(self.x, x0)
             else:
                 ix = ix0
             return np.squeeze(self.u[ix, :, :])
