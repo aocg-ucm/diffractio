@@ -1,4 +1,3 @@
-nbsphinx
 numpy
 scipy
 matplotlib
@@ -9,4 +8,4 @@ pandas
 psutil
 py_pol
 ipywidgets
-ipython
+

@@ -50,6 +50,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.type (str): Class of the field
         self.date (str): date when performed
     """
+
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         """equal than Scalar_field_X"""
         super(self.__class__, self).__init__(x, wavelength, n_background, info)
@@ -455,13 +456,13 @@ class Scalar_mask_X(Scalar_field_X):
             t1 = np.ones_like(self.x)
 
         if kind == 'amplitude' and binary is True:
-            u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
+            # u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
             u_fresnel[u_fresnel <= 0] = 0
 
         elif kind == 'phase' and binary is True:
-            u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
+            # u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
             u_fresnel[u_fresnel > 0] = 1
             u_fresnel[u_fresnel <= 0] = 0
@@ -473,7 +474,7 @@ class Scalar_mask_X(Scalar_field_X):
             u_fresnel = np.exp(1j * fase * phase)
 
         elif kind == 'amplitude' and binary is False:
-            u_fresnel = (1 + np.cos(k * ((self.x - x0)**2 / (2 * focal)))) / 2
+            # u_fresnel = (1 + np.cos(k * ((self.x - x0)**2 / (2 * focal)))) / 2
             u_fresnel = (1 + np.sin(k * ((self.x - x0)**2 / (2 * focal)))) / 2
 
         h = u_fresnel
