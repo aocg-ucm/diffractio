@@ -108,6 +108,7 @@ class Scalar_field_XZ(object):
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
+
     def __init__(self,
                  x=None,
                  z=None,
@@ -883,8 +884,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                      sep="\r",
-                      end="\r")
+                    sep="\r",
+                    end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -1824,6 +1825,8 @@ class Scalar_field_XZ(object):
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHM1D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
+            percentaje (float): (0-1) percentaje for the beam detection
+            remove_background=None,
             verbose (bool): prints info
 
         Returns:

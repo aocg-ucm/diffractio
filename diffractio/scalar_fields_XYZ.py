@@ -1002,6 +1002,7 @@ class Scalar_field_XYZ(object):
                     kind='FWHM2D',
                     has_draw=[True, False],
                     percentaje=0.5,
+                    remove_background=None,
                     verbose=False):
         """Determines the widths of the beam
 
@@ -1037,7 +1038,7 @@ class Scalar_field_XYZ(object):
                                 self.y,
                                 intensity,
                                 percentaje=percentaje,
-                                remove_background='min',
+                                remove_background=remove_background,
                                 has_draw=has_draw[1])
                 principal_axis = 0.
 

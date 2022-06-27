@@ -5,7 +5,6 @@
 Configuration file. Standard py_lab units are mm.
 """
 
-import numpy as np
 from matplotlib import cm
 
 # Configuration params for drawings

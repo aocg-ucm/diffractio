@@ -245,7 +245,7 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
             If it is not like this, discretize generates N levels.
             Usually masks are 0-1. Then normalize generates levels 0-N.
 
-            Arguments:
+            Parameters:
                 mask (scalar_mask_XY): 0-N discrete scalar mask.
                 states (np.array or Jones_matrix): Jones matrices to assign to each level
                 discretize (bool): If True, a continuous mask is converted to N levels.

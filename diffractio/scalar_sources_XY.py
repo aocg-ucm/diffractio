@@ -79,7 +79,7 @@ class Scalar_source_XY(Scalar_field_XY):
         k = 2 * pi / self.wavelength
         self.u = A * exp(1.j * k *
                          (self.X * sin(theta) * sin(phi) +
-                          self.Y * cos(theta) * sin(phi)) + z0 * cos(phi))
+                          self.Y * cos(theta) * sin(phi) + z0 * cos(phi)))
 
     def gauss_beam(self, r0, w0, z0, alpha=0 * degrees, beta=0 * degrees, A=1, theta=0. * degrees, phi=0 * degrees):
         """Gauss Beam.

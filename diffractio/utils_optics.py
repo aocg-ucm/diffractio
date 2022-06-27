@@ -312,6 +312,9 @@ def FWHM1D(x,
 
     intensity = intensity - I_background
 
+    if type(remove_background) is float:
+        intensity[intensity < remove_background * intensity.max()] = 0
+
     delta_x = x[1] - x[0]
     amp_max = intensity.max()
     amp_med = amp_max * percentaje
@@ -734,6 +737,7 @@ def normalize(u, kind='intensity'):
         u = u / log_max
 
     return u
+
 
 def normalize_vector(u):
     """Normalizes a vector to have intensity or amplitude, etc. 1
