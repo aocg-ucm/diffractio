@@ -8,4 +8,3 @@ pandas
 psutil
 py_pol
 ipywidgets
-
