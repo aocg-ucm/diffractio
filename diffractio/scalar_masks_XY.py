@@ -1755,7 +1755,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
 
-        #Correction 1 (90 degress)
         #Mitad de linea blanca, mitad negra.
         #Nos quedamos con el valor mayor (e-15) para que en ese tramo valga 1.
         if ((t.u[0, 0] != t.u[0, -1]) and angle == 90 * degrees):
@@ -1766,7 +1765,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         if angle == 0 * degrees:
             ind = 0
             times = int(2 * t.x.max() / period)
-            pixel_size = int(t.x[1] - t.x[0])
+            pixel_size = (t.x[1] - t.x[0])
             index = np.where(t.u[0, :] == 0)[0]
             distancia_minimos = int(period / pixel_size)
 

@@ -1016,9 +1016,7 @@ class Scalar_field_XY(object):
             i_centraly = num_repy + 1
             cy = concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
 
-        d1x = matrix(cx)
-        d1y = matrix(cy)
-        W = array(d1y.T * d1x)
+        W = cy.T @ cx
 
         U = zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
         U[0:ny, 0:nx] = array(W * self.u)
@@ -1580,12 +1578,12 @@ class Scalar_field_XY(object):
         """Gets the amplitude of the field.
 
         Parameters:
-            matrix(bool): if True numpy.matrix is returned
-            new_field(bool): if True it returns a new Scalar_field_XY
+            matrix (bool): if True numpy.matrix is returned
+            new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X
-            if Matrix is True: numpy.array
+            if matrix is True: numpy.array
         """
         amplitude = abs(self.u)
 
@@ -1628,9 +1626,9 @@ class Scalar_field_XY(object):
         """Removes the phase of the field. Amplitude is kept.
 
         Parameters:
-            sign(bool): If True, sign is kept, else, it is removed
-            matrix(bool): if True numpy.matrix is returned
-            new_field(bool): if True it returns a new Scalar_field_XY
+            sign (bool): If True, sign is kept, else, it is removed
+            matrix (bool): if True numpy.matrix is returned
+            new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
@@ -1666,12 +1664,12 @@ class Scalar_field_XY(object):
         """Changes the number of points in field, mantaining the area.
 
         Parameters:
-            kind(str): 'amplitude' or 'phase'
-            corte(float): value of cut. If None, the cut is in the mean value
-            level0(float): minimum value. If None, minimum value of field
-            level1(float): maximum value. If None, maximum value of field
-            new_field(bool): if True returns new field
-            matrix(bool): if True it returs a matrix
+            kind (str): 'amplitude' or 'phase'
+            corte (float): value of cut. If None, the cut is in the mean value
+            level0 (float): minimum value. If None, minimum value of field
+            level1 (float): maximum value. If None, maximum value of field
+            new_field (bool): if True returns new field
+            matrix (bool): if True it returs a matrix
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
@@ -1736,12 +1734,12 @@ class Scalar_field_XY(object):
         """Discretize in a number of levels equal to num_levels.
 
         Parameters:
-            kind(str): "amplitude" o "phase"
-            num_levels(int): number of levels for the discretization
-            factor(float): from the level, how area is binarized. if 1 everything is binarized,
-            phaseInicial(float): *
-            new_field(bool): if True returns new field
-            matrix(bool): if True it returs a matrix
+            kind (str): "amplitude" o "phase"
+            num_levels (int): number of levels for the discretization
+            factor (float): from the level, how area is binarized. if 1 everything is binarized,
+            phaseInicial (float): *
+            new_field (bool): if True returns new field
+            matrix (bool): if True it returs a matrix
 
         Returns:
             Scalar_field_XY: if new_field is True returns Scalar_field_XY
@@ -1814,7 +1812,7 @@ class Scalar_field_XY(object):
         """Normalize the field.
 
         Parameters:
-            kind(str): 'intensity' 'area'
+            kind (str): 'intensity' 'area'
         """
 
         if kind == 'intensity':
@@ -1841,14 +1839,14 @@ class Scalar_field_XY(object):
         """Draws  XY field.
 
         Parameters:
-            kind(str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
-            logarithm(bool): If True, intensity is scaled in logarithm
-            normalize(str):  False, 'maximum', 'area', 'intensity'
-            title(str): title for the drawing
-            filename(str): if not '' stores drawing in file,
-            cut_value(float): if provided, maximum value to show
-            has_colorbar(bool): if True draws the colorbar
-            reduce_matrix(str): 'standard'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
+            logarithm (bool): If True, intensity is scaled in logarithm
+            normalize (str):  False, 'maximum', 'area', 'intensity'
+            title (str): title for the drawing
+            filename (str): if not '' stores drawing in file,
+            cut_value (float): if provided, maximum value to show
+            has_colorbar (bool): if True draws the colorbar
+            reduce_matrix (str): 'standard'
         """
 
         if reduce_matrix in ([], None, ''):
@@ -1899,10 +1897,10 @@ class Scalar_field_XY(object):
         """Draws intensity  XY field.
 
         Parameters:
-            logarithm(bool): If True, intensity is scaled in logarithm
-            normalize(str):  False, 'maximum', 'area', 'intensity'
-            title(str): title for the drawing
-            cut_value(float): if provided, maximum value to show
+            logarithm (bool): If True, intensity is scaled in logarithm
+            normalize (str):  False, 'maximum', 'area', 'intensity'
+            title (str): title for the drawing
+            cut_value (float): if provided, maximum value to show
         """
         amplitude, intensity, phase = field_parameters(self.u,
                                                        has_amplitude_sign=True)
@@ -1934,10 +1932,10 @@ class Scalar_field_XY(object):
         """Draws amplitude  XY field.
 
         Parameters:
-            logarithm(bool): If True, intensity is scaled in logarithm
-            normalize(str):  False, 'maximum', 'area', 'intensity'
-            title(str): title for the drawing
-            cut_value(float): if provided, maximum value to show
+            logarithm (bool): If True, intensity is scaled in logarithm
+            normalize (str):  False, 'maximum', 'area', 'intensity'
+            title (str): title for the drawing
+            cut_value (float): if provided, maximum value to show
         """
         amplitude, intensity, phase = field_parameters(self.u,
                                                        has_amplitude_sign=True)
@@ -1962,7 +1960,7 @@ class Scalar_field_XY(object):
         """Draws phase of  XY field
 
         Parameters:
-            title(str): title for the drawing
+            title (str): title for the drawing
         """
         amplitude, intensity, phase = field_parameters(self.u,
                                                        has_amplitude_sign=True)

@@ -187,7 +187,7 @@ class Test_Scalar_sources_XY(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        # tamaño de la matrix
+        # matrix size
         M = 5
 
         # definición de parámetros iniciales
@@ -228,7 +228,7 @@ class Test_Scalar_sources_XY(object):
         Generación de haz de laguerre_beam
         """
 
-        # tamaño de la matrix
+        # matrix size
         N = 2
         K = 2
 
@@ -260,7 +260,7 @@ class Test_Scalar_sources_XY(object):
         Generación de varios haces de num_data = 256
         """
 
-        # tamaño de la matrix
+        # matrix size
         N = 3
         K = 3
 
@@ -375,7 +375,7 @@ class Test_Scalar_sources_XY(object):
         Generación de varios haces de Zernike
         """
 
-        # tamaño de la matrix
+        # matrix size
         N = 4
 
         # definición de parámetros iniciales
