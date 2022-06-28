@@ -1,4 +1,3 @@
-traitlets>=5
 nbsphinx
 numpy
 scipy
