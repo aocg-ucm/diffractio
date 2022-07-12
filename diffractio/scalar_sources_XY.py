@@ -427,20 +427,21 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float): constant value for phase shift
 
         References:
+            J. Durnin, J. Miceli, and J. H. Eberly, Phys. Rev. Lett. 58, 1499 (1987).
             F. Courvoisier, et al. "Surface nanoprocessing with nondiffracting femtosecond Bessel beams" Optics Letters Vol. 34, No. 20 3163 (2009)
         """
 
         x0, y0 = r0
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-        k = 2 * np.pi / self.wavelength
-        beta = k * np.cos(alpha)
+        k0 = 2 * np.pi / self.wavelength
+        beta = k0 * np.cos(alpha)
 
         if n == 0:
-            jbessel = j0(k * np.sin(alpha) * R)
+            jbessel = j0(k0 * np.sin(alpha) * R)
         elif n == 1:
-            jbessel = j1(k * np.sin(alpha) * R)
+            jbessel = j1(k0 * np.sin(alpha) * R)
         else:
-            jbessel = jv(n, k * np.sin(alpha) * R)
+            jbessel = jv(n, k0 * np.sin(alpha) * R)
 
         self.u = A * jbessel * np.exp(1j * beta * z0) * np.exp(
             1.j * k *

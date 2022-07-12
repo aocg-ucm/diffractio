@@ -248,7 +248,7 @@ class Vector_paraxial_source_XY(Vector_paraxial_field_XY):
             radius (float, float): Radius of a circular mask
 
         References:
-            Qwien Zhan 'Vectorial Optial Fields' page 36
+            Qwien Zhan 'Vectorial Optical Fields' page 36
         """
 
         if isinstance(radius, (float, int, complex)):

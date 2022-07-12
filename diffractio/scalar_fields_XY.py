@@ -971,7 +971,7 @@ class Scalar_field_XY(object):
 
 
         References:
-             Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
+            F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
 
         """
 
@@ -1081,7 +1081,7 @@ class Scalar_field_XY(object):
             One advantage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
         References:
-            Applied Optics vol 45 num 6 pp. 1102-1110 (2006).
+            F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
         """
 
         amplification_x, amplification_y = amplification
@@ -1179,7 +1179,6 @@ class Scalar_field_XY(object):
         References:
 
             1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
-
             2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
 
         """

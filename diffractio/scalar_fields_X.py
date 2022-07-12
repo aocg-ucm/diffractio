@@ -541,7 +541,7 @@ class Scalar_field_X(object):
             (Scalar_field_X or None): if New_field is True Scalar_field_X, else None
 
         References:
-                Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
+                F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
         """
 
         if xout is None:
