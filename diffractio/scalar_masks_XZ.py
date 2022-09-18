@@ -102,11 +102,11 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 v_locals['z'] = self.z[index]
                 v_locals['x'] = self.x
 
-                refraction_index = eval(tmp_refraction_index, v_globals,
-                                        v_locals)
+                refraction_index = eval(tmp_refraction_index, v_globals, v_locals)
             self.n = self.n.astype(complex)
-            self.n[:, index] = (refraction_index * (1 - t.u))
-            self.n[:, index] = (self.n[:, index] + self.n_background * t.u)
+            # self.n[:, index] = (refraction_index * (1 - t.u))
+            # self.n[:, index] = (self.n[:, index] + self.n_background * t.u)
+            self.n = refraction_index
 
     def mask_from_function(self,
                            r0,
@@ -157,7 +157,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             r0 (float, float): location of the mask
-            refractdion_index (float, str): can be a number or a function n(x,z)
+            refraction_index (float, str): can be a number or a function n(x,z)
             array1 (numpy.array): array (x,z) that delimits the first surface
             array2 (numpy.array): array (x,z) that delimits the second surface
             x_sides (float, float): limiting upper and lower values in x,

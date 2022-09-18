@@ -48,6 +48,28 @@ class Vector_paraxial_mask_XY(Vector_paraxial_field_XY):
 
         del self.Ex, self.Ey, self.Ez
 
+
+    def __add__(self, other, kind='standard'):
+        """adds two Vector_paraxial_mask_XY. For example two  masks
+
+        Parameters:
+            other (Vector_paraxial_mask_XY): 2nd field to add
+            kind (str): instruction how to add the fields:
+
+        Returns:
+            Vector_paraxial_mask_XY: `M3 = M1 + M2`
+        """
+
+        if other._type in ('Vector_paraxial_mask_XY'):
+            m3 = Vector_paraxial_mask_XY(self.x, self.y, self.wavelength)
+
+            m3.M00 = other.M00 + self.M00 
+            m3.M01 = other.M01 + self.M01 
+            m3.M10 = other.M10 + self.M10 
+            m3.M11 = other.M11 + self.M11 
+
+        return m3
+
     def __mul__(self, other):
         """
         Multilies the Vector_paraxial_mask_XY matrix by another Vector_paraxial_mask_XY.

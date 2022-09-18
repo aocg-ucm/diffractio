@@ -80,7 +80,7 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
 from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
-from .utils_optics import FWHM1D, beam_width_1D, field_parameters
+from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 num_max_processors = multiprocessing.cpu_count()
@@ -294,6 +294,25 @@ class Scalar_field_XZ(object):
         """clear refraction index n(x,z)=n_background"""
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
+
+
+    def normalize(self, kind='intensity', new_field=False):
+        """Normalizes the field so that intensity.max()=1.
+
+        Parameters:
+            kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+        Returns
+            u (numpy.array): normalized optical field
+        """
+        u_new = normalize(self.u, kind)
+
+        if new_field is False:
+            self.u = u_new
+        else:
+            field_output = Scalar_field_XZ(self.x, self.z, self.wavelength)
+            field_output.u = u_new
+            return field_output
 
     def mask_field(self, size_edge=0):
         """
@@ -596,10 +615,12 @@ class Scalar_field_XZ(object):
         u_final.u = self.u[:, -1]
         return u_final
 
-    def __BPM__(self, matrix=False, verbose=False):
+    def __BPM__(self, has_edges=True, pow_edge=80, matrix=False, verbose=False):
         """Beam propagation method (BPM).
 
         Parameters:
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns matrix, else goes to self.u
             verbose (bool): shows data process by screen
 
@@ -635,8 +656,10 @@ class Scalar_field_XZ(object):
         phase1 = np.exp((-1j * deltaz * kx**2) / (2 * k0))
         # Campo en el índice de refracción
         field = np.zeros(np.shape(self.n), dtype=complex)
-        # Función supergausiana para eliminar rebotes en los edges
-        filter_edge = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**90)  # 0.98
+
+        if has_edges:
+            # Función supergausiana para eliminar rebotes en los edges
+            filter_edge = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**pow_edge)  # 0.98
 
         field[:, 0] = field_z
         for k in range(0, numz):
@@ -648,7 +671,11 @@ class Scalar_field_XZ(object):
 
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
-            field_z = field_z * filter_edge + self.u[:, k]
+            if has_edges:
+                field_z = field_z * filter_edge + self.u[:, k]
+            else:
+                field_z = field_z  + self.u[:, k]
+
             field[:, k] = field_z
 
         if matrix is True:
@@ -656,10 +683,12 @@ class Scalar_field_XZ(object):
         else:
             self.u = field
 
-    def BPM(self, division=False, matrix=False, verbose=False):
+    def BPM(self, has_edges=True, pow_edge=80, division=False, matrix=False, verbose=False):
         """Beam propagation method (BPM).
 
         Parameters:
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
             division (False, int): If False nothing, else divides the BPM algorithm in several different executions. To avoid RAM problems
             matrix (bool): if True returns a matrix else
             verbose (bool): shows data process by screen

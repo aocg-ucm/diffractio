@@ -105,8 +105,6 @@ class Vector_paraxial_field_XY(object):
         Parameters:
             other (Vector_paraxial_field_XY): 2nd field to add
             kind (str): instruction how to add the fields:
-                - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
-                - 'standard': not implemented yet
 
         Returns:
             Vector_paraxial_field_XY: `E3 = E1 + E2`
@@ -1124,13 +1122,10 @@ class Vector_paraxial_field_XY(object):
             kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes', 'param_ellipse', 'ellipses'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
-            title (str): title of figure
-            filename (str): if not '' stores drawing in file,
             cut_value (float): If not None, cuts the maximum intensity to this value
             num_ellipses (int): number of ellipses for parameters_ellipse
             amplification (float): amplification of ellipses
-
-            # TODO: change to similar to v_matrix
+            filename (str): if not '' stores drawing in file,
 
         """
         if draw is True:
@@ -1140,21 +1135,21 @@ class Vector_paraxial_field_XY(object):
                                                  cut_value, only_image, **kwargs)
             elif kind == 'intensities':
                 id_fig = self.__draw_intensities__(logarithm, normalize,
-                                                   cut_value, only_image, **kwargs)
+                                                   cut_value,  **kwargs)
 
             elif kind == 'intensities_rz':
                 id_fig = self.__draw_intensities_rz__(logarithm, normalize,
-                                                      cut_value, only_image, **kwargs)
+                                                      cut_value,  **kwargs)
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
 
             elif kind == 'fields':
-                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, only_image,
+                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, 
                                               **kwargs)
 
             elif kind == 'stokes':
-                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, only_image,
+                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, 
                                               **kwargs)
 
             elif kind == 'param_ellipse':
@@ -1184,7 +1179,7 @@ class Vector_paraxial_field_XY(object):
                            normalize,
                            cut_value,
                            only_image=False,
-                           color_intensity=None):
+                           color_intensity=CONF_DRAWING['color_intensity']):
         """Draws the intensity
 
         Parameters:
@@ -1192,9 +1187,6 @@ class Vector_paraxial_field_XY(object):
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
-
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
 
         intensity = self.get('intensity')
 
@@ -1211,7 +1203,7 @@ class Vector_paraxial_field_XY(object):
         plt.tight_layout()
         return h1
 
-    def __draw_phases__(self, color_phase=None):
+    def __draw_phases__(self, color_phase=CONF_DRAWING['color_phase']):
         """internal funcion: draws intensity X,Y.
 
         Parameters:
@@ -1219,9 +1211,6 @@ class Vector_paraxial_field_XY(object):
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
-
-        if color_phase is None:
-            color_phase = CONF_DRAWING['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1316,7 +1305,7 @@ class Vector_paraxial_field_XY(object):
                              logarithm,
                              normalize,
                              cut_value,
-                             color_intensity=None):
+                             color_intensity=CONF_DRAWING['color_intensity']):
         """internal funcion: draws phase X,Y, Z.
 
         Parameters:
@@ -1324,9 +1313,6 @@ class Vector_paraxial_field_XY(object):
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
-
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1404,7 +1390,7 @@ class Vector_paraxial_field_XY(object):
                                 logarithm,
                                 normalize,
                                 cut_value,
-                                color_intensity=None):
+                                color_intensity=CONF_DRAWING['color_intensity']):
         """internal funcion: draws intensity X,Y.
 
         Parameters:
@@ -1413,8 +1399,6 @@ class Vector_paraxial_field_XY(object):
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
 
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1456,8 +1440,8 @@ class Vector_paraxial_field_XY(object):
                         logarithm,
                         normalize,
                         cut_value,
-                        color_intensity=None,
-                        color_phase=None):
+                        color_intensity=CONF_DRAWING['color_intensity'],
+                        color_phase=CONF_DRAWING['color_phase']):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Parameters:
@@ -1467,11 +1451,6 @@ class Vector_paraxial_field_XY(object):
             cut_value (float): If not None, cuts the maximum intensity to this value
 
         """
-
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
-        if color_phase is None:
-            color_phase = CONF_DRAWING['color_phase']
 
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
@@ -1525,17 +1504,12 @@ class Vector_paraxial_field_XY(object):
                         logarithm,
                         normalize,
                         cut_value,
-                        color_intensity=None,
-                        color_stokes=None):
+                        color_intensity=CONF_DRAWING['color_intensity'],
+                        color_stokes=CONF_DRAWING['color_stokes']):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
         """
 
         tx, ty = rcParams['figure.figsize']
-
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
-        if color_stokes is None:
-            color_stokes = CONF_DRAWING['color_stokes']
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
@@ -1571,15 +1545,9 @@ class Vector_paraxial_field_XY(object):
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, color_intensity=None, color_phase=None):
+    def __draw_param_ellipse__(self, color_intensity=CONF_DRAWING['color_intensity'], color_phase=CONF_DRAWING['color_phase']):
         """__internal__: computes and draws polariations ellipses
         """
-
-        if color_intensity is None:
-            color_intensity = CONF_DRAWING['color_intensity']
-        if color_phase is None:
-            color_phase = CONF_DRAWING['color_phase']
-
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
         A = reduce_matrix_size(self.reduce_matrix, self.x, self.y, A)
@@ -1619,7 +1587,7 @@ class Vector_paraxial_field_XY(object):
                           draw_arrow=True,
                           head_width=2,
                           ax=False,
-                          color_intensity=None):
+                          color_intensity=CONF_DRAWING['color_intensity']):
         """__internal__: draw ellipses
 
         Parameters:
@@ -1699,7 +1667,7 @@ class Vector_paraxial_field_XY(object):
                 #           percentaje_intensity * intensity_max)
 
 
-def __draw1__(hdl, image, colormap=None, title='', has_max=False, only_image=False):
+def __draw1__(hdl, image, colormap, title='', has_max=False, only_image=False):
     """Draws image
 
     Parameters:
