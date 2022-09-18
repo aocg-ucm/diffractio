@@ -81,7 +81,15 @@ class Scalar_source_XY(Scalar_field_XY):
                          (self.X * sin(theta) * sin(phi) +
                           self.Y * cos(theta) * sin(phi) + z0 * cos(phi)))
 
-    def gauss_beam(self, r0, w0, z0, alpha=0 * degrees, beta=0 * degrees, A=1, theta=0. * degrees, phi=0 * degrees):
+    def gauss_beam(self,
+                   r0,
+                   w0,
+                   z0,
+                   alpha=0 * degrees,
+                   beta=0 * degrees,
+                   A=1,
+                   theta=0. * degrees,
+                   phi=0 * degrees):
         """Gauss Beam.
 
         Parameters:
@@ -126,16 +134,18 @@ class Scalar_source_XY(Scalar_field_XY):
         if z0x == 0:
             R_x = 1e10
         else:
-            R_x = - z0x * (1 + (z_rayleigh_x / z0x)**2)
+            R_x = -z0x * (1 + (z_rayleigh_x / z0x)**2)
 
         if z0y == 0:
             R_y = 1e10
         else:
-            R_y = - z0y * (1 + (z_rayleigh_y / z0y)**2)
+            R_y = -z0y * (1 + (z_rayleigh_y / z0y)**2)
 
-        amplitude = (A * (w0x / wx) * (w0y / wy) *
-                     np.exp(-(self.X * np.cos(alpha) + self.Y * np.sin(alpha) - x0)**2 / (wx**2)) *
-                     np.exp(-(-self.X * np.sin(alpha) + self.Y * np.cos(alpha) - y0)**2 / (wy**2)))
+        amplitude = (A * (w0x / wx) * (w0y / wy) * np.exp(
+            -(self.X * np.cos(alpha) + self.Y * np.sin(alpha) - x0)**2 /
+            (wx**2)) * np.exp(
+                -(-self.X * np.sin(alpha) + self.Y * np.cos(alpha) - y0)**2 /
+                (wy**2)))
         phase1 = np.exp(1.j * k * (self.X * np.sin(theta) * np.sin(phi) +
                                    self.Y * np.cos(theta) * np.sin(phi)))
         phase2 = np.exp(1j * (k * z0x - phaseGouy_x + k * ((self.X * np.cos(beta) + self.Y * np.sin(beta))**2) / (2 * R_x))) * \
@@ -188,12 +198,13 @@ class Scalar_source_XY(Scalar_field_XY):
         if z0 == 0:
             R = 1e10
         else:
-            R = - z0 * (1 + (z_rayleigh / z0)**2)
+            R = -z0 * (1 + (z_rayleigh / z0)**2)
 
         amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2) -
                                      (self.Y - y0)**2 / (wy**2))
-        phase1 = exp(1.j * k * (self.X * sin(theta) * sin(phi) +
-                                self.Y * cos(theta) * sin(phi)))
+        phase1 = exp(
+            1.j * k *
+            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)))
         phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
                            (2 * R)))
 
@@ -257,7 +268,8 @@ class Scalar_source_XY(Scalar_field_XY):
         x0, y0 = r0
         amplitude = ((self.X - x0) + 1.j * sign(m) *
                      (self.Y - y0))**np.abs(m) * np.exp(-(
-                         (self.X - x0)**2 / w0x**2 + (self.Y - y0)**2 / w0y**2))
+                         (self.X - x0)**2 / w0x**2 +
+                         (self.Y - y0)**2 / w0y**2))
 
         self.u = A * amplitude / np.abs(amplitude).max()
 

@@ -65,6 +65,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u (numpy.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
+
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
         super(self.__class__, self).__init__(x, y, wavelength, info)
@@ -1755,13 +1756,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
 
-        #Mitad de linea blanca, mitad negra.
-        #Nos quedamos con el valor mayor (e-15) para que en ese tramo valga 1.
+        # Mitad de linea blanca, mitad negra.
+        # Nos quedamos con el valor mayor (e-15) para que en ese tramo valga 1.
         if ((t.u[0, 0] != t.u[0, -1]) and angle == 90 * degrees):
             #print(t.u[0].max())
             t.u[0] = t.u[0].max()
 
-        #Correction 2 (0 degrees)
+        # Correction 2 (0 degrees)
         if angle == 0 * degrees:
             ind = 0
             times = int(2 * t.x.max() / period)

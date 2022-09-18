@@ -516,7 +516,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return self
 
     def semi_plane(self, r0, refraction_index, angle=0, rotation_point=None):
-        """Inserts a semi-sphere in background (x>x0). If it is something else previous, it is removed.
+        """Inserts a semi-sphere in background (x>x0). If something else previous, it is removed.
 
         Parameters:
             r0=(x0,z0) (float,float): Location of the same plane.
@@ -1298,7 +1298,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             Dx (float): displacement of grating with respect x=0
             refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
             heigth_substrate (float): height of the substrate
-            refraction_index_substrate (float, str): refraction index of substrate , for example: 1.5 + 1.0j
+            refraction_index_substrate (float, str): refraction index of substrate,  1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """
 

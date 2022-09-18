@@ -772,11 +772,11 @@ def fZernike(X, Y, n, m, radius=5 * mm):
     N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
 
     Z = zeros(R.shape, dtype=np.float)
-    for s in np.arange(0, (n - np.abs(m)) / 2 + 1):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
-            factorial(np.abs(s)) *
-            factorial(np.abs(round(0.5 * (n + np.abs(m)) - s))) *
-            factorial(np.abs(round(0.5 * (n - np.abs(m)) - s))))
+    s_max = int(((n - abs(m)) / 2 + 1))
+    for s in np.arange(0, s_max):
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(abs(n - s)) / (
+            factorial(abs(s)) * factorial(abs(round(0.5 * (n + abs(m)) - s))) *
+            factorial(abs(round(0.5 * (n - abs(m)) - s))))
 
     if m >= 0:
         fz1 = N * Z * np.cos(m * THETA)

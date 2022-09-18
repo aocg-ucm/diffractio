@@ -118,12 +118,11 @@ def draw2D(
         xlabel = "x (mm)"
         ylabel = "y (mm)"
 
-    IDimage = plt.imshow(
-        image,
-        interpolation=interpolation,
-        aspect='auto',
-        origin='lower',
-        extent=extension)
+    IDimage = plt.imshow(image,
+                         interpolation=interpolation,
+                         aspect='auto',
+                         origin='lower',
+                         extent=extension)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.suptitle(title)
@@ -181,8 +180,8 @@ def draw_several_fields(fields,
         c = fields[i]
         id_fig.add_subplot(col, fil, i + 1)
         extension = [c.x.min(), c.x.max(), c.y.min(), c.y.max()]
-        amplitude, intensity, phase = field_parameters(
-            c.u, has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(c.u,
+                                                       has_amplitude_sign=True)
 
         if kinds == '':
             image = intensity
@@ -190,39 +189,39 @@ def draw_several_fields(fields,
             kind = 'intensity'
         else:
             kind = kinds[i]
-            if kinds[i] == 'intensity':
-                image = intensity
-                colormap = CONF_DRAWING['color_intensity']
-            elif kinds[i] == 'phase':
-                phase = phase / degrees
-                phase[intensity < percentaje_intensity * (intensity.max())] = 0
+        if kind == 'intensity':
+            image = intensity
+            colormap = CONF_DRAWING['color_intensity']
+        elif kind == 'phase':
+            phase = phase / degrees
+            phase[intensity < percentaje_intensity * (intensity.max())] = 0
 
-                colormap = CONF_DRAWING['color_phase']
-                image = phase
-            elif kinds[i] == 'amplitude':
-                image = amplitude
-                colormap = CONF_DRAWING['color_amplitude']
-            elif kinds[i] == 'real':
-                percentaje_intensity = CONF_DRAWING['percentaje_intensity']
-                rf = np.real(c.u)
-                intensity = np.abs(c.u)**2
-                rf[intensity < percentaje_intensity * (intensity.max())] = 0
+            colormap = CONF_DRAWING['color_phase']
+            image = phase
+        elif kind == 'amplitude':
+            image = amplitude
+            colormap = CONF_DRAWING['color_amplitude']
+        elif kind == 'real':
+            percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+            rf = np.real(c.u)
+            intensity = np.abs(c.u)**2
+            rf[intensity < percentaje_intensity * (intensity.max())] = 0
 
-                image = np.real(c.u)
-                colormap = CONF_DRAWING['color_real']
+            image = np.real(c.u)
+            colormap = CONF_DRAWING['color_real']
 
-            if logarithm is True and kinds[i] in ('intensity', 'amplitude', 'real'):
-                image = np.log(image + 1)
+        if logarithm > 0 and kind in ('intensity', 'amplitude', 'real'):
+            image = np.log(logarithm * image + 1)
 
-            if normalize == 'maximum' and kinds[i] in ('intensity', 'amplitude', 'real'):
-                image = image / image.max()
+        if normalize == 'maximum' and kind in ('intensity', 'amplitude',
+                                               'real'):
+            image = image / image.max()
 
-        plt.imshow(
-            image,
-            interpolation='bilinear',
-            aspect='auto',
-            origin='lower',
-            extent=extension)
+        plt.imshow(image,
+                   interpolation='bilinear',
+                   aspect='auto',
+                   origin='lower',
+                   extent=extension)
 
         plt.set_cmap(colormap)
         if titles != '':
