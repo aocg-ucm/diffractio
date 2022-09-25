@@ -1,6 +1,5 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Configuration file. Standard py_lab units are mm.
 """
@@ -15,4 +14,5 @@ CONF_DRAWING['color_amplitude_sign'] = cm.seismic
 CONF_DRAWING['color_phase'] = cm.twilight  # twilight .twilight hsv
 CONF_DRAWING['color_real'] = cm.seismic
 CONF_DRAWING['color_stokes'] = cm.seismic
-CONF_DRAWING['percentaje_intensity'] = 0.05  # percentaje of intensity not shown in phase
+# percentage of intensity not shown in phase
+CONF_DRAWING['percentage_intensity'] = 0.005

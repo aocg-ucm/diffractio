@@ -506,24 +506,24 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u
         return h_corr
 
-    def dust_different_sizes(self, percentaje, size, std=0):
+    def dust_different_sizes(self, percentage, size, std=0):
         """Mask with dust particles of different sizes.
 
         Parameters:
-            percentaje (float): percentaje of area afected by noise
+            percentage (float): percentage of area afected by noise
             size (float): mean size of dust
             std (float): std for size of dust
 
         Returns:
             numpy.array: positions - positions of dust
             numpy.array: sizes - size of dust
-            float: percentaje_real - real percentaje of dust
+            float: percentage_real - real percentage of dust
         """
 
         total_length = self.x[-1] - self.x[0]
-        num_particles = int(percentaje * total_length / size)
-        if percentaje > 0.5:
-            num_particles = int(num_particles * (1 + np.sqrt(percentaje)))
+        num_particles = int(percentage * total_length / size)
+        if percentage > 0.5:
+            num_particles = int(num_particles * (1 + np.sqrt(percentage)))
         sizes = size + std * np.random.randn(num_particles)
         sizes[sizes < 0] = size
         positions = self.x[0] + total_length * np.random.rand(num_particles)
@@ -542,30 +542,30 @@ class Scalar_mask_X(Scalar_field_X):
         # dust.u[dust.u < 1] = value
         self.u = dust.u
         # can be used to increase dust_particles, when there is overlapping
-        percentaje_real = 1 - self.u.sum() / len(self.x)
+        percentage_real = 1 - self.u.sum() / len(self.x)
 
-        return positions, sizes, percentaje_real
+        return positions, sizes, percentage_real
 
-    def dust(self, percentaje, size=0):
+    def dust(self, percentage, size=0):
         """ Mask with dust particles of equal sizes.
 
         Parameters:
-            percentaje (float): percentaje of area afected by noise
+            percentage (float): percentage of area afected by noise
             size (float): size of dust
             value (float): value included when there is noise
 
         Returns:
             numpy.array: positions - positions of dust
             numpy.array: sizes - size of dust
-            float: percentaje_real - real percentaje of dust
+            float: percentage_real - real percentage of dust
         """
 
         total_length = self.x[-1] - self.x[0]
         dx = self.x[1] - self.x[0]
         i_center = int(len(self.x) / 2)
-        num_particles = int(percentaje * total_length / size)
-        if percentaje > 0.5:
-            num_particles = int(num_particles * (1 + np.sqrt(percentaje)))
+        num_particles = int(percentage * total_length / size)
+        if percentage > 0.5:
+            num_particles = int(num_particles * (1 + np.sqrt(percentage)))
         # habria que quitar algo por los solapamientos
         positions = self.x[0] + total_length * np.random.rand(num_particles)
 
@@ -582,9 +582,9 @@ class Scalar_mask_X(Scalar_field_X):
 
         self.u = 1 - dust
 
-        percentaje_real = self.u.sum() / len(self.x)
+        percentage_real = self.u.sum() / len(self.x)
 
-        return positions, percentaje_real
+        return positions, percentage_real
 
     def sine_grating(self, x0, period, amp_min=0, amp_max=1):
         """Sinusoidal grating

@@ -63,6 +63,7 @@ def separate_from_iterable(iterable, shape=0):
 
 
 class auxiliar_multiprocessing(object):
+
     def __init__(self):
         pass
 

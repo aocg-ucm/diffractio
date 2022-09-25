@@ -34,7 +34,7 @@ Alpha state
 ------------------------
 Alpha state
 
-* Included vector paraxial (fields, sources, masks) modules, tests, and tutorial.
+* Included vector (fields, sources, masks) modules, tests, and tutorial.
 
 0.0.6 (2019-10-22)
 ------------------------
@@ -80,15 +80,16 @@ Alpha state
 * fix bug 2D gratings
 * fix bug aspheric X and new aspheric XY
 
-0.1.0 (2021-**-**)
+0.0.14 (2022-10-01)
 --------------------------------
-Beta state
+Alpha state
 
 * WPM and BPM in 3D
 * WPM and BPM in 3D without storing intermediate planes
 * Vector FFT and inverse FFT
 * pupil function in XY and vector XY
-* 
+* vector_paraxial_fields -> vector_fields
+* Implement Chirped Z Transform
 
 * Fix bugs:
   - (radial and azimuthal vector waves)
@@ -100,3 +101,8 @@ Beta state
   - VRS (vectorial Rayleigh-Sommerfeld propagation)
   - Modifications in drawing intensities and fields
   - New Self.Ez
+  
+  
+0.1.0 (future)
+--------------------------------
+implement plotly for drawings

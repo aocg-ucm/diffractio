@@ -30,7 +30,6 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
-
 import datetime
 import multiprocessing
 
@@ -59,12 +58,12 @@ num_decimals = 4
 
 no_date = False  # for test folder
 
-
-rcParams['figure.figsize'] = [4, 4]
-rcParams['figure.dpi'] = 125
-
+# rcParams['figure.figsize'] = [4, 4]
+# rcParams['figure.dpi'] = 125
 
 now = datetime.datetime.now()
 date_test = now.strftime("%Y-%m-%d_%H")
 
 number_types = (int, float, complex, np.int32, np.float64)
+
+num_max_processors = multiprocessing.cpu_count()

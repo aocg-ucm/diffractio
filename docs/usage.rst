@@ -186,9 +186,9 @@ XY Vector paraxial fields
   from diffractio.scalar_masks_XY import Scalar_mask_XY
   from diffractio.scalar_fields_XY import Scalar_field_XY
 
-  from diffractio.vector_paraxial_sources_XY import Vector_paraxial_source_XY
-  from diffractio.vector_paraxial_masks_XY import Vector_paraxial_mask_XY
-  from diffractio.vector_paraxial_fields_XY import Vector_paraxial_field_XY
+  from diffractio.vector_sources_XY import Vector_source_XY
+  from diffractio.vector_masks_XY import Vector_mask_XY
+  from diffractio.vector_fields_XY import Vector_field_XY
 
   x0 = np.linspace(-125 * um, 125 * um, 256)
   y0 = np.linspace(-125 * um, 125 * um, 256)
@@ -204,7 +204,7 @@ XY Vector paraxial fields
     theta=0. * degrees,
     phi=0 * degrees)
 
-  EM0 = Vector_paraxial_source_XY(x0, y0, wavelength)
+  EM0 = Vector_source_XY(x0, y0, wavelength)
   EM0.azimuthal_wave(u=u0, r0=(0, 0), radius=(200, 200))
   EM0.draw(kind='ellipses')
   plt.title('Before mask')
@@ -214,7 +214,7 @@ XY Vector paraxial fields
   t0 = Scalar_mask_XY(x0, y0, wavelength)
   t0.two_levels(level1=0, level2=1, x_edge=0, angle=0)
 
-  M0 = Vector_paraxial_mask_XY(x=x0, y=y0, wavelength=wavelength)
+  M0 = Vector_mask_XY(x=x0, y=y0, wavelength=wavelength)
 
   state_0 = np.array([[1, 0],[0, 0]])
   state_1 = np.array([[0, 0],[0, 1]])

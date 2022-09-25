@@ -27,6 +27,7 @@ if not os.path.exists(newpath):
 
 
 class Test_Scalar_masks_X(object):
+
     def test_slit(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -221,7 +222,7 @@ class Test_Scalar_masks_X(object):
         x = np.linspace(-500 * um, 500 * um, 2048)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.dust_different_sizes(percentaje=0.2, size=20 * um, std=5 * um)
+        t1.dust_different_sizes(percentage=0.2, size=20 * um, std=5 * um)
         t1.draw()
 
         t1.save_data(filename=filename + '.npz')
@@ -237,7 +238,7 @@ class Test_Scalar_masks_X(object):
         x = np.linspace(-500 * um, 500 * um, 2048 * 8)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.dust(percentaje=0.9, size=20 * um)
+        t1.dust(percentage=0.9, size=20 * um)
         t1.draw()
 
         t1.save_data(filename=filename + '.npz')
@@ -485,15 +486,20 @@ class Test_Scalar_masks_X(object):
         x = np.linspace(0, anchura_bit * len(code), num_data)
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.binary_code(kind='normal', code=code,
-                       bit_width=anchura_bit, x0=0 * um)
+        t1.binary_code(kind='normal',
+                       code=code,
+                       bit_width=anchura_bit,
+                       x0=0 * um)
         t1.draw()
 
         t1.save_data(filename=filename + '-normal' + '.npz')
         save_figure_test(newpath, func_name + '-normal')
 
         t2 = Scalar_mask_X(x, wavelength)
-        t2.binary_code(x0=0 * um, kind='zeros', code=code, bit_width=anchura_bit)
+        t2.binary_code(x0=0 * um,
+                       kind='zeros',
+                       code=code,
+                       bit_width=anchura_bit)
         t2.draw()
 
         t2.save_data(filename=filename + '-zeros' + '.npz')

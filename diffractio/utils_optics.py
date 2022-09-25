@@ -87,8 +87,8 @@ def roughness_2D(x, y, t, s):
     N_ancho = int(np.floor(L_ancho + M))
     N_largo = int(np.floor(L_largo + M))
 
-    desp_ancho, desp_largo = meshgrid(
-        np.arange(-M, M + 1), np.arange(-M, M + 1))
+    desp_ancho, desp_largo = meshgrid(np.arange(-M, M + 1),
+                                      np.arange(-M, M + 1))
     desp_ancho = desp_ancho * dx
     desp_largo = desp_largo * dx
 
@@ -128,13 +128,13 @@ def beam_width_1D(u, x, remove_background=None):
     return width_x, x_mean
 
 
-def width_percentaje(x, y, percentaje=0.5, verbose=False):
+def width_percentage(x, y, percentage=0.5, verbose=False):
     """ beam width (2*sigma) given at a certain height from maximum
 
     Parameters:
         x (np.array): x
         y (np.array): y
-        percentaje (float): percentaje of height. For example: 0.5
+        percentage (float): percentage of height. For example: 0.5
 
     Returns:
         (float): width, width of at given %
@@ -142,14 +142,14 @@ def width_percentaje(x, y, percentaje=0.5, verbose=False):
         (list): x_list: (i_left, i_max, i_right)
 
     Notes:
-        y=np.exp(-x**2/(s**2))  percentaje=1/e -> width = 2*s
-        y=np.exp(-x**2/(s**2))  percentaje=1/e**4 -> width = 4*s
-        y=np.exp(-x**2/(2*s**2))  percentaje=1/e**2 =  -> width = 4*s
+        y=np.exp(-x**2/(s**2))  percentage=1/e -> width = 2*s
+        y=np.exp(-x**2/(s**2))  percentage=1/e**4 -> width = 4*s
+        y=np.exp(-x**2/(2*s**2))  percentage=1/e**2 =  -> width = 4*s
 
     """
 
     maximum = y.max()
-    level = percentaje * maximum
+    level = percentage * maximum
     i_max = np.argmax(y)
 
     if i_max == 0:
@@ -211,8 +211,7 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
     xy_mean = (intensity * (X - x_mean) * (Y - y_mean)).sum() / P
     # gamma = (x2_mean - y2_mean) / np.abs(x2_mean - y2_mean + 1e-16)
     gamma = np.sign(x2_mean - y2_mean + 0.0000000001)
-    rt = sqrt(
-        (x2_mean - y2_mean)**2 + 4 * xy_mean**2)
+    rt = sqrt((x2_mean - y2_mean)**2 + 4 * xy_mean**2)
     dx = 2 * sqrt(2) * sqrt(x2_mean + y2_mean + gamma * rt)
     dy = 2 * sqrt(2) * sqrt(x2_mean + y2_mean - gamma * rt)
 
@@ -230,8 +229,10 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
         u0 = Scalar_field_XY(x, y, 1)
         u0.u = np.sqrt(intensity)
         u0.draw()
-        ellipse = Ellipse(xy=(x_mean, y_mean), width=dy,
-                          height=dx, angle=-principal_axis / degrees)
+        ellipse = Ellipse(xy=(x_mean, y_mean),
+                          width=dy,
+                          height=dx,
+                          angle=-principal_axis / degrees)
 
         ax = plt.gca()
         ax.add_artist(ellipse)
@@ -296,7 +297,7 @@ def refraction_index(filename, wavelength, raw=False, has_draw=True):
 
 def FWHM1D(x,
            intensity,
-           percentaje=0.5,
+           percentage=0.5,
            remove_background=None,
            has_draw=False):
     """FWHM1D
@@ -317,18 +318,18 @@ def FWHM1D(x,
 
     delta_x = x[1] - x[0]
     amp_max = intensity.max()
-    amp_med = amp_max * percentaje
+    amp_med = amp_max * percentage
     i_max = np.where(intensity == amp_max)
     i_max = int(i_max[0][0])
     left = intensity[0:i_max]
     right = intensity[i_max::]
 
-    i_left, _, distance_left = nearest(left, percentaje * amp_max)
+    i_left, _, distance_left = nearest(left, percentage * amp_max)
     slope_left = (intensity[i_left + 1] - intensity[i_left]) / delta_x
 
-    i_right, _, distance_right = nearest(right, percentaje * amp_max)
-    slope_right = (
-        intensity[i_max + i_right] - intensity[i_max + i_right - 1]) / delta_x
+    i_right, _, distance_right = nearest(right, percentage * amp_max)
+    slope_right = (intensity[i_max + i_right] -
+                   intensity[i_max + i_right - 1]) / delta_x
 
     i_right = i_right + i_max
 
@@ -352,8 +353,7 @@ def FWHM1D(x,
         plt.plot([x[0], x[-1]], [amp_med, amp_med], 'r--')
 
         plt.plot(x[i_max], intensity[i_max], 'ro', ms=8)
-        plt.plot(
-            x[int(i_right)], intensity[int(i_left)], 'ro', ms=8)
+        plt.plot(x[int(i_right)], intensity[int(i_left)], 'ro', ms=8)
         plt.plot(x[int(i_left)], intensity[int(i_right)], 'ro', ms=8)
         plt.ylim(ymin=0)
         plt.xlim(x[0], x[-1])
@@ -364,7 +364,7 @@ def FWHM1D(x,
 def FWHM2D(x,
            y,
            intensity,
-           percentaje=0.5,
+           percentage=0.5,
            remove_background='None',
            has_draw=False,
            xlim=None):
@@ -379,13 +379,13 @@ def FWHM2D(x,
     Iy = intensity[i_pos[0, 0], :]
 
     # print(x.shape, Iy.shape)
-    FWHM_x = FWHM1D(x, Ix, percentaje, remove_background, has_draw=has_draw)
+    FWHM_x = FWHM1D(x, Ix, percentage, remove_background, has_draw=has_draw)
     if has_draw is True:
         if xlim is not None:
             plt.xlim(xlim)
 
     # print(y.shape, Iy.shape)
-    FWHM_y = FWHM1D(y, Iy, percentaje, remove_background, has_draw=has_draw)
+    FWHM_y = FWHM1D(y, Iy, percentage, remove_background, has_draw=has_draw)
     if has_draw is True:
         if xlim is not None:
             plt.xlim(xlim)
@@ -457,11 +457,10 @@ Returns:
                  'r--')
         plt.plot([z[i_right + i_w0], z[i_right + i_w0]],
                  [-widths[i_right + i_w0], widths[i_right + i_w0]], 'r--')
-        plt.annotate(
-            text='',
-            xy=(z[i_left], -widths[i_right + i_w0]),
-            xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
-            arrowprops=dict(arrowstyle='<->'))
+        plt.annotate(text='',
+                     xy=(z[i_left], -widths[i_right + i_w0]),
+                     xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
+                     arrowprops=dict(arrowstyle='<->'))
         plt.text(z[i_w0], -widths.mean(), '$z_{R}$', fontsize=18)
         plt.xlim(z[0], z[-1])
         plt.ylim(-widths.max(), widths.max())
@@ -960,30 +959,26 @@ def draw_fresnel_coefficients(theta_i,
 
     # Amplitud
     plt.subplot(1, 2, 1)
-    plt.plot(
-        theta_i / degrees,
-        np.abs(r_perp) * sign(r_perp),
-        'k--',
-        lw=2,
-        label=u"$r_{\perp}$")
-    plt.plot(
-        theta_i / degrees,
-        np.abs(r_par) * sign(r_par),
-        'k',
-        lw=2,
-        label=u"$r_{\parallel}$")
-    plt.plot(
-        theta_i / degrees,
-        np.abs(t_perp) * sign(t_perp),
-        'r--',
-        lw=2,
-        label=r"$t_{\perp}$")
-    plt.plot(
-        theta_i / degrees,
-        np.abs(t_par) * sign(t_par),
-        'r',
-        lw=2,
-        label=r"$t_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             np.abs(r_perp) * sign(r_perp),
+             'k--',
+             lw=2,
+             label=u"$r_{\perp}$")
+    plt.plot(theta_i / degrees,
+             np.abs(r_par) * sign(r_par),
+             'k',
+             lw=2,
+             label=u"$r_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             np.abs(t_perp) * sign(t_perp),
+             'r--',
+             lw=2,
+             label=r"$t_{\perp}$")
+    plt.plot(theta_i / degrees,
+             np.abs(t_par) * sign(t_par),
+             'r',
+             lw=2,
+             label=r"$t_{\parallel}$")
 
     # Leyenda de los ejes
     plt.xlabel(r"$\phi (degrees)$", fontsize=22)
@@ -992,30 +987,26 @@ def draw_fresnel_coefficients(theta_i,
 
     # Fase
     plt.subplot(1, 2, 2)
-    plt.plot(
-        theta_i / degrees,
-        unwrap(angle(r_perp), 2 * pi),
-        'k--',
-        lw=2,
-        label=r"$r_{\perp}$")
-    plt.plot(
-        theta_i / degrees,
-        unwrap(angle(r_par), 2 * pi),
-        'k',
-        lw=2,
-        label=r"$r_{\parallel}$")
-    plt.plot(
-        theta_i / degrees,
-        unwrap(angle(t_perp), 2 * pi),
-        'r--',
-        lw=2,
-        label=r"$t_{\perp}$")
-    plt.plot(
-        theta_i / degrees,
-        unwrap(angle(t_par), 2 * pi),
-        'r',
-        lw=2,
-        label=r"$t_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             unwrap(angle(r_perp), 2 * pi),
+             'k--',
+             lw=2,
+             label=r"$r_{\perp}$")
+    plt.plot(theta_i / degrees,
+             unwrap(angle(r_par), 2 * pi),
+             'k',
+             lw=2,
+             label=r"$r_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             unwrap(angle(t_perp), 2 * pi),
+             'r--',
+             lw=2,
+             label=r"$t_{\perp}$")
+    plt.plot(theta_i / degrees,
+             unwrap(angle(t_par), 2 * pi),
+             'r',
+             lw=2,
+             label=r"$t_{\parallel}$")
 
     # Leyenda de los ejes
     plt.xlabel(r"$\phi (degrees)$", fontsize=22)
@@ -1041,17 +1032,29 @@ def drawTransmitancias(theta_i,
     plt.figure()
     # drawing
     plt.subplot(1, 1, 1)
-    plt.plot(
-        theta_i / degrees, np.real(R_perp), 'k--', lw=2, label=u"$R_{\perp}$")
-    plt.plot(
-        theta_i / degrees, np.real(R_par), 'k', lw=2, label=u"$R_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             np.real(R_perp),
+             'k--',
+             lw=2,
+             label=u"$R_{\perp}$")
+    plt.plot(theta_i / degrees,
+             np.real(R_par),
+             'k',
+             lw=2,
+             label=u"$R_{\parallel}$")
     plt.xlabel(r"$\phi (degrees)$", fontsize=22)
     plt.ylabel(r"$Amplitud$", fontsize=22)
     plt.ylim(-0.01, 1.01)
-    plt.plot(
-        theta_i / degrees, np.real(T_perp), 'r--', lw=2, label=r"$T_{\perp}$")
-    plt.plot(
-        theta_i / degrees, np.real(T_par), 'r', lw=2, label=r"$T_{\parallel}$")
+    plt.plot(theta_i / degrees,
+             np.real(T_perp),
+             'r--',
+             lw=2,
+             label=r"$T_{\perp}$")
+    plt.plot(theta_i / degrees,
+             np.real(T_par),
+             'r',
+             lw=2,
+             label=r"$T_{\parallel}$")
     plt.xlabel(r"$\phi (degrees)$", fontsize=22)
     plt.ylabel(r"$intensity$", fontsize=22)
     plt.ylim(-0.1, 2)

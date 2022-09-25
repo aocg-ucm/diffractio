@@ -29,14 +29,16 @@ Features
 
 Diffractio is a Python library for Diffraction and Interference Optics.
 
-It implements Scalar and paraxial vector Optics. The main algorithms used are:
+It implements Scalar and vector Optics. The main algorithms used are:
 
+* Fast Fourier Transform (FFT).
 * Rayleigh Sommerfeld (RS).
 * Plane Wave Descomposition (PWD).
 * Wave Propagation Method (WPM).
 * Beam Propagation Method (BPM).
 * Vectorial Rayleigh-Sommerfeld (VRS).
 * Vector Fast Fourier Tranform (VFFT).
+* Chirp z transform (CZT).
 
 When possible, multiprocessing is implemented for a faster computation.
 
@@ -54,9 +56,9 @@ Each technique present three modules:
 * masks: Masks and Diffractive Optical elements.
 * fields:  Propagation techniques, parameters and general functions.
 
-The paraxial vector propagation techniques are implemented in modules:
+The vector propagation techniques are implemented in modules:
 
-* vector_paraxial_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
+* vector_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
 
 For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
 

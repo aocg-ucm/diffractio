@@ -102,11 +102,12 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 v_locals['z'] = self.z[index]
                 v_locals['x'] = self.x
 
-                refraction_index = eval(tmp_refraction_index, v_globals, v_locals)
+                refraction_index = eval(tmp_refraction_index, v_globals,
+                                        v_locals)
             self.n = self.n.astype(complex)
-            # self.n[:, index] = (refraction_index * (1 - t.u))
-            # self.n[:, index] = (self.n[:, index] + self.n_background * t.u)
-            self.n = refraction_index
+            self.n[:, index] = (refraction_index * (1 - t.u))
+            self.n[:, index] = (self.n[:, index] + self.n_background * t.u)
+            # self.n = refraction_index
 
     def mask_from_function(self,
                            r0,

@@ -148,26 +148,26 @@ diffractio.utils\_tests module
    :undoc-members:
    :show-inheritance:
 
-diffractio.vector\_paraxial\_fields\_XY module
+diffractio.vector\_fields\_XY module
 ----------------------------------------------
 
-.. automodule:: diffractio.vector_paraxial_fields_XY
+.. automodule:: diffractio.vector_fields_XY
    :members:
    :undoc-members:
    :show-inheritance:
 
-diffractio.vector\_paraxial\_masks\_XY module
+diffractio.vector\\_masks\_XY module
 ---------------------------------------------
 
-.. automodule:: diffractio.vector_paraxial_masks_XY
+.. automodule:: diffractio.vector_masks_XY
    :members:
    :undoc-members:
    :show-inheritance:
 
-diffractio.vector\_paraxial\_sources\_XY module
+diffractio.vector\\_sources\_XY module
 -----------------------------------------------
 
-.. automodule:: diffractio.vector_paraxial_sources_XY
+.. automodule:: diffractio.vector_sources_XY
    :members:
    :undoc-members:
    :show-inheritance:

@@ -38,8 +38,11 @@ def gauss_beam_test():
     wavelength = 0.6328
 
     field = Scalar_source_XY(x0, y0, wavelength)
-    field.gauss_beam(
-        w0=(50 * um, 50 * um), r0=(0, 0), theta=0 * degrees, phi=0 * degrees)
+    field.gauss_beam(w0=(50 * um, 50 * um),
+                     r0=(0, 0),
+                     z0=0,
+                     theta=0 * degrees,
+                     phi=0 * degrees)
 
     return field
 
@@ -50,8 +53,11 @@ def gauss_beam_narrow_test():
     wavelength = 0.6328
 
     field = Scalar_source_XY(x0, y0, wavelength)
-    field.gauss_beam(
-        w0=(5 * um, 5 * um), r0=(0, 0), theta=0 * degrees, phi=0 * degrees)
+    field.gauss_beam(w0=(5 * um, 5 * um),
+                     r0=(0, 0),
+                     theta=0 * degrees,
+                     z0=0,
+                     phi=0 * degrees)
 
     return field
 
@@ -85,6 +91,7 @@ plane_wave = plane_wave_test()
 
 
 class Test_Scalar_fields_XY(object):
+
     def test_add(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -177,11 +184,11 @@ class Test_Scalar_fields_XY(object):
         wavelength = 0.6328
 
         t1 = Scalar_source_XY(x, y, wavelength)
-        t1.gauss_beam(
-            w0=(50 * um, 50 * um),
-            r0=(0, 0),
-            theta=0 * degrees,
-            phi=0 * degrees)
+        t1.gauss_beam(w0=(50 * um, 50 * um),
+                      r0=(0, 0),
+                      z0=0,
+                      theta=0 * degrees,
+                      phi=0 * degrees)
 
         t1.draw()
         save_figure_test(newpath, func_name, add_name='_saved')
@@ -202,11 +209,10 @@ class Test_Scalar_fields_XY(object):
 
         u0.draw(kind='intensity')
         save_figure_test(newpath, func_name, add_name='_0before')
-        u0.cut_resample(
-            x_limits=(-10 * um, 10 * um),
-            y_limits=(-10 * um, 10 * um),
-            num_points=(512, 512),
-            new_field=False)
+        u0.cut_resample(x_limits=(-10 * um, 10 * um),
+                        y_limits=(-10 * um, 10 * um),
+                        num_points=(512, 512),
+                        new_field=False)
         u0.draw(kind='intensity')
         save_figure_test(newpath, func_name, add_name='_1after')
         assert True
@@ -217,16 +223,14 @@ class Test_Scalar_fields_XY(object):
 
         field = field_gauss_narrow
 
-        fieldfft1 = field.fft(
-            z=0.1 * mm,
-            remove0=False,
-            shift=True,
-            matrix=False,
-            new_field=True)
+        fieldfft1 = field.fft(z=0.1 * mm,
+                              remove0=False,
+                              shift=True,
+                              matrix=False,
+                              new_field=True)
         fieldfft1.draw(kind='intensity')
 
-        fieldfft1.save_data(
-            filename=filename + '.npz', add_name='')
+        fieldfft1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -244,8 +248,9 @@ class Test_Scalar_fields_XY(object):
         u1.plane_wave(A=1, theta=0 * degrees, phi=0 * degrees)
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength0)
-        t1.square(
-            r0=(0 * um, 0 * um), size=(40 * um, 40 * um), angle=0 * degrees)
+        t1.square(r0=(0 * um, 0 * um),
+                  size=(40 * um, 40 * um),
+                  angle=0 * degrees)
 
         u2 = u1 * t1
         u2.draw()
@@ -288,8 +293,10 @@ class Test_Scalar_fields_XY(object):
         p1 = [0, 0]
         p2 = [field.x[0], field.y[0]]
 
-        h, z_profile, point1, point2 = field.profile(
-            point1=p1, point2=p2, kind='intensity', order=1)
+        h, z_profile, point1, point2 = field.profile(point1=p1,
+                                                     point2=p2,
+                                                     kind='intensity',
+                                                     order=1)
 
         field.draw_profile(point1=p1, point2=p2, kind='intensity', order=1)
         save_figure_test(newpath, func_name, add_name='_prof')
@@ -306,8 +313,10 @@ class Test_Scalar_fields_XY(object):
 
         field = gauss_beam_test()
 
-        h, z_profile, point1, point2 = field.draw_profile(
-            point1='', point2='', kind='intensity', order=1)
+        h, z_profile, point1, point2 = field.draw_profile(point1='',
+                                                          point2='',
+                                                          kind='intensity',
+                                                          order=1)
         field.draw()
         plt.plot([point1[0], point2[0]], [point1[1], point2[1]],
                  'r',
@@ -315,8 +324,10 @@ class Test_Scalar_fields_XY(object):
 
         save_figure_test(newpath, func_name, add_name='')
 
-        field.draw_profile(
-            point1=point1, point2=point2, kind='intensity', order=1)
+        field.draw_profile(point1=point1,
+                           point2=point2,
+                           kind='intensity',
+                           order=1)
 
         save_figure_test(newpath, func_name, add_name='_prof')
         assert True
@@ -371,11 +382,10 @@ class Test_Scalar_fields_XY(object):
 
         t = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
         t.circle(r0=(0, 0), radius=(500 * um, 500 * um), angle=0 * degrees)
-        t.lens(
-            r0=(0, 0),
-            focal=(1000 * mm, 1000 * mm),
-            radius=(10 * mm, 10 * mm),
-            angle=0 * degrees)
+        t.lens(r0=(0, 0),
+               focal=(1000 * mm, 1000 * mm),
+               radius=(10 * mm, 10 * mm),
+               angle=0 * degrees)
         t.send_image_screen(id_screen, kind='phase')
         assert True
 
@@ -405,8 +415,7 @@ class Test_Scalar_fields_XY(object):
         field.get_amplitude()
         field.draw(kind='field')
 
-        field.save_data(
-            filename=filename + '.npz', add_name='')
+        field.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -436,8 +445,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='field')
         # no se ve nada, porque se ha quitado la amplitude y la phase
 
-        field.save_data(
-            filename=filename + '.npz', add_name='')
+        field.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -458,8 +466,7 @@ class Test_Scalar_fields_XY(object):
         field.remove_phase(sign=False)
         field.draw(kind='field')
 
-        field.save_data(
-            filename=filename + '.npz', add_name='')
+        field.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
 
         solution = np.angle(field.u).sum()
@@ -483,17 +490,15 @@ class Test_Scalar_fields_XY(object):
         field.gray_scale(num_levels=255, levelMin=12, levelMax=25)
         field.draw(kind='field', normalize=None)
 
-        field.binarize(
-            kind="amplitude",
-            corte=None,
-            level0=None,
-            level1=None,
-            new_field=False,
-            matrix=False)
+        field.binarize(kind="amplitude",
+                       corte=None,
+                       level0=None,
+                       level1=None,
+                       new_field=False,
+                       matrix=False)
         field.draw(kind='field', normalize=None)
 
-        field.save_data(
-            filename=filename + '.npz', add_name='')
+        field.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -511,26 +516,23 @@ class Test_Scalar_fields_XY(object):
         field.spherical_wave()
         field.draw(kind='phase', normalize=None)
 
-        field2 = field.binarize(
-            kind="phase",
-            corte=None,
-            level0=None,
-            level1=None,
-            new_field=True,
-            matrix=False)
+        field2 = field.binarize(kind="phase",
+                                corte=None,
+                                level0=None,
+                                level1=None,
+                                new_field=True,
+                                matrix=False)
         field2.draw(kind='phase', normalize=None)
 
-        field3 = field.binarize(
-            kind="phase",
-            corte=0.5,
-            level0=None,
-            level1=None,
-            new_field=True,
-            matrix=False)
+        field3 = field.binarize(kind="phase",
+                                corte=0.5,
+                                level0=None,
+                                level1=None,
+                                new_field=True,
+                                matrix=False)
         field3.draw(kind='phase', normalize=None)
 
-        field3.save_data(
-            filename=filename + '.npz', add_name='')
+        field3.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -548,48 +550,42 @@ class Test_Scalar_fields_XY(object):
         field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
         field.draw(kind='field')
 
-        fieldAmplitud = field.discretize(
-            kind='amplitude',
-            num_levels=2,
-            factor=1,
-            new_field=True,
-            matrix=False)
+        fieldAmplitud = field.discretize(kind='amplitude',
+                                         num_levels=2,
+                                         factor=1,
+                                         new_field=True,
+                                         matrix=False)
         fieldAmplitud.draw(kind='field')
 
-        fieldAmplitud = field.discretize(
-            kind='amplitude',
-            num_levels=2,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldAmplitud = field.discretize(kind='amplitude',
+                                         num_levels=2,
+                                         factor=.5,
+                                         new_field=True,
+                                         matrix=False)
         fieldAmplitud.draw(kind='field')
 
-        fieldAmplitud = field.discretize(
-            kind='amplitude',
-            num_levels=3,
-            factor=1,
-            new_field=True,
-            matrix=False)
+        fieldAmplitud = field.discretize(kind='amplitude',
+                                         num_levels=3,
+                                         factor=1,
+                                         new_field=True,
+                                         matrix=False)
         fieldAmplitud.draw(kind='field')
 
-        fieldAmplitud = field.discretize(
-            kind='amplitude',
-            num_levels=4,
-            factor=1,
-            new_field=True,
-            matrix=False)
+        fieldAmplitud = field.discretize(kind='amplitude',
+                                         num_levels=4,
+                                         factor=1,
+                                         new_field=True,
+                                         matrix=False)
         fieldAmplitud.draw(kind='field')
 
-        fieldAmplitud = field.discretize(
-            kind='amplitude',
-            num_levels=4,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldAmplitud = field.discretize(kind='amplitude',
+                                         num_levels=4,
+                                         factor=.5,
+                                         new_field=True,
+                                         matrix=False)
         fieldAmplitud.draw(kind='field')
 
-        fieldAmplitud.save_data(
-            filename=filename + '.npz', add_name='')
+        fieldAmplitud.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -610,32 +606,35 @@ class Test_Scalar_fields_XY(object):
         field.set_phase(q=1, phase_min=-np.pi, phase_max=np.pi)
         field.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase', num_levels=2, factor=1, new_field=True, matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=2,
+                                     factor=1,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase',
-            num_levels=2,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=2,
+                                     factor=.5,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase', num_levels=4, factor=1, new_field=True, matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=4,
+                                     factor=1,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase',
-            num_levels=4,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=4,
+                                     factor=.5,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase.save_data(
-            filename=filename + '.npz', add_name='')
+        fieldFase.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -652,44 +651,45 @@ class Test_Scalar_fields_XY(object):
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
 
-        field.lens(
-            r0=(0 * um, 0 * um),
-            radius=(150 * um, 150 * um),
-            focal=(2 * mm, 2 * mm),
-            angle=0 * degrees)
+        field.lens(r0=(0 * um, 0 * um),
+                   radius=(150 * um, 150 * um),
+                   focal=(2 * mm, 2 * mm),
+                   angle=0 * degrees)
         field.draw(kind='field')
-        fieldFase = field.discretize(
-            kind='phase', num_levels=2, factor=1, new_field=True, matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=2,
+                                     factor=1,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        field.lens(
-            r0=(0 * um, 0 * um),
-            radius=(150 * um, 150 * um),
-            focal=(2 * mm, 2 * mm),
-            angle=0 * degrees)
+        field.lens(r0=(0 * um, 0 * um),
+                   radius=(150 * um, 150 * um),
+                   focal=(2 * mm, 2 * mm),
+                   angle=0 * degrees)
         field.draw(kind='field')
-        fieldFase = field.discretize(
-            kind='phase',
-            num_levels=2,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=2,
+                                     factor=.5,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase', num_levels=4, factor=1, new_field=True, matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=4,
+                                     factor=1,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase = field.discretize(
-            kind='phase',
-            num_levels=4,
-            factor=.5,
-            new_field=True,
-            matrix=False)
+        fieldFase = field.discretize(kind='phase',
+                                     num_levels=4,
+                                     factor=.5,
+                                     new_field=True,
+                                     matrix=False)
         fieldFase.draw(kind='field')
 
-        fieldFase.save_data(
-            filename=filename + '.npz', add_name='')
+        fieldFase.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -707,8 +707,7 @@ class Test_Scalar_fields_XY(object):
         field1.normalize()
         field1.draw(kind='intensity', normalize=False)
 
-        field1.save_data(
-            filename=filename + '.npz', add_name='')
+        field1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -726,19 +725,24 @@ class Test_Scalar_fields_XY(object):
         field1.spherical_wave()
 
         field2 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field2.gauss_beam(
-            w0=(50 * um, 100 * um),
-            r0=(0, 0),
-            theta=0 * degrees,
-            phi=0 * degrees)
+        field2.gauss_beam(w0=(50 * um, 100 * um),
+                          r0=(0, 0),
+                          z0=0,
+                          theta=0 * degrees,
+                          phi=0 * degrees)
 
         field3 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field3.laguerre_beam(A=1, r0=(0, 0), w0=10 * um, z=50 * um, z0=0, n=1, l=1)
+        field3.laguerre_beam(A=1,
+                             r0=(0, 0),
+                             w0=10 * um,
+                             z=50 * um,
+                             z0=0,
+                             n=1,
+                             l=1)
 
-        draw_several_fields(
-            fields=(field1, field2, field3), titles=('(a)', '(b)', '(c)'))
+        draw_several_fields(fields=(field1, field2, field3),
+                            titles=('(a)', '(b)', '(c)'))
 
-        field3.save_data(
-            filename=filename + '.npz', add_name='')
+        field3.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True

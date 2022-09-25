@@ -86,7 +86,7 @@ try:
 except:
     print("cv2 not imported. Function send_image_screen cannot be used")
 
-percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
 class Scalar_field_XY(object):
@@ -996,27 +996,32 @@ class Scalar_field_XY(object):
         self.quality = dr_ideal / dr_real
         if verbose is True:
             if (self.quality.min() > 1):
-                print('Good result: factor {:2.2f}'.format(self.quality), end='\r')
+                print('Good result: factor {:2.2f}'.format(self.quality),
+                      end='\r')
             else:
                 print('- Needs denser sampling: factor {:2.2f}\n'.format(
                     self.quality))
+        precise = 0
+        if precise:
+            a = [4, 2]
+            num_repx = int(round((nx) / 2) - 1)
+            num_repy = int(round((ny) / 2) - 1)
+            bx = array(a * num_repx)
+            by = array(a * num_repy)
+            cx = concatenate(((1, ), bx, (2, 1))) / 3.
+            cy = concatenate(((1, ), by, (2, 1))) / 3.
 
-        a = [2, 4]
-        num_repx = int(round((nx) / 2) - 1)
-        num_repy = int(round((ny) / 2) - 1)
-        bx = array(a * num_repx)
-        by = array(a * num_repy)
-        cx = concatenate(((1, ), bx, (2, 1))) / 3.
-        cy = concatenate(((1, ), by, (2, 1))) / 3.
+            if float(nx) / 2 == round(nx / 2):  # es par
+                i_centralx = num_repx + 1
+                cx = concatenate((cx[:i_centralx], cx[i_centralx + 1:]))
+            if float(ny) / 2 == round(ny / 2):  # es par
+                i_centraly = num_repy + 1
+                cy = concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
 
-        if float(nx) / 2 == round(nx / 2):  # es par
-            i_centralx = num_repx + 1
-            cx = concatenate((cx[:i_centralx], cx[i_centralx + 1:]))
-        if float(ny) / 2 == round(ny / 2):  # es par
-            i_centraly = num_repy + 1
-            cy = concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
+            W = (cx[:, np.newaxis] * cy[np.newaxis, :]).T
 
-        W = cy.T @ cx
+        else:
+            W = 1
 
         U = zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
         U[0:ny, 0:nx] = array(W * self.u)
@@ -1834,6 +1839,7 @@ class Scalar_field_XY(object):
              has_colorbar='',
              colormap_kind='',
              reduce_matrix='standard',
+             percentage_intensity=None,
              **kwargs):
         """Draws  XY field.
 
@@ -1845,6 +1851,7 @@ class Scalar_field_XY(object):
             filename (str): if not '' stores drawing in file,
             cut_value (float): if provided, maximum value to show
             has_colorbar (bool): if True draws the colorbar
+            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
             reduce_matrix (str): 'standard'
         """
 
@@ -1863,10 +1870,11 @@ class Scalar_field_XY(object):
                 **kwargs)
         elif kind == 'phase':
             id_fig, IDax, IDimage = self.__draw_phase__(
-                title, colormap_kind, **kwargs)
+                title, colormap_kind, percentage_intensity, **kwargs)
         elif kind == 'field':
             id_fig = self.__draw_field__(logarithm, normalize, title,
-                                         cut_value, colormap_kind, **kwargs)
+                                         cut_value, colormap_kind,
+                                         percentage_intensity, **kwargs)
             IDax = None
             IDimage = None
         elif kind == 'real_field':
@@ -1955,7 +1963,11 @@ class Scalar_field_XY(object):
 
         return id_fig, IDax, IDimage
 
-    def __draw_phase__(self, title=r'phase/pi', colormap_kind='', **kwargs):
+    def __draw_phase__(self,
+                       title=r'phase/pi',
+                       colormap_kind='',
+                       percentage_intensity='None',
+                       **kwargs):
         """Draws phase of  XY field
 
         Parameters:
@@ -1965,20 +1977,24 @@ class Scalar_field_XY(object):
                                                        has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase / degrees
-        phase[intensity < percentaje_intensity * (intensity.max())] = 0
+
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
+
+        phase[intensity < percentage_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
             colormap_kind = self.CONF_DRAWING["color_phase"]
 
-        id_fig, IDax, IDimage = draw2D(
-            phase,
-            self.x,
-            self.y,
-            xlabel="$x  (\mu m)$",
-            ylabel="$y  (\mu m)$",
-            title=title,
-            color=colormap_kind,
-            reduce_matrix=self.reduce_matrix, **kwargs)  # seismic gist_heat
+        id_fig, IDax, IDimage = draw2D(phase,
+                                       self.x,
+                                       self.y,
+                                       xlabel="$x  (\mu m)$",
+                                       ylabel="$y  (\mu m)$",
+                                       title=title,
+                                       color=colormap_kind,
+                                       reduce_matrix=self.reduce_matrix,
+                                       **kwargs)  # seismic gist_heat
         plt.clim(vmin=-180, vmax=180)
 
         return id_fig, IDax, IDimage
@@ -1989,6 +2005,7 @@ class Scalar_field_XY(object):
                        title="",
                        cut_value=None,
                        colormap_kind='',
+                       percentage_intensity=None,
                        **kwargs):
         """Draws field  XY field.
 
@@ -2006,7 +2023,11 @@ class Scalar_field_XY(object):
                                        intensity)
 
         phase = reduce_matrix_size(self.reduce_matrix, self.x, self.y, phase)
-        phase[intensity < percentaje_intensity * (intensity.max())] = 0
+
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
+
+        phase[intensity < percentage_intensity * (intensity.max())] = 0
 
         xsize, ysize = rcParams['figure.figsize']
 
@@ -2061,7 +2082,8 @@ class Scalar_field_XY(object):
                             normalize='maximum',
                             cut_value=1,
                             title="",
-                            colormap_kind='', **kwargs):
+                            colormap_kind='',
+                            **kwargs):
         """Draws real field  XY field.
 
         Parameters:
@@ -2073,7 +2095,7 @@ class Scalar_field_XY(object):
 
         rf = np.real(self.u)
         intensity = np.abs(self.u)**2
-        rf[intensity < percentaje_intensity * (intensity.max())] = 0
+        rf[intensity < percentage_intensity * (intensity.max())] = 0
 
         if colormap_kind in ['', None, []]:
             colormap_kind = self.CONF_DRAWING["color_real"]
@@ -2085,7 +2107,8 @@ class Scalar_field_XY(object):
                                        ylabel="$y  (\mu m)$",
                                        title=title,
                                        color=colormap_kind,
-                                       reduce_matrix=self.reduce_matrix, **kwargs)
+                                       reduce_matrix=self.reduce_matrix,
+                                       **kwargs)
 
         return id_fig, IDax, IDimage
 
@@ -2115,8 +2138,6 @@ class Scalar_field_XY(object):
 
             image = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
                                        t2.u)
-
-            print(("image size {}".format(image.shape)))
 
             I_drawing = prepare_drawing(image, kind, logarithm, normalize)
             ax.imshow(I_drawing)

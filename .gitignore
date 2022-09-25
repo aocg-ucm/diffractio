@@ -6,8 +6,6 @@
 # Temporal files
 *~
 
-tests/tests_results_0/*
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -22,8 +20,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Tests
-tests/tests*/
-
+test_results/
 
 # Distribution / packaging
 .Python

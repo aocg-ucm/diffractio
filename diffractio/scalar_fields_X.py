@@ -258,7 +258,7 @@ class Scalar_field_X(object):
                      x_limits='',
                      num_points=[],
                      new_field=False,
-                     interp_kind='quadratic'):
+                     interp_kind='linear'):
         """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it does nothing.
         It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
@@ -553,11 +553,12 @@ class Scalar_field_X(object):
         dx = xout[1] - xout[0]
 
         # parametro de quality
-        dr_real = sqrt(dx**2)
-        rmax = sqrt((xout**2).max())
-        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2
-                        * (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
-        self.quality = dr_ideal / dr_real
+        dr_real = dx
+        #rmax = sqrt((xout**2).max())
+        rmax = xout.max()
+        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
+                        (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
+        self.quality = dr_ideal / dr_real / np.sqrt(2)
 
         if verbose is True:
             if (self.quality.min() > 1):
@@ -566,16 +567,21 @@ class Scalar_field_X(object):
                 print('- Needs denser sampling: factor {:2.2f}'.format(
                     self.quality))
 
-        # matrix W para integracion simpson
-        a = [2, 4]
-        num_rep = int(round((nx) / 2) - 1)
+        precise = False
 
-        b = array(a * num_rep)
-        W = concatenate(((1, ), b, (2, 1))) / 3.
+        if precise:
+            # matrix W para integracion simpson
+            a = [2, 4]
+            num_rep = int(round((nx) / 2) - 1)
 
-        if float(nx) / 2 == round(nx / 2):  # es par
-            i_central = num_rep + 1
-            W = concatenate((W[:i_central], W[i_central + 1:]))
+            b = array(a * num_rep)
+            W = concatenate(((1, ), b, (2, 1))) / 3.
+
+            if float(nx) / 2 == round(nx / 2):  # es par
+                i_central = num_rep + 1
+                W = concatenate((W[:i_central], W[i_central + 1:]))
+        else:
+            W = 1
 
         # field
         U = zeros(2 * nx - 1, dtype=complex)

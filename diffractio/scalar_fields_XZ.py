@@ -70,7 +70,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import degrees, eps, mm, np, plt, seconds, um
+from . import np, plt
+from . import num_max_processors, degrees, eps, mm, seconds, um
 from .config import CONF_DRAWING
 from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
                               kernelRS, kernelRSinverse)
@@ -83,7 +84,8 @@ from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
-num_max_processors = multiprocessing.cpu_count()
+
+percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
 class Scalar_field_XZ(object):
@@ -295,7 +297,6 @@ class Scalar_field_XZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-
     def normalize(self, kind='intensity', new_field=False):
         """Normalizes the field so that intensity.max()=1.
 
@@ -343,7 +344,7 @@ class Scalar_field_XZ(object):
             draw_check (bool): draw the differences.
 
         Returns:
-            (float): percentaje_filtered
+            (float): percentage_filtered
             (np.array): lineas_filtradas
 
         References:
@@ -383,7 +384,7 @@ class Scalar_field_XZ(object):
                     self.n[:, i] = fftshift(
                         ifft(fft(self.n[:, i]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
-            percentaje_filtered = 100 * num_filtrados / len(self.z)
+            percentage_filtered = 100 * num_filtrados / len(self.z)
         elif type_filter == 3:
             # Filtro 1D, solo ejecuta cuando hay diferencias de índice eje z
             lineas_filtradas = np.zeros_like(self.x)
@@ -399,7 +400,7 @@ class Scalar_field_XZ(object):
                     self.n[i, :] = fftshift(
                         ifft(fft(self.n[i, :]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
-            percentaje_filtered = 100 * num_filtrados / len(self.x)
+            percentage_filtered = 100 * num_filtrados / len(self.x)
 
         if draw_check is True:
             plt.figure()
@@ -426,7 +427,7 @@ class Scalar_field_XZ(object):
             h1.set_cmap(cm.gray_r)
             plt.title("filter_refraction_index: n variations", fontsize=24)
 
-        return percentaje_filtered, lineas_filtradas
+        return percentage_filtered, lineas_filtradas
 
     def discretize_refraction_index(self, n_layers):
         """Takes a refraction index an discretize it according refraction indexes.
@@ -615,7 +616,11 @@ class Scalar_field_XZ(object):
         u_final.u = self.u[:, -1]
         return u_final
 
-    def __BPM__(self, has_edges=True, pow_edge=80, matrix=False, verbose=False):
+    def __BPM__(self,
+                has_edges=True,
+                pow_edge=80,
+                matrix=False,
+                verbose=False):
         """Beam propagation method (BPM).
 
         Parameters:
@@ -659,7 +664,8 @@ class Scalar_field_XZ(object):
 
         if has_edges:
             # Función supergausiana para eliminar rebotes en los edges
-            filter_edge = np.exp(-((pixelx) / (0.99 * 0.5 * numx))**pow_edge)  # 0.98
+            filter_edge = np.exp(-((pixelx) /
+                                   (0.99 * 0.5 * numx))**pow_edge)  # 0.98
 
         field[:, 0] = field_z
         for k in range(0, numz):
@@ -674,7 +680,7 @@ class Scalar_field_XZ(object):
             if has_edges:
                 field_z = field_z * filter_edge + self.u[:, k]
             else:
-                field_z = field_z  + self.u[:, k]
+                field_z = field_z + self.u[:, k]
 
             field[:, k] = field_z
 
@@ -683,7 +689,12 @@ class Scalar_field_XZ(object):
         else:
             self.u = field
 
-    def BPM(self, has_edges=True, pow_edge=80, division=False, matrix=False, verbose=False):
+    def BPM(self,
+            has_edges=True,
+            pow_edge=80,
+            division=False,
+            matrix=False,
+            verbose=False):
         """Beam propagation method (BPM).
 
         Parameters:
@@ -913,8 +924,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                    sep="\r",
-                    end="\r")
+                      sep="\r",
+                      end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -1464,6 +1475,7 @@ class Scalar_field_XZ(object):
              z_scale='um',
              edge_matrix=None,
              interpolation='spline36',
+             percentage_intensity=None,
              **kwargs):
         """Draws  XZ field.
 
@@ -1479,6 +1491,7 @@ class Scalar_field_XZ(object):
             z_scale (str): 'mm', 'um'
             edge_matrix (numpy.array): positions of borders
             interpolation(str): methods = [None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16', 'spline36', 'hanning', 'hamming', 'hermite', 'kaiser', 'quadric', 'catrom', 'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos']
+            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
         """
 
         if reduce_matrix is False:
@@ -1500,8 +1513,6 @@ class Scalar_field_XZ(object):
             u_new = self.u[::reduce_matrix[0], ::reduce_matrix[1]]
             amplitude, intensity, phase = field_parameters(u_new, True)
 
-        # phase[intensity < 0.005 * (intensity.max())] = 0
-
         if z_scale == 'um':
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
         elif z_scale == 'mm':
@@ -1509,7 +1520,8 @@ class Scalar_field_XZ(object):
                 self.z[0] / mm, self.z[-1] / mm, self.x[0], self.x[-1]
             ]
 
-        percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
 
         plt.figure()
 
@@ -1521,7 +1533,7 @@ class Scalar_field_XZ(object):
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
         elif kind == 'phase':
             phase = phase / degrees
-            phase[intensity < percentaje_intensity * (intensity.max())] = 0
+            phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             I_drawing = phase
         elif kind == 'real':
@@ -1847,14 +1859,14 @@ class Scalar_field_XZ(object):
     def beam_widths(self,
                     kind='FWHM1D',
                     has_draw=[True, False],
-                    percentaje=0.5,
+                    percentage=0.5,
                     remove_background=None,
                     verbose=False):
         """Computes the beam width for all the distances z.
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHM1D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
-            percentaje (float): (0-1) percentaje for the beam detection
+            percentage (float): (0-1) percentage for the beam detection
             remove_background=None,
             verbose (bool): prints info
 
@@ -1874,7 +1886,7 @@ class Scalar_field_XZ(object):
                 intensity = np.abs(field)**2
                 widths[i] = FWHM1D(self.x,
                                    intensity,
-                                   percentaje=percentaje,
+                                   percentage=percentage,
                                    remove_background=remove_background,
                                    has_draw=has_draw[1])
 

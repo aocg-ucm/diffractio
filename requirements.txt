@@ -8,3 +8,7 @@ pandas
 psutil
 py_pol
 ipywidgets
+ipympl
+nodejs
+mayavi
+opencv-python

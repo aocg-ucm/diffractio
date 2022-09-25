@@ -10,17 +10,14 @@ with open('README.rst', encoding='utf8') as readme_file:
 with open('HISTORY.rst', encoding='utf8') as history_file:
     history = history_file.read()
 
-# with open('README.rst') as readme_file:
-#     readme = readme_file.read(encoding='utf8')
-#
-# with open('HISTORY.rst') as history_file:
-#     history = history_file.read(encoding='utf8')
-
 # requirements = [
 #     'Click>=6.0', 'numpy', 'scipy', 'matplotlib','nbsphinx',
 # ]
 
-requirements = []
+requirements = [
+    'screeninfo', 'Pillow', 'numexpr', 'pandas', 'psutil', 'py_pol',
+    'ipywidgets', 'ipympl', 'opencv-python'
+]
 
 setup_requirements = [
     'pytest-runner',
@@ -44,6 +41,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     description="Optical Diffraction and Interference (scalar and vectorial)",
     entry_points={
@@ -58,7 +57,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM'
+        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM', 'CZT'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
@@ -66,6 +65,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.0.13',
+    version='0.0.14',
     zip_safe=False,
 )

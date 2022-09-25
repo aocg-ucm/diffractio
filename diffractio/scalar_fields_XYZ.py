@@ -43,7 +43,6 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 import copyreg
-import multiprocessing
 import os
 import sys
 import time
@@ -54,9 +53,8 @@ import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
-from scipy.signal import correlate2d
 
-from . import degrees, eps, mm, np, plt
+from . import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -64,11 +62,9 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing
 from .utils_math import get_k, ndgrid, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
-from .utils_optics import FWHM2D, beam_width_2D, field_parameters
+from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
-
-num_max_processors = multiprocessing.cpu_count()
 
 
 class Scalar_field_XYZ(object):
@@ -284,6 +280,24 @@ class Scalar_field_XYZ(object):
             v * w * (1 - ct) + u * st) + self.Z * (w**2 + (u**2 + v**2) * ct)
 
         return Xrot, Yrot, Zrot
+
+    def normalize(self, kind='intensity', new_field=False):
+        """Normalizes the field so that intensity.max()=1.
+
+        Parameters:
+            kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+        Returns
+            u (numpy.array): normalized optical field
+        """
+        u_new = normalize(self.u, kind)
+
+        if new_field is False:
+            self.u = u_new
+        else:
+            field_output = Scalar_field_XZ(self.x, self.z, self.wavelength)
+            field_output.u = u_new
+            return field_output
 
     def duplicate(self, clear=False):
         """Duplicates the instance"""
@@ -1001,7 +1015,7 @@ class Scalar_field_XYZ(object):
     def beam_widths(self,
                     kind='FWHM2D',
                     has_draw=[True, False],
-                    percentaje=0.5,
+                    percentage=0.5,
                     remove_background=None,
                     verbose=False):
         """Determines the widths of the beam
@@ -1037,7 +1051,7 @@ class Scalar_field_XYZ(object):
                 dx, dy = FWHM2D(self.x,
                                 self.y,
                                 intensity,
-                                percentaje=percentaje,
+                                percentage=percentage,
                                 remove_background=remove_background,
                                 has_draw=has_draw[1])
                 principal_axis = 0.
@@ -1223,6 +1237,7 @@ class Scalar_field_XYZ(object):
                     reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
+                kind='intensity',
                 y0=0 * mm,
                 logarithm=0,
                 normalize='',
@@ -1240,42 +1255,43 @@ class Scalar_field_XYZ(object):
 
         plt.figure()
         ufield = self.to_Scalar_field_XZ(y0=y0)
-        intensity = np.abs(ufield.u)**2
+        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename)
+        # intensity = np.abs(ufield.u)**2
 
-        if logarithm == 1:
-            intensity = np.log(intensity + 1)
+        # if logarithm == 1:
+        #     intensity = np.log(intensity + 1)
 
-        if normalize == 'maximum':
-            intensity = intensity / intensity.max()
-        if normalize == 'area':
-            area = (self.x[-1] - self.x[0]) * (self.z[-1] - self.z[0])
-            intensity = intensity / area
-        if normalize == 'intensity':
-            intensity = intensity / (intensity.sum() / len(intensity))
+        # if normalize == 'maximum':
+        #     intensity = intensity / intensity.max()
+        # if normalize == 'area':
+        #     area = (self.x[-1] - self.x[0]) * (self.z[-1] - self.z[0])
+        #     intensity = intensity / area
+        # if normalize == 'intensity':
+        #     intensity = intensity / (intensity.sum() / len(intensity))
 
-        h1 = plt.imshow(intensity,
-                        interpolation='bilinear',
-                        aspect='auto',
-                        origin='lower',
-                        extent=[
-                            self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
-                            self.y[-1]
-                        ])
-        plt.xlabel('z (mm)', fontsize=16)
-        plt.ylabel('x $(um)$', fontsize=16)
-        plt.title('intensity XZ', fontsize=20)
-        h1.set_cmap(
-            self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
-        plt.colorbar()
+        # h1 = plt.imshow(intensity,
+        #                 interpolation='bilinear',
+        #                 aspect='auto',
+        #                 origin='lower',
+        #                 extent=[
+        #                     self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
+        #                     self.y[-1]
+        #                 ])
+        # plt.xlabel('z (mm)', fontsize=16)
+        # plt.ylabel('x $(um)$', fontsize=16)
+        # plt.title('intensity XZ', fontsize=20)
+        # h1.set_cmap(
+        #     self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
+        # plt.colorbar()
 
-        # -----------------     no functiona de momento -----------------
-        if draw_borders is True:
-            x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
-            )
-            plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
+        # # -----------------     no functiona de momento -----------------
+        # if draw_borders is True:
+        #     x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
+        #     )
+        #     plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
-        if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+        # if not filename == '':
+        #     plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
@@ -1493,6 +1509,7 @@ class Scalar_field_XYZ(object):
             include logarithm and normalize
             check
         """
+
         def f(x, kind):
             # return x
             amplitude, intensity, phase = field_parameters(

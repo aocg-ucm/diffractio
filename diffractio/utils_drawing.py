@@ -13,7 +13,7 @@ from . import degrees, eps, mm
 from .config import CONF_DRAWING
 from .utils_optics import field_parameters
 
-percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+percentage_intensity = CONF_DRAWING['percentage_intensity']
 
 
 def view_image(filename):
@@ -174,7 +174,7 @@ def draw_several_fields(fields,
     id_fig = plt.figure(figsize=figsize, facecolor='w', edgecolor='k')
     num_dibujos = len(fields)
 
-    percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+    percentage_intensity = CONF_DRAWING['percentage_intensity']
 
     for i in sorted(range(num_dibujos)):
         c = fields[i]
@@ -194,7 +194,7 @@ def draw_several_fields(fields,
             colormap = CONF_DRAWING['color_intensity']
         elif kind == 'phase':
             phase = phase / degrees
-            phase[intensity < percentaje_intensity * (intensity.max())] = 0
+            phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             colormap = CONF_DRAWING['color_phase']
             image = phase
@@ -202,10 +202,10 @@ def draw_several_fields(fields,
             image = amplitude
             colormap = CONF_DRAWING['color_amplitude']
         elif kind == 'real':
-            percentaje_intensity = CONF_DRAWING['percentaje_intensity']
+            percentage_intensity = CONF_DRAWING['percentage_intensity']
             rf = np.real(c.u)
             intensity = np.abs(c.u)**2
-            rf[intensity < percentaje_intensity * (intensity.max())] = 0
+            rf[intensity < percentage_intensity * (intensity.max())] = 0
 
             image = np.real(c.u)
             colormap = CONF_DRAWING['color_real']
