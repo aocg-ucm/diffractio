@@ -574,7 +574,8 @@ def MTF_ideal(frequencies,
         # MTF[isH1] = 2 - MTF[isH1]
 
     if verbose is True:
-        print("frecuencia de corte = {:4.2f} lineas/mm".format(frequency_max))
+        print("frecuencia de bin_level = {:4.2f} lineas/mm".format(
+            frequency_max))
 
     if has_draw is True:
         plt.figure()

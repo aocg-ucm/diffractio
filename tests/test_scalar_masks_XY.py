@@ -135,7 +135,7 @@ class Test_Scalar_masks_XY(object):
         t1.save_data(filename=filename + '.npz', add_name='_wo_bin')
         save_figure_test(newpath, func_name, '_wo_bin')
         t1.binarize(kind='amplitude',
-                    corte=None,
+                    bin_level=None,
                     level0=0.25,
                     level1=.75,
                     new_field=False,
@@ -753,22 +753,22 @@ class Test_Scalar_masks_XY(object):
 
         t = Scalar_mask_XY(x, y, wavelength)
         t.laguerre_gauss_spiral(kind='intensity',
-                                n=2,
+                                n=0,
                                 l=4,
                                 r0=(0 * um, 0 * um),
                                 w0=20 * um,
-                                z=0.01 * um)
+                                z=100 * um)
         t.draw(kind='intensity')
         t.save_data(filename=filename + '.npz', add_name='_intensity')
         save_figure_test(newpath, func_name, add_name='_intensity')
 
         t2 = Scalar_mask_XY(x, y, wavelength)
         t2.laguerre_gauss_spiral(kind='phase',
-                                 n=2,
-                                 l=4,
+                                 n=0,
+                                 l=16,
                                  r0=(0 * um, 0 * um),
                                  w0=20 * um,
-                                 z=0.01 * um)
+                                 z=4000 * um)
         t2.draw(kind='phase')
 
         t2.save_data(filename=filename + '.npz', add_name='_phase')

@@ -233,7 +233,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         # Definicion de un primer level de unos
         self.u = level1 * np.ones(self.x.shape)
-        # Aquellos points cuyo mayor sea mayor que el value de corte, adquieren
+        # Aquellos points cuyo mayor sea mayor que el value de bin_level, adquieren
         # el value del level2
         self.u[self.x > x_edge] = level2
 
@@ -745,10 +745,10 @@ class Scalar_mask_X(Scalar_field_X):
 
         if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
-            corte = 0.5
+            bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
-            t_binaria[t <= corte] = levels[0]
-            t_binaria[t > corte] = levels[1]
+            t_binaria[t <= bin_level] = levels[0]
+            t_binaria[t > bin_level] = levels[1]
             t = t_binaria
 
         if kind == 'amplitude':
@@ -840,10 +840,10 @@ class Scalar_mask_X(Scalar_field_X):
 
         if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
-            corte = 0.5
+            bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
-            t_binaria[t <= corte] = levels[0]
-            t_binaria[t > corte] = levels[1]
+            t_binaria[t <= bin_level] = levels[0]
+            t_binaria[t > bin_level] = levels[1]
             t = t_binaria
 
         if kind == 'amplitude':
@@ -901,10 +901,10 @@ class Scalar_mask_X(Scalar_field_X):
 
         if kind == 'amplitude_binary' or kind == 'phase_binary':
             levels = [0, 1]
-            corte = 0.5
+            bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
-            t_binaria[t <= corte] = levels[0]
-            t_binaria[t > corte] = levels[1]
+            t_binaria[t <= bin_level] = levels[0]
+            t_binaria[t > bin_level] = levels[1]
             t = t_binaria
 
         if kind == 'amplitude':

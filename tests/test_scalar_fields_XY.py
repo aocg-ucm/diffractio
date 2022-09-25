@@ -487,16 +487,16 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        field.gray_scale(num_levels=255, levelMin=12, levelMax=25)
-        field.draw(kind='field', normalize=None)
+        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.draw(kind='intensity', normalize=None)
 
         field.binarize(kind="amplitude",
-                       corte=None,
-                       level0=None,
-                       level1=None,
+                       bin_level=0.5,
+                       level0=0,
+                       level1=1,
                        new_field=False,
                        matrix=False)
-        field.draw(kind='field', normalize=None)
+        field.draw(kind='intensity', normalize=None)
 
         field.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -517,7 +517,7 @@ class Test_Scalar_fields_XY(object):
         field.draw(kind='phase', normalize=None)
 
         field2 = field.binarize(kind="phase",
-                                corte=None,
+                                bin_level=None,
                                 level0=None,
                                 level1=None,
                                 new_field=True,
@@ -525,12 +525,11 @@ class Test_Scalar_fields_XY(object):
         field2.draw(kind='phase', normalize=None)
 
         field3 = field.binarize(kind="phase",
-                                corte=0.5,
-                                level0=None,
-                                level1=None,
+                                bin_level=0,
+                                level0=-np.pi / 2,
+                                level1=np.pi / 2,
                                 new_field=True,
                                 matrix=False)
-        field3.draw(kind='phase', normalize=None)
 
         field3.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')

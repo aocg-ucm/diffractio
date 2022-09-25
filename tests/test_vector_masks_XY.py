@@ -55,11 +55,9 @@ class Test_vector_masks_XY(object):
         # mask vectorial
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.apply_scalar_mask(u_mask=mask)
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
 
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='all')
+        save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_complementary_mask(self):
@@ -85,12 +83,11 @@ class Test_vector_masks_XY(object):
         EM.complementary_masks(mask=mask,
                                state_0=np.array([[1, 0], [0, 0]]),
                                state_1=np.array([[0, 0], [0, 1]]))
-        EM.draw(kind='intensities')
 
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
     def test_from_py_pol(self):
@@ -110,11 +107,10 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.from_py_pol(PL)
 
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
     def test_polarizer_linear(self):
@@ -130,12 +126,11 @@ class Test_vector_masks_XY(object):
 
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.polarizer_linear(azimuth=0 * degrees)
-        EM.draw(kind='fields')
 
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
     def test_quarter_wave(self):
@@ -152,11 +147,10 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.quarter_waveplate(azimuth=0 * degrees)
 
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
     def test_half_wave(self):
@@ -173,11 +167,10 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.half_waveplate(azimuth=0 * degrees)
 
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True
 
     def test_polarizer_retarder(self):
@@ -197,9 +190,8 @@ class Test_vector_masks_XY(object):
                               p2=0.1,
                               azimuth=0 * degrees)
 
-        EM.draw(kind='fields')
-        save_figure_test(newpath, func_name, add_name='_fields')
-
-        EM.draw(kind='stokes')
-        save_figure_test(newpath, func_name, add_name='_stokes')
+        EM.draw(kind='amplitude')
+        save_figure_test(newpath, func_name, add_name='_amplitude')
+        EM.draw(kind='phase')
+        save_figure_test(newpath, func_name, add_name='_phase')
         assert True

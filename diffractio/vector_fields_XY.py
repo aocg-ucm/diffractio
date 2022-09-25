@@ -1147,8 +1147,8 @@ class Vector_field_XY(object):
             filename (str): if not '' stores drawing in file,
 
         """
-        if draw is True:
 
+        if draw is True:
             if kind == 'intensity':
                 id_fig = self.__draw_intensity__(logarithm, normalize,
                                                  cut_value, only_image,

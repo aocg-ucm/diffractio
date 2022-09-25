@@ -1660,7 +1660,7 @@ class Scalar_field_XY(object):
 
     def binarize(self,
                  kind="amplitude",
-                 corte=None,
+                 bin_level=None,
                  level0=None,
                  level1=None,
                  new_field=False,
@@ -1669,7 +1669,7 @@ class Scalar_field_XY(object):
 
         Parameters:
             kind (str): 'amplitude' or 'phase'
-            corte (float): value of cut. If None, the cut is in the mean value
+            bin_level (float): value of cut. If None, the cut is in the mean value
             level0 (float): minimum value. If None, minimum value of field
             level1 (float): maximum value. If None, maximum value of field
             new_field (bool): if True returns new field
@@ -1689,43 +1689,42 @@ class Scalar_field_XY(object):
             amplitude_binarized = amplitude
             maximum = amplitude.max()
             minimum = amplitude.min()
-            if corte is None:
-                corte = (maximum + minimum) / 2
+            if bin_level is None:
+                bin_level = (maximum + minimum) / 2
             if level0 is None:
                 level0 = minimum
             if level1 is None:
                 level1 = maximum
 
-            amplitude_binarized[amplitude <= corte] = level0
-            amplitude_binarized[amplitude > corte] = level1
-            fieldDiscretizado = amplitude_binarized * phase
+            amplitude_binarized[amplitude <= bin_level] = level0
+            amplitude_binarized[amplitude > bin_level] = level1
+            u_binarized = amplitude_binarized * phase
 
         if kind == 'phase':
-            # phaseInicial = 0
             phase_binarized = phase
             maximum = phase.max()
             minimum = phase.min()
-            if corte is None:
-                corte = (maximum + minimum) / 2
+            if bin_level is None:
+                bin_level = (maximum + minimum) / 2
             if level0 is None:
                 level0 = minimum
             if level1 is None:
                 level1 = maximum
 
-            phase_binarized[phase <= corte] = level0
-            phase_binarized[phase > corte] = level1
-            fieldDiscretizado = amplitude * phase_binarized
+            phase_binarized[phase <= bin_level] = level0
+            phase_binarized[phase > bin_level] = level1
+            u_binarized = amplitude * phase_binarized
 
         if new_field is False and matrix is False:
-            self.u = fieldDiscretizado
+            self.u = u_binarized
             return self.u
 
         if new_field is False and matrix is True:
-            return fieldDiscretizado
+            return u_binarized
 
         if new_field is True:
             cn = Scalar_field_XY(self.x, self.y, self.wavelength)
-            cn.u = fieldDiscretizado
+            cn.u = u_binarized
             return cn
 
     def discretize(self,
@@ -1769,7 +1768,7 @@ class Scalar_field_XY(object):
                 Trues = abajo * arriba
                 discretized_image[Trues] = centro / 256
 
-            fieldDiscretizado = discretized_image * phase
+            u_binarized = discretized_image * phase
 
         if kind == 'phase':
             ang = angle(self.get_phase(matrix=True,
@@ -1798,19 +1797,19 @@ class Scalar_field_XY(object):
             phase = phase - phase.min()
             discretized_image = exp(1j * pi * phase)
 
-            fieldDiscretizado = amplitude * discretized_image
+            u_binarized = amplitude * discretized_image
 
         if new_field is False and matrix is False:
-            self.u = fieldDiscretizado
+            self.u = u_binarized
             return
 
         if new_field is True:
             cn = Scalar_field_XY(self.x, self.y, self.wavelength)
-            cn.u = fieldDiscretizado
+            cn.u = u_binarized
             return cn
 
         if matrix is True:
-            return fieldDiscretizado
+            return u_binarized
 
     def normalize(self, kind='intensity'):
         """Normalize the field.
