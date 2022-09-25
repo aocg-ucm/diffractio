@@ -79,7 +79,7 @@ from .scalar_masks_X import Scalar_mask_X
 from .scalar_sources_X import Scalar_source_X
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
-from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image
+from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image, Bluestein_dft_xy
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize
 

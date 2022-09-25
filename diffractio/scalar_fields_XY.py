@@ -73,8 +73,10 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
 from .utils_math import (get_edges, get_k, ndgrid, nearest, reduce_to_1,
-                         rotate_image)
+                         rotate_image, Bluestein_dft_xy)
 from .utils_optics import beam_width_2D, field_parameters
+from .scalar_fields_X import Scalar_field_X
+from .scalar_fields_XZ import Scalar_field_XZ
 
 try:
     import screeninfo
@@ -1240,6 +1242,172 @@ class Scalar_field_XY(object):
             return u_iter.u
         else:
             self.u = u_iter.u
+
+    def CZT(self, z, xout, yout):
+        """_summary_ from XY to XY
+
+        previous: Scalar_Bluestein_XY
+
+        Args:
+            z (float): diffraction distance
+            xout (np.array): x array with positions of the output plane
+            yout (np.array): y array with positions of the output plane
+
+
+        Returns:
+            gout: Complex amplitude of the outgoing light beam
+            delta_out: pixel size of the outgoing light beam
+        """
+
+        k = 2 * np.pi / self.wavelength
+
+        if isinstance(xout, (float, int)):
+            numx_out = 2
+            xout = np.array((xout, xout + 0.1))
+            remove_x = True
+        else:
+            numx_out = len(xout)
+            remove_x = False
+
+        if isinstance(yout, (float, int)):
+            numy_out = 2
+            yout = np.array((yout, yout + 0.1))
+            remove_y = True
+
+        else:
+            numy_out = len(yout)
+            remove_y = False
+
+        xstart = xout[0]
+        xend = xout[-1]
+        ystart = yout[0]
+        yend = yout[-1]
+
+        delta_x_in = self.x[1] - self.x[0]
+
+        delta_out = np.zeros(2)
+        if numx_out > 1:
+            delta_out[0] = (xend - xstart) / (numx_out - 1)
+        if numy_out > 1:
+            delta_out[1] = (yend - ystart) / (numy_out - 1)
+
+        Xout, Yout = meshgrid(xout, yout)
+
+        # calculating scalar diffraction below
+        F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
+            1j * k / 2 / z * (Xout**2 + Yout**2))
+        F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+        u0 = self.u * F
+
+        # using Bluestein method to calculate the complex amplitude of the outgoing light beam
+
+        # one-dimensional FFT in one direction
+        fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+
+        fy1 = ystart + fs / 2
+        fy2 = yend + fs / 2
+        u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, numy_out)
+
+        # one-dimensional FFT in the other direction
+        fx1 = xstart + fs / 2
+        fx2 = xend + fs / 2
+        u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, numx_out)
+
+        u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
+
+        if remove_x is True:
+            u0 = u0[:, 0]
+            xout = np.array((xout[0], ))
+            u_out = Scalar_field_X(yout, self.wavelength)
+            u_out.u = u0
+            return u_out
+
+        if remove_y is True:
+            u0 = u0[0, :]
+            yout = np.array((yout[0], ))
+            u_out = Scalar_field_X(xout, self.wavelength)
+            u_out.u = u0
+            return u_out
+
+        u_out = Scalar_field_XY(xout, yout, self.wavelength)
+        u_out.u = u0
+        return u_out
+
+    def CZT_xz(self, zs, xout, yout):
+        """_summary_ from XY to zs
+
+        previous: Scalar_Bluestein_XZ
+
+        Args:
+            zs (np.array): diffraction distance
+            xout (np.array): x array with positions of the output plane
+            yout (float): y position of the output plane
+
+
+        Returns:
+            gout: Complex amplitude of the outgoing light beam
+            delta_out: pixel size of the outgoing light beam
+        """
+
+        k = 2 * np.pi / self.wavelength
+
+        if isinstance(xout, (float, int)):
+            numx_out = 2
+            xout = np.array((xout, xout + 0.1))
+            remove_x = True
+        else:
+            numx_out = len(xout)
+            remove_x = False
+
+        numy_out = 2
+        remove_y = True
+
+        xstart = xout[0]
+        xend = xout[-1]
+
+        delta_x_in = self.x[1] - self.x[0]
+
+        Z0, _ = np.meshgrid(zs, xout)
+
+        delta_out = np.zeros(2)
+        if numx_out > 1:
+            delta_out[0] = (xend - xstart) / (numx_out - 1)
+
+        u_out = np.zeros_like(Z0, dtype=complex)
+
+        for i, z in enumerate(zs):
+            # calculating scalar diffraction below
+            print("{}/{}".format(i, len(zs)), end="\r")
+            F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+                1j * k / 2 / z * (xout**2 + yout**2))
+            F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+            u0 = self.u * F
+            # print(F0.shape, u0.shape)
+
+            # using Bluestein method to calculate the complex amplitude of the outgoing light beam
+
+            # one-dimensional FFT in one direction
+            fs = self.wavelength * z / delta_x_in
+            fy1 = yout + fs / 2
+            fy2 = yout + fs / 2
+            u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, numy_out)
+            # u0=u0.transpose()
+            # print(F0.shape, u0.shape)
+
+            # one-dimensional FFT in the other direction
+            fx1 = xstart + fs / 2
+            fx2 = xend + fs / 2
+            u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, numx_out)
+            # print(F0.shape, u0.shape)
+            # print(u0)
+            u0 = u0[0, :]
+            u_out[:, i] = F0 * u0
+
+        u_xz = Scalar_field_XZ(xout, zs, self.wavelength)
+        u_xz.u = u_out
+
+        return u_xz
 
     def profile(self,
                 point1='',

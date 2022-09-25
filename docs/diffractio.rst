@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+diffractio.config module
+------------------------
+
+.. automodule:: diffractio.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 diffractio.scalar\_fields\_X module
 -----------------------------------
 
@@ -140,6 +148,14 @@ diffractio.utils\_slicer module
    :undoc-members:
    :show-inheritance:
 
+diffractio.utils\_slicer copy module
+------------------------------------
+
+.. automodule:: diffractio.utils_slicer copy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 diffractio.utils\_tests module
 ------------------------------
 
@@ -149,23 +165,23 @@ diffractio.utils\_tests module
    :show-inheritance:
 
 diffractio.vector\_fields\_XY module
-----------------------------------------------
+------------------------------------
 
 .. automodule:: diffractio.vector_fields_XY
    :members:
    :undoc-members:
    :show-inheritance:
 
-diffractio.vector\\_masks\_XY module
----------------------------------------------
+diffractio.vector\_masks\_XY module
+-----------------------------------
 
 .. automodule:: diffractio.vector_masks_XY
    :members:
    :undoc-members:
    :show-inheritance:
 
-diffractio.vector\\_sources\_XY module
------------------------------------------------
+diffractio.vector\_sources\_XY module
+-------------------------------------
 
 .. automodule:: diffractio.vector_sources_XY
    :members:

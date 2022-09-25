@@ -65,7 +65,7 @@ from scipy.special import hankel1
 from . import degrees, mm, np, plt
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import fft_filter, get_edges, nearest, reduce_to_1
+from .utils_math import fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize
@@ -686,6 +686,67 @@ class Scalar_field_X(object):
             self.x = x0
             self.u = u_field
             self.quality = qualities.min()
+
+    def CZT(self, z, xout):
+        """_summary_
+
+        previous: Scalar_Bluestein_X -> CZT
+
+        Args:
+            z (float): diffraction distance
+            xout (np.array): x array with positions of the output plane
+
+
+        Returns:
+            gout: Complex amplitude of the outgoing light beam
+            delta_out: pixel size of the outgoing light beam
+        """
+
+        k = 2 * np.pi / self.wavelength
+
+        if isinstance(xout, (float, int)):
+            numx_out = 2
+            xout = np.array((xout, xout + 0.1))
+            remove_x = True
+        else:
+            numx_out = len(xout)
+            remove_x = False
+
+        xstart = xout[0]
+        xend = xout[-1]
+
+        delta_x_in = self.x[1] - self.x[0]
+
+        delta_out = np.zeros(2)
+        if numx_out > 1:
+            delta_out[0] = (xend - xstart) / (numx_out - 1)
+
+        # calculating scalar diffraction below
+        F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+            1j * k / 2 / z * (xout**2))
+        F = np.exp(1j * k / 2 / z * (self.x**2))
+        u0 = self.u * F
+
+        # using Bluestein method to calculate the complex amplitude of the outgoing light beam
+
+        # one-dimensional FFT in one direction
+        fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+
+        # one-dimensional FFT in the other direction
+        fx1 = xstart + fs / 2
+        fx2 = xend + fs / 2
+        u0 = Bluestein_dft_x(u0, fx1, fx2, fs, numx_out)
+
+        u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
+
+        if remove_x is True:
+            # print('quito ' + str(len(u0)))
+            return u0[0]
+
+        u_out = Scalar_field_X(xout, self.wavelength)
+        u_out.u = u0
+
+        return u_out
 
     def normalize(self, kind='intensity', new_field=False):
         """Normalizes the field so that intensity.max()=1.

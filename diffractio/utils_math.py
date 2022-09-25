@@ -4,13 +4,110 @@
 
 from copy import deepcopy
 from math import factorial
-
 import numpy as np
+
+from numpy import (angle, array, exp, linspace, ones_like, pi, linspace,
+                   arcsin, arctan2, sqrt, meshgrid, isnan, tile, real, angle,
+                   sign, mod, ones, zeros)
+
 import scipy.ndimage as ndimage
-from numpy import angle, array, exp, linspace, ones_like, pi, zeros
 from scipy.signal import fftconvolve
+from numpy.fft import fft, ifft
 
 from . import mm
+
+
+def nextpow2(x):
+    """Exponent of next higher power of 2. It returns the exponents for the smallest powers of two that satisfy $2^p≥A$ for each element in A. 
+    By convention, nextpow2(0) returns zero.
+
+    Args:
+        x (float): value
+
+    Returns:
+        integer: Exponent of next higher power of 2
+    """
+    y = np.ceil(np.log2(x))
+    if type(x) is np.ndarray:
+        y[y == -np.inf] = 0
+        return y
+    else:
+        if y == -np.inf:
+            y = 0
+        return int(y)
+
+
+def Bluestein_dft_x(x, f1, f2, fs, mout):
+    """Bluestein dft
+
+    Args:
+        x (_type_): _description_
+        f1 (_type_): _description_
+        f2 (_type_): _description_
+        fs (_type_): _description_
+        mout (_type_): _description_
+
+    Reference:
+        - Hu, Y., Wang, Z., Wang, X., Ji, S., Zhang, C., Li, J., Zhu, W., Wu, D.,  Chu, J. (2020). "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method". Light: Science and Applications, 9(1). https://doi.org/10.1038/s41377-020-00362-z
+    """
+
+    m = len(x)
+    f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
+    f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
+    a = exp(1j * 2 * pi * f11 / fs)
+    w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
+    h = np.arange(-m + 1, max(mout, m))
+    mp = m + mout - 1
+    h = w**((h**2) / 2)
+    ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
+    b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
+    tmp = b.T
+    b = fft(x * tmp, 2**nextpow2(mp), axis=0)
+
+    b = ifft(b * ft.T, axis=0)
+    b = b[m:mp + 1].T * h[m - 1:mp]
+    l = linspace(0, mout - 1, mout)
+    l = l / mout * (f22 - f11) + f11
+    Mshift = -m / 2
+    Mshift = exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs)
+    b = b * Mshift
+
+    return b
+
+
+def Bluestein_dft_xy(x, f1, f2, fs, mout):
+    """Bluestein dft
+
+    Args:
+        x (_type_): _description_
+        f1 (_type_): _description_
+        f2 (_type_): _description_
+        fs (_type_): _description_
+        mout (_type_): _description_
+    """
+
+    m, n = x.shape
+    f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
+    f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
+    a = exp(1j * 2 * pi * f11 / fs)
+    w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
+    h = np.arange(-m + 1, max(mout, m))
+    mp = m + mout - 1
+    h = w**((h**2) / 2)
+    ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
+    b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
+    tmp = tile(b, (n, 1)).T
+    b = fft(x * tmp, 2**nextpow2(mp), axis=0)
+
+    b = ifft(b * tile(ft, (n, 1)).T, axis=0)
+    b = b[m:mp + 1, 0:n].T * tile(h[m - 1:mp], (n, 1))
+    l = np.linspace(0, mout - 1, mout)
+    l = l / mout * (f22 - f11) + f11
+    Mshift = -m / 2
+    Mshift = tile(exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs), (n, 1))
+    b = b * Mshift
+
+    return b
 
 
 def reduce_to_1(class_diffractio):
