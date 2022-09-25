@@ -73,7 +73,7 @@ class Vector_source_XY(Vector_field_XY):
             radiusx, radiusy = radius
         radius = (radiusx, radiusy)
 
-        self = define_initial_field(self)
+        self = define_initial_field(self, u)
 
         if has_normalization:
             v = normalize_vector(v)
