@@ -1294,9 +1294,18 @@ class Scalar_field_XY(object):
         Xout, Yout = meshgrid(xout, yout)
 
         # calculating scalar diffraction below
-        F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
-            1j * k / 2 / z * (Xout**2 + Yout**2))
-        F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+        # F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
+        #     1j * k / 2 / z * (Xout**2 + Yout**2))
+        # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+
+        R = sqrt(Xout**2 + Yout**2 + z**2)
+        F0 = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+        R = sqrt(self.X**2 + self.Y**2 + z**2)
+        F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+
         u0 = self.u * F
 
         # using Bluestein method to calculate the complex amplitude of the outgoing light beam
@@ -1378,9 +1387,17 @@ class Scalar_field_XY(object):
         for i, z in enumerate(zs):
             # calculating scalar diffraction below
             print("{}/{}".format(i, len(zs)), end="\r")
-            F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-                1j * k / 2 / z * (xout**2 + yout**2))
-            F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+            # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+            #     1j * k / 2 / z * (xout**2 + yout**2))
+            # F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+            R = sqrt(xout**2 + yout**2 + z**2)
+            F0 = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+            R = sqrt(self.X**2 + self.Y**2 + z**2)
+            F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+
 
             u0 = self.u * F
             # print(F0.shape, u0.shape)
