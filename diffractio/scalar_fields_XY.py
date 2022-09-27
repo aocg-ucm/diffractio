@@ -135,10 +135,10 @@ class Scalar_field_XY(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   y:  {},   u:  {}".format(
             self.type, self.x.shape, self.y.shape, self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um".format(
-            self.x[0], self.x[-1]))
-        print(" - ymin:       {:2.2f} um,  ymax:      {:2.2f} um".format(
-            self.y[0], self.y[-1]))
+        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
+            self.x[0], self.x[-1], self.x[1]-self.x[0]))
+        print(" - ymin:       {:2.2f} um,  ymax:      {:2.2f} um,  Dy:   {:2.2f} um".format(
+            self.y[0], self.y[-1], self.y[1]-self.y[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -146,9 +146,10 @@ class Scalar_field_XY(object):
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
+        return("")
 
-        return ""
 
     def __add__(self, other):
         """Adds two Scalar_field_x. For example two light sources or two masks
@@ -338,11 +339,11 @@ class Scalar_field_XY(object):
             float: area (in um**2)
         """
 
-        # creo nombre para txt
+        # filename for txt
         name = filename.split(".")
         nombreTxt = name[0] + ".txt"
 
-        # creo image
+        # image
         plt.figure()
         filter = np.abs(self.u) > 0
 
@@ -368,21 +369,22 @@ class Scalar_field_XY(object):
         plt.imsave(filename, mask, cmap='gray', dpi=300, origin='lower')
         plt.close()
 
-        # creo txt con data importantes
+        # important data
         ofile = open(nombreTxt, "w")
-        ofile.write("nombre de archivo %s\n" % filename)
-        ofile.write("fecha: {}\n".format(datetime.date.today()))
+        ofile.write("filename %s\n" % filename)
+        ofile.write("date: {}\n".format(datetime.date.today()))
         if info is not None:
             ofile.write("\ninfo:\n")
             ofile.write(info)
         ofile.write("\n\n")
-        ofile.write("length de la mask: %i x %i\n" %
+        ofile.write("mask length: %i x %i\n" %
                     (len(self.x), len(self.y)))
         ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
                     (self.y.min(), self.y[-1], self.y[1] - self.y[0]))
-        ofile.write("\nlongitud de onda = %f *um" % self.wavelength)
+                    
+        ofile.write("\wavelength = %f *um" % self.wavelength)
         ofile.close()
 
         return mask
@@ -666,71 +668,7 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
 
-    def fft_backup(self,
-                   z=0,
-                   shift=True,
-                   remove0=True,
-                   matrix=False,
-                   new_field=False):
-        """Fast Fourier Transform (FFT) of the field.
-        Parameters:
-            z (float): distance to the observation plane or focal of lens
-                       if z==0, no x,y scaled y produced
-            shift (bool): if True, fftshift is performed
-            remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X
-            new_field (bool): if True returns Scalar_field_X, else it puts in self
-
-        Returns:
-            (np.array or Scalar_field_X or None): FFT of the input field
-        """
-
-        k = 2 * np.pi / self.wavelength
-
-        ttf1 = fft2(self.u)
-
-        if remove0 is True:
-            ttf1[0, 0] = 0
-
-        if shift is True:
-            ttf1 = fftshift(ttf1)
-
-        if matrix is True:
-            return ttf1
-
-        num_x = self.x.size
-        delta_x = self.x[1] - self.x[0]
-        freq_nyquist_x = 1 / (2 * delta_x)
-
-        kx = linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * z
-        num_y = self.y.size
-        delta_y = self.y[1] - self.y[0]
-        freq_nyquist_y = 1 / (2 * delta_y)
-        ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * z
-
-        if new_field is True:
-            field_output = Scalar_field_XY(self.x, self.y, self.wavelength)
-            if z > 0:
-                field_output.x = kx
-                field_output.y = ky
-            elif z == 0:
-                field_output.x = self.x
-                field_output.y = self.y
-
-            field_output.X, field_output.Y = ndgrid(field_output.x,
-                                                    field_output.y)
-            field_output.u = ttf1
-
-            # * \
-            #     np.exp(1j * k * (z + (self.X**2 + self.Y**2) / (2 * z))
-            #            ) / (1j * self.wavelength * z)
-
-            return field_output
-        else:
-            if z > 0:
-                self.x = kx
-                self.y = ky
-                self.X, self.Y = ndgrid(self.x, self.y)
+ 
 
     def ifft_proposal(self,
                       z=0 * mm,
@@ -867,80 +805,7 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
 
-    def ifft_backup(self,
-                    z=10 * mm,
-                    shift=True,
-                    remove0=True,
-                    matrix=False,
-                    new_field=False):
-        """Fast Fourier Transform (fft) of the field.
 
-        Parameters:
-            z (float): distance to the observation plane or focal of lens
-            shift (bool): if True, fftshift is performed
-            remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned. If False, returns Scalar_field_X
-            new_field (bool): if True returns Scalar_field_X, else puts in self
-
-        Returns:
-            (np.array or Scalar_field_X or None): FFT of the input field
-        """
-        k = 2 * np.pi / self.wavelength
-
-        ttf1 = ifft2(self.u)
-        ttf1 = ttf1 * np.exp(-1j * k * (z + (self.X**2 + self.Y**2) /
-                                        (2 * z))) / (-1j * self.wavelength * z)
-
-        if remove0 is True:
-            ttf1[0, 0] = 0
-
-        if shift is True:
-            ttf1 = fftshift(ttf1)
-
-        if matrix is True:
-            return ttf1
-
-        u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-
-        # x scaling - Infor
-        num_x = self.x.size
-        delta_x = self.x[1] - self.x[0]
-        freq_nyquist_x = 1 / (2 * delta_x)
-        kx = linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * self.wavelength
-        num_y = self.y.size
-        delta_y = self.y[1] - self.y[0]
-        freq_nyquist_y = 1 / (2 * delta_y)
-        ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * self.wavelength
-
-        u3.x = kx
-        u3.y = ky
-
-        u3.X, u3.Y = ndgrid(u3.x, u3.y)
-
-        if z is None:
-            u3.x = kx  # exit in angles (radians)
-        else:
-            u3.x = kx * z  # exit distances at a obsrvation plane z
-
-        u3.u = ttf1
-
-        if new_field is True:
-            field_output = Scalar_field_XY(self.x, self.y, self.wavelength)
-            field_output.x = kx
-            field_output.y = ky
-
-            field_output.X, field_output.Y = ndgrid(field_output.x,
-                                                    field_output.y)
-            field_output.u = ttf1
-
-            return field_output
-        else:
-            self.u = ttf1
-            self.x = kx
-            self.y = ky
-            self.X, self.Y = ndgrid(self.x, self.y)
-
-        return u3
 
     def _RS_(self,
              z,
@@ -990,7 +855,7 @@ class Scalar_field_XY(object):
         dx = xout[1] - xout[0]
         dy = yout[1] - yout[0]
 
-        # parametro de quality
+        # quality parameter
         dr_real = sqrt(dx**2 + dy**2)
         rmax = sqrt((xout**2).max() + (yout**2).max())
         dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *

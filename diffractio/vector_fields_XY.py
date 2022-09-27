@@ -51,11 +51,12 @@ from scipy.interpolate import RectBivariateSpline
 
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
+from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_common import load_data_common, save_data_common
 from .utils_drawing import normalize_draw, reduce_matrix_size
-from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image
+from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image, Bluestein_dft_xy
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -304,8 +305,7 @@ class Vector_field_XY(object):
 
         # Definicion de la transmitancia
         pupil0 = zeros(shape(self.X))
-        ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
-            (Yrot)**2 / (radiusy**2 + 1e-15) < 1
+        ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + (Yrot)**2 / (radiusy**2 + 1e-15) < 1
         pupil0[ipasa] = 1
         self.Ex = self.Ex * pupil0
         self.Ey = self.Ey * pupil0
@@ -324,8 +324,7 @@ class Vector_field_XY(object):
     def intensity(self):
         """"Returns intensity.
         """
-        intensity = np.abs(self.Ex)**2 + \
-            np.abs(self.Ey)**2 + np.abs(self.Ez)**2
+        intensity = np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2
 
         return intensity
 
@@ -391,141 +390,7 @@ class Vector_field_XY(object):
             self.x = Ex.x
             self.y = Ex.y
 
-    def VFFT_deprecated(self,
-                        radius,
-                        focal,
-                        n=1,
-                        new_field=False,
-                        matrix=False,
-                        has_draw=False):
-        """Vector Fast Fourier Transform (FFT) of the field.
-
-        The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
-        having a focal length fand collecting light under a convergence angle theta_max.
-        Denoting the refractive index of the medium in the focal region with n, the NA of the lens can be written as NA= n sin theta_max.
-        The polarization changes on the lens surfaces described by the Fresnel formulae have been neglected.
-
-        Ei = (Eix, Eiy, Eiz) is the local electric field vector.
-
-        Parameters:
-            radius (float): radius of lens
-            focal (float): focal
-            n (float): refraction index
-            matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X.
-            new_field (bool): if True returns Vector_field_XY, else it puts in self.
-            has_draw (bool): if True draw the field.
-
-        Returns:
-            (np.array or vector_fields_XY or None): FFT of the input field.
-
-        Reference:
-            Jahn, Kornél, and Nándor Bokor. 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
-
-
-        TODO:
-             some inconsistency in the radius of the circle lower than the size of the field.
-        """
-        from .vector_sources_XY import Vector_source_XY
-
-        # dx = self.x[1] - self.x[0]
-        # dy = self.y[1] - self.y[0]
-        num_x, num_y = self.X.shape
-
-        # numerical aperture
-        sin_theta_max = radius / np.sqrt(radius**2 + focal**2)
-        # NA = n * sin_theta_max
-
-        r = np.sqrt(self.X**2 + self.Y**2)
-        phi = np.arctan2(self.Y, self.X)
-        theta = r / focal
-
-        u = self.X / radius
-        v = self.Y / radius
-
-        # X_obs = sin_theta_max * self.X / self.wavelength
-        # Y_obs = sin_theta_max * self.Y / self.wavelength
-
-        circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        circle_mask.circle(r0=(0, 0), radius=radius)
-
-        self.mask_circle(r0=(0., 0.), radius=radius)
-
-        cos_theta = np.cos(theta)
-        sin_theta = np.sin(theta)
-        cos_phi = np.cos(phi)
-        sin_phi = np.sin(phi)
-
-        apodization_factor = np.sqrt(np.abs(np.cos(theta)))
-
-        G = 1 / sqrt(np.abs(1 - sin_theta_max**2 * (u**2 + v**2)))
-        G = G * circle_mask.u
-        G = np.real(G)
-
-        M00 = cos_phi**2 * cos_theta + sin_phi**2
-        M01 = sin_phi * cos_phi * cos_theta - sin_phi * cos_phi
-        M02 = -sin_theta * cos_phi
-
-        M10 = sin_phi * cos_phi * cos_theta - sin_phi * cos_phi
-        M11 = sin_phi**2 * cos_theta + cos_phi**2
-        M12 = -sin_theta * sin_phi
-
-        M20 = sin_theta * cos_phi
-        M21 = sin_theta * sin_phi
-        M22 = cos_theta
-
-        Eix = self.Ex
-        Eiy = self.Ey
-        Eiz = self.Ez
-
-        E0x = M00 * Eix + M01 * Eiy + M02 * Eiz
-        E0y = M10 * Eix + M11 * Eiy + M12 * Eiz
-        E0z = M20 * Eix + M21 * Eiy + M22 * Eiz
-
-        factor = -(1j * sin_theta_max**2 / (focal * self.wavelength))
-
-        Esx = factor * fftshift(fft2(apodization_factor * G * E0x))
-        Esy = factor * fftshift(fft2(apodization_factor * G * E0y))
-        Esz = factor * fftshift(fft2(apodization_factor * G * E0z))
-
-        if matrix is True:
-            return np.stack((Esx, Esy, Esz), axis=2)
-
-        num_x = self.x.size
-        delta_x = self.x[1] - self.x[0]
-        freq_nyquist_x = 1 / (2 * delta_x)
-
-        kx = linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * focal
-        num_y = self.y.size
-        delta_y = self.y[1] - self.y[0]
-        freq_nyquist_y = 1 / (2 * delta_y)
-        ky = linspace(-freq_nyquist_y, freq_nyquist_y, num_y) * focal
-
-        if new_field is True:
-            field_output = Vector_source_XY(self.x, self.y, self.wavelength)
-            field_output.x = kx
-            field_output.y = ky
-
-            field_output.X, field_output.Y = ndgrid(field_output.x,
-                                                    field_output.y)
-            field_output.Ex = Esx
-            field_output.Ey = Esy
-            field_output.Ez = Esz
-
-            if has_draw:
-                field_output.draw(kind='intensities')
-
-            return field_output
-
-        else:
-            self.Ex = Esx
-            self.Ey = Esy
-            self.Ez = Esz
-            self.x = kx
-            self.y = ky
-            self.X, self.Y = ndgrid(self.x, self.y)
-
-            if has_draw:
-                self.draw(kind='intensities')
+ 
 
     def VFFT(self,
              radius,
@@ -892,6 +757,135 @@ class Vector_field_XY(object):
             self.Ex = Ex.u
             self.Ey = Ey.u
             self.Ez = Ez.u
+
+
+    def CZT(self, z, xout, yout):
+        """_summary_ from XY to XY
+
+        previous: Scalar_Bluestein_XY
+
+        Args:
+            z (float): diffraction distance
+            xout (np.array): x array with positions of the output plane
+            yout (np.array): y array with positions of the output plane
+
+
+        Returns:
+            gout: Complex amplitude of the outgoing light beam
+            delta_out: pixel size of the outgoing light beam
+        """
+
+        e0x, e0y, _ = self.get(is_matrix=True)
+
+
+        k = 2 * np.pi / self.wavelength
+
+        if isinstance(xout, (float, int)):
+            numx_out = 2
+            xout = np.array((xout, xout + 0.1))
+            remove_x = True
+        else:
+            numx_out = len(xout)
+            remove_x = False
+
+        if isinstance(yout, (float, int)):
+            numy_out = 2
+            yout = np.array((yout, yout + 0.1))
+            remove_y = True
+
+        else:
+            numy_out = len(yout)
+            remove_y = False
+
+        xstart = xout[0]
+        xend = xout[-1]
+        ystart = yout[0]
+        yend = yout[-1]
+
+        delta_x_in = self.x[1] - self.x[0]
+
+        delta_out = np.zeros(2)
+        if numx_out > 1:
+            delta_out[0] = (xend - xstart) / (numx_out - 1)
+        if numy_out > 1:
+            delta_out[1] = (yend - ystart) / (numy_out - 1)
+
+        Xout, Yout = np.meshgrid(xout, yout)
+
+        # Fresnel
+        # F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
+        #     1j * k / 2 / z * (Xout**2 + Yout**2))
+        # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+
+        R = sqrt(Xout**2 + Yout**2 + z**2)
+        F0 = 1 / (2 * np.pi) * np.exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+        R = sqrt(self.X**2 + self.Y**2 + z**2)
+        F = 1 / (2 * np.pi) * np.exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+
+        r = np.sqrt(self.X**2 + self.Y**2 + z**2)
+        e0z = e0x * self.X / r + e0y * self.Y / r
+        e0z = e0z * z/r
+
+        Ex0 = e0x * F
+        Ey0 = e0y * F
+        Ez0 = e0z * F
+
+        # using Bluestein method to calculate the complex amplitude of the outgoing light beam
+
+        # one-dimensional FFT in one direction
+        fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+
+        fy1 = ystart + fs / 2
+        fy2 = yend + fs / 2
+        Ex0 = Bluestein_dft_xy(Ex0, fy1, fy2, fs, numy_out)
+        Ey0 = Bluestein_dft_xy(Ey0, fy1, fy2, fs, numy_out)
+        Ez0 = Bluestein_dft_xy(Ez0, fy1, fy2, fs, numy_out)
+
+        # one-dimensional FFT in the other direction
+        fx1 = xstart + fs / 2
+        fx2 = xend + fs / 2
+        Ex0 = Bluestein_dft_xy(Ex0, fx1, fx2, fs, numx_out)
+        Ey0 = Bluestein_dft_xy(Ey0, fx1, fx2, fs, numx_out)
+        Ez0 = Bluestein_dft_xy(Ez0, fx1, fx2, fs, numx_out)
+
+        # obtain the complex amplitude of the outgoing light beam
+        Ex0 = F0 * Ex0  
+        Ey0 = F0 * Ey0  
+        Ez0 = F0 * Ez0  
+
+        if remove_x is True:
+            # Ex0 = Ex0[:, 0]
+            # Ey0 = Ey0[:, 0]
+            # Ez0 = Ez0[:, 0]
+            xout = np.array((xout[0], ))
+            ex_out = Scalar_field_X(yout, self.wavelength)
+            ey_out = Scalar_field_X(yout, self.wavelength)
+            ez_out = Scalar_field_X(yout, self.wavelength)
+            ex_out.u = Ex0
+            ey_out.u = Ey0
+            ez_out.u = Ez0
+            return ex_out, ey_out, ez_out
+
+        if remove_y is True:
+            # Ex0 = Ex0[:, 0]
+            # Ey0 = Ey0[:, 0]
+            # Ez0 = Ey0[:, 0]
+            yout = np.array((yout[0], ))
+            ex_out = Scalar_field_X(yout, self.wavelength)
+            ey_out = Scalar_field_X(yout, self.wavelength)
+            ez_out = Scalar_field_X(yout, self.wavelength)
+            ex_out.u = Ex0
+            ey_out.u = Ey0
+            ez_out.u = Ez0
+            return ex_out, ey_out, ez_out
+
+        E_out = Vector_field_XY(xout, yout, self.wavelength)
+        E_out.Ex = Ex0
+        E_out.Ey = Ey0
+        E_out.Ez = Ez0
+        return E_out
 
     def polarization_states(self, matrix=False):
         """returns the Stokes parameters

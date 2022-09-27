@@ -118,8 +118,8 @@ class Scalar_field_X(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   u:  {}".format(self.type, self.x.shape,
                                                self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um".format(
-            self.x[0], self.x[-1]))
+        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
+            self.x[0], self.x[-1], self.x[1]-self.x[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -127,9 +127,10 @@ class Scalar_field_X(object):
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
+        return("")
 
-        return ""
 
     def __add__(self, other, kind='standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.
