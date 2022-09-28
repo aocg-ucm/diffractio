@@ -129,8 +129,7 @@ class Scalar_field_X(object):
         print(" - date:       {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
-        return("")
-
+        return ("")
 
     def __add__(self, other, kind='standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.

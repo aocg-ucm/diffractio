@@ -90,6 +90,7 @@ Alpha state
 * pupil function in XY and vector XY
 * vector_paraxial_fields -> vector_fields
 * Implement Chirped Z Transform
+* Added Scalar_field_Z
 
 * Fix bugs:
   - (radial and azimuthal vector waves)

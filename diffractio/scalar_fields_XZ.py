@@ -924,8 +924,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                      sep="\r",
-                      end="\r")
+                    sep="\r",
+                    end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))

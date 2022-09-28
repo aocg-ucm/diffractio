@@ -1145,7 +1145,6 @@ class Scalar_mask_XY(Scalar_field_XY):
                                      (2 * f2)))
         self.u[t == 0] = 0
 
-
     def lens_spherical(self, r0, radius, focal, refraction_index=1.5, mask=True):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
@@ -1161,16 +1160,13 @@ class Scalar_mask_XY(Scalar_field_XY):
             lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refraction_index=1.5,, mask=True)
         """
 
-  
         # Vector de onda
         k = 2 * np.pi / self.wavelength
 
         x0, y0 = r0
         angle = 0.
 
-  
         R = (refraction_index-1)*focal
-        
 
         # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
@@ -1183,15 +1179,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = np.ones_like(self.X)
 
-        h= (np.sqrt(R**2-(Xrot**2+Yrot**2))-R)
+        h = (np.sqrt(R**2-(Xrot**2+Yrot**2))-R)
 
-        h[R**2-(Xrot**2+Yrot**2)<0]=0    
+        h[R**2-(Xrot**2+Yrot**2) < 0] = 0
         self.u = t * np.exp(1j*k*(refraction_index-1)*h)
         self.u[t == 0] = 0
 
         return self
-
-
 
     def aspheric(self, r0, c, k, a, n0, n1, radius, mask=True):
         """asferic surface.
@@ -1474,13 +1468,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def hyperbolic_grating(self,
-                           r0,
-                           period,
-                           phase,
-                           radius,
-                           is_binary,
-                           angle=0 * degrees):
+    def hyperbolic_grating(self, r0, period, phase, radius, is_binary, angle=0 * degrees):
         """Hyperbolic grating.
 
         Parameters:

@@ -443,6 +443,7 @@ class Scalar_source_XY(Scalar_field_XY):
             F. Courvoisier, et al. "Surface nanoprocessing with nondiffracting femtosecond Bessel beams" Optics Letters Vol. 34, No. 20 3163 (2009)
         """
 
+        k = 2*np.pi/self.wavelength
         x0, y0 = r0
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         k0 = 2 * np.pi / self.wavelength

@@ -17,10 +17,10 @@ Development Lead
 Authors
 ----------------------------
 
-* Ángela Soria García (2021)
+* Ángela Soria García (2021 -)
 
-    * XY optimizations
-    * XY arrays of masks
+* Jesús del Hoyo Muñoz (2021 -)
+
 
 Contributors
 --------------

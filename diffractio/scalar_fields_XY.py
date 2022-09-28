@@ -148,8 +148,7 @@ class Scalar_field_XY(object):
         print(" - date:       {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
-        return("")
-
+        return ("")
 
     def __add__(self, other):
         """Adds two Scalar_field_x. For example two light sources or two masks
@@ -383,7 +382,7 @@ class Scalar_field_XY(object):
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
                     (self.y.min(), self.y[-1], self.y[1] - self.y[0]))
-                    
+
         ofile.write("\wavelength = %f *um" % self.wavelength)
         ofile.close()
 
@@ -668,8 +667,6 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
 
- 
-
     def ifft_proposal(self,
                       z=0 * mm,
                       shift=True,
@@ -804,8 +801,6 @@ class Scalar_field_XY(object):
             self.x = x_new
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
-
-
 
     def _RS_(self,
              z,
@@ -1163,13 +1158,11 @@ class Scalar_field_XY(object):
         #     1j * k / 2 / z * (Xout**2 + Yout**2))
         # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
 
-
         R = sqrt(Xout**2 + Yout**2 + z**2)
         F0 = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
 
         R = sqrt(self.X**2 + self.Y**2 + z**2)
         F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-
 
         u0 = self.u * F
 
@@ -1261,8 +1254,6 @@ class Scalar_field_XY(object):
 
             R = sqrt(self.X**2 + self.Y**2 + z**2)
             F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-
-
 
             u0 = self.u * F
             # print(F0.shape, u0.shape)
@@ -2132,6 +2123,7 @@ class Scalar_field_XY(object):
                             cut_value=1,
                             title="",
                             colormap_kind='',
+                            percentage_intensity=None,
                             **kwargs):
         """Draws real field  XY field.
 
@@ -2141,6 +2133,8 @@ class Scalar_field_XY(object):
             title(str): title for the drawing
             cut_value(float): if provided, maximum value to show
         """
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
 
         rf = np.real(self.u)
         intensity = np.abs(self.u)**2

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """Generates Scalar_mask_XZ class for definingn masks. Its parent is Scalar_field_XZ.
 
 The main atributes are:
