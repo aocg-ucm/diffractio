@@ -14,21 +14,10 @@ Development Lead
     Plaza de las ciencias 1,
     ES-28040 Madrid (Spain)
 
-Authors
-----------------------------
-
-* Ángela Soria García (2021 -)
-
-* Jesús del Hoyo Muñoz (2021 -)
-
 
 Contributors
 --------------
 
-* Manuel Rapariz López-Neira (2019)
+* Ángela Soria García (2021 -)
 
-    * XY masks (hiperellipse and sinusoidal_slit)
-
-* Joaquín Andrés Porras (2021)
-
-    * XY masks (angular_aperture, edge_series, slit_series)
+* Jesús del Hoyo Muñoz (2021 -)

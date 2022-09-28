@@ -46,6 +46,7 @@ When possible, multiprocessing is implemented for a faster computation.
 The scalar propagations techniques are implemented in modules:
 
 * X - fields are defined in the x axis.
+* Z - fields are defined in the z axis (for visualiztion and analysis).
 * XZ - fields are defined in the xz plane, being z the propagation direction.
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
@@ -119,10 +120,9 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is M is computed according to the split-step propagation scheme.
 
-* **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS mehtod [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
+* **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
 
-* **Vector Wave Propagation Method (VWPM)**.  The VWPM metho [J. Opt. Soc. Am. A  27(4), 709-717 (2010)] extends the WPM to three-dimensional vectorial fields (VWPMs) by considering the polarization dependent Fresnel coefficients for transmission in each propagation step. The continuity of the electric field is maintained in all three dimensions by an enhanced propagation vector and the transfer matrix. - in development
-
+* **Chirpez Z-Transform (CZT)**.  Bluestein, L. (1970-12-01). "A linear filtering approach to the computation of discrete Fourier transform". IEEE Transactions on Audio and Electroacoustics. 18 (4): 451–455. doi:10.1109/TAU.1970.1162132. ISSN 0018-9278.
 
 The fields, masks and sources can be stored in files.
 
@@ -134,7 +134,7 @@ In some modules, videos can be generated for a better analysis of optical fields
    :width: 400
 
 
-Paraxial vector beams
+Vector beams
 ==================================
 
 Here, we implement new classes where the fields E_x and E_y are generated and propagted using Rayleigh-Sommerfeld approach.
@@ -212,7 +212,6 @@ References
 * Z.Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
 * J.A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
 * "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
-* Beam width: https://en.wikipedia.org/wiki/Beam_diameter
 
 
 Credits
