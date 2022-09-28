@@ -10,5 +10,5 @@ py_pol
 ipywidgets
 ipympl
 nodejs
-mayavi
+# mayavi
 opencv-python
