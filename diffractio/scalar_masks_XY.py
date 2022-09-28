@@ -1146,36 +1146,30 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u[t == 0] = 0
 
 
-    def lens_spherical(self, r0, radius, focal, refraction_index=1.5, angle=0 * degrees, mask=True):
+    def lens_spherical(self, r0, radius, focal, refraction_index=1.5, mask=True):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
+        Now, only one focal.
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            radius (float, float) or (float): radius of lens mask
-            focal (float, float) or (float): focal length of lens
-            angle (float): angle of axis in radians
+            radius (float): radius of lens mask
+            focal (float): focal length of lens
             mask (bool): if True, mask with size radius
 
-        Example:
-            lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um),
-                focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
+        lens_spherical:
+            lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refraction_index=1.5,, mask=True)
         """
 
-        if isinstance(radius, (float, int, complex)):
-            radius = (radius, radius)
-        if isinstance(focal, (float, int, complex)):
-            focal = (focal, focal)
-
+  
         # Vector de onda
         k = 2 * np.pi / self.wavelength
 
         x0, y0 = r0
-        f1, f2 = focal
+        angle = 0.
 
-        R1 = (refraction_index-1)*f1
-        R2 = (refraction_index-1)*f2
-        R = (refraction_index-1)*f1
+  
+        R = (refraction_index-1)*focal
         
 
         # rotation de la lens
