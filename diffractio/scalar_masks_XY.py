@@ -25,7 +25,7 @@ The magnitude is related to microns: `micron = 1.`
     * image
     * point_maks, slit, double_slit, square, circle, super_gauss, square_circle, ring, cross
     * mask_from_function
-    * prism, lens, aspheric, fresnel_lens
+    * prism, lens, lens_spherical, aspheric, fresnel_lens
     * sine_grating, sine_edge_grating ronchi_grating, binary_grating, blazed_grating, forked_grating, grating2D, grating_2D_chess
     * axicon, axicon_binary, biprism_fresnel,
     * radial_grating, angular_grating, hyperbolic_grating, archimedes_spiral, laguerre_gauss_spiral
@@ -1144,6 +1144,60 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
                                      (2 * f2)))
         self.u[t == 0] = 0
+
+
+    def lens_spherical(self, r0, radius, focal, refraction_index=1.5, angle=0 * degrees, mask=True):
+        """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
+        When the refraction index decreases, the radius of curvature decrases and less paraxial.
+
+        Parameters:
+            r0 (float, float): (x0,y0) - center of lens
+            radius (float, float) or (float): radius of lens mask
+            focal (float, float) or (float): focal length of lens
+            angle (float): angle of axis in radians
+            mask (bool): if True, mask with size radius
+
+        Example:
+            lens(r0=(0 * um, 0 * um), radius=(100 * um, 200 * um),
+                focal=(5 * mm, 10 * mm), angle=0 * degrees, mask=True)
+        """
+
+        if isinstance(radius, (float, int, complex)):
+            radius = (radius, radius)
+        if isinstance(focal, (float, int, complex)):
+            focal = (focal, focal)
+
+        # Vector de onda
+        k = 2 * np.pi / self.wavelength
+
+        x0, y0 = r0
+        f1, f2 = focal
+
+        R1 = (refraction_index-1)*f1
+        R2 = (refraction_index-1)*f2
+        R = (refraction_index-1)*f1
+        
+
+        # rotation de la lens
+        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
+
+        # Definicion de la amplitude y la phase
+        if mask is True:
+            amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            amplitude.circle(r0, radius, angle)
+            t = amplitude.u
+        else:
+            t = np.ones_like(self.X)
+
+        h= (np.sqrt(R**2-(Xrot**2+Yrot**2))-R)
+
+        h[R**2-(Xrot**2+Yrot**2)<0]=0    
+        self.u = t * np.exp(1j*k*(refraction_index-1)*h)
+        self.u[t == 0] = 0
+
+        return self
+
+
 
     def aspheric(self, r0, c, k, a, n0, n1, radius, mask=True):
         """asferic surface.

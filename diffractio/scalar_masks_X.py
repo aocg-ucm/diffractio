@@ -15,7 +15,7 @@ The main atributes are:
     * slit, double slit
     * two_levels, gray_scale
     * prism, biprism_fresnel, biprism_fresnel_nh
-    * lens, aspheric, fresnel_lens
+    * lens, lens_spherical, aspheric, fresnel_lens
     * roughness, dust, dust_different_sizes
     * sine_grating, ronchi_grating, binary_grating, blazed_grating
     * chriped_grating, chirped_grating_p, chirped_grating_q
@@ -344,7 +344,7 @@ class Scalar_mask_X(Scalar_field_X):
         return h
 
     def lens(self, x0, focal, radius, mask=True):
-        """Transparent lens.
+        """Paraxial lens.
 
         Parameters:
             x0 (float): center of lens
@@ -373,6 +373,45 @@ class Scalar_mask_X(Scalar_field_X):
         h = h - h.min()
         h = h / h.max()
         return t * h
+
+
+    def lens_spherical(self, x0, radius, focal, refraction_index=1.5, mask=False):
+        """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
+        When the refraction index decreases, the radius of curvature decrases and less paraxial.
+
+        Parameters:
+            r0 (float, float): (x0,y0) - center of lens
+            radius (float, float) or (float): radius of lens mask
+            focal (float, float) or (float): focal length of lens
+            refraction index (float): refraction index of the lens
+            mask (bool): 
+
+        Example:
+            lens_spherical(x0=0 * um, radius=100 * um,
+                focal(5 * mm,, angle=0 * degrees, mask=True)
+        """
+
+        k = 2 * np.pi / self.wavelength
+    
+        R = (refraction_index-self.n_background)*focal
+
+        if mask is True:
+            t = np.zeros_like(self.x, dtype=int)
+            ix = (self.x < x0 + radius) & (self.x > x0 - radius)
+            t[ix] = 1
+        else:
+            t = 1
+        
+
+        h= (np.sqrt(R**2-self.x**2)-R)
+
+        h[(R**2-self.x**2)<0]=0    
+        self.u = t * np.exp(1j*k*(refraction_index-1)*h)
+        self.u[t == 0] = 0
+
+        return self
+
+
 
     def aspheric(self, x0, c, k, a, n0, n1, radius, mask=True):
         """asferic surface.
