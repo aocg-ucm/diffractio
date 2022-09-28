@@ -62,7 +62,7 @@ import matplotlib.animation as animation
 import scipy.ndimage
 from matplotlib import rcParams
 from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
-                   matrix, meshgrid, pi, real, shape, sin, sqrt, zeros)
+                   meshgrid, pi, real, shape, sin, sqrt, zeros)
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline

@@ -56,10 +56,7 @@ seconds = 1.
 eps = 1e-6
 num_decimals = 4
 
-no_date = False  # for test folder
-
-# rcParams['figure.figsize'] = [4, 4]
-# rcParams['figure.dpi'] = 125
+no_date = False  # for test
 
 now = datetime.datetime.now()
 date_test = now.strftime("%Y-%m-%d_%H")

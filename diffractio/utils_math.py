@@ -6,9 +6,7 @@ from copy import deepcopy
 from math import factorial
 import numpy as np
 
-from numpy import (angle, array, exp, linspace, ones_like, pi, linspace,
-                   arcsin, arctan2, sqrt, meshgrid, isnan, tile, real, angle,
-                   sign, mod, ones, zeros)
+from numpy import (array, exp, ones_like, pi, linspace, tile, angle, zeros)
 
 import scipy.ndimage as ndimage
 from scipy.signal import fftconvolve
@@ -199,7 +197,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
 
     num_extrema = len(listOfCordinates)
 
-    indexes = np.zeros((num_extrema, 2), dtype=np.integer)
+    indexes = np.zeros((num_extrema, 2), dtype=integer)
     xy_ext = np.zeros((num_extrema, 2))
     extrema = np.zeros((num_extrema))
 
@@ -868,7 +866,7 @@ def fZernike(X, Y, n, m, radius=5 * mm):
 
     N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
 
-    Z = zeros(R.shape, dtype=np.float)
+    Z = zeros(R.shape, dtype=float)
     s_max = int(((n - abs(m)) / 2 + 1))
     for s in np.arange(0, s_max):
         Z = Z + (-1)**s * R**(n - 2 * s) * factorial(abs(n - s)) / (

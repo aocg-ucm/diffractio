@@ -52,14 +52,14 @@ from multiprocessing import Pool
 import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
-from scipy.interpolate import RectBivariateSpline, RegularGridInterpolator
+from scipy.interpolate import RegularGridInterpolator
 
 from . import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
-from .utils_drawing import normalize_draw, prepare_drawing
+from .utils_drawing import normalize_draw
 from .utils_math import get_k, ndgrid, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize
@@ -1372,12 +1372,7 @@ class Scalar_field_XYZ(object):
             print("slicerLM is not loaded.")
             is_slicer = False
 
-        try:
-            from mayavi import mlab
-            is_mayavi = True
-        except ImportError:
-            print("mayavi.mlab is not imported.")
-            is_mayavi = False
+ 
 
         if is_slicer:
             u_xyz_r = self.cut_resample(num_points=(128, 128, 128),

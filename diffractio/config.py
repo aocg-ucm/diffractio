@@ -14,5 +14,4 @@ CONF_DRAWING['color_amplitude_sign'] = cm.seismic
 CONF_DRAWING['color_phase'] = cm.twilight  # twilight .twilight hsv
 CONF_DRAWING['color_real'] = cm.seismic
 CONF_DRAWING['color_stokes'] = cm.seismic
-# percentage of intensity not shown in phase
-CONF_DRAWING['percentage_intensity'] = 0.005
+CONF_DRAWING['percentage_intensity'] = 0.005 # percentage of intensity not shown in phase

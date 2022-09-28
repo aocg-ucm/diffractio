@@ -509,15 +509,7 @@ class Scalar_field_X(object):
             if verbose is True:
                 print("x0={},x1={}".format(x_new[0], x_new[-1]))
 
-    def _RS_(self,
-             z,
-             n,
-             matrix=False,
-             new_field=True,
-             fast=False,
-             kind='z',
-             xout=None,
-             verbose=True):
+    def _RS_(self, z, n, matrix=False, new_field=True, fast=False, kind='z', xout=None, verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask:
 
         :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
@@ -554,7 +546,6 @@ class Scalar_field_X(object):
 
         # parametro de quality
         dr_real = dx
-        #rmax = sqrt((xout**2).max())
         rmax = xout.max()
         dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
                         (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
@@ -618,15 +609,7 @@ class Scalar_field_X(object):
             # self.u = Usalida / sqrt(z)
             self.u = Usalida
 
-    def RS(self,
-           z=10 * mm,
-           n=1,
-           matrix=False,
-           new_field=True,
-           fast=False,
-           amplification=1,
-           kind='z',
-           verbose=True):
+    def RS(self, z=10 * mm, n=1, matrix=False, new_field=True, fast=False, amplification=1, kind='z', verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         Parameters:

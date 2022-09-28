@@ -188,7 +188,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         filter.circle(r0=(0 * um, 0 * um), radius=radius, angle=0 * degrees)
 
         image = np.abs(self.u)
-        image_max = image.max()
         filtrado = np.abs(filter.u) / np.abs(filter.u.sum())
 
         covolved_image = fft_convolution2d(image, filtrado)
@@ -208,12 +207,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     # __MASKS____________________________________________
 
-    def extrude_mask_x(self,
-                       mask_X,
-                       y0=None,
-                       y1=None,
-                       kind='unique',
-                       normalize=None):
+    def extrude_mask_x(self, mask_X, y0=None, y1=None, kind='unique', normalize=None):
         """
         Converts a Scalar_mask_X in volumetric between z0 and z1 by growing between these two planes
         Parameters:
@@ -244,14 +238,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             maximum = np.abs(self.u.max())
             self.u = self.u / maximum
 
-    def mask_from_function(self,
-                           r0,
-                           index,
-                           f1,
-                           f2,
-                           radius,
-                           v_globals={},
-                           mask=True):
+    def mask_from_function(self, r0, index, f1, f2, radius, v_globals={}, mask=True):
         """ phase mask defined between 2 surfaces $f_1$ and $f_2$:  $h(x,y)=f_2(x,y)-f_1(x,y)$
 
         Parameters:
@@ -283,13 +270,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t * exp(1.j * k * (index - 1) * (F2 - F1))
         self.u[t == 0] = 0
 
-    def image(self,
-              filename='',
-              canal=0,
-              normalize=True,
-              lengthImage=False,
-              invert=False,
-              angle=0):
+    def image(self, filename='', canal=0, normalize=True, lengthImage=False, invert=False, angle=0):
         """Converts an image file XY mask. If the image is color, we get the first Red frame
 
         Parameters:
@@ -365,10 +346,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = 1 - u
 
-    def repeat_structure(self,
-                         num_repetitions,
-                         position='center',
-                         new_field=True):
+    def repeat_structure(self, num_repetitions, position='center', new_field=True):
         """Repeat the structure n times.
 
         Parameters:
@@ -388,11 +366,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         print(u0.shape, u_new.shape)
         x_min = x0[0]
         x_max = x0[-1]
-        dx = x0[1] - x0[0]
+        # dx = x0[1] - x0[0]
 
         y_min = y0[0]
         y_max = y0[-1]
-        dy = y0[1] - y0[0]
+        # dy = y0[1] - y0[0]
 
         x_new = np.linspace(num_repetitions[0] * x_min,
                             num_repetitions[0] * x_max,
@@ -401,10 +379,10 @@ class Scalar_mask_XY(Scalar_field_XY):
                             num_repetitions[1] * y_max,
                             num_repetitions[1] * len(y0))
 
-        range_x = x_new[-1] - x_new[0]
+        # range_x = x_new[-1] - x_new[0]
         center_x = (x_new[-1] + x_new[0]) / 2
 
-        range_y = y_new[-1] - y_new[0]
+        # range_y = y_new[-1] - y_new[0]
         center_y = (y_new[-1] + y_new[0]) / 2
 
         if position == 'center':
@@ -430,11 +408,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.x = x_new
             self.y = y_new
 
-    def masks_to_positions(self,
-                           pos,
-                           new_field=True,
-                           binarize=False,
-                           normalize=False):
+    def masks_to_positions(self, pos, new_field=True, binarize=False, normalize=False):
         """
         Place a certain mask on several positions.
 
@@ -568,8 +542,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         assert delta_x > 0 and delta_y > 0
 
-        Xrot, Yrot = self.__rotate__(angle)
-
         uj = np.zeros_like(self.X)
 
         X = margin_x + np.arange(self.x.min(), self.x.max() + delta_x, delta_x)
@@ -660,13 +632,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = level1 * ones(self.X.shape)
         self.u[Xrot > 0] = level2
 
-    def edge_series(self,
-                    r0,
-                    period,
-                    a_coef,
-                    b_coef=None,
-                    angle=0 * degrees,
-                    invert=True):
+    def edge_series(self, r0, period, a_coef, b_coef=None, angle=0 * degrees, invert=True):
         """Creates a linear aperture using the Fourier coefficients.
 
             Parameters:
@@ -743,18 +709,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ix] = 1
         self.u = u
 
-    def slit_series(self,
-                    x0,
-                    width,
-                    period1,
-                    period2,
-                    Dy,
-                    a_coef1,
-                    a_coef2,
-                    b_coef1=None,
-                    b_coef2=None,
-                    angle=None,
-                    simmetrycal=False):
+    def slit_series(self, x0, width, period1, period2, Dy, a_coef1, a_coef2, b_coef1=None, b_coef2=None, angle=None, simmetrycal=False):
         """Creates a lineal function using the Fourier coefficients.
 
             Parameters:
@@ -899,13 +854,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
-    def super_gauss(self, r0, radius, potencia=2, angle=0 * degrees):
+    def super_gauss(self, r0, radius, power=2, angle=0 * degrees):
         """Supergauss mask.
 
         Parameters:
             r0 (float, float): center of circle
             radius (float, float) or (float): radius of circle
-            potencia (float): value of exponential
+            power (float): value of exponential
             angle (float): angle of rotation in radians
 
         Example:
@@ -925,8 +880,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
-        R = sqrt(self.X**2 + self.Y**2)
-        self.u = exp(-R**potencia / (2 * radiusx**potencia))
+        R = sqrt(Xrot**2 + Yrot**2)
+        self.u = exp(-R**power / (2 * radiusx**power))
 
     def square_circle(self, r0, R1, R2, s, angle=0 * degrees):
         """ Between circle and square, depending on fill factor s
@@ -1033,9 +988,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
         angle = 0
 
-        # rotation de la lens
-        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
-
         radius = outer_radius.max()
 
         # Definicion de la amplitude y la phase
@@ -1130,7 +1082,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
         f1, f2 = focal
 
-        # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
         # Definicion de la amplitude y la phase
@@ -1168,7 +1119,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         R = (refraction_index-1)*focal
 
-        # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
         # Definicion de la amplitude y la phase
@@ -1201,16 +1151,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             n1 (float): refraction index of second medium
             radius (float): radius of aspheric surface
 
-
         Conic Constant    Surface Type
         k = 0             spherical
         k = -1            Paraboloid
         k < -1            Hyperboloid
         -1 < k < 0        Ellipsoid
         k > 0             Oblate eliposid
-
-
-
 
         References:
             https://www.edmundoptics.com/knowledge-center/application-notes/optics/all-about-aspheric-lenses/
@@ -1240,15 +1186,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u[m1 == 0] = 0
         return t
 
-    def fresnel_lens(self,
-                     r0,
-                     radius,
-                     focal,
-                     levels=(1, 0),
-                     kind='amplitude',
-                     phase=pi,
-                     angle=0 * degrees,
-                     mask=True):
+    def fresnel_lens(self, r0, radius, focal, levels=(1, 0), kind='amplitude', phase=pi, angle=0, mask=True):
         """Fresnel lens, amplitude (0,1) or phase (0-phase)
 
         Parameters:
@@ -1274,10 +1212,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Vector de onda
         k = 2 * pi / self.wavelength
 
-        x0, y0 = r0
         f1, f2 = focal
 
-        # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle, r0)
 
         # Definicion de la amplitude y la phase
@@ -1299,13 +1235,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t2.u * t1
 
-    def axicon(self,
-               r0,
-               radius,
-               angle,
-               refraction_index,
-               off_axis_angle=0 * degrees,
-               reflective=False):
+    def axicon(self, r0, radius, angle, refraction_index, off_axis_angle=0 * degrees, reflective=False):
         """Axicon,
 
         Parameters:
@@ -1468,31 +1398,29 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def hyperbolic_grating(self, r0, period, phase, radius, is_binary, angle=0 * degrees):
+    def hyperbolic_grating(self, r0, period, radius, is_binary, angle=0 * degrees):
         """Hyperbolic grating.
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
             period (float): period of the grating
-            phase (float): initial phase
             radius (float): radius of the grating (masked)
             is_binary (bool): if True binary else, scaled
             angle (float): angle of the grating in radians
 
         Example:
             hyperbolic_grating(r0=(0 * um, 0 * um), period=20 * \
-                               um, phase=0 * um, sfradius=400 * um, is_binary=True)
+                               um, radius=400 * um, is_binary=True)
         """
 
         x0, y0 = r0
         # distance de la generatriz al eje del cono
 
-        # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
         r = sqrt((self.X - x0)**2 + (self.Y)**2)
         x_posiciones = sqrt(np.abs((Xrot)**2 - (Yrot)**2))
-        # Region de transmitancia
+
         t = (1 + sin(2 * pi * x_posiciones / period)) / 2
         if is_binary is True:
             i0 = t <= 0.5
@@ -1674,12 +1602,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         elif kind == 'phase':
             self.u = exp(1.j * pi * phase)
 
-    def sine_grating(self,
-                     x0,
-                     period,
-                     amp_min=0,
-                     amp_max=1,
-                     angle=0 * degrees):
+    def sine_grating(self, x0, period, amp_min=0, amp_max=1, angle=0 * degrees):
         """Sinusoidal grating:  self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
         Parameters:
@@ -1728,39 +1651,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def ronchi_grating_deprecated(self, x0, period, fill_factor=0.5, angle=0):
-        """Amplitude binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
-
-        Parameters:
-            x0 (float):  phase shift
-            period (float): period of the grating
-            fill_factor (float): fill_factor
-            angle (float): angle of the grating in radians
-
-        Notes:
-            Ronchi grating when fill_factor = 0.5.
-
-            It is obtained from a sinusoidal, instead as a sum of slits, for speed.
-
-            The equation to determine the position y0 is: y0=cos(pi*fill_factor)
-
-        Example:
-            ronchi_grating(x0=0 * um, period=40*um, fill_factor=0.5,  angle=0)
-        """
-        t = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        y0 = cos(pi * fill_factor)
-
-        t.sine_grating(period=period,
-                       amp_min=-1,
-                       amp_max=1,
-                       x0=x0,
-                       angle=angle)
-
-        t.u[t.u > y0] = 1
-        t.u[t.u <= y0] = 0
-
-        self.u = t.u
-
     def ronchi_grating(self, x0, period, fill_factor=0.5, angle=0):
         """Amplitude binary grating with fill factor: self.u = amp_min + (amp_max - amp_min) * (1 + cos(2 * pi * (Xrot - phase) / period)) / 2
 
@@ -1783,11 +1673,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
         y0 = cos(np.pi * fill_factor)
 
-        t.sine_grating(period=period,
-                       amp_min=-1,
-                       amp_max=1,
-                       x0=x0,
-                       angle=angle)
+        t.sine_grating(period=period, amp_min=-1, amp_max=1, x0=x0, angle=angle)
 
         t.u[t.u > y0] = 1
         t.u[t.u <= y0] = 0
@@ -1817,14 +1703,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t.u
 
-    def binary_grating(self,
-                       x0,
-                       period,
-                       fill_factor=0.5,
-                       amin=0,
-                       amax=1,
-                       phase=0 * degrees,
-                       angle=0 * degrees):
+    def binary_grating(self, x0, period, fill_factor=0.5, amin=0, amax=1, phase=0 * degrees, angle=0 * degrees):
         """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
 
          Parameters:
@@ -1878,14 +1757,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         phase = np.remainder(phase, 2 * pi)
         self.u = exp(1j * phase)
 
-    def grating_2D(self,
-                   r0,
-                   period,
-                   fill_factor,
-                   amin=0,
-                   amax=1.,
-                   phase=0,
-                   angle=0 * degrees):
+    def grating_2D(self, r0, period, fill_factor, amin=0, amax=1., phase=0, angle=0 * degrees):
         """2D binary grating
 
          Parameters:
@@ -1917,14 +1789,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
-    def grating_2D_chess_deprecated(self,
-                                    r0,
-                                    period,
-                                    fill_factor,
-                                    amin=0,
-                                    amax=1,
-                                    phase=0 * pi / 2,
-                                    angle=0 * degrees):
+    def grating_2D_chess(self, r0, period, fill_factor, amin=0, amax=1, phase=0 * pi / 2, angle=0 * degrees):
         """2D binary grating as chess
 
          Parameters:
@@ -1935,49 +1800,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             amax (float): maximum amplitude
             phase (float): max phase shift in phase gratings
             angle (float): angle of the grating in radians
-
-        Example:
-            grating_2D_chess(period=40. * um, amin=0, amax=1., phase=0. * \
-                             pi / 2, x0=0, fill_factor=0.75, angle=0.0 * degrees)
-        """
-
-        if isinstance(period, (float, int)):
-            period = period, period
-
-        t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-
-        t1.binary_grating(r0[0] + period[0] / 8, period[0], fill_factor, 0, 1,
-                          0, angle)
-        t2.binary_grating(r0[1] + period[1] / 4, period[1], fill_factor, 0, 1,
-                          0, angle + 90. * degrees)
-
-        t2_grating = t1 * t2
-        t2_grating.u = np.logical_xor(t1.u, t2.u)
-
-        self.u = amin + (amax - amin) * t2_grating.u
-        self.u = self.u * np.exp(1j * phase * t2_grating.u)
-
-    def grating_2D_chess(self,
-                         r0,
-                         period,
-                         fill_factor,
-                         amin=0,
-                         amax=1,
-                         phase=0 * pi / 2,
-                         angle=0 * degrees):
-        """2D binary grating as chess
-
-         Parameters:
-            r0 (float, r0):  initial position
-            period (float): period of the grating
-            fill_factor (float): fill_factor
-            amin (float): minimum amplitude
-            amax (float): maximum amplitude
-            phase (float): max phase shift in phase gratings
-            angle (float): angle of the grating in radians
-
-
 
         Example:
             grating_2D_chess(r0=(0,0), period=40. * um, fill_factor=0.75, amin=0, amax=1., phase=0. * \
@@ -2017,7 +1839,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = exp(-1.j * k * 2 * h_corr)
         return h_corr
 
-    def circle_rough(self, r0, radius, angle, sigma, correlation_length):
+    def circle_rough(self, r0, radius, angle, sigma):
         """Circle with a rough edge.
 
         Parameters:
@@ -2025,7 +1847,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             radius (float): radius of circle
             angle (float): when radius are not equal, axis of ellipse
             sigma  (float): std of roughness
-            correlation_length (float): correlation length of roughness
         """
 
         x0, y0 = r0
@@ -2034,13 +1855,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         u = zeros(shape(self.X))
 
         random_part = np.random.randn(Yrot.shape[0], Yrot.shape[1])
-        ipasa = (Xrot - x0)**2 + (Yrot - y0)**2 - (radius +
-                                                   sigma * random_part)**2 < 0
+        ipasa = (Xrot - x0)**2 + (Yrot - y0)**2 - (radius + sigma * random_part)**2 < 0
         u[ipasa] = 1
         self.u = u
 
-    def ring_rough(self, r0, radius1, radius2, angle, sigma,
-                   correlation_length):
+    def ring_rough(self, r0, radius1, radius2, angle, sigma):
         """Ring with a rough edge
 
         Parameters:
@@ -2049,19 +1868,17 @@ class Scalar_mask_XY(Scalar_field_XY):
             radius2 (float): outer radius
             angle (float): when radius are not equal, axis of ellipse
             sigma  (float): std of roughness
-            correlation_length (float): correlation length of roughness
         """
 
         ring1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        ring1.circle_rough(r0, radius1, angle, sigma, correlation_length)
-        ring2.circle_rough(r0, radius2, angle, sigma, correlation_length)
+        ring1.circle_rough(r0, radius1, angle, sigma)
+        ring2.circle_rough(r0, radius2, angle, sigma)
 
         # Al restar ring2.u-ring1.u se logra la transmitancia en el interior
         self.u = ring2.u - ring1.u
 
-    def fresnel_lens_rough(self, r0, radius, focal, angle, mask, kind, phase,
-                           sigma, correlation_length):
+    def fresnel_lens_rough(self, r0, radius, focal, angle, sigma):
         """Ring with a rough edge
 
         Parameters:
@@ -2069,11 +1886,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             radius (float): maximum radius of mask
             focal (float): outer radius
             angle (float): when radius are not equal, axis of ellipse
-            mask (bool):
-            kind (str): 'amplitude' o 'phase'
-            phase (float): maximum phase shift, only if kind='phase'
             sigma  (float): std of roughness
-            correlation_length (float): correlation length of roughness
         """
         lens = Scalar_mask_XY(self.x, self.y, self.wavelength)
         ring = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -2082,18 +1895,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         num_rings = int(round((radius / R0)**2))
 
         radius_0 = sqrt(self.wavelength * focal * 4) / 2
-        ring.circle_rough(r0, radius_0, angle, sigma, correlation_length)
+        ring.circle_rough(r0, radius_0, angle, sigma)
         lens.u = lens.u + ring.u
 
         for m in range(3, num_rings + 2, 2):
             inner_radius = sqrt((m - 1) * self.wavelength * focal)
             outer_radius = sqrt(m * self.wavelength * focal)
-            ring.ring_rough(r0,
-                            inner_radius,
-                            outer_radius,
-                            angle=angle,
-                            sigma=sigma,
-                            correlation_length=correlation_length)
+            ring.ring_rough(r0, inner_radius, outer_radius, angle=angle, sigma=sigma)
             lens.u = lens.u + ring.u
         self.u = lens.u
 
@@ -2141,8 +1949,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         # Definition of transmittance
         u = np.zeros_like(self.X)
-        ipasa = np.abs((Xrot) / radiusx)**nx + \
-            np.abs((Yrot) / radiusy)**ny < 1
+        ipasa = np.abs((Xrot) / radiusx)**nx + np.abs((Yrot) / radiusy)**ny < 1
         u[ipasa] = 1
         self.u = u
 
@@ -2158,20 +1965,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Vector de onda
         k = 2 * pi / self.wavelength
 
-        # rotation de la lens
         Xrot, Yrot = self.__rotate__(angle)
 
         phase = k * (Xrot**2 / (2 * f1) + Yrot**2 / (2 * f2))
 
         self.u = np.exp(1j * phase)
 
-    def sinusoidal_slit(self,
-                        size,
-                        x0,
-                        amplitude,
-                        phase,
-                        period,
-                        angle=0 * degrees):
+    def sinusoidal_slit(self, size, x0, amplitude, phase, period, angle=0 * degrees):
         """
         This function will create a sinusoidal wave-like slit.
 
@@ -2204,8 +2004,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         u = np.zeros_like(self.X)
         X_sin1 = +size / 2 + amplitude1 * np.sin(2 * np.pi * Yrot / period1)
-        X_sin2 = -size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot / period2 +
-                                                 phase)
+        X_sin2 = -size / 2 + amplitude2 * np.sin(2 * np.pi * Yrot / period2 + phase)
         ipasa_1 = (X_sin1 > Xrot) & (X_sin2 < Xrot)
         u[ipasa_1] = 1
         self.u = u
@@ -2219,8 +2018,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): Angle of rotation of the slit
 
         Example:
-            crossed_slits(r0 = (-10 * um, 20 * um),
-                          slope = 2.5, angle = 30 * degrees)
+            crossed_slits(r0 = (-10 * um, 20 * um),  slope = 2.5, angle = 30 * degrees)
         """
         if isinstance(slope, (float, int)):
             slope_x, slope_y = (slope, slope)

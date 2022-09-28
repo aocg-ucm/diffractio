@@ -360,11 +360,11 @@ class Scalar_mask_X(Scalar_field_X):
             # amplitude = Scalar_mask_X(self.x, self.wavelength)
             # amplitude.slit(x0, 2 * radius)
             # t = amplitude.u
-            t = np.zeros_like(self.x, dtype=np.int)
+            t = np.zeros_like(self.x, dtype=int)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t[ix] = 1
         else:
-            t = np.ones_like(self.x, dtype=np.int)
+            t = np.ones_like(self.x, dtype=int)
 
         h = (self.x - x0)**2 / (2 * focal)
         self.u = t * np.exp(-1.j * k * h)

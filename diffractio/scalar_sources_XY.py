@@ -153,70 +153,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = amplitude * phase1 * phase2
 
-    def gauss_beam_deprecated(self,
-                              r0,
-                              w0,
-                              z0=0 * um,
-                              A=1,
-                              theta=0. * degrees,
-                              phi=0 * degrees):
-        """Gauss Beam.
 
-        Parameters:
-            r0 (float, float): (x,y) position of center
-            w0 (float, float): (wx,wy) minimum beam width
-            z0 (float): position of beam width
-            A (float): maximum amplitude
-            theta (float): angle in radians (direction of propagation)
-            phi (float): angle in radians (direction of propagation)
-
-        Todo:
-            Generalize definition
-
-        Autor: Javier Alda Serrano
-
-        References:
-        """
-
-        if isinstance(w0, (float, int, complex)):
-            w0 = (w0, w0)
-
-        w0x, w0y = w0
-        w0 = sqrt(w0x * w0y)
-        x0, y0 = r0
-        k = 2 * pi / self.wavelength
-
-        # only for x axis.
-        z_rayleigh = k * w0x**2 / 2
-
-        phaseGouy = arctan2(z0, z_rayleigh)
-
-        wx = w0x * sqrt(1 + (z0 / z_rayleigh)**2)
-        wy = w0y * sqrt(1 + (z0 / z_rayleigh)**2)
-        w = sqrt(wx * wy)
-
-        if z0 == 0:
-            R = 1e10
-        else:
-            R = -z0 * (1 + (z_rayleigh / z0)**2)
-
-        amplitude = A * w0 / w * exp(-(self.X - x0)**2 / (wx**2) -
-                                     (self.Y - y0)**2 / (wy**2))
-        phase1 = exp(
-            1.j * k *
-            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)))
-        phase2 = exp(1j * (k * z0 - phaseGouy + k * (self.X**2 + self.Y**2) /
-                           (2 * R)))
-
-        self.u = amplitude * phase1 * phase2
-
-    def spherical_wave(self,
-                       A=1,
-                       r0=(0 * um, 0 * um),
-                       z0=-1000 * um,
-                       mask=True,
-                       radius=100 * um,
-                       normalize=False):
+    def spherical_wave(self, A=1, r0=(0 * um, 0 * um), z0=-1000 * um, mask=True, radius=100 * um, normalize=False):
         """Spherical wave.
 
         Parameters:
@@ -231,17 +169,14 @@ class Scalar_source_XY(Scalar_field_XY):
         k = 2 * pi / self.wavelength
         x0, y0 = r0
 
-        # Centrado radius de la mask y distance al origen emisor
         R2 = (self.X - x0)**2 + (self.Y - y0)**2
         Rz = sqrt((self.X - x0)**2 + (self.Y - y0)**2 + z0**2)
 
-        # Definicion de la mask circular
         if mask is True:
             amplitude = (R2 <= radius**2)
         else:
             amplitude = 1
 
-        # Onda esferica
         self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         if normalize is True:
@@ -266,10 +201,7 @@ class Scalar_source_XY(Scalar_field_XY):
             w0x, w0y = w0
 
         x0, y0 = r0
-        amplitude = ((self.X - x0) + 1.j * sign(m) *
-                     (self.Y - y0))**np.abs(m) * np.exp(-(
-                         (self.X - x0)**2 / w0x**2 +
-                         (self.Y - y0)**2 / w0y**2))
+        amplitude = ((self.X - x0) + 1.j * sign(m) * (self.Y - y0))**np.abs(m) * np.exp(-((self.X - x0)**2 / w0x**2 + (self.Y - y0)**2 / w0y**2))
 
         self.u = A * amplitude / np.abs(amplitude).max()
 
@@ -289,11 +221,9 @@ class Scalar_source_XY(Scalar_field_XY):
              hermite_gauss_beam(A=1, r0=(0,0), w0=(100*um, 50*um), n=2, m=3, z=0)
         """
         # Prepare space
-        # E = zeros(self.X.shape, dtype=np.float)
         X = self.X - r0[0]
         Y = self.Y - r0[1]
 
-        # Parameters
         r2 = sqrt(2)
 
         if isinstance(w0, (float, int, complex)):
@@ -327,8 +257,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         # Calculate amplitude
         A = A * sqrt(2**(1 - n - m) /
-                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y /
-                                                                (wx * wy))
+                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y / (wx * wy))
         Ex = eval_hermite(n, r2 * X / wx) * exp(-X**2 / wx**2)
         Ey = eval_hermite(m, r2 * Y / wy) * exp(-Y**2 / wy**2)
 
@@ -407,10 +336,9 @@ class Scalar_source_XY(Scalar_field_XY):
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2) / radius
 
         # phase as sum of Zernike functions
-        phase = zeros(self.X.shape, dtype=np.float)
+        phase = zeros(self.X.shape, dtype=float)
         for s in range(len(n)):
-            phase = phase + c_nm[s] * fZernike(self.X - x0, self.Y - y0, n[s],
-                                               m[s], radius)
+            phase = phase + c_nm[s] * fZernike(self.X - x0, self.Y - y0, n[s], m[s], radius)
 
         if mask is True:
             amplitude = (R < 1)
@@ -419,14 +347,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * amplitude * exp(1.j * np.real(phase))
 
-    def bessel_beam(self,
-                    A,
-                    r0,
-                    alpha,
-                    n,
-                    theta=0 * degrees,
-                    phi=0 * degrees,
-                    z0=0):
+    def bessel_beam(self, A, r0, alpha, n, theta=0 * degrees, phi=0 * degrees, z0=0):
         """Bessel beam produced by an axicon. Bessel-beams are generated using 2D axicons.
 
         Parameters:
@@ -545,8 +466,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 t = t + self.u
         self.u = t
 
-    def gauss_beams_several_inclined(self, A, num_beams, w0, r0, z0,
-                                     max_angle):
+    def gauss_beams_several_inclined(self, A, num_beams, w0, r0, z0, max_angle):
         """Several inclined gauss beams
 
         Parameters:
