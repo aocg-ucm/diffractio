@@ -670,12 +670,11 @@ class Scalar_field_X(object):
             self.u = u_field
             self.quality = qualities.min()
 
+
     def CZT(self, z, xout):
-        """_summary_
+        """Chirped z-transform.
 
-        previous: Scalar_Bluestein_X -> CZT
-
-        Args:
+        Parameters:
             z (float): diffraction distance
             xout (np.array): x array with positions of the output plane
 

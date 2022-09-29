@@ -764,7 +764,7 @@ class Vector_field_XY(object):
 
         previous: Scalar_Bluestein_XY
 
-        Args:
+        Parameters:
             z (float): diffraction distance
             xout (np.array): x array with positions of the output plane
             yout (np.array): y array with positions of the output plane

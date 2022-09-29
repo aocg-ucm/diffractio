@@ -19,7 +19,7 @@ def nextpow2(x):
     """Exponent of next higher power of 2. It returns the exponents for the smallest powers of two that satisfy $2^p≥A$ for each element in A. 
     By convention, nextpow2(0) returns zero.
 
-    Args:
+    Parameters:
         x (float): value
 
     Returns:
@@ -38,7 +38,7 @@ def nextpow2(x):
 def Bluestein_dft_x(x, f1, f2, fs, mout):
     """Bluestein dft
 
-    Args:
+    Parameters:
         x (_type_): _description_
         f1 (_type_): _description_
         f2 (_type_): _description_
@@ -76,7 +76,7 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
 def Bluestein_dft_xy(x, f1, f2, fs, mout):
     """Bluestein dft
 
-    Args:
+    Parameters:
         x (_type_): _description_
         f1 (_type_): _description_
         f2 (_type_): _description_
