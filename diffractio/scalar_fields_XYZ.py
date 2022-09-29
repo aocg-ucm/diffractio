@@ -1242,7 +1242,8 @@ class Scalar_field_XYZ(object):
                 logarithm=0,
                 normalize='',
                 draw_borders=False,
-                filename=''):
+                filename='',
+                **kwargs):
         """Longitudinal profile XZ at a given x0 value.
 
         Parameters:
@@ -1255,7 +1256,7 @@ class Scalar_field_XYZ(object):
 
         plt.figure()
         ufield = self.to_Scalar_field_XZ(y0=y0)
-        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename)
+        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename, **kwargs)
         # intensity = np.abs(ufield.u)**2
 
         # if logarithm == 1:
