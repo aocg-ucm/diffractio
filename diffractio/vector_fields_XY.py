@@ -863,9 +863,9 @@ class Vector_field_XY(object):
             ex_out = Scalar_field_X(yout, self.wavelength)
             ey_out = Scalar_field_X(yout, self.wavelength)
             ez_out = Scalar_field_X(yout, self.wavelength)
-            ex_out.u = Ex0
-            ey_out.u = Ey0
-            ez_out.u = Ez0
+            ex_out.u = Ex0[:,0]
+            ey_out.u = Ey0[:,0]
+            ez_out.u = Ez0[:,0]
             return ex_out, ey_out, ez_out
 
         if remove_y is True:
@@ -873,12 +873,12 @@ class Vector_field_XY(object):
             # Ey0 = Ey0[:, 0]
             # Ez0 = Ey0[:, 0]
             yout = np.array((yout[0], ))
-            ex_out = Scalar_field_X(yout, self.wavelength)
-            ey_out = Scalar_field_X(yout, self.wavelength)
-            ez_out = Scalar_field_X(yout, self.wavelength)
-            ex_out.u = Ex0
-            ey_out.u = Ey0
-            ez_out.u = Ez0
+            ex_out = Scalar_field_X(xout, self.wavelength)
+            ey_out = Scalar_field_X(xout, self.wavelength)
+            ez_out = Scalar_field_X(xout, self.wavelength)
+            ex_out.u = Ex0[0,:]
+            ey_out.u = Ey0[0,:]
+            ez_out.u = Ez0[0,:]
             return ex_out, ey_out, ez_out
 
         E_out = Vector_field_XY(xout, yout, self.wavelength)
