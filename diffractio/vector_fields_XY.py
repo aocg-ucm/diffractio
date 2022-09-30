@@ -183,6 +183,13 @@ class Vector_field_XY(object):
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
 
+    def duplicate(self, clear=False):
+        """Duplicates the instance"""
+        new_field = copy.deepcopy(self)
+        if clear is True:
+            new_field.clear_field()
+        return new_field
+
     def get(self, kind='fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XY
 
@@ -390,7 +397,7 @@ class Vector_field_XY(object):
             self.x = Ex.x
             self.y = Ex.y
 
- 
+
 
     def VFFT(self,
              radius,
@@ -851,9 +858,9 @@ class Vector_field_XY(object):
         Ez0 = Bluestein_dft_xy(Ez0, fx1, fx2, fs, numx_out)
 
         # obtain the complex amplitude of the outgoing light beam
-        Ex0 = F0 * Ex0  
-        Ey0 = F0 * Ey0  
-        Ez0 = F0 * Ez0  
+        Ex0 = F0 * Ex0
+        Ey0 = F0 * Ey0
+        Ez0 = F0 * Ez0
 
         if remove_x is True:
             # Ex0 = Ex0[:, 0]
