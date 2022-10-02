@@ -64,7 +64,6 @@ from scipy.special import hankel1
 
 from . import degrees, mm, np, plt
 
-
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x
@@ -120,8 +119,9 @@ class Scalar_field_X(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   u:  {}".format(self.type, self.x.shape,
                                                self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
-            self.x[0], self.x[-1], self.x[1]-self.x[0]))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -511,7 +511,15 @@ class Scalar_field_X(object):
             if verbose is True:
                 print("x0={},x1={}".format(x_new[0], x_new[-1]))
 
-    def _RS_(self, z, n, matrix=False, new_field=True, fast=False, kind='z', xout=None, verbose=True):
+    def _RS_(self,
+             z,
+             n,
+             matrix=False,
+             new_field=True,
+             fast=False,
+             kind='z',
+             xout=None,
+             verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask:
 
         :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
@@ -611,7 +619,15 @@ class Scalar_field_X(object):
             # self.u = Usalida / sqrt(z)
             self.u = Usalida
 
-    def RS(self, z=10 * mm, n=1, matrix=False, new_field=True, fast=False, amplification=1, kind='z', verbose=True):
+    def RS(self,
+           z=10 * mm,
+           n=1,
+           matrix=False,
+           new_field=True,
+           fast=False,
+           amplification=1,
+           kind='z',
+           verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         Parameters:
@@ -672,8 +688,107 @@ class Scalar_field_X(object):
             self.u = u_field
             self.quality = qualities.min()
 
+    # def CZT(self, z, xout=None):
+    #     """Chirped z-transform.
 
-    def CZT(self, z, xout):
+    #     Parameters:
+    #         z (float or np.array): diffraction distance
+    #         xout (float or np.array): x array with positions of the output plane
+
+    #     Returns:
+    #         u_out: Complex amplitude of the outgoing light beam
+    #     """
+
+    #     if xout is None:
+    #         xout = self.x
+
+    #     k = 2 * np.pi / self.wavelength
+
+    #     if isinstance(z, (float, int)):
+    #         num_z = 1
+    #     else:
+    #         num_z = len(z)
+
+    #     if isinstance(xout, (float, int)):
+    #         numx_out = 2
+    #         xout = np.array((xout, xout + 0.1))
+    #         remove_x = True
+    #     else:
+    #         numx_out = len(xout)
+    #         remove_x = False
+
+    #     xstart = xout[0]
+    #     xend = xout[-1]
+    #     delta_x_in = self.x[1] - self.x[0]
+
+    #     # calculating scalar diffraction below
+    #     # F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
+    #     #     1j * k / 2 / z * (Xout**2 + Yout**2))
+    #     # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+    #     if num_z == 1:
+
+    #         delta_out = np.zeros(2)
+    #         if numx_out > 1:
+    #             delta_out[0] = (xend - xstart) / (numx_out - 1)
+
+    #         # calculating scalar diffraction below
+    #         F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+    #             1j * k / 2 / z * (xout**2))
+    #         F = np.exp(1j * k / 2 / z * (self.x**2))
+    #         u0 = self.u * F
+
+    #         fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+    #         fx1 = xstart + fs / 2
+    #         fx2 = xend + fs / 2
+    #         u0 = Bluestein_dft_x(u0, fx1, fx2, fs, numx_out)
+
+    #         u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
+
+    #         if remove_x is True:
+    #             # print('quito ' + str(len(u0)))
+    #             return u0[0]
+    #         else:
+    #             u_out = Scalar_field_X(xout, self.wavelength)
+    #             u_out.u = u0
+
+    #     else:
+    #         u_zs = np.zeros((len(z), len(xout)), dtype=complex)
+
+    #         for i, z_now in enumerate(z):
+    #             delta_out = np.zeros(2)
+    #             if numx_out > 1:
+    #                 delta_out[0] = (xend - xstart) / (numx_out - 1)
+
+    #             # calculating scalar diffraction below
+    #             F0 = np.exp(1j * k * z_now) / (
+    #                 1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
+    #                                                        (xout**2))
+    #             F = np.exp(1j * k / 2 / z_now * (self.x**2))
+    #             u0 = self.u * F
+
+    #             fs = self.wavelength * z_now / delta_x_in  # dimension of the imaging plane
+    #             fx1 = xstart + fs / 2
+    #             fx2 = xend + fs / 2
+    #             u0 = Bluestein_dft_x(u0, fx1, fx2, fs, numx_out)
+
+    #             u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
+    #             u_zs[i, :] = u0
+
+    #         if remove_x is True:
+    #             from .scalar_fields_Z import Scalar_field_Z
+    #             u_out = Scalar_field_Z(z=z, wavelength=self.wavelength)
+    #             u_out.u = u_zs[:, 0]
+
+    #             return u_out
+    #         else:
+    #             from .scalar_fields_XZ import Scalar_field_XZ
+    #             u_out = Scalar_field_XZ(xout, z, self.wavelength)
+    #             u_out.u = u_zs.transpose()
+
+    #     return u_out
+
+    def CZT(self, z, xout=None):
         """Chirped z-transform.
 
         Parameters:
@@ -685,30 +800,38 @@ class Scalar_field_X(object):
             u_out: Complex amplitude of the outgoing light beam
         """
 
+        if xout is None:
+            xout = self.x
+
         k = 2 * np.pi / self.wavelength
 
         if isinstance(z, (float, int)):
             num_z = 1
+            # print("z = 0 dim")
         else:
             num_z = len(z)
+            # print("z = 1 dim")
 
         if isinstance(xout, (float, int)):
-            numx_out = 2
-            xout = np.array((xout, xout + 0.1))
-            remove_x = True
-        else:
-            numx_out = len(xout)
-            remove_x = False
+            num_x = 1
+            # print("x = 0 dim")
+            xstart = xout
+            xend = xout
 
-        xstart = xout[0]
-        xend = xout[-1]
+        else:
+            num_x = len(xout)
+            # print("x = 1 dim")
+
+            xstart = xout[0]
+            xend = xout[-1]
+
         delta_x_in = self.x[1] - self.x[0]
 
         if num_z == 1:
 
             delta_out = np.zeros(2)
-            if numx_out > 1:
-                delta_out[0] = (xend - xstart) / (numx_out - 1)
+            if num_x > 1:
+                delta_out[0] = (xend - xstart) / (num_x - 1)
 
             # calculating scalar diffraction below
             F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
@@ -719,52 +842,49 @@ class Scalar_field_X(object):
             fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
             fx1 = xstart + fs / 2
             fx2 = xend + fs / 2
-            u0 = Bluestein_dft_x(u0, fx1, fx2, fs, numx_out)
+            u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
             u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
-
-            if remove_x is True:
-                # print('quito ' + str(len(u0)))
-                return u0[0]
+            if num_x == 1:
+                return u0
             else:
                 u_out = Scalar_field_X(xout, self.wavelength)
                 u_out.u = u0
 
         else:
-            u_zs = np.zeros((len(z),len(xout)), dtype=complex)
+            u_zs = np.zeros((len(z), num_x), dtype=complex)
 
             for i, z_now in enumerate(z):
                 delta_out = np.zeros(2)
-                if numx_out > 1:
-                    delta_out[0] = (xend - xstart) / (numx_out - 1)
+                if num_x > 1:
+                    delta_out[0] = (xend - xstart) / (num_x - 1)
 
                 # calculating scalar diffraction below
-                F0 = np.exp(1j * k * z_now) / (1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now * (xout**2))
+                F0 = np.exp(1j * k * z_now) / (
+                    1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
+                                                           (xout**2))
                 F = np.exp(1j * k / 2 / z_now * (self.x**2))
                 u0 = self.u * F
 
                 fs = self.wavelength * z_now / delta_x_in  # dimension of the imaging plane
                 fx1 = xstart + fs / 2
                 fx2 = xend + fs / 2
-                u0 = Bluestein_dft_x(u0, fx1, fx2, fs, numx_out)
+                u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
                 u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
-                u_zs[i,:]=u0
+                u_zs[i, :] = u0
 
-            if remove_x is True:
+            if num_x == 1:
                 from .scalar_fields_Z import Scalar_field_Z
                 u_out = Scalar_field_Z(z=z, wavelength=self.wavelength)
-                u_out.u=u_zs[:,0]
-
+                u_out.u = u_zs
                 return u_out
             else:
                 from .scalar_fields_XZ import Scalar_field_XZ
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
                 u_out.u = u_zs.transpose()
 
-
         return u_out
-
 
     def normalize(self, kind='intensity', new_field=False):
         """Normalizes the field so that intensity.max()=1.

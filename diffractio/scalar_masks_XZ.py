@@ -433,20 +433,36 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         return perfil_previo, perfil_nuevo
 
-    def discretize_refraction_index(self, n_layers):
+    def discretize_refraction_index(self, n_layers=None, num_layers=None):
         """Takes a refraction index an discretize it according refraction indexes.
 
-        Parameters:
-            n_layers (np.array): array with refraction indexes to discretize
+        Args:
+            n_layers (np.array, optional): array with refraction indexes to discretize. Defaults to None.
+            num_layers (int, optional): number of layers, without counting n_background. Defaults to None.
+            By default, both parameters are None, but one of then must be filled. If both are present, num_layers is considered
+        Returns:
+            (np.array): refraction indexes selected.
         """
+
+        if num_layers is not None:
+            repeated_values = np.unique(self.n)
+
+            repeated_values = np.delete(
+                repeated_values,
+                np.where(repeated_values == self.n_background))
+
+            n_min, n_max = repeated_values.min(), repeated_values.max()
+            n_layers = np.linspace(n_min, n_max, num_layers)
+            np.add(n_layers, self.n_background)
+
         n = deepcopy(self.n)
-        for i, n_layer in enumerate(n_layers[:-1]):
+        for i in range(len(n_layers) - 1):
             i_capa = np.bitwise_and(self.n >= n_layers[i],
                                     self.n <= n_layers[i + 1])
             n_central = (n_layers[i] + n_layers[i + 1]) / 2
             n[i_capa] = n_central
         self.n = n
-        return n
+        return n_layers
 
     def image(self, filename, n_max, n_min, angle=0, invert=False):
         """Converts an image file in an xz-refraction index matrix.

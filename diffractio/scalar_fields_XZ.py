@@ -428,21 +428,6 @@ class Scalar_field_XZ(object):
 
         return percentage_filtered, lineas_filtradas
 
-    def discretize_refraction_index(self, n_layers):
-        """Takes a refraction index an discretize it according refraction indexes.
-
-        Parameters:
-            n_layers (np.array): array with refraction indexes to discretize
-        """
-        n = deepcopy(self.n)
-        for i in range(len(n_layers) - 1):
-            i_capa = np.bitwise_and(self.n >= n_layers[i],
-                                    self.n <= n_layers[i + 1])
-            n_central = (n_layers[i] + n_layers[i + 1]) / 2
-            n[i_capa] = n_central
-        self.n = n
-        return n
-
     def save_data(self, filename, add_name='', description='', verbose=False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
@@ -711,7 +696,9 @@ class Scalar_field_XZ(object):
 
         if division is False:
             # standard BPM _algorithm
-            self.__BPM__(matrix, verbose)
+            # self.__BPM__(matrix, verbose)
+
+            self.__BPM__(has_edges, pow_edge, matrix, verbose)
 
         else:
             # Here is the division of self.z in parts
@@ -725,6 +712,7 @@ class Scalar_field_XZ(object):
                               end="\r")
                     else:
                         print("{}/{}".format(i, num_executions))
+
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(x=self.x,
                                      z=self.z[sl],
@@ -733,7 +721,7 @@ class Scalar_field_XZ(object):
                 ui.n = self.n[:, sl]
                 ui.u0 = uf
 
-                ui.BPM()
+                ui.BPM(has_edges, pow_edge, matrix, verbose)
                 uf = ui.final_field().u
                 self.u[:, sl] = ui.u
 
@@ -923,8 +911,8 @@ class Scalar_field_XZ(object):
             if sys.version_info.major == 3:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors),
-                    sep="\r",
-                    end="\r")
+                      sep="\r",
+                      end="\r")
             else:
                 print("time in RS= {}. num proc= {}".format(
                     time2 - time1, num_processors))
@@ -1124,7 +1112,12 @@ class Scalar_field_XZ(object):
 
         return M00, M01, M10, M11
 
-    def RS_polychromatic(self, initial_field, wavelengths, spectrum='', verbose=False, num_processors=num_max_processors):
+    def RS_polychromatic(self,
+                         initial_field,
+                         wavelengths,
+                         spectrum='',
+                         verbose=False,
+                         num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light.
 
         Parameters:
@@ -1159,7 +1152,12 @@ class Scalar_field_XZ(object):
         u_temp.u = np.sqrt(I_final)
         return u_temp
 
-    def BPM_polychromatic(self, initial_field, wavelengths, spectrum, verbose=False, num_processors=4):
+    def BPM_polychromatic(self,
+                          initial_field,
+                          wavelengths,
+                          spectrum,
+                          verbose=False,
+                          num_processors=4):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light
 
         Parameters:
@@ -1383,7 +1381,11 @@ class Scalar_field_XZ(object):
 
         return z_transitions, algorithm, refr_index_RS
 
-    def surface_detection(self, mode=1, min_incr=0.1, reduce_matrix='standard', has_draw=False):
+    def surface_detection(self,
+                          mode=1,
+                          min_incr=0.1,
+                          reduce_matrix='standard',
+                          has_draw=False):
         """detect edges of variation in refraction index.
 
         Parameters:
@@ -1445,7 +1447,22 @@ class Scalar_field_XZ(object):
 
         return z_new[iy], x_new[ix]
 
-    def draw(self, kind='intensity', logarithm=0, normalize='', draw_borders=False, filename='', scale='', min_incr=0.0005, reduce_matrix='standard', colorbar_kind=False, colormap_kind="", z_scale='um', edge_matrix=None, interpolation='spline36', percentage_intensity=None, **kwargs):
+    def draw(self,
+             kind='intensity',
+             logarithm=0,
+             normalize='',
+             draw_borders=False,
+             filename='',
+             scale='',
+             min_incr=0.0005,
+             reduce_matrix='standard',
+             colorbar_kind=False,
+             colormap_kind="",
+             z_scale='um',
+             edge_matrix=None,
+             interpolation='spline36',
+             percentage_intensity=None,
+             **kwargs):
         """Draws  XZ field.
 
         Parameters:
@@ -1571,7 +1588,17 @@ class Scalar_field_XZ(object):
 
         return h1
 
-    def draw_refraction_index(self, kind='all', draw_borders=True, title='', filename='', scale='', min_incr=0.01, reduce_matrix='standard', colorbar_kind=None, colormap_kind=cm.Blues, edge_matrix=None):
+    def draw_refraction_index(self,
+                              kind='all',
+                              draw_borders=True,
+                              title='',
+                              filename='',
+                              scale='',
+                              min_incr=0.01,
+                              reduce_matrix='standard',
+                              colorbar_kind=None,
+                              colormap_kind=cm.Blues,
+                              edge_matrix=None):
         """Draws refraction index.
 
         Parameters:
@@ -1653,7 +1680,11 @@ class Scalar_field_XZ(object):
 
         return h1
 
-    def draw_incident_field(self, kind='intensity', logarithm=False, normalize=False, filename=''):
+    def draw_incident_field(self,
+                            kind='intensity',
+                            logarithm=False,
+                            normalize=False,
+                            filename=''):
         """Draws incident field self.u0
 
         Parameters:
@@ -1670,7 +1701,13 @@ class Scalar_field_XZ(object):
         u_inc.u = self.u0.u
         u_inc.draw(kind, logarithm, normalize, None, filename)
 
-    def profile_longitudinal(self, kind='intensity', x0=0 * um, logarithm=False, normalize=False, draw=True, filename=''):
+    def profile_longitudinal(self,
+                             kind='intensity',
+                             x0=0 * um,
+                             logarithm=False,
+                             normalize=False,
+                             draw=True,
+                             filename=''):
         """Determine and draws longitudinal profile
 
         Parameters:
@@ -1705,7 +1742,10 @@ class Scalar_field_XZ(object):
             plt.ylabel(texto)
 
             if not filename == '':
-                plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+                plt.savefig(filename,
+                            dpi=300,
+                            bbox_inches='tight',
+                            pad_inches=0.1)
 
         if kind == 'intensity':
             output = intensity
@@ -1719,7 +1759,13 @@ class Scalar_field_XZ(object):
             output = None
         return output
 
-    def profile_transversal(self, kind='intensity', z0=0 * um, logarithm=False, normalize=False, draw=True, filename=''):
+    def profile_transversal(self,
+                            kind='intensity',
+                            z0=0 * um,
+                            logarithm=False,
+                            normalize=False,
+                            draw=True,
+                            filename=''):
         """Determine and draws transversal profile.
 
         Parameters:
@@ -1756,7 +1802,10 @@ class Scalar_field_XZ(object):
             plt.ylabel(texto)
 
             if not filename == '':
-                plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+                plt.savefig(filename,
+                            dpi=300,
+                            bbox_inches='tight',
+                            pad_inches=0.1)
 
         if kind == 'intensity':
             output = intensity
@@ -1788,10 +1837,16 @@ class Scalar_field_XZ(object):
 
         ix, iz = np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
-            print(("x = {:2.3f} um, z = {:2.3f} um".format(self.x[ix], self.z[iz])))
+            print(("x = {:2.3f} um, z = {:2.3f} um".format(
+                self.x[ix], self.z[iz])))
         return self.x[ix], self.z[iz]
 
-    def beam_widths(self, kind='FWHM1D', has_draw=[True, False], percentage=0.5, remove_background=None, verbose=False):
+    def beam_widths(self,
+                    kind='FWHM1D',
+                    has_draw=[True, False],
+                    percentage=0.5,
+                    remove_background=None,
+                    verbose=False):
         """Computes the beam width for all the distances z.
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHM1D'
@@ -1814,7 +1869,11 @@ class Scalar_field_XZ(object):
                 widths[i], positions_center[i] = beam_width_1D(field, self.x)
             elif kind == 'FWHM1D':
                 intensity = np.abs(field)**2
-                widths[i] = FWHM1D(self.x, intensity, percentage=percentage, remove_background=remove_background, has_draw=has_draw[1])
+                widths[i] = FWHM1D(self.x,
+                                   intensity,
+                                   percentage=percentage,
+                                   remove_background=remove_background,
+                                   has_draw=has_draw[1])
 
         if has_draw[0] is True:
             plt.figure()
@@ -1828,7 +1887,15 @@ class Scalar_field_XZ(object):
 
         return widths, positions_center
 
-    def video_profiles(self, kind='intensity', kind_profile='transversal', step=1, wait=0.001, logarithm=False, normalize=False, filename='', verbose=False):
+    def video_profiles(self,
+                       kind='intensity',
+                       kind_profile='transversal',
+                       step=1,
+                       wait=0.001,
+                       logarithm=False,
+                       normalize=False,
+                       filename='',
+                       verbose=False):
         """Draws profiles in a video fashion
 
         Parameters:
@@ -1884,7 +1951,15 @@ class Scalar_field_XZ(object):
         plt.close('')
 
     def video(self,
-              kind='intensity', z_min=None, z_max=None, logarithm=False, normalize=False, time_video=10 * seconds, frames_reduction=5, filename='video.avi', dpi=300):
+              kind='intensity',
+              z_min=None,
+              z_max=None,
+              logarithm=False,
+              normalize=False,
+              time_video=10 * seconds,
+              frames_reduction=5,
+              filename='video.avi',
+              dpi=300):
         """Generates a video in the z dimension.
 
         Parameters:
@@ -1940,7 +2015,10 @@ class Scalar_field_XZ(object):
         ani.save(filename, fps=fps, dpi=dpi)
         plt.close()
 
-    def draw_profiles_interactive(self, kind='intensity', logarithm=False, normalize=False):
+    def draw_profiles_interactive(self,
+                                  kind='intensity',
+                                  logarithm=False,
+                                  normalize=False):
         """Draws profiles interactivey. Only transversal
 
         Parameters:

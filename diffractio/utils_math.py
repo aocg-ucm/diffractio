@@ -35,6 +35,44 @@ def nextpow2(x):
         return int(y)
 
 
+# def Bluestein_dft_x(x, f1, f2, fs, mout):
+#     """Bluestein dft
+
+#     Parameters:
+#         x (_type_): _description_
+#         f1 (_type_): _description_
+#         f2 (_type_): _description_
+#         fs (_type_): _description_
+#         mout (_type_): _description_
+
+#     Reference:
+#         - Hu, Y., Wang, Z., Wang, X., Ji, S., Zhang, C., Li, J., Zhu, W., Wu, D.,  Chu, J. (2020). "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method". Light: Science and Applications, 9(1). https://doi.org/10.1038/s41377-020-00362-z
+#     """
+
+#     m = len(x)
+#     f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
+#     f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
+#     a = exp(1j * 2 * pi * f11 / fs)
+#     w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
+#     h = np.arange(-m + 1, max(mout, m))
+#     mp = m + mout - 1
+#     h = w**((h**2) / 2)
+#     ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
+#     b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
+#     tmp = b.T
+#     b = fft(x * tmp, 2**nextpow2(mp), axis=0)
+
+#     b = ifft(b * ft.T, axis=0)
+#     b = b[m:mp + 1].T * h[m - 1:mp]
+#     l = linspace(0, mout - 1, mout)
+#     l = l / mout * (f22 - f11) + f11
+#     Mshift = -m / 2
+#     Mshift = exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs)
+#     b = b * Mshift
+
+#     return b
+
+
 def Bluestein_dft_x(x, f1, f2, fs, mout):
     """Bluestein dft
 
@@ -48,12 +86,15 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
     Reference:
         - Hu, Y., Wang, Z., Wang, X., Ji, S., Zhang, C., Li, J., Zhu, W., Wu, D.,  Chu, J. (2020). "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method". Light: Science and Applications, 9(1). https://doi.org/10.1038/s41377-020-00362-z
     """
+    # print("mout = {}".format(mout))
 
     m = len(x)
+    # print("m (len(x)) = {}".format(m))
+
     f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
     f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
-    a = exp(1j * 2 * pi * f11 / fs)
-    w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
+    a = np.exp(1j * 2 * np.pi * f11 / fs)
+    w = np.exp(-1j * 2 * np.pi * (f22 - f11) / (mout * fs))
     h = np.arange(-m + 1, max(mout, m))
     mp = m + mout - 1
     h = w**((h**2) / 2)
@@ -63,11 +104,22 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
     b = fft(x * tmp, 2**nextpow2(mp), axis=0)
 
     b = ifft(b * ft.T, axis=0)
-    b = b[m:mp + 1].T * h[m - 1:mp]
-    l = linspace(0, mout - 1, mout)
+    # b = b[m:mp + 1].T * h[m - 1:mp]
+    ### Nuevo:
+    # print("b = {}".format(b))
+    if mout > 1:
+        b = b[m:mp + 1].T * h[m - 1:mp]
+    else:
+        b = b[0] * h[0]
+    l = np.linspace(0, mout - 1, mout)
     l = l / mout * (f22 - f11) + f11
+    # print("b = {}".format(b))
+    # print("l = {}".format(l))
+
     Mshift = -m / 2
-    Mshift = exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs)
+    Mshift = np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs)
+    # print("Mshift = {}".format(Mshift))
+
     b = b * Mshift
 
     return b
@@ -197,7 +249,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
 
     num_extrema = len(listOfCordinates)
 
-    indexes = np.zeros((num_extrema, 2), dtype=integer)
+    indexes = np.zeros((num_extrema, 2), dtype=int)
     xy_ext = np.zeros((num_extrema, 2))
     extrema = np.zeros((num_extrema))
 
