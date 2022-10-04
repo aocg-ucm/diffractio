@@ -77,6 +77,7 @@ from .utils_math import (get_edges, get_k, ndgrid, nearest, reduce_to_1,
 from .utils_optics import beam_width_2D, field_parameters
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XZ import Scalar_field_XZ
+from .scalar_fields_Z import Scalar_field_Z
 
 try:
     import screeninfo
@@ -135,10 +136,12 @@ class Scalar_field_XY(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   y:  {},   u:  {}".format(
             self.type, self.x.shape, self.y.shape, self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
-            self.x[0], self.x[-1], self.x[1]-self.x[0]))
-        print(" - ymin:       {:2.2f} um,  ymax:      {:2.2f} um,  Dy:   {:2.2f} um".format(
-            self.y[0], self.y[-1], self.y[1]-self.y[0]))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
+        print(
+            " - ymin:       {:2.2f} um,  ymax:      {:2.2f} um,  Dy:   {:2.2f} um"
+            .format(self.y[0], self.y[-1], self.y[1] - self.y[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -376,8 +379,7 @@ class Scalar_field_XY(object):
             ofile.write("\ninfo:\n")
             ofile.write(info)
         ofile.write("\n\n")
-        ofile.write("mask length: %i x %i\n" %
-                    (len(self.x), len(self.y)))
+        ofile.write("mask length: %i x %i\n" % (len(self.x), len(self.y)))
         ofile.write("x0 = %f *um, x1 = %f *um, Deltax = %f *um\n" %
                     (self.x.min(), self.x[-1], self.x[1] - self.x[0]))
         ofile.write("y0 = %f *um, y1 = %f *um, Deltay = %f *um\n" %
@@ -1103,184 +1105,207 @@ class Scalar_field_XY(object):
         else:
             self.u = u_iter.u
 
-    def CZT(self, z, xout, yout):
-        """_summary_ from XY to XY
-
-        previous: Scalar_Bluestein_XY
+    def CZT(self, z, xout=None, yout=None, verbose=False):
+        """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
+        The output Scheme depends on this input parameters.
 
         Parameters:
             z (float): diffraction distance
             xout (np.array): x array with positions of the output plane
             yout (np.array): y array with positions of the output plane
-
+            verbose (bool): If True, it prints some information
 
         Returns:
-            gout: Complex amplitude of the outgoing light beam
-            delta_out: pixel size of the outgoing light beam
+            u_out: Scalar_field_** depending of the input scheme. When all the parameters are numbers, it returns the complex field at that point.
+
+        TODO: It works, but the maximum amplitude is not fine. Also there is a tiny displacement from the axis.
         """
+
+        if xout is None:
+            xout = self.x
+
+        if yout is None:
+            yout = self.y
 
         k = 2 * np.pi / self.wavelength
 
-        if isinstance(xout, (float, int)):
-            numx_out = 2
-            xout = np.array((xout, xout + 0.1))
-            remove_x = True
+        if isinstance(z, (float, int)):
+            num_z = 1
+            # print("z = 0 dim")
         else:
-            numx_out = len(xout)
-            remove_x = False
+            num_z = len(z)
+            # print("z = 1 dim")
+
+        if isinstance(xout, (float, int)):
+            num_x = 1
+            # print("x = 0 dim")
+            xstart = xout
+            xend = xout
+        else:
+            num_x = len(xout)
+            # print("x = 1 dim")
+
+            xstart = xout[0]
+            xend = xout[-1]
 
         if isinstance(yout, (float, int)):
-            numy_out = 2
-            yout = np.array((yout, yout + 0.1))
-            remove_y = True
-
+            num_y = 1
+            # print("y = 0 dim")
+            ystart = yout
+            yend = yout
         else:
-            numy_out = len(yout)
-            remove_y = False
+            num_y = len(yout)
+            # print("y = 1 dim")
 
-        xstart = xout[0]
-        xend = xout[-1]
-        ystart = yout[0]
-        yend = yout[-1]
+            ystart = yout[0]
+            yend = yout[-1]
 
         delta_x_in = self.x[1] - self.x[0]
 
         delta_out = np.zeros(2)
-        if numx_out > 1:
-            delta_out[0] = (xend - xstart) / (numx_out - 1)
-        if numy_out > 1:
-            delta_out[1] = (yend - ystart) / (numy_out - 1)
+        if num_x > 1:
+            delta_out[0] = (xend - xstart) / (num_x - 1)
 
-        Xout, Yout = meshgrid(xout, yout)
+        if num_y > 1:
+            delta_out[1] = (yend - ystart) / (num_y - 1)
 
-        # calculating scalar diffraction below
-        # F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
-        #     1j * k / 2 / z * (Xout**2 + Yout**2))
-        # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+        Xout, Yout = np.meshgrid(xout, yout)
 
-        R = sqrt(Xout**2 + Yout**2 + z**2)
-        F0 = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+        if verbose:
+            print("num x, num y, num z = {}, {}, {}".format(
+                num_x, num_y, num_z))
 
-        R = sqrt(self.X**2 + self.Y**2 + z**2)
-        F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-
-        u0 = self.u * F
-
-        # using Bluestein method to calculate the complex amplitude of the outgoing light beam
-
-        # one-dimensional FFT in one direction
-        fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
-
-        fy1 = ystart + fs / 2
-        fy2 = yend + fs / 2
-        u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, numy_out)
-
-        # one-dimensional FFT in the other direction
-        fx1 = xstart + fs / 2
-        fx2 = xend + fs / 2
-        u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, numx_out)
-
-        u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
-
-        if remove_x is True:
-            u0 = u0[:, 0]
-            xout = np.array((xout[0], ))
-            u_out = Scalar_field_X(yout, self.wavelength)
-            u_out.u = u0
-            return u_out
-
-        if remove_y is True:
-            u0 = u0[0, :]
-            yout = np.array((yout[0], ))
-            u_out = Scalar_field_X(xout, self.wavelength)
-            u_out.u = u0
-            return u_out
-
-        u_out = Scalar_field_XY(xout, yout, self.wavelength)
-        u_out.u = u0
-        return u_out
-
-    def CZT_xz(self, zs, xout, yout):
-        """_summary_ from XY to zs
-
-        previous: Scalar_Bluestein_XZ
-
-        Parameters:
-            zs (np.array): diffraction distance
-            xout (np.array): x array with positions of the output plane
-            yout (float): y position of the output plane
-
-
-        Returns:
-            gout: Complex amplitude of the outgoing light beam
-            delta_out: pixel size of the outgoing light beam
-        """
-
-        k = 2 * np.pi / self.wavelength
-
-        if isinstance(xout, (float, int)):
-            numx_out = 2
-            xout = np.array((xout, xout + 0.1))
-            remove_x = True
-        else:
-            numx_out = len(xout)
-            remove_x = False
-
-        numy_out = 2
-        remove_y = True
-
-        xstart = xout[0]
-        xend = xout[-1]
-
-        delta_x_in = self.x[1] - self.x[0]
-
-        Z0, _ = np.meshgrid(zs, xout)
-
-        delta_out = np.zeros(2)
-        if numx_out > 1:
-            delta_out[0] = (xend - xstart) / (numx_out - 1)
-
-        u_out = np.zeros_like(Z0, dtype=complex)
-
-        for i, z in enumerate(zs):
+        if num_z == 1:
             # calculating scalar diffraction below
-            print("{}/{}".format(i, len(zs)), end="\r")
             # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-            #     1j * k / 2 / z * (xout**2 + yout**2))
+            #     1j * k / 2 / z * (Xout**2 + Yout**2))
             # F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
 
-            R = sqrt(xout**2 + yout**2 + z**2)
-            F0 = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+            R = np.sqrt(Xout**2 + Yout**2 + z**2)
+            F0 = 1 / (2 * np.pi) * np.exp(
+                1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
 
-            R = sqrt(self.X**2 + self.Y**2 + z**2)
-            F = 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+            R = np.sqrt(self.X**2 + self.Y**2 + z**2)
+            F = 1 / (2 * np.pi) * np.exp(
+                1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
 
             u0 = self.u * F
-            # print(F0.shape, u0.shape)
 
             # using Bluestein method to calculate the complex amplitude of the outgoing light beam
 
             # one-dimensional FFT in one direction
-            fs = self.wavelength * z / delta_x_in
-            fy1 = yout + fs / 2
-            fy2 = yout + fs / 2
-            u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, numy_out)
-            # u0=u0.transpose()
-            # print(F0.shape, u0.shape)
+            fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+
+            fy1 = ystart + fs / 2
+            fy2 = yend + fs / 2
+            u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
 
             # one-dimensional FFT in the other direction
             fx1 = xstart + fs / 2
             fx2 = xend + fs / 2
-            u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, numx_out)
-            # print(F0.shape, u0.shape)
-            # print(u0)
-            u0 = u0[0, :]
-            u_out[:, i] = F0 * u0
+            u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
 
-        u_xz = Scalar_field_XZ(xout, zs, self.wavelength)
-        u_xz.u = u_out
+            u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
 
-        return u_xz
+            u0 = u0.squeeze()
+
+            if num_x == 1 and num_y == 1:
+                # just 1 number
+                return u0.sum()
+
+            elif num_x > 1 and num_y == 1:
+                u_out = Scalar_field_X(xout, self.wavelength)
+                #u_out.u = u0.transpose()[: ,0]
+                u_out.u = u0.sum(axis=0)
+                return u_out
+
+            elif num_x == 1 and num_y > 1:
+                u_out = Scalar_field_X(yout, self.wavelength)
+                # u_out.u =  u0.transpose()[:, 0]
+                u_out.u = u0.sum(axis=0)
+
+                return u_out
+
+            elif num_x > 1 and num_y > 1:
+                from diffractio.scalar_fields_XY import Scalar_field_XY
+                u_out = Scalar_field_XY(xout, yout, self.wavelength)
+                u_out.u = u0
+                return u_out
+
+        elif num_z > 1:
+            u_zs = np.zeros((num_x, num_y, num_z), dtype=complex)
+            u_zs = u_zs.squeeze()
+            Xout, Yout = np.meshgrid(xout, yout)
+
+            for i, z_now in enumerate(z):
+                # calculating scalar diffraction below
+                # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+                #     1j * k / 2 / z * (xout**2 + yout**2))
+                # F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
+
+                R = np.sqrt(Xout**2 + Yout**2 + z_now**2)
+                F0 = 1 / (2 * np.pi) * np.exp(
+                    1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
+
+                R = np.sqrt(self.X**2 + self.Y**2 + z_now**2)
+                F = 1 / (2 * np.pi) * np.exp(
+                    1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
+
+                u0 = self.u * F
+                # print(F0.shape, u0.shape)
+
+                # using Bluestein method to calculate the complex amplitude of the outgoing light beam
+
+                # one-dimensional FFT in one direction
+                fs = self.wavelength * z_now / delta_x_in
+
+                fy1 = ystart + fs / 2
+                fy2 = yend + fs / 2
+                u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
+                # u0=u0.transpose()
+                # print(F0.shape, u0.shape)
+
+                # one-dimensional FFT in the other direction
+                fx1 = xstart + fs / 2
+                fx2 = xend + fs / 2
+                u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
+                # print(F0.shape, u0.shape)
+                # print(u0)
+                # u_zs[:, :, i] = (F0 * u0).transpose()
+
+                u0 = F0 * u0
+
+                if num_x == 1 and num_y == 1:
+                    u_zs[i] = u0.sum()
+                elif num_x > 1 and num_y == 1:
+                    u_zs[:, i] = u0.sum(axis=0)
+                elif num_x == 1 and num_y > 1:
+                    u_zs[:, i] = u0.sum(axis=0)
+                elif num_x > 1 and num_y > 1:
+                    u_zs[:, :, i] = u0.transpose()
+
+            if num_x == 1 and num_y == 1:
+                u_out = Scalar_field_Z(z, self.wavelength)
+                u_out.u = u_zs
+                return u_out
+
+            elif num_x > 1 and num_y == 1:
+                u_out = Scalar_field_XZ(xout, z, self.wavelength)
+                u_out.u = u_zs
+                return u_out
+
+            elif num_x == 1 and num_y > 1:
+                u_out = Scalar_field_XZ(yout, z, self.wavelength)
+                u_out.u = u_zs
+                return u_out
+
+            elif num_x > 1 and num_y > 1:
+                from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
+                u_out = Scalar_field_XYZ(xout, yout, z, self.wavelength)
+                u_out.u = u_zs
+                return u_out
+
+        return u_out
 
     def profile(self,
                 point1='',

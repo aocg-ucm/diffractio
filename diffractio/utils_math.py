@@ -135,6 +135,55 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
         fs (_type_): _description_
         mout (_type_): _description_
     """
+    verbose = False
+
+    m, n = x.shape
+    f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
+    f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
+    a = np.exp(1j * 2 * np.pi * f11 / fs)
+    w = np.exp(-1j * 2 * np.pi * (f22 - f11) / (mout * fs))
+    h = np.arange(-m + 1, max(mout, m))
+    mp = m + mout - 1
+    h = w**((h**2) / 2)
+    ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
+    b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
+    tmp = np.tile(b, (n, 1)).T
+    b = fft(x * tmp, 2**nextpow2(mp), axis=0)
+    b = ifft(b * np.tile(ft, (n, 1)).T, axis=0)
+
+    if verbose:
+        print("b = {}".format(b))
+
+    if mout > 1:
+        b = b[m:mp + 1, 0:n].T * np.tile(h[m - 1:mp], (n, 1))
+    else:
+        b = b[0] * h[0]
+
+    l = np.linspace(0, mout - 1, mout)
+    l = l / mout * (f22 - f11) + f11
+
+    if verbose:
+        print("b = {}".format(b))
+        print("l = {}".format(l))
+
+    Mshift = -m / 2
+    Mshift = np.tile(np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs),
+                     (n, 1))
+    b = b * Mshift
+
+    return b
+
+
+def Bluestein_dft_xy_backup(x, f1, f2, fs, mout):
+    """Bluestein dft
+
+    Parameters:
+        x (_type_): _description_
+        f1 (_type_): _description_
+        f2 (_type_): _description_
+        fs (_type_): _description_
+        mout (_type_): _description_
+    """
 
     m, n = x.shape
     f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
