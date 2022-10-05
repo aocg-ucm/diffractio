@@ -3,25 +3,14 @@
 ## Bugs
 
 -   utils_math has several normalize functions
+-   Check that RS is working properly of XYZ (multiprocessing).
+-   CZT: check intensity normalization.
+-   CZT: check a small disalignment of center from axis.
 
 ## alpha
 
--   Check that RS is working properly of XYZ (multiprocessing)
--   XZ and  XYZ: function for interactive drawing I(x,y;z)
-
-Algorithms:
-
--   Implement PWD
--   Implement WPM
--   Implement VPM
--   Implement new BPM
--   Implemement VRS - working in development
-
-Masks:
-
--   XYZ másk - develop more masks
--   -   vectorial - implement complex XY masks (from SLM for example and g.l.)
-
-## others
-
--   tests for utils
+-   Vector frames from CZT.
+-   Documentation: Add Algorithms to tutorials.
+-   XZ and  XYZ: function for interactive drawing I(x,y;z).
+-   plotly implmentation for XYZ visualization.
+-   XYZ mask - develop more masks.
