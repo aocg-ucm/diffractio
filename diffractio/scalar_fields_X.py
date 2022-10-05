@@ -825,7 +825,7 @@ class Scalar_field_X(object):
             xstart = xout[0]
             xend = xout[-1]
 
-        delta_x_in = self.x[1] - self.x[0]
+        dx = self.x[1] - self.x[0]
 
         if num_z == 1:
 
@@ -839,12 +839,16 @@ class Scalar_field_X(object):
             F = np.exp(1j * k / 2 / z * (self.x**2))
             u0 = self.u * F
 
-            fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
+            fs = self.wavelength * z / dx  # dimension of the imaging plane
             fx1 = xstart + fs / 2
             fx2 = xend + fs / 2
             u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
-            u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
+            k_factor = np.sqrt(z * self.wavelength) * dx
+
+            u0 = F0 * u0 * k_factor
+            # obtain the complex amplitude of the outgoing light beam
+
             if num_x == 1:
                 return u0
             else:
@@ -866,21 +870,24 @@ class Scalar_field_X(object):
                 F = np.exp(1j * k / 2 / z_now * (self.x**2))
                 u0 = self.u * F
 
-                fs = self.wavelength * z_now / delta_x_in  # dimension of the imaging plane
+                fs = self.wavelength * z_now / dx  # dimension of the imaging plane
                 fx1 = xstart + fs / 2
                 fx2 = xend + fs / 2
                 u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
                 u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
-                u_zs[i, :] = u0
+
+                k_factor = np.sqrt(z_now * self.wavelength) * dx
+
+                u_zs[i, :] = u0 * k_factor
 
             if num_x == 1:
-                from .scalar_fields_Z import Scalar_field_Z
+                from diffractio.scalar_fields_Z import Scalar_field_Z
                 u_out = Scalar_field_Z(z=z, wavelength=self.wavelength)
                 u_out.u = u_zs
                 return u_out
             else:
-                from .scalar_fields_XZ import Scalar_field_XZ
+                from diffractio.scalar_fields_XZ import Scalar_field_XZ
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
                 u_out.u = u_zs.transpose()
 
