@@ -211,8 +211,7 @@ class Scalar_field_XYZ(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        # TODO:
-            It can be improved for maks (not having less than 1)
+        # TODO: It can be improved for maks (not having less than 1)
         """
 
         u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
@@ -860,8 +859,7 @@ class Scalar_field_XYZ(object):
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        TODO:
-            Simplify and change variable name clase
+        TODO: Simplify and change variable name clase
         """
         if is_class is True:
             field_output = Scalar_field_XY(x=self.x,
@@ -894,8 +892,6 @@ class Scalar_field_XYZ(object):
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        TODO:
-            Simplify and change variable name clase
         """
         if is_class is True:
             field_output = Scalar_field_XZ(x=self.x,
@@ -928,8 +924,6 @@ class Scalar_field_XYZ(object):
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        TODO:
-            Simplify and change variable name clase
         """
         if is_class is True:
             field_output = Scalar_field_XZ(x=self.y,
@@ -1405,8 +1399,7 @@ class Scalar_field_XYZ(object):
             normalize (bool): If True, max(intensity)=1
             maxintensity (float): maximum value of intensity
 
-        TODO:
-            Simplify, drawing
+        TODO: Simplify, drawing
             include kind and other parameters of draw
         """
 
@@ -1500,8 +1493,7 @@ class Scalar_field_XYZ(object):
             frame (bool): figure with or without axis.
             verbose (bool): If True prints
 
-        TODO:
-            Implement kind, now only intensity
+        TODO: Implement kind, now only intensity
             include logarithm and normalize
             check
         """

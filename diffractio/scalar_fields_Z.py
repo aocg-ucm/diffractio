@@ -45,7 +45,6 @@ from .utils_math import nearest
 
 from .utils_optics import field_parameters, normalize, FWHM1D
 
-
 num_max_processors = multiprocessing.cpu_count()
 
 
@@ -91,8 +90,9 @@ class Scalar_field_Z(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - z:  {},   u:  {}".format(self.type, self.z.shape,
                                                self.u.shape))
-        print(" - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um".format(
-            self.z[0], self.z[-1], self.z[1]-self.z[0]))
+        print(
+            " - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um"
+            .format(self.z[0], self.z[-1], self.z[1] - self.z[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -144,8 +144,7 @@ class Scalar_field_Z(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        TODO:
-            It can be improved for maks (not having less than 1)
+        TODO: It can be improved for maks (not having less than 1)
         """
 
         u3 = Scalar_field_Z(self.z, self.wavelength)
@@ -323,11 +322,16 @@ class Scalar_field_Z(object):
 
         intensities = np.abs(self.u)**2
 
-        widths = FWHM1D(self.z, intensities, percentage, remove_background, has_draw)
-       
+        widths = FWHM1D(self.z, intensities, percentage, remove_background,
+                        has_draw)
+
         return widths
 
-    def DOF(self, w_factor=np.sqrt(2), w_fixed=0, has_draw=False, verbose=False):
+    def DOF(self,
+            w_factor=np.sqrt(2),
+            w_fixed=0,
+            has_draw=False,
+            verbose=False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
         Parameters:
@@ -351,7 +355,6 @@ class Scalar_field_Z(object):
         """
 
         pass
-
 
     def draw(self,
              kind='intensity',

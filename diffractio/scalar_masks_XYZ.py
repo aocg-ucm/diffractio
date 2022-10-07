@@ -27,6 +27,7 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):
+
     def __init__(self, x, y, z, wavelength, n_background=1., info=''):
         # print("init de Scalar_mask_XYZ")
         super(self.__class__, self).__init__(x, y, z, wavelength, n_background,
@@ -136,13 +137,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         return ipasa
 
-    def cylinder(self,
-                 r0,
-                 radius,
-                 length,
-                 refraction_index,
-                 axis,
-                 angle):
+    def cylinder(self, r0, radius, length, refraction_index, axis, angle):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Parameters:
@@ -169,7 +164,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         ipasaz2 = self.Z <= z0 + length / 2
         ipasa = ipasar * ipasaz1 * ipasaz2
         """
-        TODO: no funciona
+        FIXME: not working
 
         # psi,phi,sigma=angles
         # if not (psi ==0 and phi==0 and sigma==0):

@@ -476,8 +476,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             angle (float): angle to rotate the image in radians
             invert (bool): if True the image is inverted
 
-        TODO:
-            Now it is only possible that image size is equal to XZ, change using interpolation
+        TODO: Now it is only possible that image size is equal to XZ, change using interpolation
             Rotation position
         """
 

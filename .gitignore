@@ -22,6 +22,9 @@ __pycache__/
 # Tests
 test_results/
 
+# Visual studio
+.vscode/*
+
 # Distribution / packaging
 .Python
 docs/_build/
@@ -32,15 +35,15 @@ dist/
 downloads/
 eggs/
 .eggs/
+*.egg
+*.egg-info/
 lib/
 lib64/
 parts/
 sdist/
 var/
 distLM/
-*.egg-info/
 .installed.cfg
-*.egg
 
 
 # PyInstaller

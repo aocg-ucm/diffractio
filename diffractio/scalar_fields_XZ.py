@@ -151,10 +151,10 @@ class Scalar_field_XZ(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   z:  {},   u:  {}".format(
             self.type, self.x.shape, self.z.shape, self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um".format(
-            self.x[0], self.x[-1]))
-        print(" - zmin:       {:2.2f} um,  zmax:      {:2.2f} um".format(
-            self.z[0], self.z[-1]))
+        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
+            self.x[0], self.x[-1], self.x[1]-self.x[0]))
+        print(" - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um".format(
+            self.z[0], self.z[-1], self.z[1]-self.z[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -204,8 +204,7 @@ class Scalar_field_XZ(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        TODO:
-            It can be improved for maks (not having less than 1)
+        TODO: It can be improved for maks (not having less than 1)
         """
 
         u3 = Scalar_field_XZ(self.x, self.z, self.wavelength,
@@ -782,8 +781,6 @@ class Scalar_field_XZ(object):
     def __RS_multiprocessing__(self, i):
         """Internal for multiprocessing
 
-        TODO:
-            It can be using a dict as input
         """
         if self.z.min() > 0:
             H = kernelRS(self.xtemp,
@@ -1779,8 +1776,7 @@ class Scalar_field_XZ(object):
         Returns:
             numpy.array: profile
 
-        TODO:
-            Include interpolation
+        TODO: Include interpolation
         """
 
         imenor, _, _ = nearest(vector=self.z, number=z0)

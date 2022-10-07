@@ -145,7 +145,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
 
-        TODO: improve
+        TODO: improve to have better usage
         """
 
         u3 = Scalar_field_X(self.x, self.wavelength)
@@ -173,8 +173,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        TODO:
-            It can be improved for maks (not having less than 1)
+        TODO: It can be improved for masks (not having less than 1)
         """
 
         u3 = Scalar_field_X(self.x, self.wavelength)

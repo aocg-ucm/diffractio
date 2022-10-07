@@ -443,6 +443,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
+
+    #TODO: 8 pointed star
+    
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
 

@@ -7,10 +7,13 @@ It is required also for generating masks and fields.
 The main atributes are:
     * self.Ex - x component of electric field
     * self.Ey - y component of electric field
-    * self.Ez - z component of electric field
+    * self.x - x positions of the field
     * self.wavelength - wavelength of the incident field. The field is monocromatic
     * self.x - x positions of the field
     * self.y - y positions of the field
+    * self.wavelength - wavdelength of the incident field. The field is monochromatic
+    * self.Ex - x component of electric field. Equal size to x * y. complex field
+    * self.Ey - y component of electric field. Equal size to x * y. complex field
     * self.X (numpy.array): equal size to x * y. complex field
     * self.Y (numpy.array): equal size to x * y. complex field
     * self.quality (float): quality of RS algorithm
@@ -91,24 +94,11 @@ class Vector_field_XY(object):
     def __str__(self):
         """Represents data from class."""
 
-        intensity = self.intensity()
-        Imin = intensity.min()
-        Imax = intensity.max()
-
-        print("{}\n - x:  {},     Ex:  {}".format(self.type, self.x.shape,
-                                                  self.Ex.shape))
-        print(
-            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
-            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
-
-        print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
-            Imin, Imax))
-
-        print(" - wavelength: {:2.2f} um".format(self.wavelength))
-        print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
-
-        return ""
+        print('length x: ', self.x.shape, '- xmin: ', self.x[0], '- xmax: ',
+              self.x[-1])
+        print('length y: ', self.y.shape, '- ymin: ', self.y[0], '- ymax: ',
+              self.y[-1])
+        print('size Ex: ', self.Ex.shape)
 
     def __add__(self, other, kind='standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
@@ -444,7 +434,7 @@ class Vector_field_XY(object):
             Jahn, Kornél, and Nándor Bokor. 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
 
 
-        TODO: Some inconsistency in the radius of the circle lower than the size of the field.
+        TODO: some inconsistency in the radius of the circle lower than the size of the field.
         """
         from .vector_sources_XY import Vector_source_XY
 
@@ -592,7 +582,7 @@ class Vector_field_XY(object):
             Jahn, Kornél, and Nándor Bokor. 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
 
 
-        TODO: Radius of the circle lower than the size of the field.
+        TODO: radius of the circle lower than the size of the field.
         """
 
         from diffractio.vector_sources_XY import \
@@ -768,136 +758,133 @@ class Vector_field_XY(object):
             self.Ey = Ey.u
             self.Ez = Ez.u
 
-    def CZT(self, z, xout=None, yout=None, verbose=True):
-        """Vector Z Chirped Transform algorithm (VCZT)
+    def CZT(self, z, xout, yout):
+        """_summary_ from XY to XY
+
+        previous: Scalar_Bluestein_XY
 
         Parameters:
             z (float): diffraction distance
             xout (np.array): x array with positions of the output plane
             yout (np.array): y array with positions of the output plane
-            verbose (bool): If True prints some information
+
 
         Returns:
-            E_out (variable): Output field. It depends on the size of xout, yout, and z.
+            gout: Complex amplitude of the outgoing light beam
+            delta_out: pixel size of the outgoing light beam
         """
-        if xout is None:
-            xout = self.x
 
-        if yout is None:
-            yout = self.y
+        e0x, e0y, _ = self.get(is_matrix=True)
 
         k = 2 * np.pi / self.wavelength
 
-        if isinstance(z, (float, int)):
-            num_z = 1
-            # print("z = 0 dim")
-        else:
-            num_z = len(z)
-            # print("z = 1 dim")
-
         if isinstance(xout, (float, int)):
-            num_x = 1
-            # print("x = 0 dim")
-            xstart = xout
-            xend = xout
+            numx_out = 2
+            xout = np.array((xout, xout + 0.1))
+            remove_x = True
         else:
-            num_x = len(xout)
-            # print("x = 1 dim")
-
-            xstart = xout[0]
-            xend = xout[-1]
+            numx_out = len(xout)
+            remove_x = False
 
         if isinstance(yout, (float, int)):
-            num_y = 1
-            # print("y = 0 dim")
-            ystart = yout
-            yend = yout
+            numy_out = 2
+            yout = np.array((yout, yout + 0.1))
+            remove_y = True
+
         else:
-            num_y = len(yout)
-            # print("y = 1 dim")
+            numy_out = len(yout)
+            remove_y = False
 
-            ystart = yout[0]
-            yend = yout[-1]
+        xstart = xout[0]
+        xend = xout[-1]
+        ystart = yout[0]
+        yend = yout[-1]
 
-        e0x, e0y, _ = self.get(is_matrix=False)
-        e0z = e0x.duplicate()
+        delta_x_in = self.x[1] - self.x[0]
 
-        if num_z == 1:
-            r = np.sqrt(self.X**2 + self.Y**2 + z**2)
-            e0z_u = e0x.u * self.X / r + e0y.u * self.Y / r
-            e0z_u = e0z_u * z / r
-            e0z.u = e0z_u
+        delta_out = np.zeros(2)
+        if numx_out > 1:
+            delta_out[0] = (xend - xstart) / (numx_out - 1)
+        if numy_out > 1:
+            delta_out[1] = (yend - ystart) / (numy_out - 1)
 
-            e0x = e0x.CZT(z, xout, yout)
-            e0y = e0y.CZT(z, xout, yout)
-            e0z = e0z.CZT(z, xout, yout)
+        Xout, Yout = np.meshgrid(xout, yout)
 
-            if num_x == 1 and num_y == 1:
-                return e0x, e0y, e0z
+        # Fresnel
+        # F0 = exp(1j * k * z) / (1j * self.wavelength * z) * exp(
+        #     1j * k / 2 / z * (Xout**2 + Yout**2))
+        # F = exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
 
-            elif num_x > 1 and num_y == 1:
-                from diffractio.vector_fields_X import Vector_field_X
-                E_out = Vector_field_X(xout, self.wavelength)
-                E_out.Ex = e0x.u
-                E_out.Ey = e0y.u
-                E_out.Ez = e0z.u
-                return E_out
-            elif num_x > 1 and num_y > 1:
-                from diffractio.vector_fields_XY import Vector_field_XY
-                E_out = Vector_field_XY(xout, yout, self.wavelength)
-                E_out.Ex = e0x.u
-                E_out.Ey = e0y.u
-                E_out.Ez = e0z.u
-                return E_out
+        R = sqrt(Xout**2 + Yout**2 + z**2)
+        F0 = 1 / (2 * np.pi) * np.exp(
+            1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
 
-        elif num_z > 1:
-            e0x_zs = e0x.CZT(z, xout, yout)
-            e0y_zs = e0y.CZT(z, xout, yout)
-            e0z_zs = e0x_zs.duplicate()
+        R = sqrt(self.X**2 + self.Y**2 + z**2)
+        F = 1 / (2 * np.pi) * np.exp(
+            1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
 
-            u_zs = np.zeros_like(e0x_zs.u)
+        r = np.sqrt(self.X**2 + self.Y**2 + z**2)
+        e0z = e0x * self.X / r + e0y * self.Y / r
+        e0z = e0z * z / r
 
-            for i, z_now in enumerate(z):
-                if verbose:
-                    print("{}/{}".format(i, num_z), end='\r')
+        Ex0 = e0x * F
+        Ey0 = e0y * F
+        Ez0 = e0z * F
 
-                r = np.sqrt(self.X**2 + self.Y**2 + z_now**2)
-                e0z_u = e0x.u * self.X / r + e0y.u * self.Y / r
-                e0z_u = e0z_u * z_now / r
-                e0z.u = e0z_u
+        # using Bluestein method to calculate the complex amplitude of the outgoing light beam
 
-                e0z_u = e0z.CZT(z_now, xout, yout)
+        # one-dimensional FFT in one direction
+        fs = self.wavelength * z / delta_x_in  # dimension of the imaging plane
 
-                if num_x == 1 and num_y == 1:
-                    e0z_zs.u[i] = e0z_u
+        fy1 = ystart + fs / 2
+        fy2 = yend + fs / 2
+        Ex0 = Bluestein_dft_xy(Ex0, fy1, fy2, fs, numy_out)
+        Ey0 = Bluestein_dft_xy(Ey0, fy1, fy2, fs, numy_out)
+        Ez0 = Bluestein_dft_xy(Ez0, fy1, fy2, fs, numy_out)
 
-                elif num_x > 1 and num_y == 1:
-                    e0z_zs.u[:, i] = e0z_u.u
+        # one-dimensional FFT in the other direction
+        fx1 = xstart + fs / 2
+        fx2 = xend + fs / 2
+        Ex0 = Bluestein_dft_xy(Ex0, fx1, fx2, fs, numx_out)
+        Ey0 = Bluestein_dft_xy(Ey0, fx1, fx2, fs, numx_out)
+        Ez0 = Bluestein_dft_xy(Ez0, fx1, fx2, fs, numx_out)
 
-            if num_x == 1 and num_y == 1:
-                from diffractio.vector_fields_Z import Vector_field_Z
-                E_out = Vector_field_Z(z, self.wavelength)
-                E_out.Ex = e0x_zs.u
-                E_out.Ey = e0y_zs.u
-                E_out.Ez = e0z_zs.u
-                return E_out
+        # obtain the complex amplitude of the outgoing light beam
+        Ex0 = F0 * Ex0
+        Ey0 = F0 * Ey0
+        Ez0 = F0 * Ez0
 
-            elif num_x > 1 and num_y == 1:
-                from diffractio.vector_fields_XZ import Vector_field_XZ
-                E_out = Vector_field_XZ(xout, z, self.wavelength)
-                E_out.Ex = e0x_zs.u
-                E_out.Ey = e0y_zs.u
-                E_out.Ez = e0z_zs.u
-                return E_out
+        if remove_x is True:
+            # Ex0 = Ex0[:, 0]
+            # Ey0 = Ey0[:, 0]
+            # Ez0 = Ez0[:, 0]
+            xout = np.array((xout[0], ))
+            ex_out = Scalar_field_X(yout, self.wavelength)
+            ey_out = Scalar_field_X(yout, self.wavelength)
+            ez_out = Scalar_field_X(yout, self.wavelength)
+            ex_out.u = Ex0[:, 0]
+            ey_out.u = Ey0[:, 0]
+            ez_out.u = Ez0[:, 0]
+            return ex_out, ey_out, ez_out
 
-            elif num_x > 1 and num_y > 1:
-                # TODO: need to implement Vector_field_XYZ
-                from diffractio.vector_fields_XYZ import Vector_field_XYZ
-                E_out = Vector_field_XYZ(xout, yout, z, self.wavelength)
-                E_out.Ex = e0x_zs.u
-                E_out.Ey = e0y_zs.u
-                E_out.Ez = e0z_zs.u
-                return E_out
+        if remove_y is True:
+            # Ex0 = Ex0[:, 0]
+            # Ey0 = Ey0[:, 0]
+            # Ez0 = Ey0[:, 0]
+            yout = np.array((yout[0], ))
+            ex_out = Scalar_field_X(xout, self.wavelength)
+            ey_out = Scalar_field_X(xout, self.wavelength)
+            ez_out = Scalar_field_X(xout, self.wavelength)
+            ex_out.u = Ex0[0, :]
+            ey_out.u = Ey0[0, :]
+            ez_out.u = Ez0[0, :]
+            return ex_out, ey_out, ez_out
+
+        E_out = Vector_field_XY(xout, yout, self.wavelength)
+        E_out.Ex = Ex0
+        E_out.Ey = Ey0
+        E_out.Ez = Ez0
+        return E_out
 
     def polarization_states(self, matrix=False):
         """returns the Stokes parameters
@@ -1221,7 +1208,7 @@ class Vector_field_XY(object):
 
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
-        self.__draw1__(intensity, color_intensity, "", only_image=only_image)
+        __draw1__(self, intensity, color_intensity, "", only_image=only_image)
         plt.subplots_adjust(left=0,
                             bottom=0,
                             right=1,
@@ -1245,16 +1232,15 @@ class Vector_field_XY(object):
         Ez_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ez)
         tx, ty = rcParams['figure.figsize']
 
-        intensity1 = np.abs(Ex_r)**2
-        intensity2 = np.abs(Ey_r)**2
+        # intensity1 = np.abs(Ex_r)**2
+        # intensity2 = np.abs(Ey_r)**2
         intensity3 = np.abs(Ez_r)**2
 
-        intensity_max = np.max(
-            (intensity1.max(), intensity2.max(), intensity3.max()))
+        # intensity_max = np.max(
+        #     (intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
+        if intensity3.max() < 1e-15:
 
-        if intensity3.max() < percentage_z * intensity_max:
             plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
@@ -1264,7 +1250,7 @@ class Vector_field_XY(object):
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 2, 2)
@@ -1274,7 +1260,7 @@ class Vector_field_XY(object):
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
 
             plt.subplots_adjust(left=0,
@@ -1297,7 +1283,7 @@ class Vector_field_XY(object):
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 3, 2)
@@ -1307,7 +1293,7 @@ class Vector_field_XY(object):
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
 
             h3 = plt.subplot(1, 3, 3)
@@ -1317,7 +1303,7 @@ class Vector_field_XY(object):
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
+            __draw1__(self, phase / degrees, color_phase, "$\phi_z$")
             plt.clim(-180, 180)
 
             plt.subplots_adjust(left=0,
@@ -1363,19 +1349,18 @@ class Vector_field_XY(object):
         intensity_max = np.max(
             (intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
+        if intensity3.max() < 1e-15:
 
-        if intensity3.max() < percentage_z * intensity_max:
             plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
 
-            self.__draw1__(intensity1, color_intensity, "$I_x$")
+            __draw1__(self, intensity1, color_intensity, "$I_x$")
             plt.clim(0, intensity_max)
 
             h2 = plt.subplot(1, 2, 2)
 
-            self.__draw1__(intensity2, color_intensity, "$I_y$")
+            __draw1__(self, intensity2, color_intensity, "$I_y$")
             plt.clim(0, intensity_max)
 
             plt.subplots_adjust(left=0,
@@ -1393,17 +1378,17 @@ class Vector_field_XY(object):
 
             h1 = plt.subplot(1, 3, 1)
 
-            self.__draw1__(intensity1, color_intensity, "$I_x$")
+            __draw1__(self, intensity1, color_intensity, "$I_x$")
             # plt.clim(0, intensity_max)
 
             h2 = plt.subplot(1, 3, 2)
 
-            self.__draw1__(intensity2, color_intensity, "$I_y$")
+            __draw1__(self, intensity2, color_intensity, "$I_y$")
             # plt.clim(0, intensity_max)
 
             h3 = plt.subplot(1, 3, 3)
 
-            self.__draw1__(intensity3, color_intensity, "$I_z$")
+            __draw1__(self, intensity3, color_intensity, "$I_z$")
             # plt.clim(0, intensity_max)
 
             plt.subplots_adjust(left=0,
@@ -1449,12 +1434,12 @@ class Vector_field_XY(object):
 
         h1 = plt.subplot(1, 2, 1)
 
-        self.__draw1__(intensity_r, color_intensity, "$I_r$")
+        __draw1__(self, intensity_r, color_intensity, "$I_r$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(1, 2, 2)
 
-        self.__draw1__(intensity_z, color_intensity, "$I_z$")
+        __draw1__(self, intensity_z, color_intensity, "$I_z$")
 
         plt.subplots_adjust(left=0,
                             bottom=0,
@@ -1500,25 +1485,25 @@ class Vector_field_XY(object):
 
         h1 = plt.subplot(2, 2, 1)
 
-        self.__draw1__(intensity_x, color_intensity, "$I_x$")
+        __draw1__(self, intensity_x, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
-        self.__draw1__(intensity_y, color_intensity, "$I_y$")
+        __draw1__(self, intensity_y, color_intensity, "$I_y$")
         plt.clim(0, intensity_max)
 
         h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+        __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)
         phase = np.angle(self.Ey)
         phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+        __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
         h4 = plt.gca()
         plt.subplots_adjust(left=0,
@@ -1551,19 +1536,19 @@ class Vector_field_XY(object):
 
         plt.figure(figsize=(2 * tx, 2 * ty))
         h1 = plt.subplot(2, 2, 1)
-        self.__draw1__(S0, color_intensity, "$S_0$")
+        __draw1__(self, S0, color_intensity, "$S_0$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
-        self.__draw1__(S1, color_stokes, "$S_1$")
+        __draw1__(self, S1, color_stokes, "$S_1$")
         plt.clim(-intensity_max, intensity_max)
 
         h3 = plt.subplot(2, 2, 3)
-        self.__draw1__(S2, color_stokes, "$S_2$")
+        __draw1__(self, S2, color_stokes, "$S_2$")
         plt.clim(-intensity_max, intensity_max)
 
         h4 = plt.subplot(2, 2, 4)
-        self.__draw1__(S3, color_stokes, "$S_3$")
+        __draw1__(self, S3, color_stokes, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
         plt.subplots_adjust(left=0,
@@ -1594,17 +1579,17 @@ class Vector_field_XY(object):
         max_intensity = max(A.max(), B.max())
 
         h1 = plt.subplot(2, 2, 1)
-        self.__draw1__(A, color_intensity, "$A$")
+        __draw1__(self, A, color_intensity, "$A$")
         plt.clim(0, max_intensity)
         h2 = plt.subplot(2, 2, 2)
-        self.__draw1__(B, color_intensity, "$B$")
+        __draw1__(self, B, color_intensity, "$B$")
         plt.clim(0, max_intensity)
 
         h3 = plt.subplot(2, 2, 3)
-        self.__draw1__(theta / degrees, color_phase, "$\phi$")
+        __draw1__(self, theta / degrees, color_phase, "$\phi$")
         plt.clim(-180, 180)
         h4 = plt.subplot(2, 2, 4)
-        self.__draw1__(h, "gist_heat", "$h$")
+        __draw1__(self, h, "gist_heat", "$h$")
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
@@ -1698,62 +1683,54 @@ class Vector_field_XY(object):
                 #     print(max_r, intensity_max,
                 #           percentage_intensity * intensity_max)
 
-    def __draw1__(self,
-                  image,
-                  colormap,
-                  title='',
-                  has_max=False,
-                  only_image=False):
-        """Draws image
 
-        Parameters:
-            image (numpy.array): array with drawing
-            colormap (str): colormap
-            title (str): title of drawing
-        """
-        extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
+def __draw1__(hdl, image, colormap, title='', has_max=False, only_image=False):
+    """Draws image
 
-        h = plt.imshow(image,
-                       interpolation='bilinear',
-                       aspect='auto',
-                       origin='lower',
-                       extent=extension)
-        h.set_cmap(colormap)
-        plt.axis('scaled')
-        plt.axis(extension)
+    Parameters:
+        image (numpy.array): array with drawing
+        colormap (str): colormap
+        title (str): title of drawing
+    """
+    extension = [hdl.x[0], hdl.x[-1], hdl.y[0], hdl.y[-1]]
 
-        if only_image is True:
-            plt.axis('off')
-            return h
+    h = plt.imshow(image,
+                   interpolation='bilinear',
+                   aspect='auto',
+                   origin='lower',
+                   extent=extension)
+    h.set_cmap(colormap)
+    plt.axis('scaled')
+    plt.axis(extension)
 
-        plt.title(title, fontsize=16)
-
-        if has_max is True:
-            text_up = "{}".format(image.max())
-            plt.text(self.x.max(),
-                     self.y.max(),
-                     text_up,
-                     fontsize=14,
-                     bbox=dict(edgecolor='white',
-                               facecolor='white',
-                               alpha=0.75))
-
-            text_down = "{}".format(image.min())
-            plt.text(self.x.max(),
-                     self.y.min(),
-                     text_down,
-                     fontsize=14,
-                     bbox=dict(edgecolor='white',
-                               facecolor='white',
-                               alpha=0.75))
-
-        plt.xlabel("$x  (\mu m)$")
-        plt.ylabel("$y  (\mu m)$")
-        if colormap is not None:
-            plt.colorbar(orientation='horizontal', shrink=0.66)
-            h.set_clim(0, image.max())
-
+    if only_image is True:
+        plt.axis('off')
         return h
+
+    plt.title(title, fontsize=16)
+
+    if has_max is True:
+        text_up = "{}".format(image.max())
+        plt.text(hdl.x.max(),
+                 hdl.y.max(),
+                 text_up,
+                 fontsize=14,
+                 bbox=dict(edgecolor='white', facecolor='white', alpha=0.75))
+
+        text_down = "{}".format(image.min())
+        plt.text(hdl.x.max(),
+                 hdl.y.min(),
+                 text_down,
+                 fontsize=14,
+                 bbox=dict(edgecolor='white', facecolor='white', alpha=0.75))
+
+    plt.xlabel("$x  (\mu m)$")
+    plt.ylabel("$y  (\mu m)$")
+    if colormap is not None:
+        plt.colorbar(orientation='horizontal', shrink=0.66)
+        h.set_clim(0, image.max())
+
+    return h
 
 
 def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
@@ -1768,7 +1745,7 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
         h (float): to remove
         amplification (float): increase of size of ellipse
 
-    TODO: Remove hs
+    TODO: remove hs
     """
     # esto es para verlo más grande
     A = A * amplification
@@ -1784,3 +1761,77 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
     y = r * np.sin(fi) + y0
 
     return x, y
+
+
+def polarization_ellipse(self, pol_state=None, matrix=False):
+    """returns A, B, theta, h polarization parameter of elipses
+
+    Parameters:
+        pol_state (None or (I, Q, U, V) ): Polarization state previously computed
+        Matrix (bool): if True returns Matrix, else Scalar_field_XY
+
+    Returns:
+        A, B, theta, h for Matrix=True
+        CA, CB, Ctheta, Ch for Matrix=False
+    """
+    if pol_state is None:
+        I, Q, U, V = self.polarization_states(matrix=True)
+    else:
+        I, Q, U, V = pol_state
+        I = I.u
+        Q = Q.u
+        U = U.u
+        V = V.u
+
+    Ip = np.sqrt(Q**2 + U**2 + V**2)
+    L = Q + 1.j * U
+
+    A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
+    B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
+    theta = 0.5 * np.angle(L)
+    h = np.sign(V)
+
+    if matrix is True:
+        return A, B, theta, h
+    else:
+        CA = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        CB = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        Ctheta = Scalar_field_XY(x=self.x,
+                                 y=self.y,
+                                 wavelength=self.wavelength)
+        Ch = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+
+        CA.u = A
+        CB.u = B
+        Ctheta.u = theta
+        Ch.u = h
+        return (CA, CB, Ctheta, Ch)
+
+        I = I.u
+        Q = Q.u
+        U = U.u
+        V = V.u
+
+    Ip = np.sqrt(Q**2 + U**2 + V**2)
+    L = Q + 1.j * U
+
+    A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
+    B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
+    theta = 0.5 * np.angle(L)
+    h = np.sign(V)
+
+    if matrix is True:
+        return A, B, theta, h
+    else:
+        CA = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        CB = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        Ctheta = Scalar_field_XY(x=self.x,
+                                 y=self.y,
+                                 wavelength=self.wavelength)
+        Ch = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+
+        CA.u = A
+        CB.u = B
+        Ctheta.u = theta
+        Ch.u = h
+        return (CA, CB, Ctheta, Ch)
