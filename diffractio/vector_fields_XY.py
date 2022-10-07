@@ -86,7 +86,9 @@ class Vector_field_XY(object):
         self.Ez = np.zeros_like(self.X, dtype=complex)
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
-        self._type = 'Vector_field_XY'
+        self.type = 'Vector_field_XY'
+        self.info = info
+        self.date = get_date()
 
     def __str__(self):
         """Represents data from class."""
@@ -100,7 +102,9 @@ class Vector_field_XY(object):
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
             .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
-
+        print(
+            " - ymin:       {:2.2f} um,  ymay:      {:2.2f} um,  Dy:   {:2.2f} um"
+            .format(self.y[0], self.y[-1], self.y[1] - self.y[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
 
@@ -468,8 +472,6 @@ class Vector_field_XY(object):
 
         circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
         circle_mask.circle(r0=(0, 0), radius=radius)
-
-        self.mask_circle(r0=(0., 0.), radius=radius)
 
         cos_theta = np.cos(theta)
         sin_theta = np.sin(theta)

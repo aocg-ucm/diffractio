@@ -56,7 +56,7 @@ class Vector_source_XY(Vector_field_XY):
 
     def __init__(self, x, y, wavelength, info=''):
         super(self.__class__, self).__init__(x, y, wavelength, info)
-        self._type = 'Vector_source_XY'
+        self.type = 'Vector_source_XY'
 
     def constant_wave(self, u=1, v=(1, 0), has_normalization=False, radius=0.):
         """Provides a constant polarization to a scalar_source_xy

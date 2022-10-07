@@ -158,13 +158,17 @@ class Scalar_field_XYZ(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   y:  {},  z:  {},   u:  {}".format(
             self.type, self.x.shape, self.y.shape, self.z.shape, self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
-            self.x[0], self.x[-1], self.x[1]-self.x[0]))
-        print(" - ymin:       {:2.2f} um,  ymax:      {:2.2f} um,  Dy:   {:2.2f} um".format(
-            self.y[0], self.y[-1], self.y[1]-self.y[0]))
-        print(" - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um".format(
-            self.z[0], self.z[-1], self.z[1]-self.z[0]))
-        print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(Imin, Imax))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
+        print(
+            " - ymin:       {:2.2f} um,  ymax:      {:2.2f} um,  Dy:   {:2.2f} um"
+            .format(self.y[0], self.y[-1], self.y[1] - self.y[0]))
+        print(
+            " - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um"
+            .format(self.z[0], self.z[-1], self.z[1] - self.z[0]))
+        print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
+            Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
             phase_min, phase_max))
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
@@ -496,14 +500,13 @@ class Scalar_field_XYZ(object):
 
         self.u0 = u0
 
-        if u0.x.shape == self.x.shape:    
+        if u0.x.shape == self.x.shape:
             if z0 in (None, '', []):
                 self.u[:, :, 0] = self.u[:, :, 0] + u0.u.transpose()
 
             else:
                 iz, _, _ = nearest(self.z, z0)
                 self.u[:, :, iz] = self.u[:, :, iz] + u0.u.tranpose()
-            
 
     def final_field(self):
         """Returns the final field as a Scalar_field_XYZ."""
@@ -1250,7 +1253,8 @@ class Scalar_field_XYZ(object):
 
         plt.figure()
         ufield = self.to_Scalar_field_XZ(y0=y0)
-        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename, **kwargs)
+        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename,
+                         **kwargs)
         # intensity = np.abs(ufield.u)**2
 
         # if logarithm == 1:
@@ -1336,17 +1340,6 @@ class Scalar_field_XYZ(object):
             self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
-        # -----------------     no functiona de momento -----------------
-        if draw_borders is True:
-            x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
-            )
-            plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
-
-        if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
-
-        return h1
-
     def draw_XYZ(self,
                  kind='intensity',
                  logarithm=False,
@@ -1366,8 +1359,6 @@ class Scalar_field_XYZ(object):
         except ImportError:
             print("slicerLM is not loaded.")
             is_slicer = False
-
- 
 
         if is_slicer:
             u_xyz_r = self.cut_resample(num_points=(128, 128, 128),
