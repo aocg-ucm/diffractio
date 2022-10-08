@@ -1,14 +1,6 @@
 diffractio package
 ==================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   diffractio.add_ons
-
 Submodules
 ----------
 
@@ -48,6 +40,14 @@ diffractio.scalar\_fields\_XZ module
 ------------------------------------
 
 .. automodule:: diffractio.scalar_fields_XZ
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.scalar\_fields\_Z module
+-----------------------------------
+
+.. automodule:: diffractio.scalar_fields_Z
    :members:
    :undoc-members:
    :show-inheritance:
@@ -148,14 +148,6 @@ diffractio.utils\_slicer module
    :undoc-members:
    :show-inheritance:
 
-diffractio.utils\_slicer copy module
-------------------------------------
-
-.. automodule:: diffractio.utils_slicer copy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 diffractio.utils\_tests module
 ------------------------------
 
@@ -164,10 +156,42 @@ diffractio.utils\_tests module
    :undoc-members:
    :show-inheritance:
 
+diffractio.vector\_fields\_X module
+-----------------------------------
+
+.. automodule:: diffractio.vector_fields_X
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 diffractio.vector\_fields\_XY module
 ------------------------------------
 
 .. automodule:: diffractio.vector_fields_XY
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.vector\_fields\_XYZ module
+-------------------------------------
+
+.. automodule:: diffractio.vector_fields_XYZ
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.vector\_fields\_XZ module
+------------------------------------
+
+.. automodule:: diffractio.vector_fields_XZ
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.vector\_fields\_Z module
+-----------------------------------
+
+.. automodule:: diffractio.vector_fields_Z
    :members:
    :undoc-members:
    :show-inheritance:

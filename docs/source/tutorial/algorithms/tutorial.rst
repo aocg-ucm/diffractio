@@ -12,7 +12,11 @@ Algorithms used in diffractio
    BPM.ipynb
    WPM.ipynb
    CZT.ipynb
+   VFFT.ipynb
    VRS.ipynb
-   CZT_vector.ipynb
+   VCZT.ipynb
    RS_vs_BPM.ipynb
    WPM_vs_BPM.ipynb
+   comparison/RS_vs_WPM.ipynb
+   comparison/WPM_vs_CZT.ipynb
+   
