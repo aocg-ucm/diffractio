@@ -151,10 +151,12 @@ class Scalar_field_XZ(object):
         phase_max = (np.angle(self.u)).max() / degrees
         print("{}\n - x:  {},   z:  {},   u:  {}".format(
             self.type, self.x.shape, self.z.shape, self.u.shape))
-        print(" - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
-            self.x[0], self.x[-1], self.x[1]-self.x[0]))
-        print(" - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um".format(
-            self.z[0], self.z[-1], self.z[1]-self.z[0]))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
+        print(
+            " - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um"
+            .format(self.z[0], self.z[-1], self.z[1] - self.z[0]))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(
@@ -1561,7 +1563,7 @@ class Scalar_field_XZ(object):
         plt.axis(extension)
 
         if colorbar_kind not in (False, '', [], None):
-            plt.colorbar(orientation=colorbar_kind)
+            plt.colorbar(orientation=colorbar_kind, shrink=0.66)
 
         h1.set_cmap(colormap_kind)  # OrRd # Reds_r gist_heat
         plt.clim(climits)
@@ -1658,7 +1660,7 @@ class Scalar_field_XZ(object):
         h1.set_cmap(colormap_kind)  # flag OrRd # Reds_r gist_heat # gist_heat
 
         if colorbar_kind not in (False, '', None):
-            plt.colorbar(orientation=colorbar_kind)
+            plt.colorbar(orientation=colorbar_kind, shrink=0.66)
 
         if scale != '':
             plt.axis(scale)

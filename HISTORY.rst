@@ -80,30 +80,51 @@ Alpha state
 * fix bug 2D gratings
 * fix bug aspheric X and new aspheric XY
 
-0.0.14 (2022-10-01)
+0.1.0 (2022-10-12)
 --------------------------------
-Alpha state
+Beta state
 
-* WPM and BPM in 3D
-* WPM and BPM in 3D without storing intermediate planes
-* Vector FFT and inverse FFT
-* pupil function in XY and vector XY
-* vector_paraxial_fields -> vector_fields
-* Implement Chirped Z Transform
-* Added Scalar_field_Z
 
 * Fix bugs:
+
   - (radial and azimuthal vector waves)
 
-* New Scalar_mask_XY: angular_aperture, edge_series, slit_series, rings
 
-* New vector_paraxial_fields_XY:
+* New Scalar_mask_XY: 
+
+  - angular_aperture 
+  - edge_series 
+  - slit_series 
+  - rings
+
+
+* New vector_fields_XY:
+
   - vector_paraxial_fields -> vector_fields
-  - VRS (vectorial Rayleigh-Sommerfeld propagation)
+
+
+* New propagation algorithms:
+
+  - WPM and BPM in 3D
+  - WPM and BPM in 3D without storing intermediate planes
+  - VFFT (vector FFT and inverse FFT)
+  - VRS (vector Rayleigh-Sommerfeld propagation, with Ez field)
+  - Chirped z-transform (CZT) for scalar fields
+  - Chirped z-transform (CZT) for vector fields
+
+
+* New schemes mainly for representation:
+
+  - Scalar_field_Z
+  - vector_X, vector_Z, vector_XZ, vector_XYZ
+
+
+* Other:
+
+  - Pupil function in XY and vector XY
   - Modifications in drawing intensities and fields
-  - New Self.Ez
+
   
-  
-0.1.0 (future)
+0.1.1 (future)
 --------------------------------
 implement plotly for drawings

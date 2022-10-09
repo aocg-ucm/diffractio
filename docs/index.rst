@@ -7,9 +7,6 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    :numbered:
    :glob:
 
-
-
-
    readme
    installation
    usage

@@ -60,7 +60,7 @@ class Vector_mask_XY(Vector_field_XY):
             Vector_mask_XY: `M3 = M1 + M2`
         """
 
-        if other._type in ('Vector_mask_XY'):
+        if other.type in ('Vector_mask_XY'):
             m3 = Vector_mask_XY(self.x, self.y, self.wavelength)
 
             m3.M00 = other.M00 + self.M00
@@ -88,7 +88,7 @@ class Vector_mask_XY(Vector_field_XY):
             m3.M10 = self.M10 * other
             m3.M11 = self.M11 * other
 
-        elif other._type in ('Vector_mask_XY', 'Vector_field_XY'):
+        elif other.type in ('Vector_mask_XY', 'Vector_field_XY'):
             m3 = Vector_mask_XY(self.x, self.y, self.wavelength)
 
             m3.M00 = other.M00 * self.M00 + other.M01 * self.M10
@@ -120,7 +120,7 @@ class Vector_mask_XY(Vector_field_XY):
             m3.M11 = self.M11 * other
             # print("numero * matriz")
 
-        elif other._type in ('Vector_source_XY', 'Vector_field_XY'):
+        elif other.type in ('Vector_source_XY', 'Vector_field_XY'):
             m3 = Vector_source_XY(self.x, self.y, self.wavelength)
             m3.Ex = self.M00 * other.Ex + self.M01 * other.Ey
             m3.Ey = self.M10 * other.Ex + self.M11 * other.Ey
@@ -429,7 +429,7 @@ class Vector_mask_XY(Vector_field_XY):
 
             plt.suptitle("Amplitudes", fontsize=20)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
-            cbar = plt.colorbar(im1, cax=cax)
+            cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
 
             if range_scale == 'um':
@@ -476,7 +476,7 @@ class Vector_mask_XY(Vector_field_XY):
 
             plt.suptitle("Phases", fontsize=20)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
-            cbar = plt.colorbar(im1, cax=cax)
+            cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
 
             if range_scale == 'um':

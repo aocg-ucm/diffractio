@@ -18,6 +18,8 @@ Development Lead
 Contributors
 --------------
 
-* Ángela Soria García (2021 -)
+* Jesús del Hoyo Muñoz
 
-* Jesús del Hoyo Muñoz (2021 -)
+* Ángela Soria García 
+
+* Joaquín Andrés Porras

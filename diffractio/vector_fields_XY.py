@@ -51,7 +51,7 @@ from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
-from .utils_common import load_data_common, save_data_common
+from .utils_common import load_data_common, save_data_common, get_date
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image, Bluestein_dft_xy
 
@@ -1619,7 +1619,7 @@ class Vector_field_XY(object):
                           color_line='w',
                           line_width=1,
                           draw_arrow=True,
-                          head_width=2,
+                          head_width=1,
                           ax=False,
                           color_intensity=CONF_DRAWING['color_intensity']):
         """__internal__: draw ellipses

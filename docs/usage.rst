@@ -69,8 +69,7 @@ XZ fields
 
   u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
   u1.incident_field(u0)
-  u1.rectangle(
-    r0=(0 * um, 100 * um),
+  u1.rectangle(r0=(0 * um, 100 * um),
     size=(100 * um, 100 * um),
     angle=45 * degrees,
     refraction_index=2)
@@ -175,7 +174,7 @@ XYZ fields
   :width: 600
 
 
-XY Vector paraxial fields
+XY Vector fields
 ==================================
 
 .. code-block:: python

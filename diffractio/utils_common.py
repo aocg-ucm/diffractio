@@ -95,7 +95,11 @@ def get_date():
     return date
 
 
-def save_data_common(cls, filename, add_name='', description='', verbose=False):
+def save_data_common(cls,
+                     filename,
+                     add_name='',
+                     description='',
+                     verbose=False):
     """Common save data function to be used in all the modules.
     The methods included are: npz, matlab
 
@@ -142,6 +146,7 @@ def load_data_common(cls, filename, verbose=False):
         filename(str): filename
         verbose(bool): If True prints data
     """
+
     def print_data_dict(dict0):
         for k, v in dict0.items():
             print("{:12} = {}".format(k, v))

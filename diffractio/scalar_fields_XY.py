@@ -1518,7 +1518,7 @@ class Scalar_field_XY(object):
                 color="gist_heat",  # YlGnBu  seismic
                 interpolation='bilinear',  # 'bilinear', 'nearest'
                 scale='scaled')
-            plt.colorbar(orientation='vertical')
+            plt.colorbar(orientation='vertical', shrink=0.66)
 
         self.u = tmp_field
 
@@ -1959,7 +1959,7 @@ class Scalar_field_XY(object):
             print("not in kinds")
 
         if has_colorbar in ('horizontal', 'vertical'):
-            plt.colorbar(orientation=has_colorbar, shrink=0.75)
+            plt.colorbar(orientation=has_colorbar, shrink=0.66)
 
         if not filename == '':
             plt.savefig(filename,

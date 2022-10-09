@@ -453,16 +453,23 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
             n_min, n_max = repeated_values.min(), repeated_values.max()
             n_layers = np.linspace(n_min, n_max, num_layers)
-            np.add(n_layers, self.n_background)
+            n_layers = np.append(n_layers, self.n_background)
 
         n = deepcopy(self.n)
-        for i in range(len(n_layers) - 1):
-            i_capa = np.bitwise_and(self.n >= n_layers[i],
-                                    self.n <= n_layers[i + 1])
-            n_central = (n_layers[i] + n_layers[i + 1]) / 2
-            n[i_capa] = n_central
-        self.n = n
-        return n_layers
+        n = n.real
+        n_new = np.zeros_like(self.n)
+
+        i_n, _, _ = nearest2(n_layers, n)
+        i_n = i_n.reshape(self.n.shape)
+
+        for i, n in enumerate(n_layers):
+            n_new[i_n == i] = n_layers[i]
+        n_new = n_new.real
+        self.n = n_new
+
+        repeated_values = np.unique(self.n)
+
+        return self
 
     def image(self, filename, n_max, n_min, angle=0, invert=False):
         """Converts an image file in an xz-refraction index matrix.

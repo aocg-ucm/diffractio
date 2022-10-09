@@ -38,12 +38,12 @@ It implements Scalar and vector Optics. The main algorithms used are:
 * Beam Propagation Method (BPM).
 * Vectorial Rayleigh-Sommerfeld (VRS).
 * Vector Fast Fourier Tranform (VFFT).
-* Chirp z transform (CZT).
+* Chirp z-transform (CZT).
 
 When possible, multiprocessing is implemented for a faster computation.
 
 
-The scalar propagations techniques are implemented in modules:
+The **scalar** propagation schemes are implemented in modules:
 
 * X - fields are defined in the x axis.
 * Z - fields are defined in the z axis (for visualiztion and analysis).
@@ -51,15 +51,22 @@ The scalar propagations techniques are implemented in modules:
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
 
-Each technique present three modules:
+Each scheme present three modules:
 
 * sources: Generation of light.
 * masks: Masks and Diffractive Optical elements.
 * fields:  Propagation techniques, parameters and general functions.
 
-The vector propagation techniques are implemented in modules:
+The **vector** propagation schemes are implemented in modules:
 
-* vector_XY - Ex and Ey electric field components are defined, which allows polarization analysis.
+* vector_XY - Ex, Ey, and Ez electric field components are defined, which allows polarization analysis.
+
+There are additional schemes used mainly for representation.
+
+* vector_X - fields are defined in the z axis (for visualiztion and analysis).
+* vector_Z - fields are defined in the z axis (for visualiztion and analysis).
+* vector_XZ - fields are defined in the xz axis (for visualiztion and analysis).
+* vector_XYZ - fields are defined in the xyz axis (for visualiztion and analysis).
 
 For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
 
@@ -112,17 +119,23 @@ In these module, algorithms for propagation of light are implemented. We have im
 
 * **Rayleigh-Sommerfeld (RS)** which allows in a single step to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
 
+
 * **Fast Fourier Transform (FFT)** which allows, in a single step to determine the field at the far field.
+
 
 * **Plane Wave Descomposition (PWD)**. It provides the key idea of the wave propagation method because it emphasizes the decomposition of a field E(r) into its plane waves components by the Fourier transformation.
 
+
 * **Wave Propagation Method (WPM)**. The WPM [Appl. Opt. 32, 4984 (1993) ] was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation
+
 
 * **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is M is computed according to the split-step propagation scheme.
 
+
 * **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
 
-* **Chirpez Z-Transform (CZT)**.  Bluestein, L. (1970-12-01). "A linear filtering approach to the computation of discrete Fourier transform". IEEE Transactions on Audio and Electroacoustics. 18 (4): 451–455. doi:10.1109/TAU.1970.1162132. ISSN 0018-9278.
+
+* **Chirped Z-Transform (CZT)**.  Bluestein, L. "A linear filtering approach to the computation of discrete Fourier transform". IEEE Transactions on Audio and Electroacoustics. 18 (4): 451–455.
 
 The fields, masks and sources can be stored in files.
 
@@ -137,7 +150,7 @@ In some modules, videos can be generated for a better analysis of optical fields
 Vector beams
 ==================================
 
-Here, we implement new classes where the fields E_x and E_y are generated and propagted using Rayleigh-Sommerfeld approach.
+Here, we implement new classes where the E_x, E_y, and E_z fields are generated and propagted using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
 Also, simple and complex polarizing masks can be created.
 
 **Ex and Ey fields**
@@ -204,13 +217,14 @@ References
 * Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
 * Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
 * K. Jahn and N. Bokor, “Intensity control of the focal spot by vectorial beam shaping,” Opt. Commun., vol. 283, no. 24, pp. 4859–4865, 2010, doi: 10.1016/j.optcom.2010.07.030. 
+* Leo I. Bluestein, "A linear filtering approach to the computation of the discrete Fourier transform," Northeast Electronics Research and Engineering Meeting Record 10, 218-219 (1968).
+
 
 **Other references**
 
-* J.W. Goodman, Introduction to Fourier optics. McGraw-Hill, 1996.
+* J.W. Goodman, Introduction to Fourier Optics. McGraw-Hill, 1996.
 * B.E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
 * Z.Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
-* J.A. Ogilvy, Theory of Wave Scattering from Random Rough Surfaces.Adam Hilger, 1991.
 * "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
 
 
