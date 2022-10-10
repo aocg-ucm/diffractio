@@ -47,8 +47,8 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = ['.rst', '.md', '.ipynb']
+source_suffix = ['.rst', '.md']
+# source_suffix = ['.rst', '.md', '.ipynb']
 
 # The master toctree document.
 master_doc = 'index'
@@ -64,7 +64,7 @@ author = u"Luis Miguel Sanchez Brea"
 #
 # The short X.Y version.
 # version = diffractio.__version__
-version = '0.0.10'
+version = '0.1.0'
 # The full version, including alpha/beta/rc tags.
 # release = diffractio.__version__
 release = version
@@ -74,7 +74,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'English'
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -159,3 +159,6 @@ texinfo_documents = [
      u'Python diffraction and interference Documentation', author,
      'diffractio'),
 ]
+
+# Module items sort order
+autodoc_member_order = 'bysource'
