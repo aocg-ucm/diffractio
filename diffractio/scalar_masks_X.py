@@ -413,7 +413,7 @@ class Scalar_mask_X(Scalar_field_X):
         return self
 
     def aspheric(self, x0, c, k, a, n0, n1, radius, mask=True):
-        """asferic surface.
+        """Asferic surface.
 
         $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
 

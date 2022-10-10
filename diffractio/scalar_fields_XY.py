@@ -528,6 +528,7 @@ class Scalar_field_XY(object):
         pupil0[ipasa] = 1
         self.u = self.u * pupil0
 
+    """
     def fft_proposal(self,
                      z=0,
                      shift=True,
@@ -535,7 +536,7 @@ class Scalar_field_XY(object):
                      matrix=False,
                      new_field=False,
                      cut_square=True):
-        """Fast Fourier Transform (FFT) of the field.
+        Fast Fourier Transform (FFT) of the field.
         Parameters:
             z (float): distance to the observation plane or focal of lens
                        if z==0, no x,y scaled is produced
@@ -547,8 +548,7 @@ class Scalar_field_XY(object):
 
         Returns:
             (np.array or Scalar_field_X or None): FFT of the input field
-        """
-
+        
         k = 2 * np.pi / self.wavelength
         num_x = self.x.size
         num_y = self.y.size
@@ -603,9 +603,9 @@ class Scalar_field_XY(object):
             self.x = x_new
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
+    """        
 
-    def fft(self,
-            z=0,
+    def fft(self, z=0,
             shift=True,
             remove0=True,
             matrix=False,

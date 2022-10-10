@@ -70,21 +70,5 @@ The VRS method propagates (Ex,Ey,Ez) fields offering the advantage of significan
 
 - Hu, Y., Wang, Z., Wang, X., Ji, S., Zhang, C., Li, J., Zhu, W., Wu, D., and Chu, J. (2020). Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method. Light: Science and Applications, 9(1). https://doi.org/10.1038/s41377-020-00362-z
 
-.. toctree::
-   :maxdepth: 4
-   :numbered:
-   :glob:
 
-
-   FFT.ipynb
-   RS.ipynb
-   BPM.ipynb
-   WPM.ipynb
-   CZT.txt
-   VFFT.ipynb
-   VRS.ipynb
-   VCZT.ipynb
-
-   comparison/RS_vs_WPM.ipynb
-   comparison/WPM_vs_CZT.ipynb
    
