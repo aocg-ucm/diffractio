@@ -43,19 +43,17 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 import copy
-from matplotlib import rcParams
-from numpy import cos, linspace, shape, sin, sqrt, zeros
-from scipy.fftpack import fft2, fftshift, ifft2
-from scipy.interpolate import RectBivariateSpline
+
 
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
-from .scalar_fields_XY import Scalar_field_XYZ
+from .scalar_fields_XY import Scalar_field_XY
+from .scalar_fields_XZ import Scalar_field_XZ
+from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
-from .utils_common import load_data_common, save_data_common
-from .utils_drawing import normalize_draw, reduce_matrix_size
-from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image, Bluestein_dft_xy
+from .utils_common import load_data_common, save_data_common, get_date
+from .utils_math import  ndgrid, nearest
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 

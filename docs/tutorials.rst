@@ -14,6 +14,7 @@ Tutorials
    source/tutorial/scalar_XYZ/tutorial.rst
    source/tutorial/vector_XY/tutorial.rst
    source/tutorial/drawing/tutorial.rst
-   source/tutorial/tricks/tutorial.rst
+   source/tutorial/functioning/functioning.rst
+
 
 

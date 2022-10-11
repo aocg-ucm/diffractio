@@ -13,8 +13,8 @@ Running Sphinx v4.3.2
 loading translations [en]... done
 making output directory... done
 building [mo]: targets for 0 po files that are out of date
-building [html]: targets for 75 source files that are out of date
-updating environment: [new config] 75 added, 0 changed, 0 removed
+building [html]: targets for 74 source files that are out of date
+updating environment: [new config] 74 added, 0 changed, 0 removed
 reading sources... [  1%] authors
 reading sources... [  2%] contributing
 reading sources... [  4%] diffractio
@@ -25,68 +25,67 @@ reading sources... [  9%] installation
 reading sources... [ 10%] modules
 reading sources... [ 12%] readme
 reading sources... [ 13%] results
-reading sources... [ 14%] source/examples/functioning/artifacts_bpm
-reading sources... [ 16%] source/examples/functioning/developing_new_functions
-reading sources... [ 17%] source/examples/functioning/examples
-reading sources... [ 18%] source/examples/functioning/multiprocessing
-reading sources... [ 20%] source/examples/functioning/power_z_ propagation
-reading sources... [ 21%] source/examples/functioning/surfaces
-reading sources... [ 22%] source/examples/optics/VRS_paper
-reading sources... [ 24%] source/examples/optics/arago_point
-reading sources... [ 25%] source/examples/optics/diffraction_objects
-reading sources... [ 26%] source/examples/optics/diffraction_slit
-reading sources... [ 28%] source/examples/optics/examples
-reading sources... [ 29%] source/examples/optics/fresnel_biprism
-reading sources... [ 30%] source/examples/optics/fresnel_lens
-reading sources... [ 32%] source/examples/optics/gauss_beam
-reading sources... [ 33%] source/examples/optics/lenses
-reading sources... [ 34%] source/examples/optics/reflection_refraction
-reading sources... [ 36%] source/examples/optics/scattering_small_cylinders
-reading sources... [ 37%] source/examples/optics/talbot_effect
-reading sources... [ 38%] source/examples/optics/variable_refraction_index
-reading sources... [ 40%] source/examples/optics/vector_double_slit_experiment
-reading sources... [ 41%] source/tutorial/algorithms/BPM
-reading sources... [ 42%] source/tutorial/algorithms/CZT
-reading sources... [ 44%] source/tutorial/algorithms/FFT
-reading sources... [ 45%] source/tutorial/algorithms/PWD
-reading sources... [ 46%] source/tutorial/algorithms/RS
-reading sources... [ 48%] source/tutorial/algorithms/VCZT
-reading sources... [ 49%] source/tutorial/algorithms/VFFT
-reading sources... [ 50%] source/tutorial/algorithms/VRS
-reading sources... [ 52%] source/tutorial/algorithms/WPM
-reading sources... [ 53%] source/tutorial/algorithms/comparison/RS_vs_WPM
-reading sources... [ 54%] source/tutorial/algorithms/comparison/WPM_vs_BPM
-reading sources... [ 56%] source/tutorial/algorithms/tutorial
-reading sources... [ 57%] source/tutorial/drawing/creating_video
-reading sources... [ 58%] source/tutorial/drawing/external_qt
-reading sources... [ 60%] source/tutorial/drawing/interactive_in_diffractio
-reading sources... [ 61%] source/tutorial/drawing/tutorial
-reading sources... [ 62%] source/tutorial/drawing/use_interact_visualize_profiles
-reading sources... [ 64%] source/tutorial/scalar_X/masks_x
-reading sources... [ 65%] source/tutorial/scalar_X/sources_x
-reading sources... [ 66%] source/tutorial/scalar_X/tutorial
-reading sources... [ 68%] source/tutorial/scalar_X/tutorial_x
-reading sources... [ 69%] source/tutorial/scalar_XY/masks_xy
-reading sources... [ 70%] source/tutorial/scalar_XY/sources_xy
-reading sources... [ 72%] source/tutorial/scalar_XY/tutorial
-reading sources... [ 73%] source/tutorial/scalar_XY/tutorial_xy
-reading sources... [ 74%] source/tutorial/scalar_XYZ/masks_xyz
-reading sources... [ 76%] source/tutorial/scalar_XYZ/tutorial
-reading sources... [ 77%] source/tutorial/scalar_XYZ/tutorial_xyz
-reading sources... [ 78%] source/tutorial/scalar_XYZ/wpm-bpm 3d
-reading sources... [ 80%] source/tutorial/scalar_XYZ/wpm_without_storing
-reading sources... [ 81%] source/tutorial/scalar_XZ/drawing_xz
-reading sources... [ 82%] source/tutorial/scalar_XZ/masks_xz
-reading sources... [ 84%] source/tutorial/scalar_XZ/tutorial
-reading sources... [ 85%] source/tutorial/scalar_XZ/tutorial_xz
-reading sources... [ 86%] source/tutorial/scalar_Z/Scalar_field_z
-reading sources... [ 88%] source/tutorial/scalar_Z/tutorial
-reading sources... [ 89%] source/tutorial/tricks/phase_intensity
-reading sources... [ 90%] source/tutorial/tricks/tutorial
-reading sources... [ 92%] source/tutorial/vector_XY/tutorial
+reading sources... [ 14%] source/examples/VRS_paper
+reading sources... [ 16%] source/examples/arago_point
+reading sources... [ 17%] source/examples/diffraction_objects
+reading sources... [ 18%] source/examples/diffraction_slit
+reading sources... [ 20%] source/examples/examples
+reading sources... [ 21%] source/examples/fresnel_biprism
+reading sources... [ 22%] source/examples/fresnel_lens
+reading sources... [ 24%] source/examples/gauss_beam
+reading sources... [ 25%] source/examples/lenses
+reading sources... [ 27%] source/examples/reflection_refraction
+reading sources... [ 28%] source/examples/scattering_small_cylinders
+reading sources... [ 29%] source/examples/talbot_effect
+reading sources... [ 31%] source/examples/variable_refraction_index
+reading sources... [ 32%] source/examples/vector_double_slit_experiment
+reading sources... [ 33%] source/tutorial/algorithms/BPM
+reading sources... [ 35%] source/tutorial/algorithms/CZT
+reading sources... [ 36%] source/tutorial/algorithms/FFT
+reading sources... [ 37%] source/tutorial/algorithms/PWD
+reading sources... [ 39%] source/tutorial/algorithms/RS
+reading sources... [ 40%] source/tutorial/algorithms/VCZT
+reading sources... [ 41%] source/tutorial/algorithms/VFFT
+reading sources... [ 43%] source/tutorial/algorithms/VRS
+reading sources... [ 44%] source/tutorial/algorithms/WPM
+reading sources... [ 45%] source/tutorial/algorithms/comparison/RS_vs_WPM
+reading sources... [ 47%] source/tutorial/algorithms/comparison/WPM_vs_BPM
+reading sources... [ 48%] source/tutorial/algorithms/tutorial
+reading sources... [ 50%] source/tutorial/drawing/creating_video
+reading sources... [ 51%] source/tutorial/drawing/external_qt
+reading sources... [ 52%] source/tutorial/drawing/interactive_in_diffractio
+reading sources... [ 54%] source/tutorial/drawing/tutorial
+reading sources... [ 55%] source/tutorial/drawing/use_interact_visualize_profiles
+reading sources... [ 56%] source/tutorial/functioning/artifacts_bpm
+reading sources... [ 58%] source/tutorial/functioning/developing_new_functions
+reading sources... [ 59%] source/tutorial/functioning/functioning
+reading sources... [ 60%] source/tutorial/functioning/multiprocessing
+reading sources... [ 62%] source/tutorial/functioning/phase_intensity
+reading sources... [ 63%] source/tutorial/functioning/power_z_propagation
+reading sources... [ 64%] source/tutorial/functioning/surfaces
+reading sources... [ 66%] source/tutorial/scalar_X/masks_x
+reading sources... [ 67%] source/tutorial/scalar_X/sources_x
+reading sources... [ 68%] source/tutorial/scalar_X/tutorial
+reading sources... [ 70%] source/tutorial/scalar_X/tutorial_x
+reading sources... [ 71%] source/tutorial/scalar_XY/masks_xy
+reading sources... [ 72%] source/tutorial/scalar_XY/sources_xy
+reading sources... [ 74%] source/tutorial/scalar_XY/tutorial
+reading sources... [ 75%] source/tutorial/scalar_XY/tutorial_xy
+reading sources... [ 77%] source/tutorial/scalar_XYZ/masks_xyz
+reading sources... [ 78%] source/tutorial/scalar_XYZ/tutorial
+reading sources... [ 79%] source/tutorial/scalar_XYZ/tutorial_xyz
+reading sources... [ 81%] source/tutorial/scalar_XYZ/wpm-bpm 3d
+reading sources... [ 82%] source/tutorial/scalar_XYZ/wpm_without_storing
+reading sources... [ 83%] source/tutorial/scalar_XZ/drawing_xz
+reading sources... [ 85%] source/tutorial/scalar_XZ/masks_xz
+reading sources... [ 86%] source/tutorial/scalar_XZ/tutorial
+reading sources... [ 87%] source/tutorial/scalar_XZ/tutorial_xz
+reading sources... [ 89%] source/tutorial/scalar_Z/Scalar_field_z
+reading sources... [ 90%] source/tutorial/scalar_Z/tutorial
+reading sources... [ 91%] source/tutorial/vector_XY/tutorial
 reading sources... [ 93%] source/tutorial/vector_XY/tutorial_vector_XY
 reading sources... [ 94%] source/tutorial/vector_XY/tutorial_vector_XY_draw
-reading sources... [ 96%] source/tutorial/vector_XY/tutorial_vector_masks_XY
+reading sources... [ 95%] source/tutorial/vector_XY/tutorial_vector_masks_XY
 reading sources... [ 97%] source/tutorial/vector_XY/tutorial_vector_sources_XY
 reading sources... [ 98%] tutorials
 reading sources... [100%] usage
@@ -105,121 +104,118 @@ writing output... [  9%] installation
 writing output... [ 10%] modules
 writing output... [ 12%] readme
 writing output... [ 13%] results
-writing output... [ 14%] source/examples/functioning/artifacts_bpm
-writing output... [ 16%] source/examples/functioning/developing_new_functions
-writing output... [ 17%] source/examples/functioning/examples
-writing output... [ 18%] source/examples/functioning/multiprocessing
-writing output... [ 20%] source/examples/functioning/power_z_ propagation
-writing output... [ 21%] source/examples/functioning/surfaces
-writing output... [ 22%] source/examples/optics/VRS_paper
-writing output... [ 24%] source/examples/optics/arago_point
-writing output... [ 25%] source/examples/optics/diffraction_objects
-writing output... [ 26%] source/examples/optics/diffraction_slit
-writing output... [ 28%] source/examples/optics/examples
-writing output... [ 29%] source/examples/optics/fresnel_biprism
-writing output... [ 30%] source/examples/optics/fresnel_lens
-writing output... [ 32%] source/examples/optics/gauss_beam
-writing output... [ 33%] source/examples/optics/lenses
-writing output... [ 34%] source/examples/optics/reflection_refraction
-writing output... [ 36%] source/examples/optics/scattering_small_cylinders
-writing output... [ 37%] source/examples/optics/talbot_effect
-writing output... [ 38%] source/examples/optics/variable_refraction_index
-writing output... [ 40%] source/examples/optics/vector_double_slit_experiment
-writing output... [ 41%] source/tutorial/algorithms/BPM
-writing output... [ 42%] source/tutorial/algorithms/CZT
-writing output... [ 44%] source/tutorial/algorithms/FFT
-writing output... [ 45%] source/tutorial/algorithms/PWD
-writing output... [ 46%] source/tutorial/algorithms/RS
-writing output... [ 48%] source/tutorial/algorithms/VCZT
-writing output... [ 49%] source/tutorial/algorithms/VFFT
-writing output... [ 50%] source/tutorial/algorithms/VRS
-writing output... [ 52%] source/tutorial/algorithms/WPM
-writing output... [ 53%] source/tutorial/algorithms/comparison/RS_vs_WPM
-writing output... [ 54%] source/tutorial/algorithms/comparison/WPM_vs_BPM
-writing output... [ 56%] source/tutorial/algorithms/tutorial
-writing output... [ 57%] source/tutorial/drawing/creating_video
-writing output... [ 58%] source/tutorial/drawing/external_qt
-writing output... [ 60%] source/tutorial/drawing/interactive_in_diffractio
-writing output... [ 61%] source/tutorial/drawing/tutorial
-writing output... [ 62%] source/tutorial/drawing/use_interact_visualize_profiles
-writing output... [ 64%] source/tutorial/scalar_X/masks_x
-writing output... [ 65%] source/tutorial/scalar_X/sources_x
-writing output... [ 66%] source/tutorial/scalar_X/tutorial
-writing output... [ 68%] source/tutorial/scalar_X/tutorial_x
-writing output... [ 69%] source/tutorial/scalar_XY/masks_xy
-writing output... [ 70%] source/tutorial/scalar_XY/sources_xy
-writing output... [ 72%] source/tutorial/scalar_XY/tutorial
-writing output... [ 73%] source/tutorial/scalar_XY/tutorial_xy
-writing output... [ 74%] source/tutorial/scalar_XYZ/masks_xyz
-writing output... [ 76%] source/tutorial/scalar_XYZ/tutorial
-writing output... [ 77%] source/tutorial/scalar_XYZ/tutorial_xyz
-writing output... [ 78%] source/tutorial/scalar_XYZ/wpm-bpm 3d
-writing output... [ 80%] source/tutorial/scalar_XYZ/wpm_without_storing
-writing output... [ 81%] source/tutorial/scalar_XZ/drawing_xz
-writing output... [ 82%] source/tutorial/scalar_XZ/masks_xz
-writing output... [ 84%] source/tutorial/scalar_XZ/tutorial
-writing output... [ 85%] source/tutorial/scalar_XZ/tutorial_xz
-writing output... [ 86%] source/tutorial/scalar_Z/Scalar_field_z
-writing output... [ 88%] source/tutorial/scalar_Z/tutorial
-writing output... [ 89%] source/tutorial/tricks/phase_intensity
-writing output... [ 90%] source/tutorial/tricks/tutorial
-writing output... [ 92%] source/tutorial/vector_XY/tutorial
+writing output... [ 14%] source/examples/VRS_paper
+writing output... [ 16%] source/examples/arago_point
+writing output... [ 17%] source/examples/diffraction_objects
+writing output... [ 18%] source/examples/diffraction_slit
+writing output... [ 20%] source/examples/examples
+writing output... [ 21%] source/examples/fresnel_biprism
+writing output... [ 22%] source/examples/fresnel_lens
+writing output... [ 24%] source/examples/gauss_beam
+writing output... [ 25%] source/examples/lenses
+writing output... [ 27%] source/examples/reflection_refraction
+writing output... [ 28%] source/examples/scattering_small_cylinders
+writing output... [ 29%] source/examples/talbot_effect
+writing output... [ 31%] source/examples/variable_refraction_index
+writing output... [ 32%] source/examples/vector_double_slit_experiment
+writing output... [ 33%] source/tutorial/algorithms/BPM
+writing output... [ 35%] source/tutorial/algorithms/CZT
+writing output... [ 36%] source/tutorial/algorithms/FFT
+writing output... [ 37%] source/tutorial/algorithms/PWD
+writing output... [ 39%] source/tutorial/algorithms/RS
+writing output... [ 40%] source/tutorial/algorithms/VCZT
+writing output... [ 41%] source/tutorial/algorithms/VFFT
+writing output... [ 43%] source/tutorial/algorithms/VRS
+writing output... [ 44%] source/tutorial/algorithms/WPM
+writing output... [ 45%] source/tutorial/algorithms/comparison/RS_vs_WPM
+writing output... [ 47%] source/tutorial/algorithms/comparison/WPM_vs_BPM
+writing output... [ 48%] source/tutorial/algorithms/tutorial
+writing output... [ 50%] source/tutorial/drawing/creating_video
+writing output... [ 51%] source/tutorial/drawing/external_qt
+writing output... [ 52%] source/tutorial/drawing/interactive_in_diffractio
+writing output... [ 54%] source/tutorial/drawing/tutorial
+writing output... [ 55%] source/tutorial/drawing/use_interact_visualize_profiles
+writing output... [ 56%] source/tutorial/functioning/artifacts_bpm
+writing output... [ 58%] source/tutorial/functioning/developing_new_functions
+writing output... [ 59%] source/tutorial/functioning/functioning
+writing output... [ 60%] source/tutorial/functioning/multiprocessing
+writing output... [ 62%] source/tutorial/functioning/phase_intensity
+writing output... [ 63%] source/tutorial/functioning/power_z_propagation
+writing output... [ 64%] source/tutorial/functioning/surfaces
+writing output... [ 66%] source/tutorial/scalar_X/masks_x
+writing output... [ 67%] source/tutorial/scalar_X/sources_x
+writing output... [ 68%] source/tutorial/scalar_X/tutorial
+writing output... [ 70%] source/tutorial/scalar_X/tutorial_x
+writing output... [ 71%] source/tutorial/scalar_XY/masks_xy
+writing output... [ 72%] source/tutorial/scalar_XY/sources_xy
+writing output... [ 74%] source/tutorial/scalar_XY/tutorial
+writing output... [ 75%] source/tutorial/scalar_XY/tutorial_xy
+writing output... [ 77%] source/tutorial/scalar_XYZ/masks_xyz
+writing output... [ 78%] source/tutorial/scalar_XYZ/tutorial
+writing output... [ 79%] source/tutorial/scalar_XYZ/tutorial_xyz
+writing output... [ 81%] source/tutorial/scalar_XYZ/wpm-bpm 3d
+writing output... [ 82%] source/tutorial/scalar_XYZ/wpm_without_storing
+writing output... [ 83%] source/tutorial/scalar_XZ/drawing_xz
+writing output... [ 85%] source/tutorial/scalar_XZ/masks_xz
+writing output... [ 86%] source/tutorial/scalar_XZ/tutorial
+writing output... [ 87%] source/tutorial/scalar_XZ/tutorial_xz
+writing output... [ 89%] source/tutorial/scalar_Z/Scalar_field_z
+writing output... [ 90%] source/tutorial/scalar_Z/tutorial
+writing output... [ 91%] source/tutorial/vector_XY/tutorial
 writing output... [ 93%] source/tutorial/vector_XY/tutorial_vector_XY
 writing output... [ 94%] source/tutorial/vector_XY/tutorial_vector_XY_draw
-writing output... [ 96%] source/tutorial/vector_XY/tutorial_vector_masks_XY
+writing output... [ 95%] source/tutorial/vector_XY/tutorial_vector_masks_XY
 writing output... [ 97%] source/tutorial/vector_XY/tutorial_vector_sources_XY
 writing output... [ 98%] tutorials
 writing output... [100%] usage
 
 generating indices... genindex py-modindex done
-copying notebooks ... [  1%] source/examples/functioning/artifacts_bpm.ipynb
-copying notebooks ... [  3%] source/examples/functioning/developing_new_functions.ipynb
-copying notebooks ... [  5%] source/examples/functioning/multiprocessing.ipynb
-copying notebooks ... [  7%] source/examples/functioning/power_z_ propagation.ipynb
-copying notebooks ... [  9%] source/examples/functioning/surfaces.ipynb
-copying notebooks ... [ 11%] source/examples/optics/VRS_paper.ipynb
-copying notebooks ... [ 13%] source/examples/optics/arago_point.ipynb
-copying notebooks ... [ 15%] source/examples/optics/diffraction_objects.ipynb
-copying notebooks ... [ 17%] source/examples/optics/diffraction_slit.ipynb
-copying notebooks ... [ 19%] source/examples/optics/fresnel_biprism.ipynb
-copying notebooks ... [ 21%] source/examples/optics/fresnel_lens.ipynb
-copying notebooks ... [ 23%] source/examples/optics/gauss_beam.ipynb
-copying notebooks ... [ 25%] source/examples/optics/lenses.ipynb
-copying notebooks ... [ 26%] source/examples/optics/reflection_refraction.ipynb
-copying notebooks ... [ 28%] source/examples/optics/scattering_small_cylinders.ipynb
-copying notebooks ... [ 30%] source/examples/optics/talbot_effect.ipynb
-copying notebooks ... [ 32%] source/examples/optics/variable_refraction_index.ipynb
-copying notebooks ... [ 34%] source/examples/optics/vector_double_slit_experiment.ipynb
-copying notebooks ... [ 36%] source/tutorial/algorithms/BPM.ipynb
-copying notebooks ... [ 38%] source/tutorial/algorithms/CZT.ipynb
-copying notebooks ... [ 40%] source/tutorial/algorithms/FFT.ipynb
-copying notebooks ... [ 42%] source/tutorial/algorithms/PWD.ipynb
-copying notebooks ... [ 44%] source/tutorial/algorithms/RS.ipynb
-copying notebooks ... [ 46%] source/tutorial/algorithms/VCZT.ipynb
-copying notebooks ... [ 48%] source/tutorial/algorithms/VFFT.ipynb
-copying notebooks ... [ 50%] source/tutorial/algorithms/VRS.ipynb
-copying notebooks ... [ 51%] source/tutorial/algorithms/WPM.ipynb
-copying notebooks ... [ 53%] source/tutorial/algorithms/comparison/RS_vs_WPM.ipynb
-copying notebooks ... [ 55%] source/tutorial/algorithms/comparison/WPM_vs_BPM.ipynb
-copying notebooks ... [ 57%] source/tutorial/drawing/creating_video.ipynb
-copying notebooks ... [ 59%] source/tutorial/drawing/external_qt.ipynb
-copying notebooks ... [ 61%] source/tutorial/drawing/interactive_in_diffractio.ipynb
-copying notebooks ... [ 63%] source/tutorial/drawing/use_interact_visualize_profiles.ipynb
-copying notebooks ... [ 65%] source/tutorial/scalar_X/masks_x.ipynb
-copying notebooks ... [ 67%] source/tutorial/scalar_X/sources_x.ipynb
-copying notebooks ... [ 69%] source/tutorial/scalar_X/tutorial_x.ipynb
-copying notebooks ... [ 71%] source/tutorial/scalar_XY/masks_xy.ipynb
-copying notebooks ... [ 73%] source/tutorial/scalar_XY/sources_xy.ipynb
-copying notebooks ... [ 75%] source/tutorial/scalar_XY/tutorial_xy.ipynb
-copying notebooks ... [ 76%] source/tutorial/scalar_XYZ/masks_xyz.ipynb
-copying notebooks ... [ 78%] source/tutorial/scalar_XYZ/tutorial_xyz.ipynb
-copying notebooks ... [ 80%] source/tutorial/scalar_XYZ/wpm-bpm 3d.ipynb
-copying notebooks ... [ 82%] source/tutorial/scalar_XYZ/wpm_without_storing.ipynb
-copying notebooks ... [ 84%] source/tutorial/scalar_XZ/drawing_xz.ipynb
-copying notebooks ... [ 86%] source/tutorial/scalar_XZ/masks_xz.ipynb
-copying notebooks ... [ 88%] source/tutorial/scalar_XZ/tutorial_xz.ipynb
-copying notebooks ... [ 90%] source/tutorial/scalar_Z/Scalar_field_z.ipynb
-copying notebooks ... [ 92%] source/tutorial/tricks/phase_intensity.ipynb
+copying notebooks ... [  2%] source/examples/VRS_paper.ipynb
+copying notebooks ... [  4%] source/examples/arago_point.ipynb
+copying notebooks ... [  6%] source/examples/diffraction_objects.ipynb
+copying notebooks ... [  8%] source/examples/diffraction_slit.ipynb
+copying notebooks ... [ 10%] source/examples/fresnel_biprism.ipynb
+copying notebooks ... [ 12%] source/examples/fresnel_lens.ipynb
+copying notebooks ... [ 14%] source/examples/gauss_beam.ipynb
+copying notebooks ... [ 16%] source/examples/lenses.ipynb
+copying notebooks ... [ 18%] source/examples/scattering_small_cylinders.ipynb
+copying notebooks ... [ 20%] source/examples/variable_refraction_index.ipynb
+copying notebooks ... [ 22%] source/examples/vector_double_slit_experiment.ipynb
+copying notebooks ... [ 24%] source/tutorial/algorithms/BPM.ipynb
+copying notebooks ... [ 26%] source/tutorial/algorithms/CZT.ipynb
+copying notebooks ... [ 28%] source/tutorial/algorithms/FFT.ipynb
+copying notebooks ... [ 30%] source/tutorial/algorithms/PWD.ipynb
+copying notebooks ... [ 32%] source/tutorial/algorithms/RS.ipynb
+copying notebooks ... [ 34%] source/tutorial/algorithms/VCZT.ipynb
+copying notebooks ... [ 36%] source/tutorial/algorithms/VFFT.ipynb
+copying notebooks ... [ 38%] source/tutorial/algorithms/VRS.ipynb
+copying notebooks ... [ 40%] source/tutorial/algorithms/WPM.ipynb
+copying notebooks ... [ 42%] source/tutorial/algorithms/comparison/RS_vs_WPM.ipynb
+copying notebooks ... [ 44%] source/tutorial/algorithms/comparison/WPM_vs_BPM.ipynb
+copying notebooks ... [ 46%] source/tutorial/drawing/creating_video.ipynb
+copying notebooks ... [ 48%] source/tutorial/drawing/external_qt.ipynb
+copying notebooks ... [ 50%] source/tutorial/drawing/interactive_in_diffractio.ipynb
+copying notebooks ... [ 52%] source/tutorial/drawing/use_interact_visualize_profiles.ipynb
+copying notebooks ... [ 54%] source/tutorial/functioning/artifacts_bpm.ipynb
+copying notebooks ... [ 56%] source/tutorial/functioning/developing_new_functions.ipynb
+copying notebooks ... [ 58%] source/tutorial/functioning/multiprocessing.ipynb
+copying notebooks ... [ 60%] source/tutorial/functioning/phase_intensity.ipynb
+copying notebooks ... [ 62%] source/tutorial/functioning/power_z_propagation.ipynb
+copying notebooks ... [ 64%] source/tutorial/functioning/surfaces.ipynb
+copying notebooks ... [ 66%] source/tutorial/scalar_X/masks_x.ipynb
+copying notebooks ... [ 68%] source/tutorial/scalar_X/sources_x.ipynb
+copying notebooks ... [ 70%] source/tutorial/scalar_X/tutorial_x.ipynb
+copying notebooks ... [ 72%] source/tutorial/scalar_XY/masks_xy.ipynb
+copying notebooks ... [ 74%] source/tutorial/scalar_XY/sources_xy.ipynb
+copying notebooks ... [ 76%] source/tutorial/scalar_XY/tutorial_xy.ipynb
+copying notebooks ... [ 78%] source/tutorial/scalar_XYZ/masks_xyz.ipynb
+copying notebooks ... [ 80%] source/tutorial/scalar_XYZ/tutorial_xyz.ipynb
+copying notebooks ... [ 82%] source/tutorial/scalar_XYZ/wpm-bpm 3d.ipynb
+copying notebooks ... [ 84%] source/tutorial/scalar_XYZ/wpm_without_storing.ipynb
+copying notebooks ... [ 86%] source/tutorial/scalar_XZ/drawing_xz.ipynb
+copying notebooks ... [ 88%] source/tutorial/scalar_XZ/masks_xz.ipynb
+copying notebooks ... [ 90%] source/tutorial/scalar_XZ/tutorial_xz.ipynb
+copying notebooks ... [ 92%] source/tutorial/scalar_Z/Scalar_field_z.ipynb
 copying notebooks ... [ 94%] source/tutorial/vector_XY/tutorial_vector_XY.ipynb
 copying notebooks ... [ 96%] source/tutorial/vector_XY/tutorial_vector_XY_draw.ipynb
 copying notebooks ... [ 98%] source/tutorial/vector_XY/tutorial_vector_masks_XY.ipynb
@@ -230,24 +226,25 @@ highlighting module code... [  8%] diffractio.scalar_fields_XY
 highlighting module code... [ 12%] diffractio.scalar_fields_XYZ
 highlighting module code... [ 16%] diffractio.scalar_fields_XZ
 highlighting module code... [ 20%] diffractio.scalar_fields_Z
-highlighting module code... [ 25%] diffractio.scalar_masks_X
-highlighting module code... [ 29%] diffractio.scalar_masks_XY
-highlighting module code... [ 33%] diffractio.scalar_masks_XYZ
-highlighting module code... [ 37%] diffractio.scalar_masks_XZ
-highlighting module code... [ 41%] diffractio.scalar_sources_X
-highlighting module code... [ 45%] diffractio.scalar_sources_XY
-highlighting module code... [ 50%] diffractio.utils_common
-highlighting module code... [ 54%] diffractio.utils_drawing
-highlighting module code... [ 58%] diffractio.utils_math
-highlighting module code... [ 62%] diffractio.utils_multiprocessing
-highlighting module code... [ 66%] diffractio.utils_optics
-highlighting module code... [ 70%] diffractio.utils_slicer
-highlighting module code... [ 75%] diffractio.utils_tests
-highlighting module code... [ 79%] diffractio.vector_fields_X
-highlighting module code... [ 83%] diffractio.vector_fields_XY
-highlighting module code... [ 87%] diffractio.vector_fields_XZ
-highlighting module code... [ 91%] diffractio.vector_fields_Z
-highlighting module code... [ 95%] diffractio.vector_masks_XY
+highlighting module code... [ 24%] diffractio.scalar_masks_X
+highlighting module code... [ 28%] diffractio.scalar_masks_XY
+highlighting module code... [ 32%] diffractio.scalar_masks_XYZ
+highlighting module code... [ 36%] diffractio.scalar_masks_XZ
+highlighting module code... [ 40%] diffractio.scalar_sources_X
+highlighting module code... [ 44%] diffractio.scalar_sources_XY
+highlighting module code... [ 48%] diffractio.utils_common
+highlighting module code... [ 52%] diffractio.utils_drawing
+highlighting module code... [ 56%] diffractio.utils_math
+highlighting module code... [ 60%] diffractio.utils_multiprocessing
+highlighting module code... [ 64%] diffractio.utils_optics
+highlighting module code... [ 68%] diffractio.utils_slicer
+highlighting module code... [ 72%] diffractio.utils_tests
+highlighting module code... [ 76%] diffractio.vector_fields_X
+highlighting module code... [ 80%] diffractio.vector_fields_XY
+highlighting module code... [ 84%] diffractio.vector_fields_XYZ
+highlighting module code... [ 88%] diffractio.vector_fields_XZ
+highlighting module code... [ 92%] diffractio.vector_fields_Z
+highlighting module code... [ 96%] diffractio.vector_masks_XY
 highlighting module code... [100%] diffractio.vector_sources_XY
 
 writing additional pages... search done
@@ -256,306 +253,297 @@ copying images... [  0%] source.png
 copying images... [  0%] mask1.png
 copying images... [  0%] mask2.png
 copying images... [  0%] propagation.png
-copying images... [  0%] vector_gauss_radial_fields.png
+copying images... [  1%] vector_gauss_radial_fields.png
 copying images... [  1%] vector_gauss_radial_stokes.png
 copying images... [  1%] logoUCM.png
-copying images... [  1%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_5_0.png
-copying images... [  1%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_6_0.png
-copying images... [  1%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_7_0.png
-copying images... [  1%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_10_0.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_11_0.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_15_0.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_artifacts_bpm_16_0.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_developing_new_functions_4_0.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_developing_new_functions_8_1.png
-copying images... [  2%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_6_1.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_9_0.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_16_0.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_29_0.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_34_0.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_39_0.png
-copying images... [  3%] _build/doctrees/nbsphinx/source_examples_functioning_multiprocessing_45_0.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_power_z__propagation_6_2.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_power_z__propagation_9_1.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_power_z__propagation_10_0.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_6_0.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_7_0.png
-copying images... [  4%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_11_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_13_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_17_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_20_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_22_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_functioning_surfaces_27_0.png
-copying images... [  5%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_10_0.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_17_0.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_19_0.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_25_1.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_28_0.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_30_0.png
-copying images... [  6%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_31_0.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_VRS_paper_33_1.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_arago_point_7_0.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_arago_point_9_0.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_arago_point_10_0.png
-copying images... [  7%] source/examples/optics/arago.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_arago_point_23_1.png
-copying images... [  7%] _build/doctrees/nbsphinx/source_examples_optics_arago_point_32_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_4_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_6_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_8_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_10_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_12_0.png
-copying images... [  8%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_14_0.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_16_0.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_17_0.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_19_0.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_21_1.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_23_0.png
-copying images... [  9%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_25_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_26_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_28_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_30_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_32_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_34_0.png
-copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_36_0.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_objects_38_0.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_5_0.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_6_1.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_6_2.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_7_0.png
-copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_8_0.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_14_0.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_17_0.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_18_0.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_22_0.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_22_1.png
-copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_optics_diffraction_slit_23_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_12_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_14_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_15_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_16_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_17_0.png
-copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_19_0.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_27_1.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_28_0.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_31_1.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_32_1.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_39_0.png
-copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_42_0.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_43_1.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_45_1.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_47_0.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_biprism_49_0.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_9_0.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_10_0.png
-copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_15_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_17_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_22_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_25_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_27_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_28_0.png
-copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_optics_fresnel_lens_29_0.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_6_0.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_12_0.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_12_1.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_14_1.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_16_0.png
-copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_optics_gauss_beam_16_1.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_6_0.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_8_0.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_11_1.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_13_1.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_17_0.png
-copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_optics_lenses_18_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_19_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_23_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_25_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_30_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_32_0.png
-copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_optics_lenses_34_1.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_35_0.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_38_0.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_41_1.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_42_0.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_44_0.png
-copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_optics_lenses_47_1.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_48_0.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_53_0.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_56_0.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_58_0.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_59_0.png
-copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_optics_lenses_61_0.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_lenses_62_0.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_lenses_72_0.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_lenses_79_0.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_4_1.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_6_0.png
-copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_7_0.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_9_1.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_10_0.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_14_1.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_16_0.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_17_1.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_19_0.png
-copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_20_0.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_reflection_refraction_21_0.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_5_0.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_6_1.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_8_0.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_9_1.png
-copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_11_0.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_12_1.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_13_0.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_14_1.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_15_0.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_16_1.png
-copying images... [ 25%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_18_0.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_19_1.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_21_0.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_22_1.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_24_0.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_scattering_small_cylinders_25_1.png
-copying images... [ 26%] _build/doctrees/nbsphinx/source_examples_optics_talbot_effect_6_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_talbot_effect_9_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_talbot_effect_11_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_talbot_effect_12_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_talbot_effect_14_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_7_0.png
-copying images... [ 27%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_9_0.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_10_1.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_15_0.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_16_0.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_20_0.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_29_1.png
-copying images... [ 28%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_32_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_variable_refraction_index_41_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_7_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_8_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_9_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_10_0.png
-copying images... [ 29%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_11_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_12_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_14_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_15_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_16_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_17_0.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_18_1.png
-copying images... [ 30%] _build/doctrees/nbsphinx/source_examples_optics_vector_double_slit_experiment_19_0.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_6_1.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_10_1.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_15_0.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_16_0.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_7_0.png
-copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_14_0.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_18_0.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_22_0.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_27_0.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_33_1.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_36_0.png
-copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_39_1.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_42_2.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_46_0.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_47_1.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_54_1.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_56_1.png
-copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_58_2.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_61_1.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_63_2.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_4_0.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_5_1.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_6_1.png
-copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_8_0.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_8_1.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_9_0.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_14_0.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_15_0.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_7_0.png
-copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_13_1.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_14_0.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_15_0.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_23_0.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_24_2.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_4_1.png
-copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_4_2.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_7_1.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_7_2.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_9_0.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_9_1.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_12_1.png
-copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_12_2.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_15_1.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_15_2.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_18_2.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_19_2.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_11_0.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_12_0.png
-copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_14_0.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_15_0.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_23_2.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_24_0.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_25_0.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_26_0.png
-copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_27_0.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_31_1.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_32_0.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_33_0.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_34_0.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_35_0.png
-copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_39_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_40_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_41_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_42_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_46_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_47_0.png
-copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_48_1.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_49_0.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_50_0.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_51_0.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_52_0.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_9_0.png
-copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_12_0.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_15_0.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_16_1.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_17_0.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_18_0.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_9_0.png
-copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_11_0.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_17_0.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_19_0.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_21_0.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_22_0.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_23_1.png
-copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_5_0.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_9_0.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_14_0.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_18_0.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_5_1.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_7_0.png
-copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_10_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_11_1.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_9_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_13_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_18_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_19_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_20_0.png
-copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_24_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_28_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_33_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_34_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_35_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_38_0.png
-copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_39_0.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_40_0.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_drawing_creating_video_6_0.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_drawing_creating_video_8_0.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_5_1.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_6_0.png
-copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_11_0.png
-copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_drawing_interactive_in_diffractio_5_1.png
-copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_drawing_interactive_in_diffractio_7_1.png
-copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_drawing_use_interact_visualize_profiles_5_0.png
-copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_drawing_use_interact_visualize_profiles_8_0.png
-copying images... [ 49%] source/tutorial/drawing/interactive.png
+copying images... [  1%] _build/doctrees/nbsphinx/source_examples_VRS_paper_10_0.png
+copying images... [  1%] _build/doctrees/nbsphinx/source_examples_VRS_paper_17_0.png
+copying images... [  1%] _build/doctrees/nbsphinx/source_examples_VRS_paper_19_0.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_VRS_paper_25_0.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_VRS_paper_28_0.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_VRS_paper_30_0.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_VRS_paper_31_0.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_VRS_paper_33_1.png
+copying images... [  2%] _build/doctrees/nbsphinx/source_examples_arago_point_7_0.png
+copying images... [  3%] _build/doctrees/nbsphinx/source_examples_arago_point_9_0.png
+copying images... [  3%] _build/doctrees/nbsphinx/source_examples_arago_point_10_0.png
+copying images... [  3%] source/examples/arago.png
+copying images... [  3%] _build/doctrees/nbsphinx/source_examples_arago_point_21_1.png
+copying images... [  3%] _build/doctrees/nbsphinx/source_examples_arago_point_30_0.png
+copying images... [  3%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_4_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_6_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_8_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_10_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_12_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_14_0.png
+copying images... [  4%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_16_0.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_17_0.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_19_0.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_21_1.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_23_0.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_25_0.png
+copying images... [  5%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_26_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_28_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_30_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_32_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_34_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_36_0.png
+copying images... [  6%] _build/doctrees/nbsphinx/source_examples_diffraction_objects_38_0.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_5_0.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_6_1.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_6_2.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_7_0.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_8_0.png
+copying images... [  7%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_14_0.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_17_0.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_18_0.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_22_0.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_22_1.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_diffraction_slit_23_0.png
+copying images... [  8%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_12_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_14_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_15_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_16_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_17_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_19_0.png
+copying images... [  9%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_27_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_28_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_31_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_32_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_39_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_42_0.png
+copying images... [ 10%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_43_1.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_45_1.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_47_0.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_49_0.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_biprism_50_0.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_9_0.png
+copying images... [ 11%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_10_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_15_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_17_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_22_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_25_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_27_0.png
+copying images... [ 12%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_28_0.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_fresnel_lens_29_0.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_gauss_beam_6_0.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_gauss_beam_12_0.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_gauss_beam_12_1.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_gauss_beam_14_0.png
+copying images... [ 13%] _build/doctrees/nbsphinx/source_examples_gauss_beam_16_0.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_gauss_beam_16_1.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_lenses_6_0.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_lenses_8_0.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_lenses_11_1.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_lenses_13_1.png
+copying images... [ 14%] _build/doctrees/nbsphinx/source_examples_lenses_17_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_18_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_19_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_23_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_25_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_30_0.png
+copying images... [ 15%] _build/doctrees/nbsphinx/source_examples_lenses_32_0.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_34_1.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_35_0.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_38_0.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_41_1.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_42_0.png
+copying images... [ 16%] _build/doctrees/nbsphinx/source_examples_lenses_44_0.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_47_1.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_48_0.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_53_0.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_56_0.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_58_0.png
+copying images... [ 17%] _build/doctrees/nbsphinx/source_examples_lenses_59_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_lenses_61_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_lenses_62_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_lenses_72_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_lenses_79_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_5_0.png
+copying images... [ 18%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_6_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_8_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_9_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_11_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_12_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_13_0.png
+copying images... [ 19%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_14_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_15_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_16_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_18_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_19_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_21_0.png
+copying images... [ 20%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_22_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_24_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_scattering_small_cylinders_25_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_7_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_9_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_10_0.png
+copying images... [ 21%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_15_0.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_16_0.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_20_0.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_28_1.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_31_0.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_variable_refraction_index_40_0.png
+copying images... [ 22%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_7_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_8_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_9_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_10_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_11_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_12_0.png
+copying images... [ 23%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_14_0.png
+copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_15_0.png
+copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_16_0.png
+copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_17_0.png
+copying images... [ 24%] _build/doctrees/nbsphinx/source_examples_vector_double_slit_experiment_18_1.png
+copying images... [ 24%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_6_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_10_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_15_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_BPM_16_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_7_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_14_0.png
+copying images... [ 25%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_18_0.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_22_0.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_27_0.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_33_1.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_36_0.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_39_1.png
+copying images... [ 26%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_42_1.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_46_0.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_47_1.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_54_1.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_56_1.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_58_1.png
+copying images... [ 27%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_61_0.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_CZT_63_1.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_5_0.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_6_0.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_7_0.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_9_0.png
+copying images... [ 28%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_9_1.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_10_0.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_15_0.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_FFT_16_0.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_7_0.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_13_1.png
+copying images... [ 29%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_14_0.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_15_0.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_23_0.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_PWD_24_2.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_5_1.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_5_2.png
+copying images... [ 30%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_8_1.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_8_2.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_10_0.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_10_1.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_13_1.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_13_2.png
+copying images... [ 31%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_16_0.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_16_1.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_19_1.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_RS_20_1.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_8_0.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_9_0.png
+copying images... [ 32%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_11_0.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_12_0.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_20_1.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_21_0.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_22_0.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_23_0.png
+copying images... [ 33%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_24_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_28_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_29_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_30_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_31_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_32_0.png
+copying images... [ 34%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_36_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_37_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_38_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_39_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_43_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_44_0.png
+copying images... [ 35%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_45_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_46_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_47_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_48_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VCZT_49_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_9_0.png
+copying images... [ 36%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_12_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_15_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_16_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_17_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VFFT_18_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_9_0.png
+copying images... [ 37%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_11_0.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_17_0.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_19_0.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_21_0.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_22_0.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_VRS_23_1.png
+copying images... [ 38%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_6_0.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_10_0.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_15_0.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_WPM_19_0.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_5_1.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_7_0.png
+copying images... [ 39%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_10_0.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_RS_vs_WPM_11_1.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_9_0.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_13_0.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_18_0.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_19_0.png
+copying images... [ 40%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_20_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_24_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_28_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_33_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_34_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_35_0.png
+copying images... [ 41%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_38_0.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_39_0.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_algorithms_comparison_WPM_vs_BPM_40_0.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_drawing_creating_video_6_0.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_drawing_creating_video_8_0.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_5_1.png
+copying images... [ 42%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_6_0.png
+copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_drawing_external_qt_11_0.png
+copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_drawing_interactive_in_diffractio_5_1.png
+copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_drawing_interactive_in_diffractio_7_1.png
+copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_drawing_use_interact_visualize_profiles_5_0.png
+copying images... [ 43%] _build/doctrees/nbsphinx/source_tutorial_drawing_use_interact_visualize_profiles_8_0.png
+copying images... [ 43%] source/tutorial/drawing/interactive.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_5_0.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_6_0.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_7_0.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_10_0.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_11_0.png
+copying images... [ 44%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_15_0.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_artifacts_bpm_16_0.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_developing_new_functions_5_0.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_developing_new_functions_9_1.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_6_1.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_9_0.png
+copying images... [ 45%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_16_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_29_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_34_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_multiprocessing_39_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_8_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_9_0.png
+copying images... [ 46%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_10_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_11_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_15_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_16_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_17_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_phase_intensity_18_0.png
+copying images... [ 47%] _build/doctrees/nbsphinx/source_tutorial_functioning_power_z_propagation_6_1.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_power_z_propagation_9_0.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_power_z_propagation_10_0.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_6_0.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_7_0.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_11_0.png
+copying images... [ 48%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_13_0.png
+copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_17_0.png
+copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_20_0.png
+copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_22_0.png
+copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_functioning_surfaces_27_0.png
 copying images... [ 49%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks_x_6_1.png
 copying images... [ 50%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks_x_8_0.png
 copying images... [ 50%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks_x_10_0.png
@@ -581,283 +569,275 @@ copying images... [ 53%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks
 copying images... [ 53%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks_x_49_0.png
 copying images... [ 53%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_masks_x_51_0.png
 copying images... [ 53%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_5_0.png
-copying images... [ 53%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_7_0.png
+copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_7_0.png
 copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_10_0.png
 copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_12_0.png
 copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_14_0.png
 copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_16_0.png
 copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_18_0.png
-copying images... [ 54%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_20_0.png
+copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_sources_x_20_0.png
 copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_10_0.png
 copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_12_0.png
 copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_15_0.png
 copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_17_0.png
 copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_20_1.png
-copying images... [ 55%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_21_1.png
+copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_21_1.png
 copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_23_0.png
 copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_25_0.png
 copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_25_1.png
 copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_27_0.png
 copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_27_1.png
-copying images... [ 56%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_29_0.png
+copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_29_0.png
 copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_30_0.png
 copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_32_0.png
 copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_35_0.png
 copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_37_0.png
 copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_39_0.png
-copying images... [ 57%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_41_0.png
+copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_41_0.png
 copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_47_1.png
 copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_49_0.png
 copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_X_tutorial_x_50_1.png
 copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_7_0.png
 copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_8_0.png
-copying images... [ 58%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_10_0.png
+copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_10_0.png
 copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_12_0.png
 copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_13_0.png
 copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_16_0.png
 copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_17_0.png
 copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_19_0.png
-copying images... [ 59%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_21_0.png
+copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_21_0.png
 copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_24_0.png
 copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_26_0.png
 copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_28_0.png
 copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_30_0.png
 copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_32_0.png
-copying images... [ 60%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_34_0.png
+copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_34_0.png
 copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_36_0.png
 copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_38_0.png
 copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_40_0.png
 copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_42_0.png
 copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_44_0.png
-copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_46_0.png
-copying images... [ 61%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_48_0.png
+copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_46_0.png
+copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_48_0.png
 copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_50_0.png
 copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_52_0.png
 copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_54_0.png
 copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_56_0.png
-copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_58_0.png
-copying images... [ 62%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_60_0.png
+copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_58_0.png
+copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_60_0.png
 copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_62_0.png
 copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_64_0.png
 copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_65_0.png
 copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_67_0.png
-copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_69_0.png
-copying images... [ 63%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_71_0.png
+copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_69_0.png
+copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_71_0.png
 copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_72_0.png
 copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_74_0.png
 copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_76_0.png
 copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_78_0.png
-copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_80_0.png
-copying images... [ 64%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_82_0.png
+copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_80_0.png
+copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_82_0.png
 copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_84_0.png
 copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_86_0.png
 copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_88_0.png
 copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_masks_xy_90_0.png
-copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_6_0.png
-copying images... [ 65%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_8_0.png
+copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_6_0.png
+copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_8_0.png
 copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_10_0.png
 copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_12_0.png
 copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_14_0.png
 copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_16_0.png
-copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_18_0.png
-copying images... [ 66%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_18_1.png
+copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_18_0.png
+copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_18_1.png
 copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_20_0.png
 copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_22_0.png
 copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_24_0.png
 copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_26_0.png
-copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_28_0.png
-copying images... [ 67%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_30_0.png
+copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_28_0.png
+copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_30_0.png
 copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_32_0.png
 copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_sources_xy_34_0.png
 copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_9_0.png
 copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_11_0.png
-copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_14_0.png
-copying images... [ 68%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_16_0.png
+copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_14_0.png
+copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_16_0.png
 copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_19_0.png
 copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_21_0.png
 copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_21_1.png
 copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_26_0.png
-copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_28_0.png
-copying images... [ 69%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_30_1.png
-copying images... [ 69%] source/tutorial/scalar_XYZ/n_cylinder.png
+copying images... [ 70%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_28_0.png
+copying images... [ 70%] _build/doctrees/nbsphinx/source_tutorial_scalar_XY_tutorial_xy_30_1.png
+copying images... [ 70%] source/tutorial/scalar_XYZ/n_cylinder.png
 copying images... [ 70%] source/tutorial/scalar_XYZ/n_sphere.png
 copying images... [ 70%] source/tutorial/scalar_XYZ/n_square.png
 copying images... [ 70%] source/tutorial/scalar_XYZ/sphere.png
-copying images... [ 70%] source/tutorial/scalar_XYZ/RS_circle.png
-copying images... [ 70%] source/tutorial/scalar_XYZ/talbot.png
-copying images... [ 70%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_8_3.png
+copying images... [ 71%] source/tutorial/scalar_XYZ/RS_circle.png
+copying images... [ 71%] source/tutorial/scalar_XYZ/talbot.png
+copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_8_3.png
 copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_9_0.png
 copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_12_3.png
 copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_13_0.png
-copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_23_1.png
-copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_25_0.png
-copying images... [ 71%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_29_1.png
+copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_23_1.png
+copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_25_0.png
+copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm-bpm_3d_29_1.png
 copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_7_0.png
 copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_9_0.png
 copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_13_3.png
-copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_14_0.png
-copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_16_1.png
-copying images... [ 72%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_7_0.png
+copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_14_0.png
+copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XYZ_wpm_without_storing_16_1.png
+copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_7_0.png
 copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_10_0.png
 copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_15_0.png
 copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_17_0.png
-copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_19_0.png
-copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_21_0.png
-copying images... [ 73%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_22_0.png
+copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_19_0.png
+copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_21_0.png
+copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_22_0.png
 copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_24_0.png
 copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_25_0.png
-copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_27_0.png
-copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_30_1.png
-copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_31_1.png
-copying images... [ 74%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_5_0.png
+copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_27_0.png
+copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_30_1.png
+copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_drawing_xz_31_1.png
+copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_5_0.png
 copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_7_0.png
 copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_7_1.png
-copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_9_0.png
-copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_11_0.png
-copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_13_1.png
-copying images... [ 75%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_16_0.png
+copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_9_0.png
+copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_11_0.png
+copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_13_1.png
+copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_16_0.png
 copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_18_0.png
 copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_20_1.png
-copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_22_0.png
-copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_24_0.png
-copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_26_0.png
-copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_28_0.png
-copying images... [ 76%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_30_0.png
+copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_22_0.png
+copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_24_0.png
+copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_26_0.png
+copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_28_0.png
+copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_30_0.png
 copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_32_0.png
-copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_34_0.png
-copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_36_0.png
-copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_38_0.png
-copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_40_0.png
-copying images... [ 77%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_42_0.png
+copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_34_0.png
+copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_36_0.png
+copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_38_0.png
+copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_40_0.png
+copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_42_0.png
 copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_44_0.png
-copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_46_0.png
-copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_48_0.png
-copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_50_0.png
-copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_52_1.png
-copying images... [ 78%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_54_1.png
+copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_46_0.png
+copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_48_0.png
+copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_50_0.png
+copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_52_1.png
+copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_54_1.png
 copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_56_1.png
-copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_58_1.png
-copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_60_0.png
-copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_11_0.png
-copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_13_0.png
-copying images... [ 79%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_18_0.png
+copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_58_1.png
+copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_masks_xz_60_0.png
+copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_11_0.png
+copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_13_0.png
+copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_18_0.png
 copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_21_1.png
-copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_23_0.png
-copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_25_0.png
-copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_26_0.png
-copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_29_1.png
-copying images... [ 80%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_31_0.png
+copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_23_0.png
+copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_25_0.png
+copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_26_0.png
+copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_29_1.png
+copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_31_0.png
 copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_35_2.png
-copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_37_1.png
-copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_39_0.png
-copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_41_0.png
-copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_43_0.png
-copying images... [ 81%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_44_0.png
+copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_37_1.png
+copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_39_0.png
+copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_41_0.png
+copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_43_0.png
+copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_44_0.png
 copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_45_0.png
-copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_46_0.png
-copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_48_0.png
-copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_50_0.png
-copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_51_0.png
-copying images... [ 82%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_53_0.png
+copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_46_0.png
+copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_48_0.png
+copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_50_0.png
+copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_51_0.png
+copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_53_0.png
 copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_56_0.png
-copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_58_0.png
-copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_60_0.png
-copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_63_0.png
-copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_65_0.png
-copying images... [ 83%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_68_0.png
+copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_58_0.png
+copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_60_0.png
+copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_63_0.png
+copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_65_0.png
+copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_68_0.png
 copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_69_1.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_71_0.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_72_0.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_74_1.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_75_1.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_76_0.png
-copying images... [ 84%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_81_2.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_82_2.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_85_2.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_88_2.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_10_0.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_15_1.png
-copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_16_0.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_17_0.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_18_0.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_19_0.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_6_1.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_7_1.png
-copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_8_1.png
-copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_9_1.png
-copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_13_1.png
-copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_14_1.png
-copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_15_1.png
-copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_tricks_phase_intensity_16_1.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_71_0.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_72_0.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_74_1.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_75_1.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_76_0.png
+copying images... [ 85%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_81_2.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_82_2.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_85_2.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_XZ_tutorial_xz_88_2.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_10_0.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_15_1.png
+copying images... [ 86%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_16_0.png
+copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_17_0.png
+copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_18_0.png
+copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_scalar_Z_Scalar_field_z_19_0.png
 copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_14_0.png
-copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_16_0.png
-copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_18_1.png
+copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_16_0.png
+copying images... [ 87%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_18_1.png
 copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_21_0.png
 copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_25_0.png
 copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_31_0.png
 copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_33_0.png
-copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_39_0.png
-copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_41_0.png
+copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_39_0.png
+copying images... [ 88%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_41_0.png
 copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_47_0.png
 copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_49_0.png
 copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_52_0.png
 copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_53_0.png
-copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_59_0.png
-copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_7_0.png
+copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_59_0.png
+copying images... [ 89%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_7_0.png
 copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_8_0.png
 copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_10_0.png
 copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_12_0.png
 copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_14_0.png
-copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_15_0.png
-copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_17_0.png
+copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_15_0.png
+copying images... [ 90%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_17_0.png
 copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_19_0.png
 copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_29_0.png
 copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_30_0.png
 copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_32_0.png
-copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_33_0.png
-copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_7_1.png
+copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_XY_draw_33_0.png
+copying images... [ 91%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_7_1.png
 copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_9_1.png
 copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_9_2.png
 copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_11_1.png
 copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_13_1.png
 copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_15_1.png
-copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_15_2.png
+copying images... [ 92%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_15_2.png
 copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_1.png
 copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_3.png
 copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_5.png
 copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_7.png
 copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_9.png
-copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_11.png
+copying images... [ 93%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_11.png
 copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_13.png
 copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_15.png
 copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_masks_XY_18_18.png
 copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_7_0.png
 copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_9_0.png
-copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_11_0.png
+copying images... [ 94%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_11_0.png
 copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_13_0.png
 copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_15_0.png
 copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_17_0.png
 copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_19_0.png
 copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_21_0.png
-copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_23_0.png
+copying images... [ 95%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_23_0.png
 copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_24_0.png
 copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_27_0.png
 copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_28_0.png
 copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_31_0.png
 copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_34_0.png
-copying images... [ 97%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_36_0.png
+copying images... [ 96%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_36_0.png
 copying images... [ 97%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_38_0.png
 copying images... [ 97%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_40_0.png
 copying images... [ 97%] _build/doctrees/nbsphinx/source_tutorial_vector_XY_tutorial_vector_sources_XY_42_0.png
 copying images... [ 97%] x_source.png
 copying images... [ 97%] x_mask.png
-copying images... [ 98%] x_RS.png
+copying images... [ 97%] x_RS.png
 copying images... [ 98%] xz_source.png
 copying images... [ 98%] xz_mask.png
 copying images... [ 98%] xz_WPM.png
 copying images... [ 98%] xy_source.png
 copying images... [ 98%] xy_mask.png
-copying images... [ 99%] xy_RS.png
+copying images... [ 98%] xy_RS.png
 copying images... [ 99%] xyz_mask.png
 copying images... [ 99%] xyz_RS.png
 copying images... [ 99%] xyz_cut.png
@@ -869,7 +849,7 @@ copying static files... done
 copying extra files... done
 dumping search index in English (code: en)... done
 dumping object inventory... done
-build succeeded, 56 warnings.
+build succeeded, 602 warnings.
 
 The HTML pages are in _build/html.
 make[1]: se sale del directorio '/home/luismiguel/bitbucket/diffractio/docs'
