@@ -90,6 +90,7 @@ The VRS method propagates (Ex,Ey,Ez) fields offering the advantage of significan
    BPM.ipynb
    WPM.ipynb
    CZT.ipynb
+   PWD.ipynb
    VFFT.ipynb
    VRS.ipynb
    VCZT.ipynb

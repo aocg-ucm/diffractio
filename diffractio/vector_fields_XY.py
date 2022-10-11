@@ -1706,7 +1706,7 @@ class Vector_field_XY(object):
                   title='',
                   has_max=False,
                   only_image=False):
-        """Draws image
+        """Draws image.
 
         Parameters:
             image (numpy.array): array with drawing

@@ -13,6 +13,7 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    modules
    tutorials
    examples
+   functioning
    contributing
    authors
    results

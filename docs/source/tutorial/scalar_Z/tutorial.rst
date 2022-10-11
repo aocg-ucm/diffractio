@@ -6,5 +6,5 @@ Scalar_Z
    :numbered:
    :glob:
 
-   Scalar_field_Z.ipynb
 
+   scalar_field_z.ipynb

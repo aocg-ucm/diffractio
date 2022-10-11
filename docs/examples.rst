@@ -14,7 +14,7 @@ Examples
    source/examples/arago_point.ipynb
    source/examples/diffraction_objects.ipynb
    source/examples/scattering_small_cylinders.ipynb
-   source/examples/ fresnel_biprism.ipynb
+   source/examples/fresnel_biprism.ipynb
    source/examples/lenses.ipynb
    source/examples/fresnel_lens.ipynb
    source/examples/talbot_effect.ipynb
