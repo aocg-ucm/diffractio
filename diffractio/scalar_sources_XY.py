@@ -415,7 +415,7 @@ class Scalar_source_XY(Scalar_field_XY):
         for p in params:
             self.u = self.u + p['A'] * exp(
                 1.j * k *
-                (self.X * sin(p['theta']) * cps(p['phi']) + self.Y *
+                (self.X * sin(p['theta']) * cos(p['phi']) + self.Y *
                  sin(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['theta'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle, z0=0):

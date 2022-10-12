@@ -230,7 +230,7 @@ def draw_several_fields(fields,
         plt.suptitle(title, fontsize=26)
         plt.axis('scaled')
         plt.axis(extension)
-        plt.colorbar(orientation='horizontal', shrink=0.66)
+        plt.colorbar(orientation='horizontal', fraction=0.046)
         if kind == 'phase':
             plt.clim(-180, 180)
 

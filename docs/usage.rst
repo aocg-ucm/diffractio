@@ -10,10 +10,6 @@ To use Python diffraction and interference in a project:
 
 
 
-
-Examples of use
----------------------------
-
 X fields
 =================
 

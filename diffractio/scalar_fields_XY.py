@@ -2100,7 +2100,8 @@ class Scalar_field_XY(object):
 
         xsize, ysize = rcParams['figure.figsize']
 
-        plt.figure(figsize=(2 * xsize, ysize))
+        #plt.figure(figsize=(2 * xsize, 2 * ysize))
+        plt.figure()
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
 
@@ -2115,17 +2116,17 @@ class Scalar_field_XY(object):
                         extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.title("$intensity$")
+        plt.colorbar(orientation='horizontal', shrink=0.66, pad=0.1)
+
         plt.axis('scaled')
         plt.axis(extension)
-        plt.colorbar(orientation='horizontal', shrink=0.66)
-        plt.axis(extension)
+        plt.title("$intensity$")
+        plt.clim(-180, 180)
         h1.set_cmap(self.CONF_DRAWING["color_intensity"])
         if self.type == 'Scalar_mask_XY':
             plt.clim(0, 1)
 
         plt.subplot(1, 2, 2)
-        # phase[phase == 1] = -1
         phase = phase / degrees
 
         # elimino la fase en la visualicion cuando no hay campo
@@ -2136,14 +2137,14 @@ class Scalar_field_XY(object):
                         extent=extension)
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.colorbar(orientation='horizontal', shrink=0.66)
+        plt.colorbar(orientation='horizontal', shrink=0.66, pad=0.1)
+
         plt.axis('scaled')
         plt.axis(extension)
         plt.title("$phase$")
         plt.clim(-180, 180)
         h2.set_cmap(self.CONF_DRAWING["color_phase"])  #
-        plt.subplots_adjust(0, 0, 1, 1, 0, 0)
-
+        plt.subplots_adjust(0.01, 0.01, 0.99, 0.95, 0.35, 0.35)
         return (h1, h2)
 
     def __draw_real_field__(self,

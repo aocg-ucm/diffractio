@@ -1398,7 +1398,7 @@ class Vector_field_XY(object):
         percentage_z = 0.01
 
         if intensity3.max() < percentage_z * intensity_max:
-            plt.figure(figsize=(2 * tx, ty))
+            plt.figure(figsize=(tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
 
@@ -1421,7 +1421,7 @@ class Vector_field_XY(object):
             return h1, h2
         else:
 
-            plt.figure(figsize=(3 * tx, ty))
+            plt.figure(figsize=(1.5 * tx, 1 * ty))
 
             h1 = plt.subplot(1, 3, 1)
 
@@ -1477,7 +1477,7 @@ class Vector_field_XY(object):
 
         intensity_max = np.max((intensity_r, intensity_z))
 
-        plt.figure(figsize=(2 * tx, ty))
+        plt.figure(figsize=(tx, ty))
 
         h1 = plt.subplot(1, 2, 1)
 
@@ -1528,7 +1528,7 @@ class Vector_field_XY(object):
         intensity_max = np.max((intensity_x.max(), intensity_y.max()))
         tx, ty = rcParams['figure.figsize']
 
-        plt.figure(figsize=(2 * tx, 2 * ty))
+        plt.figure(figsize=(tx, 1.75 * ty))
 
         h1 = plt.subplot(2, 2, 1)
 
@@ -1552,6 +1552,8 @@ class Vector_field_XY(object):
 
         self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
+        # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+
         h4 = plt.gca()
         plt.subplots_adjust(left=0,
                             bottom=0,
@@ -1581,7 +1583,7 @@ class Vector_field_XY(object):
 
         intensity_max = S0.max()
 
-        plt.figure(figsize=(2 * tx, 2 * ty))
+        plt.figure(figsize=(1.1 * tx, 1.75 * ty))
         h1 = plt.subplot(2, 2, 1)
         self.__draw1__(S0, color_intensity, "$S_0$")
         plt.clim(0, intensity_max)
@@ -1598,13 +1600,8 @@ class Vector_field_XY(object):
         self.__draw1__(S3, color_stokes, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
-        plt.subplots_adjust(left=0,
-                            bottom=0,
-                            right=1,
-                            top=1,
-                            wspace=0.05,
-                            hspace=0)
         plt.tight_layout()
+
         return (h1, h2, h3, h4)
 
     def __draw_param_ellipse__(self,
@@ -1621,7 +1618,7 @@ class Vector_field_XY(object):
 
         tx, ty = rcParams['figure.figsize']
 
-        plt.figure(figsize=(2 * tx, 2 * ty))
+        plt.figure(figsize=(tx, 1.75 * ty))
 
         max_intensity = max(A.max(), B.max())
 
@@ -1781,9 +1778,9 @@ class Vector_field_XY(object):
 
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        if colormap is not None:
-            plt.colorbar(orientation='horizontal', shrink=0.66)
-            h.set_clim(0, image.max())
+        plt.colorbar(orientation='horizontal', shrink=0.66, pad=0.15)
+        h.set_clim(0, image.max())
+        plt.subplots_adjust(0.01, 0.01, 0.99, 0.95, 0.05, 0.05)
 
         return h
 

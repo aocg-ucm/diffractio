@@ -382,7 +382,9 @@ class Vector_mask_XY(Vector_field_XY):
         Parameters:
             kind (str): 'amplitude', 'phase', 'all'
         """
+        from matplotlib import rcParams
         # def draw_masks(self, kind='fields'):
+        xsize, ysize = rcParams['figure.figsize']
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
         if range_scale == 'mm':
@@ -410,6 +412,9 @@ class Vector_mask_XY(Vector_field_XY):
                                         'hspace': 0.25,
                                         'wspace': 0.025
                                     })
+            fig.set_figwidth(xsize)
+            fig.set_figheight(1.25 * ysize)
+
             im1 = axs[0, 0].imshow(a00, extent=extension, origin='lower')
             im1.set_clim(0, a_max)
             axs[0, 0].set_title("J00")
@@ -447,8 +452,10 @@ class Vector_mask_XY(Vector_field_XY):
                                     sharey='row',
                                     gridspec_kw={
                                         'hspace': 0.25,
-                                        'wspace': 0.00
+                                        'wspace': 0.025
                                     })
+            fig.set_figwidth(xsize)
+            fig.set_figheight(1.25 * ysize)
             im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
                                    extent=extension,
                                    origin='lower')

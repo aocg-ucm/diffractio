@@ -949,7 +949,7 @@ class Vector_field_XZ(object):
         plt.xlabel("$z  (\mu m)$")
         plt.ylabel("$x  (\mu m)$")
         if colormap is not None:
-            plt.colorbar(orientation='horizontal', shrink=0.66)
+            plt.colorbar(orientation='horizontal', fraction=0.046)
             h.set_clim(0, image.max())
 
         return h
