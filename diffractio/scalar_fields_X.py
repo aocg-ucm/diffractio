@@ -69,7 +69,7 @@ from .utils_drawing import normalize_draw
 from .utils_math import fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
-from .utils_optics import field_parameters, normalize
+from .utils_optics import field_parameters, normalize_field
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -892,23 +892,15 @@ class Scalar_field_X(object):
 
         return u_out
 
-    def normalize(self, kind='intensity', new_field=False):
+    def normalize(self, new_field=False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
-            kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
         """
-        u_new = normalize(self.u, kind)
-
-        if new_field is False:
-            self.u = u_new
-        else:
-            field_output = Scalar_field_X(self.x, self.wavelength)
-            field_output.u = u_new
-            return field_output
+        return normalize_field(self, new_field)
 
     def MTF(self, kind='mm', has_draw=True):
         """Computes the MTF of a field,.

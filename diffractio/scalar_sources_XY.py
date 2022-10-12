@@ -68,7 +68,11 @@ class Scalar_source_XY(Scalar_field_XY):
         self.type = 'Scalar_source_XY'
 
     def plane_wave(self, A=1, theta=0 * degrees, phi=0 * degrees, z0=0 * um):
-        """Plane wave. self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
+        """Plane wave. self.u = A * exp(1.j * k *
+                         (self.X * sin(theta) * cos(phi) +
+                          self.Y * sin(theta) * sin(phi) + z0 * cos(theta)))
+        
+        According to https://en.wikipedia.org/wiki/Spherical_coordinate_system: physics (ISO 80000-2:2019 convention)
 
         Parameters:
             A (float): maximum amplitude
@@ -78,8 +82,8 @@ class Scalar_source_XY(Scalar_field_XY):
         """
         k = 2 * pi / self.wavelength
         self.u = A * exp(1.j * k *
-                         (self.X * sin(theta) * sin(phi) +
-                          self.Y * cos(theta) * sin(phi) + z0 * cos(phi)))
+                         (self.X * sin(theta) * cos(phi) +
+                          self.Y * sin(theta) * sin(phi) + z0 * cos(theta)))
 
     def gauss_beam(self,
                    r0,
@@ -100,10 +104,6 @@ class Scalar_source_XY(Scalar_field_XY):
             beta (float): rotation angle of the axis of the main directions of the wavefront (it can be different from alpha)
             A (float): maximum amplitude
             theta (float): angle in radians (angle of k with respect to z))
-            phi (float): angle in radians (angle of k with respect to z))
-
-        Todo:
-            generalize definition
 
         References:
         """
@@ -146,15 +146,20 @@ class Scalar_source_XY(Scalar_field_XY):
             (wx**2)) * np.exp(
                 -(-self.X * np.sin(alpha) + self.Y * np.cos(alpha) - y0)**2 /
                 (wy**2)))
-        phase1 = np.exp(1.j * k * (self.X * np.sin(theta) * np.sin(phi) +
-                                   self.Y * np.cos(theta) * np.sin(phi)))
+        phase1 = np.exp(1.j * k * (self.X * np.sin(theta) * np.cos(phi) +
+                                   self.Y * np.sin(theta) * np.sin(phi)))
         phase2 = np.exp(1j * (k * z0x - phaseGouy_x + k * ((self.X * np.cos(beta) + self.Y * np.sin(beta))**2) / (2 * R_x))) * \
             np.exp(1j * (k * z0y - phaseGouy_y + k * ((-self.X * np.sin(beta) + self.Y * np.cos(beta))**2) / (2 * R_y)))
 
         self.u = amplitude * phase1 * phase2
 
-
-    def spherical_wave(self, A=1, r0=(0 * um, 0 * um), z0=-1000 * um, mask=True, radius=100 * um, normalize=False):
+    def spherical_wave(self,
+                       A=1,
+                       r0=(0 * um, 0 * um),
+                       z0=-1000 * um,
+                       mask=True,
+                       radius=100 * um,
+                       normalize=False):
         """Spherical wave.
 
         Parameters:
@@ -201,7 +206,10 @@ class Scalar_source_XY(Scalar_field_XY):
             w0x, w0y = w0
 
         x0, y0 = r0
-        amplitude = ((self.X - x0) + 1.j * sign(m) * (self.Y - y0))**np.abs(m) * np.exp(-((self.X - x0)**2 / w0x**2 + (self.Y - y0)**2 / w0y**2))
+        amplitude = ((self.X - x0) + 1.j * sign(m) *
+                     (self.Y - y0))**np.abs(m) * np.exp(-(
+                         (self.X - x0)**2 / w0x**2 +
+                         (self.Y - y0)**2 / w0y**2))
 
         self.u = A * amplitude / np.abs(amplitude).max()
 
@@ -257,7 +265,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         # Calculate amplitude
         A = A * sqrt(2**(1 - n - m) /
-                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y / (wx * wy))
+                     (pi * factorial(n) * factorial(m))) * sqrt(w0x * w0y /
+                                                                (wx * wy))
         Ex = eval_hermite(n, r2 * X / wx) * exp(-X**2 / wx**2)
         Ey = eval_hermite(m, r2 * Y / wy) * exp(-Y**2 / wy**2)
 
@@ -338,7 +347,8 @@ class Scalar_source_XY(Scalar_field_XY):
         # phase as sum of Zernike functions
         phase = zeros(self.X.shape, dtype=float)
         for s in range(len(n)):
-            phase = phase + c_nm[s] * fZernike(self.X - x0, self.Y - y0, n[s], m[s], radius)
+            phase = phase + c_nm[s] * fZernike(self.X - x0, self.Y - y0, n[s],
+                                               m[s], radius)
 
         if mask is True:
             amplitude = (R < 1)
@@ -347,7 +357,14 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * amplitude * exp(1.j * np.real(phase))
 
-    def bessel_beam(self, A, r0, alpha, n, theta=0 * degrees, phi=0 * degrees, z0=0):
+    def bessel_beam(self,
+                    A,
+                    r0,
+                    alpha,
+                    n,
+                    theta=0 * degrees,
+                    phi=0 * degrees,
+                    z0=0):
         """Bessel beam produced by an axicon. Bessel-beams are generated using 2D axicons.
 
         Parameters:
@@ -364,10 +381,9 @@ class Scalar_source_XY(Scalar_field_XY):
             F. Courvoisier, et al. "Surface nanoprocessing with nondiffracting femtosecond Bessel beams" Optics Letters Vol. 34, No. 20 3163 (2009)
         """
 
-        k = 2*np.pi/self.wavelength
+        k = 2 * np.pi / self.wavelength
         x0, y0 = r0
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-        k0 = 2 * np.pi / self.wavelength
         beta = k0 * np.cos(alpha)
 
         if n == 0:
@@ -379,8 +395,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * jbessel * np.exp(1j * beta * z0) * np.exp(
             1.j * k *
-            (self.X * sin(theta) * sin(phi) + self.Y * cos(theta) * sin(phi)) +
-            z0 * cos(phi))
+            (self.X * sin(theta) * cos(phi) + self.Y * sin(theta) * sin(phi)) +
+            z0 * cos(theta))
 
     def plane_waves_dict(self, params):
         """Several plane waves with parameters defined in dictionary
@@ -399,8 +415,8 @@ class Scalar_source_XY(Scalar_field_XY):
         for p in params:
             self.u = self.u + p['A'] * exp(
                 1.j * k *
-                (self.X * sin(p['theta']) * sin(p['phi']) + self.Y *
-                 cos(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['phi'])))
+                (self.X * sin(p['theta']) * cps(p['phi']) + self.Y *
+                 sin(p['theta']) * sin(p['phi']) + p['z0'] * cos(p['theta'])))
 
     def plane_waves_several_inclined(self, A, num_beams, max_angle, z0=0):
         """Several paralel plane waves
@@ -466,7 +482,8 @@ class Scalar_source_XY(Scalar_field_XY):
                 t = t + self.u
         self.u = t
 
-    def gauss_beams_several_inclined(self, A, num_beams, w0, r0, z0, max_angle):
+    def gauss_beams_several_inclined(self, A, num_beams, w0, r0, z0,
+                                     max_angle):
         """Several inclined gauss beams
 
         Parameters:

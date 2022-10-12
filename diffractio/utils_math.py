@@ -502,26 +502,19 @@ def normalize(v, order=2):
 
 #
 # def normalize_field(u, kind='intensity'):
-#     """Normalize the field.
+#     """Normalize the field to maximum intensity.
 #
 #     Parameters:
 #         u (np.array): field
-#         kind (str): normalization parameter -'intensity' 'area'
 #
 #     Returns:
-#         normalized value
-#
-#
+#         normalized field.
 #     """
 #
-#     if kind == 'intensity':
 #         intensity = np.abs(u**2)
 #         maximum = sqrt(intensity.max())
 #         u = u / maximum
-#     if kind == 'area':
-#         intensity = np.abs(u**2)
-#         maximum = intensity.sum()
-#         u = u / maximum
+
 #
 #         return u
 

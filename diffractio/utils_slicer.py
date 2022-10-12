@@ -83,8 +83,8 @@ class VolumeSlicer(HasTraits):
         self.ipw_3d_z
 
     def _data_src3d_default(self):
-        return mlab.pipeline.scalar_field(
-            self.data, figure=self.scene3d.mayavi_scene)
+        return mlab.pipeline.scalar_field(self.data,
+                                          figure=self.scene3d.mayavi_scene)
 
     def make_ipw_3d(self, axis_name):
         ipw = mlab.pipeline.image_plane_widget(
@@ -104,8 +104,8 @@ class VolumeSlicer(HasTraits):
 
     @on_trait_change('scene3d.activated')
     def display_scene3d(self):
-        mlab.pipeline.outline(
-            self.data_src3d, figure=self.scene3d.mayavi_scene)
+        mlab.pipeline.outline(self.data_src3d,
+                              figure=self.scene3d.mayavi_scene)
         self.scene3d.mlab.view(40, 50)
         # Interaction properties can only be changed after the scene
         # has been created, and thus the interactor exists
@@ -129,8 +129,9 @@ class VolumeSlicer(HasTraits):
             self.data_src3d.mlab_source.dataset,
             figure=scene.mayavi_scene,
         )
-        ipw = mlab.pipeline.image_plane_widget(
-            outline, plane_orientation='%s_axes' % axis_name)
+        ipw = mlab.pipeline.image_plane_widget(outline,
+                                               plane_orientation='%s_axes' %
+                                               axis_name)
         setattr(self, 'ipw_%s' % axis_name, ipw)
 
         # Synchronize positions between the corresponding image plane
@@ -155,8 +156,8 @@ class VolumeSlicer(HasTraits):
         ipw.ipw.add_observer('StartInteractionEvent', move_view)
 
         # Center the image plane widget
-        ipw.ipw.slice_position = 0.5 * self.data.shape[self.
-                                                       _axis_names[axis_name]]
+        ipw.ipw.slice_position = 0.5 * self.data.shape[
+            self._axis_names[axis_name]]
 
         # Position the view for the scene
         views = dict(
@@ -187,29 +188,25 @@ class VolumeSlicer(HasTraits):
     view = View(
         HGroup(
             Group(
-                Item(
-                    'scene_y',
-                    editor=SceneEditor(scene_class=Scene),
-                    height=250,
-                    width=300),
-                Item(
-                    'scene_z',
-                    editor=SceneEditor(scene_class=Scene),
-                    height=250,
-                    width=300),
+                Item('scene_y',
+                     editor=SceneEditor(scene_class=Scene),
+                     height=250,
+                     width=300),
+                Item('scene_z',
+                     editor=SceneEditor(scene_class=Scene),
+                     height=250,
+                     width=300),
                 show_labels=False,
             ),
             Group(
-                Item(
-                    'scene_x',
-                    editor=SceneEditor(scene_class=Scene),
-                    height=250,
-                    width=300),
-                Item(
-                    'scene3d',
-                    editor=SceneEditor(scene_class=MayaviScene),
-                    height=250,
-                    width=300),
+                Item('scene_x',
+                     editor=SceneEditor(scene_class=Scene),
+                     height=250,
+                     width=300),
+                Item('scene3d',
+                     editor=SceneEditor(scene_class=MayaviScene),
+                     height=250,
+                     width=300),
                 show_labels=False,
             ),
         ),

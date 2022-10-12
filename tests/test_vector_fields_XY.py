@@ -119,7 +119,7 @@ class Test_Vector_fields_XY(object):
         u0.gauss_beam(A=1, z0=0 * um, r0=(0, 0), w0=(25 * um, 25 * um))
 
         EM = Vector_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u0, v=[1, 1])
+        EM.constant_polarization(u0, v=[1, 1])
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
@@ -139,7 +139,7 @@ class Test_Vector_fields_XY(object):
 
         # con esto definimos el field E
         EM = Vector_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u=1, v=[1, 0])
+        EM.constant_polarization(u=1, v=[1, 0])
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_0')
@@ -179,7 +179,7 @@ class Test_Vector_fields_XY(object):
                                               m=1,
                                               fi0=0,
                                               radius=0.)
-        EM.mask_circle()
+        EM.pupil()
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_1EH')
@@ -212,7 +212,7 @@ class Test_Vector_fields_XY(object):
                                               m=1,
                                               fi0=0,
                                               radius=0.)
-        EM.mask_circle()
+        EM.pupil()
 
         EM.draw(kind='stokes')
         save_figure_test(newpath, func_name, add_name='_1EH')

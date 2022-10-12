@@ -367,7 +367,7 @@ class Test_Scalar_masks_XY(object):
         t1.super_gauss(r0=(0 * um, 0 * um),
                        radius=(length / 3, length / 3),
                        angle=45 * degrees,
-                       potencia=22)
+                       power=22)
         t1.draw(kind='intensity')
 
         t1.save_data(filename=filename + '.npz')
@@ -974,8 +974,7 @@ class Test_Scalar_masks_XY(object):
         t.circle_rough(r0=(0, 0),
                        radius=100 * um,
                        angle=0 * degrees,
-                       sigma=4 * um,
-                       correlation_length=.1 * um)
+                       sigma=4 * um)
         t.draw(kind='intensity')
         t.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
@@ -994,8 +993,7 @@ class Test_Scalar_masks_XY(object):
                      radius1=50 * um,
                      radius2=100 * um,
                      angle=0 * degrees,
-                     sigma=4 * um,
-                     correlation_length=.1 * um)
+                     sigma=4 * um)
         t.draw(kind='intensity')
 
         t.save_data(filename=filename + '.npz')

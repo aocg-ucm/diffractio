@@ -45,8 +45,8 @@ The magnitude is related to microns: `micron = 1.`
     * draw
     * draw_refraction_index
     * draw_incident_field
-    * video_profiles
     * draw_profiles_interactive
+    * video
 
 *Parameters*
     * final_field
@@ -80,7 +80,7 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
 from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
-from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize
+from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize_field
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -297,23 +297,15 @@ class Scalar_field_XZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-    def normalize(self, kind='intensity', new_field=False):
+    def normalize(self, new_field=False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
-            kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
         """
-        u_new = normalize(self.u, kind)
-
-        if new_field is False:
-            self.u = u_new
-        else:
-            field_output = Scalar_field_XZ(self.x, self.z, self.wavelength)
-            field_output.u = u_new
-            return field_output
+        return normalize_field(self, new_field)
 
     def mask_field(self, size_edge=0):
         """
@@ -1885,68 +1877,68 @@ class Scalar_field_XZ(object):
 
         return widths, positions_center
 
-    def video_profiles(self,
-                       kind='intensity',
-                       kind_profile='transversal',
-                       step=1,
-                       wait=0.001,
-                       logarithm=False,
-                       normalize=False,
-                       filename='',
-                       verbose=False):
-        """Draws profiles in a video fashion
+    # def video_profiles(self,
+    #                    kind='intensity',
+    #                    kind_profile='transversal',
+    #                    step=1,
+    #                    wait=0.001,
+    #                    logarithm=False,
+    #                    normalize=False,
+    #                    filename='',
+    #                    verbose=False):
+    #     """Draws profiles in a video fashion
 
-        Parameters:
-            kind (str): 'intensity', 'amplitude', 'phase'
-            kind_profile (str): 'transversal', 'longitudinal'
-            step (list): number of frames shown (if 1 shows all, if 2 1/2, ..) for accelerating pruposes in video.
-            wait (float) : (in seconds) time for slow down the video
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            filename: (str))  filename of video
-            verbose (bool): If True shows info
-        """
+    #     Parameters:
+    #         kind (str): 'intensity', 'amplitude', 'phase'
+    #         kind_profile (str): 'transversal', 'longitudinal'
+    #         step (list): number of frames shown (if 1 shows all, if 2 1/2, ..) for accelerating pruposes in video.
+    #         wait (float) : (in seconds) time for slow down the video
+    #         logarithm (bool): If True, intensity is scaled in logarithm
+    #         normalize (bool): If True, max(intensity)=1
+    #         filename: (str))  filename of video
+    #         verbose (bool): If True shows info
+    #     """
 
-        fig = plt.figure()
-        if kind_profile == 'transversal':
-            h1, = plt.plot(self.x, np.zeros_like(self.x), 'k', lw=2)
-            plt.xlim(self.x[0], self.x[-1])
-            plt.xlabel(r'$x (\mu m)$')
-        elif kind_profile == 'longitudinal':
-            h1, = plt.plot(self.z, np.zeros_like(self.z), 'k', lw=2)
-            plt.xlim(self.z[0], self.z[-1])
-            plt.xlabel(r'$z (\mu m)$')
+    #     fig = plt.figure()
+    #     if kind_profile == 'transversal':
+    #         h1, = plt.plot(self.x, np.zeros_like(self.x), 'k', lw=2)
+    #         plt.xlim(self.x[0], self.x[-1])
+    #         plt.xlabel(r'$x (\mu m)$')
+    #     elif kind_profile == 'longitudinal':
+    #         h1, = plt.plot(self.z, np.zeros_like(self.z), 'k', lw=2)
+    #         plt.xlim(self.z[0], self.z[-1])
+    #         plt.xlabel(r'$z (\mu m)$')
 
-        I_drawing = prepare_drawing(self.u, kind, logarithm, normalize)
+    #     I_drawing = prepare_drawing(self.u, kind, logarithm, normalize)
 
-        plt.ylim(I_drawing.min(), I_drawing.max())
+    #     plt.ylim(I_drawing.min(), I_drawing.max())
 
-        writer = prepare_video(fps=15, title='', artist='', comment='')
+    #     writer = prepare_video(fps=15, title='', artist='', comment='')
 
-        with writer.saving(fig, filename, 300):
-            if kind_profile == 'transversal':
-                for i in range(0, len(self.z), step):
-                    h1.set_ydata(I_drawing[:, i])
-                    plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
-                    plt.draw()
-                    if filename == '':
-                        plt.pause(wait)
-                    else:
-                        if verbose:
-                            print(("{}/{}".format(i, len(self.z))))
-                        writer.grab_frame()
-            elif kind_profile == 'longitudinal':
-                for i in range(0, len(self.x), step):
-                    h1.set_ydata(I_drawing[i, :])
-                    plt.title("x={:6.2f}, i={}".format(round(self.x[i], 2), i))
-                    plt.draw()
-                    if filename == '':
-                        plt.pause(wait)
-                    else:
-                        if verbose:
-                            print(("{}/{}".format(i, len(self.z))))
-                        writer.grab_frame()
-        plt.close('')
+    #     with writer.saving(fig, filename, 300):
+    #         if kind_profile == 'transversal':
+    #             for i in range(0, len(self.z), step):
+    #                 h1.set_ydata(I_drawing[:, i])
+    #                 plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
+    #                 plt.draw()
+    #                 if filename == '':
+    #                     plt.pause(wait)
+    #                 else:
+    #                     if verbose:
+    #                         print(("{}/{}".format(i, len(self.z))))
+    #                     writer.grab_frame()
+    #         elif kind_profile == 'longitudinal':
+    #             for i in range(0, len(self.x), step):
+    #                 h1.set_ydata(I_drawing[i, :])
+    #                 plt.title("x={:6.2f}, i={}".format(round(self.x[i], 2), i))
+    #                 plt.draw()
+    #                 if filename == '':
+    #                     plt.pause(wait)
+    #                 else:
+    #                     if verbose:
+    #                         print(("{}/{}".format(i, len(self.z))))
+    #                     writer.grab_frame()
+    #     plt.close('')
 
     def video(self,
               kind='intensity',
@@ -2039,7 +2031,7 @@ class Scalar_field_XZ(object):
         z_actual = self.z[0]
         x = self.x
         ix, iz = np.unravel_index(I_drawing.argmax(), I_drawing.shape)
-        # I_drawing_maxima = I_drawing[ix, iz]
+
         extension = [self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()]
 
         imenor, value, distance = nearest(vector=self.z, number=z_actual)
@@ -2066,7 +2058,7 @@ def __update__(val):
     zz = zZ.val
     imenor, value, distance = nearest(vector=z, number=zz)
     I_drawing_profile = np.squeeze(I_drawing[:, imenor])
-    # lo siguiente normaliza linea a línea:
+
     I_drawing_profile = normalize_draw(I_drawing_profile, log1, norm1)
     l2a.set_ydata(I_drawing_profile)
     plt.draw()

@@ -74,7 +74,7 @@ from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
 from .utils_math import (get_edges, get_k, ndgrid, nearest, reduce_to_1,
                          rotate_image, Bluestein_dft_xy)
-from .utils_optics import beam_width_2D, field_parameters
+from .utils_optics import beam_width_2D, field_parameters, normalize_field
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_fields_Z import Scalar_field_Z
@@ -603,9 +603,10 @@ class Scalar_field_XY(object):
             self.x = x_new
             self.y = y_new
             self.X, self.Y = ndgrid(self.x, self.y)
-    """        
+    """
 
-    def fft(self, z=0,
+    def fft(self,
+            z=0,
             shift=True,
             remove0=True,
             matrix=False,
@@ -1887,22 +1888,15 @@ class Scalar_field_XY(object):
         if matrix is True:
             return u_binarized
 
-    def normalize(self, kind='intensity'):
-        """Normalize the field.
+    def normalize(self, new_field=False):
+        """Normalizes the field so that intensity.max()=1.
 
         Parameters:
-            kind (str): 'intensity' 'area'
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+        Returns
+            u (numpy.array): normalized optical field
         """
-
-        if kind == 'intensity':
-            intensity = abs(self.u)**2
-            maximum = sqrt(intensity.max())
-            self.u = self.u / maximum
-
-        elif kind == 'area':
-            intensity = abs(self.u**2)
-            maximum = intensity.sum()
-            self.u = self.u / maximum
+        return normalize_field(self, new_field)
 
     def draw(self,
              kind='intensity',
@@ -2235,9 +2229,7 @@ class Scalar_field_XY(object):
 
 
 def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
-    """Kernel for RS propagation.
-
-    Había una errata según: Juan Valencia <valen167@umn.edu>  210131
+    """Kernel for RS propagation. There is a bug accordig: Juan Valencia <valen167@umn.edu>  210131
 
     Parameters:
         X(numpy.array): positions x
@@ -2289,7 +2281,8 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
 
 
 def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
-    """Kernel for Fesnel propagation
+    """
+    Kernel for Fesnel propagation.
 
     Parameters:
         X(numpy.array): positions x

@@ -1,9 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates Vector_source_XY class for defining sources.
-Its parent is Vector_field_XY.
-
+This module generates Vector_source_XY class for defining sources. Its parent is Vector_field_XY.
 The main atributes are:
     * x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
     * y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
@@ -32,7 +30,6 @@ from . import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
-from .utils_optics import normalize_vector
 from .vector_fields_XY import Vector_field_XY
 
 
@@ -58,7 +55,11 @@ class Vector_source_XY(Vector_field_XY):
         super(self.__class__, self).__init__(x, y, wavelength, info)
         self.type = 'Vector_source_XY'
 
-    def constant_wave(self, u=1, v=(1, 0), has_normalization=False, radius=0.):
+    def constant_polarization(self,
+                              u=1,
+                              v=(1, 0),
+                              has_normalization=False,
+                              radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
         Parameters:
@@ -76,13 +77,13 @@ class Vector_source_XY(Vector_field_XY):
         self = define_initial_field(self, u)
 
         if has_normalization:
-            v = normalize_vector(v)
+            v = v / np.linalg.norm(v)
 
         self.Ex = v[0] * self.Ex
         self.Ey = v[1] * self.Ey
 
         if radiusx * radiusy > 0:
-            self.mask_circle(radius=radius)
+            self.pupil(radius=radius)
 
     def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -108,7 +109,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = -np.cos(angle) * self.Ey
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -134,7 +135,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = np.sin(angle) * self.Ey
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -160,7 +161,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = -np.sin(angle) * self.Ey
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
@@ -186,7 +187,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = np.cos(angle) * self.Ey
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def local_polarized_vector_wave(self,
                                     u=1,
@@ -225,7 +226,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = self.Ey * np.sin(delta)
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def local_polarized_vector_wave_radial(self,
                                            u=1,
@@ -273,7 +274,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = self.Ey * np.sin(delta)
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def local_polarized_vector_wave_hybrid(self,
                                            u=1,
@@ -321,7 +322,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = self.Ey * np.sin(delta)
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
+            self.pupil(r0=r0, radius=radius)
 
     def spiral_polarized_beam(self,
                               u=1,
@@ -358,44 +359,7 @@ class Vector_source_XY(Vector_field_XY):
         self.Ey = self.Ey * np.cos(theta + alpha)
 
         if radiusx * radiusy > 0:
-            self.mask_circle(r0=r0, radius=radius)
-
-    def mask_circle(self, r0=(0., 0.), radius=0.):
-        """Mask vector field using a circular mask.
-
-        Parameters:
-            r0 (float, float): center of mask.
-            radius (float, float): radius of mask
-        """
-
-        if isinstance(radius, (float, int, complex)):
-            radiusx, radiusy = (radius, radius)
-        else:
-            radiusx, radiusy = radius
-        radius = (radiusx, radiusy)
-
-        if radiusx * radiusy > 0:
-            radius_x = (self.x[-1] - self.x[0]) / 2
-            radius_y = (self.y[-1] - self.y[0]) / 2
-            radius = (radius_x, radius_y)
-
-        elif radius in (None, '', []):
-            return
-
-        elif isinstance(radius, (float, int, complex)):
-            radius = (radius, radius)
-
-        if r0 in (0, None, '', []):
-            r0_x = (self.x[-1] + self.x[0]) / 2
-            r0_y = (self.y[-1] + self.y[0]) / 2
-            r0 = (r0_x, r0_y)
-
-        if radiusx * radiusy > 0:
-            t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-            t1.circle(r0=r0, radius=radius, angle=0 * degrees)
-            self.Ex = t1.u * self.Ex
-            self.Ey = t1.u * self.Ey
-            self.Ez = t1.u * self.Ez
+            self.pupil(r0=r0, radius=radius)
 
     def to_py_pol(self):
         """Pass Ex, Ey field to py_pol package for software analysis

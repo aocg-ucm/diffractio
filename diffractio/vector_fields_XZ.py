@@ -1,9 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates Vector_field_X class.
-
-It is required also for generating masks and fields.
+This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
     * self.x - x positions of the field
     * self.Ex - x component of electric field
@@ -42,6 +40,7 @@ from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import nearest
+from .utils_optics import normalize_field
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -371,15 +370,15 @@ class Vector_field_XZ(object):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self):
-        """Normalizes the field"""
-        max_amplitude = np.sqrt(
-            np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
-            np.abs(self.Ez)**2).max()
+    def normalize(self, new_field=False):
+        """Normalizes the field so that intensity.max()=1.
 
-        self.Ex = self.Ex / max_amplitude
-        self.Ey = self.Ey / max_amplitude
-        self.Ez = self.Ez / max_amplitude
+        Parameters:
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+        Returns
+            u (numpy.array): normalized optical field
+        """
+        return normalize_field(self, new_field)
 
     def draw(self,
              kind='intensity',

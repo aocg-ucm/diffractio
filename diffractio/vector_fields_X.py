@@ -1,9 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates Vector_field_X class.
-
-It is required also for generating masks and fields.
+This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
     * self.x - x positions of the field
     * self.Ex - x component of electric field
@@ -29,7 +27,6 @@ The magnitude is related to microns: `micron = 1.`
 
 *Drawing functions*
     * draw: intensity, intensities, phases, fields, stokes, param_ellipse, ellipses
-
 """
 
 import copy
@@ -40,7 +37,6 @@ from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import nearest
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 

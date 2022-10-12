@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 This module generates Vector_mask_XY class for defining vector masks. Its parent is Vector_field_XY.
-
 The main atributes are:
         self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         self.y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
@@ -169,13 +168,13 @@ class Vector_mask_XY(Vector_field_XY):
             x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
             r0 = (x_center, y_center)
 
-        u_mask_circle = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        u_mask_circle.circle(r0=r0, radius=radius)
+        u_pupil = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        u_pupil.circle(r0=r0, radius=radius)
 
-        self.M00 = self.M00 * u_mask_circle.u
-        self.M01 = self.M01 * u_mask_circle.u
-        self.M10 = self.M10 * u_mask_circle.u
-        self.M11 = self.M11 * u_mask_circle.u
+        self.M00 = self.M00 * u_pupil.u
+        self.M01 = self.M01 * u_pupil.u
+        self.M10 = self.M10 * u_pupil.u
+        self.M11 = self.M11 * u_pupil.u
 
     def pupil(self, r0=None, radius=None, angle=0 * degrees):
         """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.

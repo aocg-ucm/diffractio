@@ -1,9 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This module generates Vector_field_XY class.
-
-It is required also for generating masks and fields.
+This module generates Vector_field_XY class. It is required also for generating masks and fields.
 The main atributes are:
     * self.Ex - x component of electric field
     * self.Ey - y component of electric field
@@ -300,11 +298,10 @@ class Vector_field_XY(object):
 
         Example:
 
-            pupil(r0=(0 * um, 0 * um), radius=(250 * \
-                   um, 125 * um), angle=0 * degrees)
+            pupil(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
         """
 
-        if r0 is None:
+        if r0 in (0, None, '', []):
             x0 = (self.x[-1] + self.x[0]) / 2
             y0 = (self.y[-1] + self.y[0]) / 2
             r0 = (x0, y0)
@@ -314,12 +311,13 @@ class Vector_field_XY(object):
             radiusy = (self.y[-1] - self.y[0]) / 2
             radius = (radiusx, radiusy)
 
-        x0, y0 = r0
-
         if isinstance(radius, (float, int, complex)):
             radiusx, radiusy = (radius, radius)
         else:
             radiusx, radiusy = radius
+        radius = (radiusx, radiusy)
+
+        x0, y0 = r0
 
         # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
@@ -332,6 +330,43 @@ class Vector_field_XY(object):
         self.Ex = self.Ex * pupil0
         self.Ey = self.Ey * pupil0
         self.Ez = self.Ez * pupil0
+
+    # def mask_circle(self, r0=(0., 0.), radius=0.):
+    #     """Mask vector field using a circular mask.
+
+    #     Parameters:
+    #         r0 (float, float): center of mask.
+    #         radius (float, float): radius of mask
+    #     """
+
+    #     if isinstance(radius, (float, int, complex)):
+    #         radiusx, radiusy = (radius, radius)
+    #     else:
+    #         radiusx, radiusy = radius
+    #     radius = (radiusx, radiusy)
+
+    #     if radiusx * radiusy > 0:
+    #         radius_x = (self.x[-1] - self.x[0]) / 2
+    #         radius_y = (self.y[-1] - self.y[0]) / 2
+    #         radius = (radius_x, radius_y)
+
+    #     elif radius in (None, '', []):
+    #         return
+
+    #     elif isinstance(radius, (float, int, complex)):
+    #         radius = (radius, radius)
+
+    #     if r0 in (0, None, '', []):
+    #         r0_x = (self.x[-1] + self.x[0]) / 2
+    #         r0_y = (self.y[-1] + self.y[0]) / 2
+    #         r0 = (r0_x, r0_y)
+
+    #     if radiusx * radiusy > 0:
+    #         t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+    #         t1.circle(r0=r0, radius=radius, angle=0 * degrees)
+    #         self.Ex = t1.u * self.Ex
+    #         self.Ey = t1.u * self.Ey
+    #         self.Ez = t1.u * self.Ez
 
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
@@ -452,8 +487,6 @@ class Vector_field_XY(object):
         """
         from .vector_sources_XY import Vector_source_XY
 
-        # dx = self.x[1] - self.x[0]
-        # dy = self.y[1] - self.y[0]
         num_x, num_y = self.X.shape
 
         # numerical aperture
@@ -466,9 +499,6 @@ class Vector_field_XY(object):
 
         u = self.X / radius
         v = self.Y / radius
-
-        # X_obs = sin_theta_max * self.X / self.wavelength
-        # Y_obs = sin_theta_max * self.Y / self.wavelength
 
         circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
         circle_mask.circle(r0=(0, 0), radius=radius)
@@ -621,7 +651,7 @@ class Vector_field_XY(object):
         circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
         circle_mask.circle(r0=(0, 0), radius=radius)
 
-        self.mask_circle(r0=(0., 0.), radius=radius)
+        self.pupil(r0=(0., 0.), radius=radius)
 
         cos_theta = np.cos(theta)
         sin_theta = -np.sin(theta)
@@ -1617,7 +1647,7 @@ class Vector_field_XY(object):
                           num_ellipses=(21, 21),
                           amplification=0.75,
                           color_line='w',
-                          line_width=1,
+                          line_width=0.75,
                           draw_arrow=True,
                           head_width=1,
                           ax=False,

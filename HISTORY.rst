@@ -87,7 +87,19 @@ Beta state
 
 * Fix bugs:
 
-  - (radial and azimuthal vector waves)
+  - radial and azimuthal vector waves
+  - Change in criterion of plane waves to Physics (ISO 80000-2:2019 convention): https://en.wikipedia.org/wiki/Spherical_coordinate_system#Coordinate_system_conversions
+  - constant_wave -> constant_polarization in vector_sources_XY
+  - mask_circle -> pupil
+
+* New vector_fields_XY:
+
+  - vector_paraxial_fields -> vector_fields
+
+* New schemes mainly for representation:
+
+  - Scalar_field_Z
+  - vector_X, vector_Z, vector_XZ, vector_XYZ
 
 
 * New Scalar_mask_XY: 
@@ -98,11 +110,6 @@ Beta state
   - rings
 
 
-* New vector_fields_XY:
-
-  - vector_paraxial_fields -> vector_fields
-
-
 * New propagation algorithms:
 
   - WPM and BPM in 3D
@@ -111,12 +118,6 @@ Beta state
   - VRS (vector Rayleigh-Sommerfeld propagation, with Ez field)
   - Chirped z-transform (CZT) for scalar fields
   - Chirped z-transform (CZT) for vector fields
-
-
-* New schemes mainly for representation:
-
-  - Scalar_field_Z
-  - vector_X, vector_Z, vector_XZ, vector_XYZ
 
 
 * Other:

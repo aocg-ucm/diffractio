@@ -34,7 +34,7 @@ polarization_m45 = [1, -1] / np.sqrt(2)
 
 class Test_vector_sources_XY(object):
 
-    def test_constant_wave(self):
+    def test_constant_polarization(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
@@ -45,7 +45,7 @@ class Test_vector_sources_XY(object):
         wavelength = 1 * um
 
         EM = Vector_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u=1, v=(1, 1j))
+        EM.constant_polarization(u=1, v=(1, 1j))
 
         save_figure_test(newpath, func_name, add_name='_fields')
 
@@ -70,10 +70,10 @@ class Test_vector_sources_XY(object):
         u1.plane_wave(A=1, theta=1 * degrees, phi=0 * degrees)
 
         EM1 = Vector_source_XY(x0, y0, wavelength)
-        EM1.constant_wave(u=u0, v=[1, 0])
+        EM1.constant_polarization(u=u0, v=[1, 0])
 
         EM2 = Vector_source_XY(x0, y0, wavelength)
-        EM1.constant_wave(u=u1, v=[1, 0])
+        EM1.constant_polarization(u=u1, v=[1, 0])
 
         EM = EM1 + EM2
 
@@ -148,7 +148,7 @@ class Test_vector_sources_XY(object):
                      theta=0. * degrees,
                      phi=0 * degrees)
         EM = Vector_source_XY(x0, y0, wavelength)
-        EM.constant_wave(u, v=(1, 1))
+        EM.constant_polarization(u, v=(1, 1))
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')

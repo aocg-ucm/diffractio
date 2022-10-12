@@ -43,7 +43,7 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import nearest
 
-from .utils_optics import field_parameters, normalize, FWHM1D
+from .utils_optics import field_parameters, normalize_field, FWHM1D
 
 num_max_processors = multiprocessing.cpu_count()
 
@@ -270,23 +270,15 @@ class Scalar_field_Z(object):
             field.u = u_new
             return field
 
-    def normalize(self, kind='intensity', new_field=False):
+    def normalize(self, new_field=False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
-            kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
         """
-        u_new = normalize(self.u, kind)
-
-        if new_field is False:
-            self.u = u_new
-        else:
-            field_output = Scalar_field_Z(self.z, self.wavelength)
-            field_output.u = u_new
-            return field_output
+        return normalize_field(self, new_field)
 
     def intensity(self):
         """Intensity.

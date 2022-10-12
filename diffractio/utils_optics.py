@@ -715,40 +715,74 @@ def uniform_spectrum(wavelengths, normalize=True):
     return weights
 
 
-def normalize(u, kind='intensity'):
-    """Normalizes a field to have intensity or amplitude, etc. 1
+def normalize_field(self, new_field=False):
+    """Normalize the field to maximum intensity.
 
     Parameters:
-        u (numpy.array): optical field (comes usually form field.u)
-        kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
-
-    Returns
-        u (numpy.array): normalized optical field
+        (Scalar_field): field_*
+        new_field (bool): If True returns a field, else returns a matrix
+    Returns:
+        (np.array): normalized field.
     """
 
-    if kind == 'intensity':
-        intensity_max = (np.abs(u)).max()
-        u = u / intensity_max
-    elif kind == 'amplitude':
-        amplitude_max = np.sqrt(np.abs(u)).max()
-        u = u / amplitude_max
-    if kind == 'logarithm':
-        log_max = (np.log(np.sqrt(np.abs(u)))).max()
-        u = u / log_max
+    if self.type[0:6] == 'Scalar':
 
-    return u
+        max_amplitude = np.sqrt(np.abs(self.u)**2).max()
+
+        if new_field is False:
+            self.u = self.u / max_amplitude
+        else:
+            field_new = self.duplicate()
+            field_new.u = self.u / max_amplitude
+            return field_new
+
+    elif self.type[0:6] == 'Vector':
+        max_amplitude = np.sqrt(
+            np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
+            np.abs(self.Ez)**2).max()
+
+        if new_field is False:
+            self.Ex = self.Ex / max_amplitude
+            self.Ey = self.Ey / max_amplitude
+            self.Ez = self.Ez / max_amplitude
+        else:
+            field_new = self.duplicate()
+            field_new.Ex = self.Ex / max_amplitude
+            field_new.Ey = self.Ey / max_amplitude
+            field_new.Ez = self.Ez / max_amplitude
+            return field_new
 
 
-def normalize_vector(u):
-    """Normalizes a vector to have intensity or amplitude, etc. 1
+# def normalize(u, kind='intensity'):
+#     """Normalizes a field to have intensity or amplitude, etc. 1
 
-    Parameters:
-        u (numpy.array): vector (last dimension should have size 2 or 3)
+#     Parameters:
+#         u (numpy.array): optical field (comes usually form field.u)
+#         kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
 
-    Returns
-        u (numpy.array): normalized optical field
-    """
-    return u / np.linalg.norm(u)
+#     Returns
+#         u (numpy.array): normalized optical field
+#     """
+
+#     if kind == 'intensity':
+#         intensity_max = (np.abs(u)).max()
+#         u = u / intensity_max
+#     elif kind == 'amplitude':
+#         amplitude_max = np.sqrt(np.abs(u)).max()
+#         u = u / amplitude_max
+
+#     return u
+
+# def normalize_vector_deprecated(u):
+#     """Normalizes a vector to have intensity or amplitude, etc. 1
+
+#     Parameters:
+#         u (numpy.array): vector (last dimension should have size 2 or 3)
+
+#     Returns
+#         u (numpy.array): normalized optical field
+#     """
+#     return u / np.linalg.norm(u)
 
 
 def field_parameters(u, has_amplitude_sign=False):
