@@ -30,13 +30,6 @@ The fields and the masks must be defined in a plane.
 Single step to propagate to a near or far observation plane, which allows fast computations. 
 
 
-**Plane Wave Descomposition (PWD)**
-
-- Scheffers, h. (1942). Vereinfachte  Ableitung  der  Formeln  fur  die  Fraunhoferschen  Beugungserscheinungen.  Annalen der Physik,  434(2), 211-215. https://doi.org/10.1002/andp.19424340210
-
-It provides the key idea of the wave propagation method because it emphasizes the decomposition of a field E(r) into its plane waves components by the Fourier transformation.
-
-
 **Beam propagation method (BPM)** 
 
 - Feit, M. D., and Fleck, J. A. (1978). Light propagation in graded-index optical fibers.
@@ -90,7 +83,6 @@ The VRS method propagates (Ex,Ey,Ez) fields offering the advantage of significan
    BPM.ipynb
    WPM.ipynb
    CZT.ipynb
-   PWD.ipynb
    VFFT.ipynb
    VRS.ipynb
    VCZT.ipynb

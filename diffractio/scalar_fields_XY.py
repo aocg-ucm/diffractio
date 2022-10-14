@@ -1090,10 +1090,7 @@ class Scalar_field_XY(object):
 
             z_now = z_now + dz
             if verbose is True:
-                if sys.version_info.major == 3:
-                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
-                else:
-                    print("{}/{}".format(j, num_steps))
+                print("{}/{}".format(j, num_steps), sep='\r', end='\r')
 
         t2 = time.time()
         if verbose is True:
@@ -1251,7 +1248,8 @@ class Scalar_field_XY(object):
             Xout, Yout = np.meshgrid(xout, yout)
 
             for i, z_now in enumerate(z):
-
+                if verbose is True:
+                    print("{}/{}".format(i, num_z), sep="\r", end="\r")
                 R = np.sqrt(Xout**2 + Yout**2 + z_now**2)
                 F0 = 1 / (2 * np.pi) * np.exp(
                     1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
@@ -1953,8 +1951,7 @@ class Scalar_field_XY(object):
             print("not in kinds")
 
         if has_colorbar in ('horizontal', 'vertical'):
-            plt.colorbar(orientation=has_colorbar, shrink=0.66)
-
+            plt.colorbar(orientation=has_colorbar, shrink=0.5, pad=0.15)
         if not filename == '':
             plt.savefig(filename,
                         dpi=300,
@@ -1992,6 +1989,7 @@ class Scalar_field_XY(object):
                                        color=colormap_kind,
                                        reduce_matrix=self.reduce_matrix,
                                        **kwargs)
+        plt.tight_layout()
 
         # if self.type == 'Scalar_mask_XY':
         #    plt.clim(0, 1)
@@ -2121,7 +2119,6 @@ class Scalar_field_XY(object):
         plt.axis('scaled')
         plt.axis(extension)
         plt.title("$intensity$")
-        plt.clim(-180, 180)
         h1.set_cmap(self.CONF_DRAWING["color_intensity"])
         if self.type == 'Scalar_mask_XY':
             plt.clim(0, 1)

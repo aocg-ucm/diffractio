@@ -431,7 +431,7 @@ class Vector_mask_XY(Vector_field_XY):
             im1.set_clim(0, a_max)
             axs[1, 1].set_title("J11")
 
-            plt.suptitle("Amplitudes", fontsize=20)
+            plt.suptitle("amplitudes", fontsize=20)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
@@ -443,9 +443,8 @@ class Vector_mask_XY(Vector_field_XY):
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
-        if kind in ('phase', 'all'):
+        if kind in ('phases', 'all'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
-
             fig, axs = plt.subplots(2,
                                     2,
                                     sharex='col',
@@ -478,9 +477,9 @@ class Vector_mask_XY(Vector_field_XY):
                                    extent=extension,
                                    origin='lower')
             im1.set_clim(-180, 180)
-            axs[1, 1].set_title("J11")
+            axs[1, 1].set_title("J12")
 
-            plt.suptitle("Phases", fontsize=20)
+            plt.suptitle("phases", fontsize=20)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
@@ -491,6 +490,55 @@ class Vector_mask_XY(Vector_field_XY):
             elif range_scale == 'mm':
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
+
+        # if kind in ('phase', 'all'):
+        #     plt.set_cmap(CONF_DRAWING['color_phase'])
+
+        #     fig, axs = plt.subplots(2,
+        #                             2,
+        #                             sharex='col',
+        #                             sharey='row',
+        #                             gridspec_kw={
+        #                                 'hspace': 0.25,
+        #                                 'wspace': 0.025
+        #                             })
+        #     fig.set_figwidth(xsize)
+        #     fig.set_figheight(1.25 * ysize)
+        #     im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
+        #                            extent=extension,
+        #                            origin='lower')
+        #     im1.set_clim(-180, 180)
+        #     axs[0, 0].set_title("J00")
+
+        #     im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees,
+        #                            extent=extension,
+        #                            origin='lower')
+        #     im1.set_clim(-180, 180)
+        #     axs[0, 1].set_title("J01")
+
+        #     im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees,
+        #                            extent=extension,
+        #                            origin='lower')
+        #     im1.set_clim(-180, 180)
+        #     axs[1, 0].set_title("J10")
+
+        #     im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees,
+        #                            extent=extension,
+        #                            origin='lower')
+        #     im1.set_clim(-180, 180)
+        #     axs[1, 1].set_title("J11")
+
+        #     plt.suptitle("Phases", fontsize=20)
+        #     cax = plt.axes([.89, 0.2, 0.03, 0.6])
+        #     cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
+        #     cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+
+        #     if range_scale == 'um':
+        #         axs[1, 0].set_xlabel(r'x ($\mu$m)')
+        #         axs[1, 0].set_ylabel(r'y($\mu$m)')
+        #     elif range_scale == 'mm':
+        #         axs[1, 0].set_xlabel(r'x (mm)')
+        #         axs[1, 0].set_ylabel(r'y (mm)')
 
 
 def rotation_matrix_Jones(angle):

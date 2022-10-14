@@ -358,7 +358,7 @@ def FWHM1D(x,
         plt.ylim(ymin=0)
         plt.xlim(x[0], x[-1])
 
-    return FWHM_x
+    return np.squeeze(FWHM_x)
 
 
 def FWHM2D(x,

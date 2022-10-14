@@ -787,12 +787,13 @@ class Scalar_field_X(object):
 
     #     return u_out
 
-    def CZT(self, z, xout=None):
+    def CZT(self, z, xout=None, verbose=False):
         """Chirped z-transform.
 
         Parameters:
             z (float or np.array): diffraction distance
             xout (float or np.array): x array with positions of the output plane
+            verbose (bool): If True it prints information.
 
 
         Returns:
@@ -856,8 +857,10 @@ class Scalar_field_X(object):
 
         else:
             u_zs = np.zeros((len(z), num_x), dtype=complex)
-
+            num_z = len(z)
             for i, z_now in enumerate(z):
+                if verbose is True:
+                    print("{}/{}".format(i, num_z), sep="\r", end="\r")
                 delta_out = np.zeros(2)
                 if num_x > 1:
                     delta_out[0] = (xend - xstart) / (num_x - 1)

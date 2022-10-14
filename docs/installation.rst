@@ -37,10 +37,9 @@ Diffractio uses also the following non-standard modules:
 
 In some schemes, the following modules are also required:
 
-* screeninfo
-* PIL
-* mayavi, traits, tvtk
-* python-opencv
+* numpy, scipy, matplotlib
+* Pillow, numexpr, pandas, screeninfo, opencv-python
+* ipywidgets, ipympl
 
 They should previously be installed before Diffractio module.
 

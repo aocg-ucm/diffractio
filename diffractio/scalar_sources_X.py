@@ -90,8 +90,8 @@ class Scalar_source_X(Scalar_field_X):
             R = -z0 * (1 + (z_rayleigh / z0)**2)
         amplitude = A * w0 / w * exp(-(self.x - x0)**2 / (w**2))
         phase1 = exp(1j * k * ((self.x - x0) * np.sin(theta)))  # rotation
-        phase2 = exp(
-            1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 / (2 * R)))
+        phase2 = exp(1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 /
+                           (2 * R)))
 
         self.u = amplitude * phase1 * phase2
 
@@ -99,7 +99,6 @@ class Scalar_source_X(Scalar_field_X):
                        A=1,
                        x0=0 * um,
                        z0=-1000 * um,
-                       mask=True,
                        radius=100 * um,
                        normalize=False):
         """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
@@ -114,18 +113,10 @@ class Scalar_source_X(Scalar_field_X):
         """
         k = 2 * pi / self.wavelength
 
-        # Centrado radius de la mask y distance al origen emisor
         Rz = sqrt((self.x - x0)**2 + z0**2)
 
-        # Definicion de la mask circular
-        if mask is True:
-            R2 = (self.x - x0)**2
-            amplitude = (R2 < radius**2)
-        else:
-            amplitude = 1
-
         # Onda esferica
-        self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
+        self.u = A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)

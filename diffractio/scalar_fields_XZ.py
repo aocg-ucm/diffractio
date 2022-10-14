@@ -699,12 +699,9 @@ class Scalar_field_XZ(object):
             uf = self.u0
             for i in range(num_executions):
                 if verbose is True:
-                    if sys.version_info.major == 3:
-                        print("{}/{}".format(i, num_executions),
-                              sep="\r",
-                              end="\r")
-                    else:
-                        print("{}/{}".format(i, num_executions))
+                    print("{}/{}".format(i, num_executions),
+                          sep="\r",
+                          end="\r")
 
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(x=self.x,

@@ -800,7 +800,7 @@ class Vector_field_XY(object):
             self.Ey = Ey.u
             self.Ez = Ez.u
 
-    def CZT(self, z, xout=None, yout=None, verbose=True):
+    def CZT(self, z, xout=None, yout=None, verbose=False):
         """Vector Z Chirped Transform algorithm (VCZT)
 
         Parameters:
@@ -883,8 +883,14 @@ class Vector_field_XY(object):
                 return E_out
 
         elif num_z > 1:
-            e0x_zs = e0x.CZT(z, xout, yout)
-            e0y_zs = e0y.CZT(z, xout, yout)
+            if verbose is True:
+                print("1/3")
+            e0x_zs = e0x.CZT(z, xout, yout, verbose=verbose)
+            if verbose is True:
+                print("2/3")
+            e0y_zs = e0y.CZT(z, xout, yout, verbose=verbose)
+            if verbose is True:
+                print("3/3")
             e0z_zs = e0x_zs.duplicate()
 
             u_zs = np.zeros_like(e0x_zs.u)
@@ -1513,56 +1519,110 @@ class Vector_field_XY(object):
             cut_value (float): If not None, cuts the maximum intensity to this value
 
         """
-
         Ex_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ex)
         Ey_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ey)
+        Ez_r = reduce_matrix_size(self.reduce_matrix, self.x, self.y, self.Ez)
 
-        intensity_x = np.abs(Ex_r)**2
-        intensity_x = normalize_draw(intensity_x, logarithm, normalize,
-                                     cut_value)
+        amplitude1 = np.sqrt(np.abs(Ex_r)**2)
+        amplitude1 = normalize_draw(amplitude1, logarithm, normalize,
+                                    cut_value)
 
-        intensity_y = np.abs(Ey_r)**2
-        intensity_y = normalize_draw(intensity_y, logarithm, normalize,
-                                     cut_value)
+        amplitude2 = np.sqrt(np.abs(Ey_r)**2)
+        amplitude2 = normalize_draw(amplitude2, logarithm, normalize,
+                                    cut_value)
 
-        intensity_max = np.max((intensity_x.max(), intensity_y.max()))
+        amplitude3 = np.sqrt(np.abs(Ez_r)**2)
+        amplitude3 = normalize_draw(amplitude3, logarithm, normalize,
+                                    cut_value)
+
+        amplitude_max = np.max(
+            (amplitude1.max(), amplitude2.max(), amplitude3.max()))
+
         tx, ty = rcParams['figure.figsize']
 
-        plt.figure(figsize=(tx, 1.75 * ty))
+        percentage_z = 0.01
 
-        h1 = plt.subplot(2, 2, 1)
+        if amplitude3.max() < percentage_z * amplitude_max:
+            plt.figure(figsize=(1.1 * tx, 1.5 * ty))
 
-        self.__draw1__(intensity_x, color_intensity, "$I_x$")
-        plt.clim(0, intensity_max)
+            h1 = plt.subplot(2, 2, 1)
 
-        h2 = plt.subplot(2, 2, 2)
-        self.__draw1__(intensity_y, color_intensity, "$I_y$")
-        plt.clim(0, intensity_max)
+            self.__draw1__(amplitude1, color_intensity, "$A_x$")
+            plt.clim(0, amplitude_max)
 
-        h3 = plt.subplot(2, 2, 3)
-        phase = np.angle(self.Ex)
-        phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
+            h2 = plt.subplot(2, 2, 2)
+            self.__draw1__(amplitude2, color_intensity, "$A_y$")
+            plt.clim(0, amplitude_max)
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
-        plt.clim(-180, 180)
+            h3 = plt.subplot(2, 2, 3)
+            phase = np.angle(self.Ex)
+            phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
 
-        h4 = plt.subplot(2, 2, 4)
-        phase = np.angle(self.Ey)
-        phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
+            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            plt.clim(-180, 180)
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
-        plt.clim(-180, 180)
-        # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+            h4 = plt.subplot(2, 2, 4)
+            phase = np.angle(self.Ey)
+            phase[amplitude2 < percentage_intensity * (amplitude2.max())] = 0
 
-        h4 = plt.gca()
-        plt.subplots_adjust(left=0,
-                            bottom=0,
-                            right=1,
-                            top=1,
-                            wspace=0.05,
-                            hspace=0)
-        plt.tight_layout()
-        return h1, h2, h3, h4
+            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            plt.clim(-180, 180)
+            # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+
+            h4 = plt.gca()
+            plt.subplots_adjust(left=0,
+                                bottom=0,
+                                right=1,
+                                top=1,
+                                wspace=0.05,
+                                hspace=0)
+            plt.tight_layout()
+            return h1, h2, h3, h4
+        else:
+            plt.figure(figsize=(1.1 * 1.5 * tx, 1.4 * 1.5 * ty))
+
+            h1 = plt.subplot(2, 3, 1)
+
+            self.__draw1__(amplitude1, color_intensity, "$A_x$")
+            plt.clim(0, amplitude_max)
+
+            h2 = plt.subplot(2, 3, 2)
+            self.__draw1__(amplitude2, color_intensity, "$A_y$")
+            plt.clim(0, amplitude_max)
+
+            h3 = plt.subplot(2, 3, 3)
+            self.__draw1__(amplitude3, color_intensity, "$A_z$")
+            plt.clim(0, amplitude_max)
+
+            h4 = plt.subplot(2, 3, 4)
+            phase = np.angle(self.Ex)
+            phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
+
+            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            plt.clim(-180, 180)
+
+            h5 = plt.subplot(2, 3, 5)
+            phase = np.angle(self.Ey)
+            phase[amplitude2 < percentage_intensity * (amplitude2.max())] = 0
+
+            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            plt.clim(-180, 180)
+
+            h6 = plt.subplot(2, 3, 6)
+            phase = np.angle(self.Ez)
+            phase[amplitude3 < percentage_intensity * (amplitude3.max())] = 0
+            self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
+            plt.clim(-180, 180)
+            # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+
+            plt.subplots_adjust(left=0,
+                                bottom=0,
+                                right=1,
+                                top=1,
+                                wspace=0.05,
+                                hspace=0)
+            plt.tight_layout()
+            return h1, h2, h3, h4, h5, h6
 
     def __draw_stokes__(self,
                         logarithm,
@@ -1618,7 +1678,7 @@ class Vector_field_XY(object):
 
         tx, ty = rcParams['figure.figsize']
 
-        plt.figure(figsize=(tx, 1.75 * ty))
+        plt.figure(figsize=(1.1 * tx, 1.75 * ty))
 
         max_intensity = max(A.max(), B.max())
 
@@ -1778,7 +1838,7 @@ class Vector_field_XY(object):
 
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.colorbar(orientation='horizontal', shrink=0.66, pad=0.15)
+        plt.colorbar(orientation='horizontal', shrink=0.5, pad=0.15)
         h.set_clim(0, image.max())
         plt.subplots_adjust(0.01, 0.01, 0.99, 0.95, 0.05, 0.05)
 
@@ -1796,8 +1856,6 @@ def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
         theta (float): angle of ellipse
         h (float): to remove
         amplification (float): increase of size of ellipse
-
-    TODO: Remove hs
     """
     # esto es para verlo más grande
     A = A * amplification

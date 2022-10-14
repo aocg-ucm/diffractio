@@ -33,12 +33,13 @@ It implements Scalar and vector Optics. The main algorithms used are:
 
 * Fast Fourier Transform (FFT).
 * Rayleigh Sommerfeld (RS).
+* Chirp z-transform (CZT).
 * Plane Wave Descomposition (PWD).
-* Wave Propagation Method (WPM).
 * Beam Propagation Method (BPM).
+* Wave Propagation Method (WPM).
 * Vectorial Rayleigh-Sommerfeld (VRS).
 * Vector Fast Fourier Tranform (VFFT).
-* Chirp z-transform (CZT).
+* Vector Chirp z-transform (VCZT).
 
 When possible, multiprocessing is implemented for a faster computation.
 
@@ -80,17 +81,12 @@ One main part of this software is the generation of optical fields such as:
 * Spherical waves.
 * Gaussian beams.
 * Bessel beams.
-* Aberrated beams.
-
-Also, in the XY module the following sources are defined:
-
 * Vortex beams.
 * Laguerre beams.
 * Hermite-Gauss beams.
 * Zernike beams.
-* Bessel beams.
 
-.. image:: source.png
+.. image:: readme1.png
    :width: 400
 
 
@@ -99,43 +95,46 @@ Masks
 
 Another important part of Diffractio is the generation of masks and Diffractive Optical Elements such as:
 
-* Slits, double slits
-* Lenses, diffractive lenses, aspherical lenses.
-* Gratings, prisms, biprism
-* Rough surfaces, dust are defined as plane. However, in the XZ and XYZ frames, volumetric mask are also possible.
+* Slits, double slits, circle, square, ring ...
+* Lenses, diffractive lenses, aspherical lenses...
+* Axicon, prisms, biprism, image, rough surface, gray scale ...
+* Gratings: Ronchi, phase, radial, angular, sine, forked, blazed, 2D, chess...
+
+.. image:: readme2.png
+   :height: 400
+
+In the XZ scheme there is also a number of masks:
+
+* image, sphere, layer, lenses, wedge, prism, probe, gratings...
+* Additionally, any X_mask can be extruded to the XZ scheme.
+* Masks from functions
+* Surfaces can be added to objects
 
 
-.. image:: mask1.png
-   :height: 300
-
-.. image:: mask2.png
-   :height: 350
+.. image:: readme3.png
+   :height: 400
 
 
 Fields
 =========
 
-In these module, algorithms for propagation of light are implemented. We have implemented the following algorithms for light propagation:
+Several propagation algorithms for propagation of light are implemented in the *fields* modules:
 
-* **Rayleigh-Sommerfeld (RS)** which allows in a single step to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
+* **Fast Fourier Transform (FFT)** which allows, in a single step, to determine the field at the far field.
 
+* **Rayleigh-Sommerfeld (RS)** [Appl. Opt., 45(6) 1102–1110, (2006)] RS allows, in a single step, to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
 
-* **Fast Fourier Transform (FFT)** which allows, in a single step to determine the field at the far field.
+* **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is computed according to the split-step propagation scheme.
 
+* **Wave Propagation Method (WPM)**. [Appl. Opt. 32, 4984 (1993)] WPM was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Fast implementation with discrete number of refraction indexes is also implemented.
 
-* **Plane Wave Descomposition (PWD)**. It provides the key idea of the wave propagation method because it emphasizes the decomposition of a field E(r) into its plane waves components by the Fourier transformation.
+* **Chirped Z-Transform (CZT)**.  [Light: Science and Applications, 9(1), (2020)] CZT allows, in a single step, to propagate to a near or far observation plane. It present advantages with respecto to RS algorithm, since the region of interest and the sampling numbers can be arbitrarily chosen, endowing the proposed method with superior flexibility. CZT algorithm allows to have a XY mask and compute in XY, Z, XZ, XYZ schemes, simply defining the output arrays.
 
+* **Vector Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013)] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
 
-* **Wave Propagation Method (WPM)**. The WPM [Appl. Opt. 32, 4984 (1993) ] was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation
+* **Vector Chirped Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
 
-
-* **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is M is computed according to the split-step propagation scheme.
-
-
-* **Vectorial Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013).] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
-
-
-* **Chirped Z-Transform (CZT)**.  Bluestein, L. "A linear filtering approach to the computation of discrete Fourier transform". IEEE Transactions on Audio and Electroacoustics. 18 (4): 451–455.
+    """
 
 The fields, masks and sources can be stored in files.
 
@@ -143,25 +142,28 @@ Also drawings can be easily obtained, for intensity, phase, fields, etc.
 
 In some modules, videos can be generated for a better analysis of optical fields.
 
-.. image:: propagation.png
-   :width: 400
+.. image:: readme4.png
+   :width: 600
+
+.. image:: readme5.png
+   :width: 600
 
 
 Vector beams
 ==================================
 
-Here, we implement new classes where the E_x, E_y, and E_z fields are generated and propagted using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
+Here, we implement new classes where the $E_x$, $E_y$, and $E_z$ fields are generated and propagated using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
 Also, simple and complex polarizing masks can be created.
 
-**Ex and Ey fields**
+**Intensity of vector field**
 
-.. image:: vector_gauss_radial_fields.png
+.. image:: readme6.png
    :width: 700
 
 **Polarization: Stokes parameters**
 
-.. image:: vector_gauss_radial_stokes.png
-  :width: 700
+.. image:: readme7.png
+   :width: 700
 
 
 Other features
@@ -169,7 +171,7 @@ Other features
 
 * Intensity, MTF and other parameters are obtained from the optical fields.
 
-* Fields can be added and interference is produced. Masks can be multiplied, added and substracted in order to make complex structures
+* Fields can be added simply with the + signe, and interference is produced. Masks can be multiplied, added and substracted in order to make complex structures
 
 * Resampling fields in order to analyze only areas of interest.
 
@@ -187,11 +189,11 @@ Authors
 * Luis Miguel Sanchez Brea <optbrea@ucm.es>
 
 
-    **Universidad Complutense de Madrid**,
-    Faculty of Physical Sciences,
-    Department of Optics
-    Plaza de las ciencias 1,
-    ES-28040 Madrid (Spain)
+   **Universidad Complutense de Madrid**,
+   Faculty of Physical Sciences,
+   Department of Optics
+   Plaza de las ciencias 1,
+   ES-28040 Madrid (Spain)
 
 .. image:: logoUCM.png
    :width: 125
@@ -210,21 +212,22 @@ References
 
 **Propagation algorithms**:
 
-* Shen, F. & Wang, A. Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
-* Fertig, M. & Brenner, K.-H. Vector wave propagation method. J. Opt. Soc. Am. A 27, 709 (2010).
-* Fertig, M. & Brenner, K.-H. Vector wave propagation method. PhD thesis (Mannheim, 2010).
-* Ye, H. et al. Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method. Laser Phys. Lett. 10, (2013).
-* Schmidt, S. et al. Wave-optical modeling beyond the thin-element-approximation. Opt. Express 24, 30188 (2016).
-* Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A. & Gross, H. Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Opt. Lett. 42, 1612 (2017).
-* K. Jahn and N. Bokor, “Intensity control of the focal spot by vectorial beam shaping,” Opt. Commun., vol. 283, no. 24, pp. 4859–4865, 2010, doi: 10.1016/j.optcom.2010.07.030. 
-* Leo I. Bluestein, "A linear filtering approach to the computation of the discrete Fourier transform," Northeast Electronics Research and Engineering Meeting Record 10, 218-219 (1968).
-
+* Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
+* Fertig, M. & Brenner, K.-H. "Vector wave propagation method". J. Opt. Soc. Am. A 27, 709 (2010).
+* Fertig, M. & Brenner, K.-H. "Vector wave propagation method". PhD thesis (Mannheim, 2010).
+* Ye, H. et al. "Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method" Laser Phys. Lett. 10, (2013).
+* Schmidt, S. et al. "Wave-optical modeling beyond the thin-element-approximation" Opt. Express 24, 30188 (2016).
+* Schmidt, S., et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).
+* Jahn K. and Bokor N., “Intensity control of the focal spot by vectorial beam shaping,” Opt. Commun., (283)24, 4859–4865 (2010).
+* Bluestein, L., "A linear filtering approach to the computation of the discrete Fourier transform," Northeast Electronics Research and Engineering Meeting Record 10, 218-219 (1968).
+* Leutenegger M. et al. "Fast focus field calculations" Optics Express 14(23) 11277 (2006).
+* Hu Y. et al. "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method" Light: Science & Applications  9(119) (2020)
 
 **Other references**
 
-* J.W. Goodman, Introduction to Fourier Optics. McGraw-Hill, 1996.
-* B.E. Saleh y M. C. Teich, Fundamentals of photonics. John Wiley & Sons, 2019.
-* Z.Qiwen, Vectorial optical fields: Fundamentals and applications. World scientific, 2013.
+* J.W. Goodman, "Introduction to Fourier Optics" McGraw-Hill, 1996.
+* B.E. Saleh y M. C. Teich, "Fundamentals of photonics" John Wiley & Sons, 2019.
+* Z.Qiwen, "Vectorial optical fields: Fundamentals and applications" World scientific, 2013.
 * "Numerical Methods in Photonics Lecture Notes".  http://ecee.colorado.edu/~mcleod/teaching/nmip/lecturenotes.html.
 
 

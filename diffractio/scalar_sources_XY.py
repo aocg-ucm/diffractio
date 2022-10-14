@@ -324,7 +324,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Er * Ef
 
-    def zernike_beam(self, A, r0, radius, n, m, c_nm, mask=True):
+    def zernike_beam(self, A, r0, radius, n, m, c_nm):
         """Zernike beam.
 
         Parameters:
@@ -334,7 +334,6 @@ class Scalar_source_XY(Scalar_field_XY):
             n (list): list of integers with orders
             m (list): list of integers with orders
             c_nm (list): list of integers with coefficients
-            mask (bool): if True a mask of radius is provided
 
         Example:
              zernike_beam(A=1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1], mask=True)
@@ -350,12 +349,7 @@ class Scalar_source_XY(Scalar_field_XY):
             phase = phase + c_nm[s] * fZernike(self.X - x0, self.Y - y0, n[s],
                                                m[s], radius)
 
-        if mask is True:
-            amplitude = (R < 1)
-        else:
-            amplitude = 1
-
-        self.u = A * amplitude * exp(1.j * np.real(phase))
+        self.u = A * exp(1.j * np.real(phase))
 
     def bessel_beam(self,
                     A,
@@ -384,14 +378,14 @@ class Scalar_source_XY(Scalar_field_XY):
         k = 2 * np.pi / self.wavelength
         x0, y0 = r0
         R = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
-        beta = k0 * np.cos(alpha)
+        beta = k * np.cos(alpha)
 
         if n == 0:
-            jbessel = j0(k0 * np.sin(alpha) * R)
+            jbessel = j0(k * np.sin(alpha) * R)
         elif n == 1:
-            jbessel = j1(k0 * np.sin(alpha) * R)
+            jbessel = j1(k * np.sin(alpha) * R)
         else:
-            jbessel = jv(n, k0 * np.sin(alpha) * R)
+            jbessel = jv(n, k * np.sin(alpha) * R)
 
         self.u = A * jbessel * np.exp(1j * beta * z0) * np.exp(
             1.j * k *

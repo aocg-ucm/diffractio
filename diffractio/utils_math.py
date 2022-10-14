@@ -363,22 +363,22 @@ def ndgrid(*args, **kwargs):
 
         >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
         array([[[0, 0, 0],
-                        [1, 1, 1]],
-                   [[2, 3, 4],
-                        [2, 3, 4]]])
+               [1, 1, 1]],
+               [[2, 3, 4],
+               [2, 3, 4]]])
 
         For input vectors of different data kinds,
         same_dtype=False makes ndgrid()
         return a list of arrays with the respective dtype.
         >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
         [array([[0, 0, 0], [1, 1, 1]]),
-         array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
+        array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
 
         Default is to return a single array.
 
         >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
         array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
-                   [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
+              [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
     same_dtype = kwargs.get("same_dtype", True)
     V = [array(v) for v in args]  # ensure all input vectors are arrays
@@ -395,28 +395,6 @@ def ndgrid(*args, **kwargs):
         return array(result)  # converts to a common dtype
     else:
         return result  # keeps separate dtype for each output
-
-
-# def meshgrid2(*arrs):
-#     arrs = tuple(reversed(arrs))  # edit
-#     lens = map(len, arrs)
-#     dim = len(arrs)
-#
-#     sz = 1
-#     for s in lens:
-#         sz *= s
-#
-#     ans = []
-#     for i, arr in enumerate(arrs):
-#         slc = [1] * dim
-#         slc[i] = lens[i]
-#         arr2 = np.asarray(arr).reshape(slc)
-#         for j, sz in enumerate(lens):
-#             if j != i:
-#                 arr2 = arr2.repeat(sz, axis=j)
-#         ans.append(arr2)
-#
-#     return tuple(ans)
 
 
 def get_amplitude(u, sign=False):
@@ -498,25 +476,6 @@ def normalize(v, order=2):
     if norm == 0:
         raise ValueError('normalize: norm = 0.')
     return v / norm
-
-
-#
-# def normalize_field(u, kind='intensity'):
-#     """Normalize the field to maximum intensity.
-#
-#     Parameters:
-#         u (np.array): field
-#
-#     Returns:
-#         normalized field.
-#     """
-#
-#         intensity = np.abs(u**2)
-#         maximum = sqrt(intensity.max())
-#         u = u / maximum
-
-#
-#         return u
 
 
 def binarize(vector, min_value=0, max_value=1):

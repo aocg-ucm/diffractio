@@ -309,31 +309,33 @@ class Scalar_field_Z(object):
         """
         FWHM1D
 
-        remove_background = 'min', 'mean', None
+        Parameters:
+            percentage (float): value between 0 and 1. 0.5 means that the width is computed at half maximum.
+            remove_background (str): 'min', 'mean', None
+            has_draw (bool): If true it draws
+
+        Returns:
+            width (float): width, in this z case: DOF
+        
         """
 
         intensities = np.abs(self.u)**2
 
-        widths = FWHM1D(self.z, intensities, percentage, remove_background,
-                        has_draw)
+        width = FWHM1D(self.z, intensities, percentage, remove_background,
+                       has_draw)
 
-        return widths
+        return np.squeeze(width)
 
-    def DOF(self,
-            w_factor=np.sqrt(2),
-            w_fixed=0,
-            has_draw=False,
-            verbose=False):
+    def DOF(self, percentage=0.5, remove_background=None, has_draw=False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
         Parameters:
+            percentage (float): value between 0 and 1. 0.5 means that the width is computed at half maximum.
+            remove_background (str): 'min', 'mean', None
+            has_draw (bool): If true it draws
 
-            z (np.array): z positions
-            widths (np.array): width at positions z
-            w_factor (float): range to determine z where   w = w_factor * w0, being w0 the beam waist
-            w_fixed (float): If it is not 0, then it is used as w_min
-            has_draw (bool): if True draws the depth of focus
-            verbose (bool): if True, prints data
+        Returns:
+            width (float): width, in this z case: D
 
         References:
 
@@ -346,7 +348,7 @@ class Scalar_field_Z(object):
             (float, float, float): postions (z_min, z_0, z_max) of the depth of focus
         """
 
-        pass
+        return self.FWHM1D(percentage, remove_background, has_draw)
 
     def draw(self,
              kind='intensity',

@@ -275,7 +275,7 @@ class Scalar_mask_X(Scalar_field_X):
         h = h - h.min()
         return h
 
-    def biprism_fresnel(self, angle, x0, radius, mask):
+    def biprism_fresnel(self, angle, x0, radius=0):
         """Fresnel biprism.
 
         Parameters:
@@ -300,7 +300,9 @@ class Scalar_mask_X(Scalar_field_X):
 
         t = np.ones_like(self.x)
 
-        if mask is True:
+        if radius == 0:
+            t = 1
+        else:
             ipasa = np.abs(self.x - x0) > radius
             t[ipasa] = 0.
             remove_phase_out = np.angle(u)
@@ -341,43 +343,33 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = u * np.exp(1.j * k * (n - 1) * h)
         return h
 
-    def lens(self, x0, focal, radius, mask=True):
+    def lens(self, x0, focal, radius=0):
         """Paraxial lens.
 
         Parameters:
             x0 (float): center of lens
             focal (float): focal length of lens
-            mask (bool): if True, mask with size radius
-            radius (float): radius of lens mask
         """
 
         k = 2 * np.pi / self.wavelength
 
         # Definicion de la amplitude y la phase
-        if mask is True:
-            # amplitude = Scalar_mask_X(self.x, self.wavelength)
-            # amplitude.slit(x0, 2 * radius)
-            # t = amplitude.u
-            t = np.zeros_like(self.x, dtype=int)
+        if radius == 0:
+            t = 1
+
+        else:
+            t = np.zeros_like(self.x)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t[ix] = 1
-        else:
-            t = np.ones_like(self.x, dtype=int)
 
         h = (self.x - x0)**2 / (2 * focal)
         self.u = t * np.exp(-1.j * k * h)
-        self.u[t == 0] = 0
 
         h = h - h.min()
         h = h / h.max()
-        return t * h
+        return h
 
-    def lens_spherical(self,
-                       x0,
-                       radius,
-                       focal,
-                       refraction_index=1.5,
-                       mask=False):
+    def lens_spherical(self, x0, radius, focal, refraction_index=1.5):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
 
@@ -386,7 +378,6 @@ class Scalar_mask_X(Scalar_field_X):
             radius (float, float) or (float): radius of lens mask
             focal (float, float) or (float): focal length of lens
             refraction index (float): refraction index of the lens
-            mask (bool): 
 
         Example:
             lens_spherical(x0=0 * um, radius=100 * um,
@@ -397,12 +388,12 @@ class Scalar_mask_X(Scalar_field_X):
 
         R = (refraction_index - self.n_background) * focal
 
-        if mask is True:
+        if radius == 0:
+            t = 1
+        else:
             t = np.zeros_like(self.x, dtype=int)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t[ix] = 1
-        else:
-            t = 1
 
         h = (np.sqrt(R**2 - self.x**2) - R)
 
@@ -412,7 +403,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         return self
 
-    def aspheric(self, x0, c, k, a, n0, n1, radius, mask=True):
+    def aspheric(self, x0, c, k, a, n0, n1, radius):
         """Asferic surface.
 
         $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
@@ -448,12 +439,12 @@ class Scalar_mask_X(Scalar_field_X):
 
         t = t1 + t2
 
-        if mask is True:
+        if radius > 0:
             m1 = np.zeros_like(self.x, dtype=int)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             m1[ix] = 1
         else:
-            m1 = np.ones_like(self.x, dtype=int)
+            m1 = 1
 
         self.u = m1 * np.exp(1j * 2 * np.pi * (n1 - n0) * t / self.wavelength)
         self.u[m1 == 0] = 0
@@ -465,7 +456,6 @@ class Scalar_mask_X(Scalar_field_X):
                      kind='amplitude',
                      binary=True,
                      phase=np.pi,
-                     mask=True,
                      radius=100 * um):
         """Fresnel lens. Amplitude phase, continuous or binary.
 
@@ -485,13 +475,13 @@ class Scalar_mask_X(Scalar_field_X):
         k = 2 * np.pi / self.wavelength
 
         # Definicion de la amplitude y la phase
-        if mask is True:
+        if radius > 0:
 
             t1 = np.zeros_like(self.x)
             ix = (self.x < x0 + radius) & (self.x > x0 - radius)
             t1[ix] = 1
         else:
-            t1 = np.ones_like(self.x)
+            t1 = 1
 
         if kind == 'amplitude' and binary is True:
             # u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))

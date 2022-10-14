@@ -123,9 +123,10 @@ Beta state
 * Other:
 
   - Pupil function in XY and vector XY
-  - Modifications in drawing intensities and fields
+  - Remove mask parameter from lenses
+  - Improving drawings
 
   
 0.1.1 (future)
 --------------------------------
-implement plotly for drawings
+* implement plotly for drawings
