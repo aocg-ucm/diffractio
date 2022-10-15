@@ -76,7 +76,6 @@ class Test_vector_masks_XY(object):
                           radius=(125 * um, 125 * um),
                           focal=(2 * mm, 2 * mm),
                           angle=0 * degrees,
-                          mask=True,
                           kind='amplitude')
 
         EM = Vector_mask_XY(x0, y0, wavelength)

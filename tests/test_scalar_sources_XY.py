@@ -29,6 +29,7 @@ if not os.path.exists(newpath):
 
 
 class Test_Scalar_sources_XY(object):
+
     def test_plane_wave(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -100,11 +101,7 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga de la onda esferica
-        u.spherical_wave(A=1,
-                         r0=(0 * um, 0 * um),
-                         z0=-5 * mm,
-                         radius=300 * um,
-                         mask=True)
+        u.spherical_wave(A=1, r0=(0 * um, 0 * um), z0=-5 * mm, radius=300 * um)
 
         # draw la onda esferica
         u.draw(kind='field', normalize='maximum')
@@ -133,15 +130,13 @@ class Test_Scalar_sources_XY(object):
         u.spherical_wave(A=1,
                          r0=(0 * um, 0 * um),
                          z0=-25.0 * mm,
-                         radius=1300 * um,
-                         mask=False)
+                         radius=1300 * um)
 
         t = Scalar_mask_XY(x0, y0, wavelength0)
         t.lens(r0=(0, 0),
                radius=(300 * um, 300 * um),
                focal=(25 * mm, 25 * mm),
-               angle=0,
-               mask=False)
+               angle=0)
         u_salida = u * t
         u.draw(kind='field')
         t.draw(kind='field')
@@ -242,8 +237,13 @@ class Test_Scalar_sources_XY(object):
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
         # carga del haz de Laguerre
-        u.laguerre_beam(A=1, n=N, l=K, r0=(0 * um, 0 * um),
-                        w0=100 * um,  z=0.01 * um, z0=0)
+        u.laguerre_beam(A=1,
+                        n=N,
+                        l=K,
+                        r0=(0 * um, 0 * um),
+                        w0=100 * um,
+                        z=0.01 * um,
+                        z0=0)
 
         # drawing
         title = r'$n=%d, k=%d$' % (N, K)
@@ -281,11 +281,13 @@ class Test_Scalar_sources_XY(object):
 
         for n in range(N + 1):
             for k in range(K + 1):
-                u.laguerre_beam(A=1, n=n,
+                u.laguerre_beam(A=1,
+                                n=n,
                                 l=k,
                                 r0=(0 * um, 0 * um),
                                 w0=100 * um,
-                                z=0.01 * um, z0=0)
+                                z=0.01 * um,
+                                z0=0)
 
                 title = "(%d,%d)" % (n, k)
                 plt.figure(ID1.number)
@@ -355,13 +357,8 @@ class Test_Scalar_sources_XY(object):
         # creación del u
         u = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength0)
 
-        u.zernike_beam(A=1,
-                       r0=(0, 0),
-                       radius=length / 2,
-                       n=N,
-                       m=M,
-                       c_nm=c_nm,
-                       mask=True)
+        u.zernike_beam(A=1, r0=(0, 0), radius=length / 2, n=N, m=M, c_nm=c_nm)
+        u.pupil()
         u.draw(kind='field')
 
         u.save_data(filename=filename + '.npz')
@@ -401,8 +398,8 @@ class Test_Scalar_sources_XY(object):
                                radius=length / 2,
                                n=np.array([n]),
                                m=np.array([m]),
-                               c_nm=np.array([1]),
-                               mask=True)
+                               c_nm=np.array([1]))
+                u.pupil()
 
                 # carga de los drawings
                 title = "(%d,%d)" % (n, m)
@@ -558,11 +555,7 @@ class Test_Scalar_sources_XY(object):
         u_final = Scalar_source_XY(x, y, wavelength)
         u_temp = Scalar_source_XY(x, y, wavelength)
         for x_i, y_i in zip(xpos, ypos):
-            u_temp.spherical_wave(A=1,
-                                  r0=(x_i, y_i),
-                                  z0=z0,
-                                  radius=10000 * um,
-                                  mask=False)
+            u_temp.spherical_wave(A=1, r0=(x_i, y_i), z0=z0, radius=0 * um)
             u_final = u_final + u_temp
 
         u_final.draw(kind='field')

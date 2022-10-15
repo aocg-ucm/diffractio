@@ -121,10 +121,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.biprism_fresnel(angle=1 * degrees,
-                           x0=100 * um,
-                           radius=125,
-                           mask=True)
+        t1.biprism_fresnel(angle=1 * degrees, x0=100 * um, radius=125)
         t1.draw(kind='phase')
 
         t1.save_data(filename=filename + '.npz')
@@ -177,7 +174,6 @@ class Test_Scalar_masks_X(object):
         t1.fresnel_lens(x0=0 * um,
                         radius=100 * um,
                         focal=.25 * mm,
-                        mask=True,
                         kind='amplitude',
                         phase=np.pi)
         t1.draw(kind='amplitude')
@@ -186,7 +182,6 @@ class Test_Scalar_masks_X(object):
         t1.fresnel_lens(x0=0 * um,
                         radius=100 * um,
                         focal=.25 * mm,
-                        mask=True,
                         kind='phase',
                         phase=np.pi)
         t1.draw(kind='phase')
@@ -356,8 +351,7 @@ class Test_Scalar_masks_X(object):
                               f1=f1,
                               f2=f2,
                               v_globals=v_globals,
-                              radius=100 * um,
-                              mask=True)
+                              radius=100 * um)
         t1.draw(kind='phase')
 
         t1.save_data(filename=filename + '.npz')
@@ -389,8 +383,7 @@ class Test_Scalar_masks_X(object):
                            array1=profile1 * mm,
                            array2=profile2 * mm,
                            interp_kind='quadratic',
-                           radius=1.5 * mm,
-                           mask=True)
+                           radius=1.5 * mm)
 
         t1.draw(kind='phase')
 

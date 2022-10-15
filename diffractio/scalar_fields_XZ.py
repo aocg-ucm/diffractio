@@ -321,7 +321,7 @@ class Scalar_field_XZ(object):
         mask.slit(x0=x_center, size=L - 2 * size_edge)
         self.u0.u = self.u0.u * mask.u
 
-    def filter_refraction_index(self,
+    def smooth_refraction_index(self,
                                 type_filter=2,
                                 pixels_filtering=10,
                                 max_diff_filter=0.1,
@@ -418,7 +418,7 @@ class Scalar_field_XZ(object):
 
             plt.axis(extension)
             h1.set_cmap(cm.gray_r)
-            plt.title("filter_refraction_index: n variations", fontsize=24)
+            plt.title("smooth_refraction_index: n variations", fontsize=24)
 
         return percentage_filtered, lineas_filtradas
 

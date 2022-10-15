@@ -126,7 +126,7 @@ class Test_Scalar_fields_XZ(object):
                            angle=0 * degrees,
                            mask=(10 * um, 3 + 0.05j))
 
-        u1.filter_refraction_index(type_filter=3,
+        u1.smooth_refraction_index(type_filter=3,
                                    pixels_filtering=2,
                                    max_diff_filter=0.01,
                                    draw_check=False)
@@ -562,6 +562,7 @@ class Test_Scalar_fields_XZ(object):
                 filename='')
         save_figure_test(newpath, func_name, add_name='_int')
 
+        seconds = 1
         u1.video(kind='intensity',
                  logarithm=True,
                  normalize=False,
@@ -838,7 +839,7 @@ class Test_Scalar_fields_XZ(object):
                   radius=(radius_sphere, radius_sphere),
                   refraction_index=1)
 
-        u1.filter_refraction_index(type_filter=3,
+        u1.smooth_refraction_index(type_filter=3,
                                    pixels_filtering=2,
                                    max_diff_filter=0.01,
                                    draw_check=False)

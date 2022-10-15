@@ -23,7 +23,6 @@ from numpy import linspace
 
 # from functools import wraps
 
-
 if no_date is True:
     date = '0'
 else:
@@ -66,7 +65,7 @@ class Test_Scalar_sources_X(object):
         u0.plane_wave(theta=1 * degrees, z0=0 * um)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -77,12 +76,15 @@ class Test_Scalar_sources_X(object):
         x0 = np.linspace(-500 * um, 500 * um, 2048)
         wavelength = .5 * um
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.gauss_beam(
-            A=1, x0=0 * um, z0=-2000 * um, w0=25 * um, theta=0 * degrees)
+        u0.gauss_beam(A=1,
+                      x0=0 * um,
+                      z0=-2000 * um,
+                      w0=25 * um,
+                      theta=0 * degrees)
 
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -94,11 +96,10 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(
-            A=1, x0=0 * um, z0=5 * mm, radius=200 * um, mask=True)
+        u0.spherical_wave(A=1, x0=0 * um, z0=5 * mm, radius=200 * um)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -110,11 +111,10 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(
-            A=1, x0=0 * um, z0=-5 * mm, radius=200 * um, mask=True)
+        u0.spherical_wave(A=1, x0=0 * um, z0=-5 * mm, radius=200 * um)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -126,11 +126,12 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.plane_waves_several_inclined(
-            A=1, num_beams=5, max_angle=5 * degrees)
+        u0.plane_waves_several_inclined(A=1,
+                                        num_beams=5,
+                                        max_angle=5 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -145,17 +146,16 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.gauss_beams_several_parallel(
-            A=1,
-            num_beams=5,
-            w0=50 * um,
-            z0=0 * um,
-            x_central=0 * um,
-            x_range=750 * um,
-            theta=0 * degrees)
+        u0.gauss_beams_several_parallel(A=1,
+                                        num_beams=5,
+                                        w0=50 * um,
+                                        z0=0 * um,
+                                        x_central=0 * um,
+                                        x_range=750 * um,
+                                        theta=0 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -167,16 +167,15 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.gauss_beams_several_inclined(
-            A=1,
-            num_beams=5,
-            w0=250 * um,
-            x0=0 * um,
-            z0=0 * um,
-            max_angle=5 * degrees)
+        u0.gauss_beams_several_inclined(A=1,
+                                        num_beams=5,
+                                        w0=250 * um,
+                                        x0=0 * um,
+                                        z0=0 * um,
+                                        max_angle=5 * degrees)
         u0.draw(kind='field')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
 
@@ -191,14 +190,20 @@ class Test_Scalar_sources_X(object):
         u1 = Scalar_source_X(x=x0, wavelength=wavelength0)
         u2 = Scalar_source_X(x=x0, wavelength=wavelength0)
 
-        u1.gauss_beam(
-            A=1, x0=0 * um, z0=0 * um, w0=250 * um, theta=.25 * degrees)
-        u2.gauss_beam(
-            A=1, x0=0 * um, z0=0 * um, w0=250 * um, theta=-.25 * degrees)
+        u1.gauss_beam(A=1,
+                      x0=0 * um,
+                      z0=0 * um,
+                      w0=250 * um,
+                      theta=.25 * degrees)
+        u2.gauss_beam(A=1,
+                      x0=0 * um,
+                      z0=0 * um,
+                      w0=250 * um,
+                      theta=-.25 * degrees)
 
         u0 = u1 + u2
         u0.draw(kind='intensity')
 
-        u0.save_data(filename=filename+'.npz')
+        u0.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True

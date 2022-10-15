@@ -126,7 +126,7 @@ Several propagation algorithms for propagation of light are implemented in the *
 
 * **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is computed according to the split-step propagation scheme.
 
-* **Wave Propagation Method (WPM)**. [Appl. Opt. 32, 4984 (1993)] WPM was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. In that reference it was demonstrated that the wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Fast implementation with discrete number of refraction indexes is also implemented.
+* **Wave Propagation Method (WPM)**. [Appl. Opt. 32, 4984 (1993)] WPM was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. WPM can accurately simulate scalar light propagation in inhomogeneous media at high numerical apertures, and provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Fast implementation with discrete number of refraction indexes is also implemented.
 
 * **Chirped Z-Transform (CZT)**.  [Light: Science and Applications, 9(1), (2020)] CZT allows, in a single step, to propagate to a near or far observation plane. It present advantages with respecto to RS algorithm, since the region of interest and the sampling numbers can be arbitrarily chosen, endowing the proposed method with superior flexibility. CZT algorithm allows to have a XY mask and compute in XY, Z, XZ, XYZ schemes, simply defining the output arrays.
 
@@ -207,23 +207,36 @@ Citing
 L.M. Sanchez Brea, "Diffractio, python module for diffraction and interference optics", https://pypi.org/project/diffractio/ (2019)
 
 
-References
+References for algorithms
 ---------------------------
 
-**Propagation algorithms**:
-
+**RS**
 * Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
-* Fertig, M. & Brenner, K.-H. "Vector wave propagation method". J. Opt. Soc. Am. A 27, 709 (2010).
-* Fertig, M. & Brenner, K.-H. "Vector wave propagation method". PhD thesis (Mannheim, 2010).
-* Ye, H. et al. "Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method" Laser Phys. Lett. 10, (2013).
+
+*WPM**
+* K.-H. Brenner, W. Singer, “Light propagation through micro lenses: a new simulation method”, Appl. Opt., 32(6) 4984-4988 (1993).
 * Schmidt, S. et al. "Wave-optical modeling beyond the thin-element-approximation" Opt. Express 24, 30188 (2016).
+* Brenner, K.H. "A high-speed version of the wave propagation method applied to micro-optics."  16th Workshop on Information Optics (WIO). IEEE (2017)
 * Schmidt, S., et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).
-* Jahn K. and Bokor N., “Intensity control of the focal spot by vectorial beam shaping,” Opt. Commun., (283)24, 4859–4865 (2010).
+
+**VRS**
+* Ye, H. et al. "Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method" Laser Phys. Lett. 10, (2013).
+
+**CZT**
 * Bluestein, L., "A linear filtering approach to the computation of the discrete Fourier transform," Northeast Electronics Research and Engineering Meeting Record 10, 218-219 (1968).
+* Hu Y. et al. "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method" Light: Science & Applications  9(119) (2020)
+
+**VCZT**
 * Leutenegger M. et al. "Fast focus field calculations" Optics Express 14(23) 11277 (2006).
 * Hu Y. et al. "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method" Light: Science & Applications  9(119) (2020)
 
-**Other references**
+**VWPM** (not implemented yet)
+* Fertig, M., Brenner, K.-H. "Vector wave propagation method". J. Opt. Soc. Am. A 27, 709 (2010).
+* Fertig, M., Brenner, K.-H. "Vector wave propagation method". PhD thesis (Mannheim, 2010).
+
+
+Other References
+---------------------------
 
 * J.W. Goodman, "Introduction to Fourier Optics" McGraw-Hill, 1996.
 * B.E. Saleh y M. C. Teich, "Fundamentals of photonics" John Wiley & Sons, 2019.

@@ -55,10 +55,7 @@ def __experiment_extended_source__(x0):
 
     u1 = Scalar_source_X(x, wavelength)
 
-    # posiciones de la fuente
-
-    u1.spherical_wave(
-        A=1., x0=x0, z0=z0, radius=100000 * um, mask=False, normalize=True)
+    u1.spherical_wave(A=1., x0=x0, z0=z0, normalize=True)
     u2 = u1 * red * lens
     u2.RS(z=focal, new_field=False, verbose=False)
 
@@ -124,13 +121,7 @@ class Test_Scalar_fields_X(object):
 
         time1 = time.time()
         for x0 in x0s:
-            u1.spherical_wave(
-                A=1,
-                x0=x0,
-                z0=z0,
-                radius=100000 * um,
-                mask=False,
-                normalize=True)
+            u1.spherical_wave(A=1, x0=x0, z0=z0, normalize=True)
             u2 = u1 * lens * red
             u2.RS(z=focal, new_field=False, verbose=False)
             intensities.u = intensities.u + abs(u2.u)**2
@@ -150,11 +141,10 @@ class Test_Scalar_fields_X(object):
 
         wavelengths = np.linspace(.3 * um, .9 * um, 101)
         w_central = wavelengths.mean()
-        spectrum_gauss = gauss_spectrum(
-            wavelengths=wavelengths,
-            w_central=w_central,
-            Dw=0.4,
-            normalize=True)
+        spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
+                                        w_central=w_central,
+                                        Dw=0.4,
+                                        normalize=True)
 
         intensity, u_s, time_proc = polychromatic_multiprocessing(
             __function_polychromatic__,
@@ -209,6 +199,7 @@ class Test_Scalar_fields_X(object):
 
     def test_grating_movement(self):
         func_name = sys._getframe().f_code.co_name
+
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(deltas_x, period, t1, t2):
@@ -226,20 +217,24 @@ class Test_Scalar_fields_X(object):
         z0 = z_talbot / 2
         delay = 0.001
 
-        t1 = Scalar_mask_X(
-            x0, wavelength, info="__experiment_grating_movement__")
+        t1 = Scalar_mask_X(x0,
+                           wavelength,
+                           info="__experiment_grating_movement__")
         t1.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
         t1.RS(z=z0, new_field=False)
 
-        t2 = Scalar_mask_X(
-            x0, wavelength, info="__experiment_grating_movement__")
+        t2 = Scalar_mask_X(x0,
+                           wavelength,
+                           info="__experiment_grating_movement__")
         t2.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
 
         deltas_x = np.linspace(-60 * um, 60 * um, 51)  # 512
         num_processors = num_max_processors
 
-        dict_Parameters = creation_dictionary(
-            deltas_x=deltas_x, period=period, t1=t1, t2=t2)
+        dict_Parameters = creation_dictionary(deltas_x=deltas_x,
+                                              period=period,
+                                              t1=t1,
+                                              t2=t2)
 
         u_s, time_proc = execute_multiprocessing(
             __experiment_grating_movement__,
@@ -268,8 +263,8 @@ class Test_Scalar_fields_X(object):
         for i in range(0, len(deltas_x), incr_frames):
             intensidad = abs(u_s[i].u)**2  # sacar fuera
             perfil[i] = intensidad.mean()
-            plt.suptitle(
-                r"$\delta x={:6.2f}\,\mu m$".format(deltas_x[i]), fontsize=18)
+            plt.suptitle(r"$\delta x={:6.2f}\,\mu m$".format(deltas_x[i]),
+                         fontsize=18)
             h1.set_ydata(intensidad)
             h2.set_ydata(perfil)
             plt.draw()
@@ -331,8 +326,7 @@ def __experiment_extended_polychromatic_source__(dict_params):
     t1.ronchi_grating(period=periodo, x0=0 * um, fill_factor=0.5)
 
     f1 = Scalar_source_X(x, wavelength)
-    f1.spherical_wave(
-        A=1, x0=x0, z0=z0, radius=10000 * um, mask=False, normalize=True)
+    f1.spherical_wave(A=1, x0=x0, z0=z0, normalize=True)
 
     u1 = f1 * t1
     u1.RS(z, new_field=False, verbose=False)
@@ -341,8 +335,10 @@ def __experiment_extended_polychromatic_source__(dict_params):
 
 
 class Test_Scalar_fields_X_multiprocessing(object):
+
     def test_multiprocessing_dictionary(self):
         func_name = sys._getframe().f_code.co_name
+
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(wavelengths, x0, z, slit_size, separation):
@@ -350,33 +346,32 @@ class Test_Scalar_fields_X_multiprocessing(object):
             dict_Parameters = []
             for i, wavelength in enumerate(wavelengths):
                 dict_Parameters.append(
-                    dict(
-                        x0=x0,
-                        wavelength=wavelength,
-                        z=z,
-                        slit_size=slit_size,
-                        separation=separation))
+                    dict(x0=x0,
+                         wavelength=wavelength,
+                         z=z,
+                         slit_size=slit_size,
+                         separation=separation))
             return dict_Parameters
 
         x0 = np.linspace(-100 * um, 100 * um, 1024)
         wavelengths = np.linspace(0.3 * um, 0.8 * um, 101)
-        spectrum_gauss = gauss_spectrum(
-            wavelengths=wavelengths, w_central=0.6, Dw=0.1, normalize=True)
+        spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
+                                        w_central=0.6,
+                                        Dw=0.1,
+                                        normalize=True)
         num_processors = num_max_processors
 
-        dict_Parameters0 = dict(
-            x0=x0,
-            wavelength=0.6 * um,
-            z=.05 * mm,
-            slit_size=50 * um,
-            separation=75 * um)
+        dict_Parameters0 = dict(x0=x0,
+                                wavelength=0.6 * um,
+                                z=.05 * mm,
+                                slit_size=50 * um,
+                                separation=75 * um)
 
-        dict_Parameters = creation_dictionary(
-            wavelengths=wavelengths,
-            x0=x0,
-            z=.05 * mm,
-            slit_size=50 * um,
-            separation=75 * um)
+        dict_Parameters = creation_dictionary(wavelengths=wavelengths,
+                                              x0=x0,
+                                              z=.05 * mm,
+                                              slit_size=50 * um,
+                                              separation=75 * um)
 
         I0 = __experiment_double_slit_dictionary__(dict_Parameters0)
 
@@ -419,20 +414,18 @@ class Test_Scalar_fields_X_multiprocessing(object):
         plt.figure()
         ax = plt.subplot(111)
         for i, slit_size in enumerate(slit_sizes):
-            ax.plot(
-                u_s[i].x,
-                abs(u_s[i].u)**2 + 2 * i,
-                lw=2,
-                label=r"${:2.2f}\,\mu m$".format(slit_size))
+            ax.plot(u_s[i].x,
+                    abs(u_s[i].u)**2 + 2 * i,
+                    lw=2,
+                    label=r"${:2.2f}\,\mu m$".format(slit_size))
         box = ax.get_position()
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
         # Put a legend to the right of the current axis
-        ax.legend(
-            fontsize=8,
-            frameon=False,
-            loc='center left',
-            bbox_to_anchor=(1, 0.5))
+        ax.legend(fontsize=8,
+                  frameon=False,
+                  loc='center left',
+                  bbox_to_anchor=(1, 0.5))
 
         save_figure_test(newpath, func_name)
         assert True
@@ -444,11 +437,10 @@ class Test_Scalar_fields_X_multiprocessing(object):
         x0s = np.linspace(-150 * um, 150 * um, 21)
         wavelengths = np.linspace(.45 * um, .65 * um, 11)
         w_central = wavelengths.mean()
-        spectrum_gauss = gauss_spectrum(
-            wavelengths=wavelengths,
-            w_central=w_central,
-            Dw=0.4,
-            normalize=True)
+        spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
+                                        w_central=w_central,
+                                        Dw=0.4,
+                                        normalize=True)
 
         u0 = __experiment_extended_polychromatic_source__(
             dict(x0=0, wavelength=w_central))

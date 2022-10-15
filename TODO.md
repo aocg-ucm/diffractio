@@ -9,8 +9,8 @@
 
 
 ## In process
-
-- discretize_refraction_index, so that filter_refraction_index can be used with WPM.
+- filter_refraction_index -> smooth_refraction_index
+- discretize_refraction_index, so that smooth_refraction_index can be used with WPM.
 - XZ and XYZ: function for interactive drawing I(x,y;z).
 
 ## Documentation

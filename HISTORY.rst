@@ -91,6 +91,7 @@ Beta state
   - Change in criterion of plane waves to Physics (ISO 80000-2:2019 convention): https://en.wikipedia.org/wiki/Spherical_coordinate_system#Coordinate_system_conversions
   - constant_wave -> constant_polarization in vector_sources_XY
   - mask_circle -> pupil
+  - 
 
 * New vector_fields_XY:
 
@@ -123,7 +124,7 @@ Beta state
 * Other:
 
   - Pupil function in XY and vector XY
-  - Remove mask parameter from lenses
+  - Remove mask parameter from lenses. This may produce incompatibilities with former code
   - Improving drawings
 
   

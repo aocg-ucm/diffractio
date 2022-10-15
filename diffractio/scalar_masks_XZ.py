@@ -436,7 +436,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
     def discretize_refraction_index(self,
                                     num_layers=None,
                                     n_layers=None,
-                                    new_field=True):
+                                    new_field=False):
         """Takes a refraction index an discretize it according refraction indexes.
 
         Args:
@@ -470,9 +470,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         if num_layers[0] is not None:
             if num_layers[0] > 1:
                 repeated_values = np.unique(n_real)
-                print(len(repeated_values))
-                print(repeated_values)
-
                 repeated_values = np.delete(
                     repeated_values,
                     np.where(repeated_values == self.n_background))
@@ -490,15 +487,12 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         if num_layers[1] is not None:
             if num_layers[1] > 1:
                 repeated_values = np.unique(kappa)
-                print(len(repeated_values))
-                print(repeated_values)
 
                 k_min, k_max = repeated_values.min(), repeated_values.max()
                 k_layers = np.linspace(k_min, k_max, num_layers[1])
                 k_layers = np.unique(k_layers)
                 k_new = _discretize_(kappa, k_layers)
             else:
-                print("kappa-max = {}".format(kappa.max()))
                 k_new = np.zeros_like(kappa)
                 k_new[kappa > kappa.max() / 2] = kappa.max()
         else:
@@ -511,7 +505,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return t_new
         else:
             self.n = n_new + 1j * k_new
-            return self
 
     def image(self, filename, n_max, n_min, angle=0, invert=False):
         """Converts an image file in an xz-refraction index matrix.
