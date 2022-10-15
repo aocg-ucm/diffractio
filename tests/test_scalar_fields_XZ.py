@@ -569,7 +569,7 @@ class Test_Scalar_fields_XZ(object):
                  time_video=10 * seconds,
                  frames_reduction=5,
                  filename='creating_video.mp4',
-                 dpi=300)
+                 dpi=100)
 
         assert True
 

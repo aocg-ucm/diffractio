@@ -214,11 +214,12 @@ References for algorithms
 
 * Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
 
-*WPM**
+**WPM**
 
 * K.-H. Brenner, W. Singer, “Light propagation through micro lenses: a new simulation method”, Appl. Opt., 32(6) 4984-4988 (1993).
 
 * Schmidt, S. et al. "Wave-optical modeling beyond the thin-element-approximation" Opt. Express 24, 30188 (2016).
+
 * Brenner, K.H. "A high-speed version of the wave propagation method applied to micro-optics."  16th Workshop on Information Optics (WIO). IEEE (2017)
 
 * Schmidt, S., et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).

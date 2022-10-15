@@ -418,7 +418,7 @@ class Scalar_field_Z(object):
             plt.xlim(left=z_drawing[0], right=z_drawing[-1])
 
         if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         if kind == 'intensity':
             plt.ylim(bottom=0)

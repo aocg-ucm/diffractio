@@ -367,7 +367,7 @@ class Scalar_field_XY(object):
 
             mask = mask2
 
-        plt.imsave(filename, mask, cmap='gray', dpi=300, origin='lower')
+        plt.imsave(filename, mask, cmap='gray', dpi=100, origin='lower')
         plt.close()
 
         # important data
@@ -1957,7 +1957,7 @@ class Scalar_field_XY(object):
         plt.tight_layout()
         if not filename == '':
             plt.savefig(filename,
-                        dpi=300,
+                        dpi=100,
                         bbox_inches='tight',
                         pad_inches=0.05)
 
@@ -2193,7 +2193,7 @@ class Scalar_field_XY(object):
               time_video=10 * seconds,
               frames_reduction=1,
               filename='video.avi',
-              dpi=300):
+              dpi=100):
         """Makes a video
 
         Parameters:

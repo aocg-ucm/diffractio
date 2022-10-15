@@ -392,7 +392,7 @@ class Vector_field_Z(object):
 
             if not filename == '':
                 plt.savefig(filename,
-                            dpi=300,
+                            dpi=100,
                             bbox_inches='tight',
                             pad_inches=0.1)
 

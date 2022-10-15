@@ -238,7 +238,7 @@ def draw_several_fields(fields,
 def change_image_size(image_name,
                       length='800x600',
                       final_filename='prueba.png',
-                      dpi=300):
+                      dpi=100):
     """change the size with imageMagick
 
         Parameters:

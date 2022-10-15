@@ -55,7 +55,8 @@ import multiprocessing
 import time
 import types
 
-from numpy import (angle, array, concatenate, exp, linspace, pi, shape, sqrt, zeros)
+from numpy import (angle, array, concatenate, exp, linspace, pi, shape, sqrt,
+                   zeros)
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fftshift, ifft
 from scipy.interpolate import interp1d
@@ -116,7 +117,8 @@ class Scalar_field_X(object):
         Imax = (np.abs(self.u)**2).max()
         phase_min = (np.angle(self.u)).min() / degrees
         phase_max = (np.angle(self.u)).max() / degrees
-        print("{}\n - x:  {},   u:  {}".format(self.type, self.x.shape, self.u.shape))
+        print("{}\n - x:  {},   u:  {}".format(self.type, self.x.shape,
+                                               self.u.shape))
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
             .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
@@ -232,7 +234,8 @@ class Scalar_field_X(object):
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self, filename, add_name, description, verbose)
+            final_filename = save_data_common(self, filename, add_name,
+                                              description, verbose)
             return final_filename
         except:
             return False
@@ -256,7 +259,11 @@ class Scalar_field_X(object):
         if verbose is True:
             print(dict0.keys())
 
-    def cut_resample(self, x_limits='', num_points=[], new_field=False, interp_kind='linear'):
+    def cut_resample(self,
+                     x_limits='',
+                     num_points=[],
+                     new_field=False,
+                     interp_kind='linear'):
         """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it does nothing.
         It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
@@ -287,9 +294,17 @@ class Scalar_field_X(object):
 
         if num_points not in ([], '', 0, None):
             x_new = linspace(x0, x1, num_points)
-            f_interp_abs = interp1d(self.x, np.abs(self.u), kind=interp_kind, bounds_error=False, fill_value=0)
+            f_interp_abs = interp1d(self.x,
+                                    np.abs(self.u),
+                                    kind=interp_kind,
+                                    bounds_error=False,
+                                    fill_value=0)
 
-            f_interp_phase = interp1d(self.x, np.imag(self.u), kind=interp_kind, bounds_error=False, fill_value=0)
+            f_interp_phase = interp1d(self.x,
+                                      np.imag(self.u),
+                                      kind=interp_kind,
+                                      bounds_error=False,
+                                      fill_value=0)
 
             u_new_abs = f_interp_abs(x_new)
             u_new_phase = f_interp_phase(x_new)
@@ -343,9 +358,17 @@ class Scalar_field_X(object):
             t1.x = t1.x - (t1.x[0] + t1.x[-1]) / 2 + x0_mask1
 
         # interpolation is different for real and imag
-        f_interp_real = interp1d(t1.x, np.real(t1.u), kind='nearest', bounds_error=False, fill_value=0)
+        f_interp_real = interp1d(t1.x,
+                                 np.real(t1.u),
+                                 kind='nearest',
+                                 bounds_error=False,
+                                 fill_value=0)
 
-        f_interp_imag = interp1d(t1.x, np.imag(t1.u), kind='nearest', bounds_error=False, fill_value=0)
+        f_interp_imag = interp1d(t1.x,
+                                 np.imag(t1.u),
+                                 kind='nearest',
+                                 bounds_error=False,
+                                 fill_value=0)
 
         # interpolates all the range
         u_new_real = f_interp_real(self.x)
@@ -369,7 +392,10 @@ class Scalar_field_X(object):
             kind_position (str): 'left', 'center': positions are at left or center.
         """
 
-        self.insert_mask(t1, x_pos[0], clean=clean, kind_position=kind_position)
+        self.insert_mask(t1,
+                         x_pos[0],
+                         clean=clean,
+                         kind_position=kind_position)
 
         for xi in x_pos[1:]:
             self.insert_mask(t1, xi, clean=False, kind_position=kind_position)
@@ -409,7 +435,8 @@ class Scalar_field_X(object):
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
-        kx = np.linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * self.wavelength
+        kx = np.linspace(-freq_nyquist_x, freq_nyquist_x,
+                         num_x) * self.wavelength
 
         if z in (None, '', [], 0):
             x_new = kx  # exit in angles (degrees)
@@ -431,7 +458,13 @@ class Scalar_field_X(object):
             self.u = ttf1
             self.x = x_new
 
-    def ifft(self, z=None, shift=True, remove0=True, matrix=False, new_field=False, verbose=False):
+    def ifft(self,
+             z=None,
+             shift=True,
+             remove0=True,
+             matrix=False,
+             new_field=False,
+             verbose=False):
         """Inverse Fast Fourier Transform (ifft) of the field.
 
         Parameters:
@@ -459,7 +492,8 @@ class Scalar_field_X(object):
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
-        kx = np.linspace(-freq_nyquist_x, freq_nyquist_x, num_x) * self.wavelength
+        kx = np.linspace(-freq_nyquist_x, freq_nyquist_x,
+                         num_x) * self.wavelength
 
         if z in (None, '', [], 0):
             x_new = kx  # exit in angles (radians)
@@ -482,7 +516,15 @@ class Scalar_field_X(object):
             if verbose is True:
                 print("x0={},x1={}".format(x_new[0], x_new[-1]))
 
-    def _RS_(self, z, n, matrix=False, new_field=True, fast=False, kind='z', xout=None, verbose=True):
+    def _RS_(self,
+             z,
+             n,
+             matrix=False,
+             new_field=True,
+             fast=False,
+             kind='z',
+             xout=None,
+             verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask:
 
         :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)`
@@ -582,7 +624,15 @@ class Scalar_field_X(object):
             # self.u = Usalida / sqrt(z)
             self.u = Usalida
 
-    def RS(self, z=10 * mm, n=1, matrix=False, new_field=True, fast=False, amplification=1, kind='z', verbose=True):
+    def RS(self,
+           z=10 * mm,
+           n=1,
+           matrix=False,
+           new_field=True,
+           fast=False,
+           amplification=1,
+           kind='z',
+           verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         Parameters:
@@ -616,8 +666,16 @@ class Scalar_field_X(object):
 
         u_field = np.zeros_like(x0, dtype=complex)
         qualities = np.zeros((amplification))
-        for i, xi in zip(list(range(len(positions_x))), np.flipud(positions_x)):
-            u3 = self._RS_(z=z, n=n, matrix=False, new_field=True, fast=fast, kind=kind, xout=xi, verbose=verbose)
+        for i, xi in zip(list(range(len(positions_x))),
+                         np.flipud(positions_x)):
+            u3 = self._RS_(z=z,
+                           n=n,
+                           matrix=False,
+                           new_field=True,
+                           fast=fast,
+                           kind=kind,
+                           xout=xi,
+                           verbose=verbose)
             xshape = slice(i * num_pixels, (i + 1) * num_pixels)
             u_field[xshape] = u3.u
             qualities[i] = u3.quality
@@ -715,7 +773,8 @@ class Scalar_field_X(object):
 
                 # calculating scalar diffraction below
                 F0 = np.exp(1j * k * z_now) / (
-                    1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now * (xout**2))
+                    1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
+                                                           (xout**2))
                 F = np.exp(1j * k / 2 / z_now * (self.x**2))
                 u0 = self.u * F
 
@@ -823,7 +882,11 @@ class Scalar_field_X(object):
 
         return average_intensity
 
-    def get_edges(self, kind_transition='amplitude', min_step=0, verbose=False, filename=''):
+    def get_edges(self,
+                  kind_transition='amplitude',
+                  min_step=0,
+                  verbose=False,
+                  filename=''):
         """Determine locations of edges for a binary mask.
 
         Parameters:
@@ -842,7 +905,13 @@ class Scalar_field_X(object):
             self.x, self.u, kind_transition, min_step, verbose, filename)
         return pos_transitions, type_transitions, raising, falling
 
-    def draw(self, kind='intensity', logarithm=False, normalize=False, cut_value=None, filename='', scale=''):
+    def draw(self,
+             kind='intensity',
+             logarithm=False,
+             normalize=False,
+             cut_value=None,
+             filename='',
+             scale=''):
         """Draws X field. There are several data from the field that are extracted, depending of 'kind' parameter.
 
         Parameters:
@@ -909,7 +978,7 @@ class Scalar_field_X(object):
             plt.axis(scale)
 
         if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         if kind == 'intensity':
             plt.ylim(bottom=0)
@@ -1036,7 +1105,11 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
     return u_final
 
 
-def polychromatic_multiprocessing(function_process, wavelengths, spectrum, num_processors=num_max_processors, verbose=False):
+def polychromatic_multiprocessing(function_process,
+                                  wavelengths,
+                                  spectrum,
+                                  num_processors=num_max_processors,
+                                  verbose=False):
     """
     It performs an analysis of polychromatic light. It needs a function with only one input parameter: wavelength.
     It determines the intensity for each wavelength and the final results is the summation of the intensities.
@@ -1058,7 +1131,8 @@ def polychromatic_multiprocessing(function_process, wavelengths, spectrum, num_p
         spectrum = np.ones_like(wavelengths)
 
     if type(wavelengths) in (list, np.ndarray):
-        u_s, time_proc = execute_multiprocessing(function_process, wavelengths, num_processors, verbose)
+        u_s, time_proc = execute_multiprocessing(function_process, wavelengths,
+                                                 num_processors, verbose)
         print(len(u_s))
         intensity = np.zeros_like(u_s[0].u, dtype=float)
         for i in range(len(wavelengths)):
@@ -1074,7 +1148,10 @@ def polychromatic_multiprocessing(function_process, wavelengths, spectrum, num_p
     return intensity, u_s, time_proc
 
 
-def extended_source_multiprocessing(function_process, x0s, num_processors=num_max_processors, verbose=False):
+def extended_source_multiprocessing(function_process,
+                                    x0s,
+                                    num_processors=num_max_processors,
+                                    verbose=False):
     """
     It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
@@ -1091,7 +1168,8 @@ def extended_source_multiprocessing(function_process, x0s, num_processors=num_ma
     """
 
     if type(x0s) in (list, np.ndarray):
-        u_s, time_proc = execute_multiprocessing(function_process, x0s, num_processors, verbose)
+        u_s, time_proc = execute_multiprocessing(function_process, x0s,
+                                                 num_processors, verbose)
         intensity = np.zeros_like(u_s[0].u, dtype=float)
         for i in range(len(x0s)):
             intensity = intensity + np.abs(u_s[i].u)**2
@@ -1108,7 +1186,12 @@ def extended_source_multiprocessing(function_process, x0s, num_processors=num_ma
     return intensity, u_s, time_proc
 
 
-def extended_polychromatic_source(function_process, x0s, wavelengths, spectrum, num_processors=num_max_processors, verbose=False):
+def extended_polychromatic_source(function_process,
+                                  x0s,
+                                  wavelengths,
+                                  spectrum,
+                                  num_processors=num_max_processors,
+                                  verbose=False):
     """ It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
     Parameters:
@@ -1128,7 +1211,8 @@ def extended_polychromatic_source(function_process, x0s, wavelengths, spectrum, 
             dict_Parameters.append(
                 dict(x0=x0, wavelength=wavelength, ij=(i, j)))
 
-    u_s, time_proc = execute_multiprocessing(function_process, dict_Parameters, num_processors, verbose)
+    u_s, time_proc = execute_multiprocessing(function_process, dict_Parameters,
+                                             num_processors, verbose)
     intensity = np.zeros_like(u_s[0].u, dtype=float)
     for k in range(len(u_s)):
         # print( len(u_s), dict_Parameters[k]['ij'])

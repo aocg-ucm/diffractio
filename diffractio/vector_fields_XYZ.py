@@ -636,7 +636,7 @@ class Vector_field_XYZ(object):
         #     plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
         # if not filename == '':
-        #     plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+        #     plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
@@ -693,7 +693,7 @@ class Vector_field_XYZ(object):
             plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
         if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 

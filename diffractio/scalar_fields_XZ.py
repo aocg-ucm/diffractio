@@ -1573,7 +1573,7 @@ class Scalar_field_XZ(object):
             plt.plot(border0, border1, 'w.', ms=0.5)
 
         if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
@@ -1665,7 +1665,7 @@ class Scalar_field_XZ(object):
             plt.plot(border0, border1, 'w.', ms=1)
 
         if not filename == '':
-            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
@@ -1732,7 +1732,7 @@ class Scalar_field_XZ(object):
 
             if not filename == '':
                 plt.savefig(filename,
-                            dpi=300,
+                            dpi=100,
                             bbox_inches='tight',
                             pad_inches=0.1)
 
@@ -1791,7 +1791,7 @@ class Scalar_field_XZ(object):
 
             if not filename == '':
                 plt.savefig(filename,
-                            dpi=300,
+                            dpi=100,
                             bbox_inches='tight',
                             pad_inches=0.1)
 
@@ -1947,7 +1947,7 @@ class Scalar_field_XZ(object):
               time_video=10 * seconds,
               frames_reduction=5,
               filename='video.avi',
-              dpi=300):
+              dpi=100):
         """Generates a video in the z dimension.
 
         Parameters:
