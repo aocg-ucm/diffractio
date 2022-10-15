@@ -446,7 +446,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
-    #TODO: 8 pointed star
+    # TODO: 8 pointed star
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
@@ -1166,12 +1166,12 @@ class Scalar_mask_XY(Scalar_field_XY):
             n1 (float): refraction index of second medium
             radius (float): radius of aspheric surface
 
-        Conic Constant    Surface Type
-        k = 0             spherical
-        k = -1            Paraboloid
-        k < -1            Hyperboloid
-        -1 < k < 0        Ellipsoid
-        k > 0             Oblate eliposid
+            Conic Constant    Surface Type
+            k = 0             spherical
+            k = -1            Paraboloid
+            k < -1            Hyperboloid
+            -1 < k < 0        Ellipsoid
+            k > 0             Oblate eliposid
 
         References:
             https://www.edmundoptics.com/knowledge-center/application-notes/optics/all-about-aspheric-lenses/

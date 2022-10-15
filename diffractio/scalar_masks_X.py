@@ -404,9 +404,7 @@ class Scalar_mask_X(Scalar_field_X):
         return self
 
     def aspheric(self, x0, c, k, a, n0, n1, radius):
-        """Asferic surface.
-
-        $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
+        """Asferic surface. $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
 
         Parameters:
             x0 (float): position of center
@@ -417,13 +415,12 @@ class Scalar_mask_X(Scalar_field_X):
             n1 (float): refraction index of second medium
             radius (float): radius of aspheric surface
 
-
-        Conic Constant    Surface Type
-        k = 0             spherical
-        k = -1            Paraboloid
-        k < -1            Hyperboloid
-        -1 < k < 0        Ellipsoid
-        k > 0             Oblate eliposid
+            Conic Constant    Surface Type
+            k = 0             spherical
+            k = -1            Paraboloid
+            k < -1            Hyperboloid
+            -1 < k < 0        Ellipsoid
+            k > 0             Oblate eliposid
 
         References:
             https://www.edmundoptics.com/knowledge-center/application-notes/optics/all-about-aspheric-lenses/

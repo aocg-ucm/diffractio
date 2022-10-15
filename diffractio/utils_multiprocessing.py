@@ -101,7 +101,6 @@ class auxiliar_multiprocessing(object):
         return self.external_function(elem_iterable, self.dict_constants)
 
 
-# execute multiprocessing
 def execute_multiprocessing(__function_process__,
                             dict_Parameters,
                             num_processors,

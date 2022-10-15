@@ -105,7 +105,7 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
 
     b = ifft(b * ft.T, axis=0)
     # b = b[m:mp + 1].T * h[m - 1:mp]
-    ### Nuevo:
+    # Nuevo:
     # print("b = {}".format(b))
     if mout > 1:
         b = b[m:mp + 1].T * h[m - 1:mp]
@@ -316,7 +316,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
 
 
 def ndgrid(*args, **kwargs):
-    """n-dimensional gridding like Matlab's NDGRID
+    """n-dimensional gridding like Matlab's NDGRID.
 
     Parameters:
         The input *args are an arbitrary number of numerical sequences, e.g. lists, arrays, or tuples.
@@ -328,44 +328,44 @@ def ndgrid(*args, **kwargs):
         >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
 
         >>> X, Y, Z = ndgrid(x, y, z)
-        # unpacking the returned ndarray into X, Y, Z
+            # unpacking the returned ndarray into X, Y, Z
 
         Each of X, Y, Z has shape [len(v) for v in x, y, z].
 
         >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
-        True
+            True
 
         >>> X
-        array([[[0, 0, 0, 0],
-                        [0, 0, 0, 0],
-                        [0, 0, 0, 0]],
-                   [[1, 1, 1, 1],
-                        [1, 1, 1, 1],
-                        [1, 1, 1, 1]]])
+            array([[[0, 0, 0, 0],
+                            [0, 0, 0, 0],
+                            [0, 0, 0, 0]],
+                    [[1, 1, 1, 1],
+                            [1, 1, 1, 1],
+                            [1, 1, 1, 1]]])
         >>> Y
-        array([[[2, 2, 2, 2],
-                        [3, 3, 3, 3],
-                        [4, 4, 4, 4]],
-                   [[2, 2, 2, 2],
-                        [3, 3, 3, 3],
-                        [4, 4, 4, 4]]])
+            array([[[2, 2, 2, 2],
+                            [3, 3, 3, 3],
+                            [4, 4, 4, 4]],
+                    [[2, 2, 2, 2],
+                            [3, 3, 3, 3],
+                            [4, 4, 4, 4]]])
         >>> Z
-        array([[[5, 6, 7, 8],
-                        [5, 6, 7, 8],
-                        [5, 6, 7, 8]],
-                   [[5, 6, 7, 8],
-                        [5, 6, 7, 8],
-                        [5, 6, 7, 8]]])
+            array([[[5, 6, 7, 8],
+                            [5, 6, 7, 8],
+                            [5, 6, 7, 8]],
+                    [[5, 6, 7, 8],
+                            [5, 6, 7, 8],
+                            [5, 6, 7, 8]]])
 
         With an unpacked argument list:
 
         >>> V = [[0, 1], [2, 3, 4]]
 
         >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
-        array([[[0, 0, 0],
-               [1, 1, 1]],
-               [[2, 3, 4],
-               [2, 3, 4]]])
+            array([[[0, 0, 0],
+                [1, 1, 1]],
+                [[2, 3, 4],
+                [2, 3, 4]]])
 
         For input vectors of different data kinds,
         same_dtype=False makes ndgrid()
@@ -377,8 +377,8 @@ def ndgrid(*args, **kwargs):
         Default is to return a single array.
 
         >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
-        array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
-              [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
+            array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
+                [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
     same_dtype = kwargs.get("same_dtype", True)
     V = [array(v) for v in args]  # ensure all input vectors are arrays

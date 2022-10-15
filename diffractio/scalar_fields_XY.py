@@ -612,6 +612,7 @@ class Scalar_field_XY(object):
             matrix=False,
             new_field=False):
         """Fast Fourier Transform (FFT) of the field.
+
         Parameters:
             z (float): distance to the observation plane or focal of lens
                        if z==0, no x,y scaled is produced

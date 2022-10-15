@@ -433,43 +433,85 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         return perfil_previo, perfil_nuevo
 
-    def discretize_refraction_index(self, n_layers=None, num_layers=None):
+    def discretize_refraction_index(self,
+                                    num_layers=None,
+                                    n_layers=None,
+                                    new_field=True):
         """Takes a refraction index an discretize it according refraction indexes.
 
         Args:
+            num_layers ((int,int), optional): number of layers (for real and imaginary parts), without counting background. Defaults to None.
+                By default, both parameters are None, but one of then must be filled. If both are present, num_layers is considered
             n_layers (np.array, optional): array with refraction indexes to discretize. Defaults to None.
-            num_layers (int, optional): number of layers, without counting n_background. Defaults to None.
-            By default, both parameters are None, but one of then must be filled. If both are present, num_layers is considered
+            new_field (bool): If True, it generates a new field.
+
         Returns:
             (np.array): refraction indexes selected.
         """
 
+        def _discretize_(refraction_index, n_layers):
+            n_new = np.zeros_like(refraction_index, dtype=float)
+
+            i_n, _, _ = nearest2(n_layers, refraction_index)
+            i_n = i_n.reshape(refraction_index.shape)
+
+            for i, n in enumerate(n_layers):
+                n_new[i_n == i] = n_layers[i]
+
+            return n_new
+
         if num_layers is not None:
-            repeated_values = np.unique(self.n)
+            if isinstance(num_layers, int):
+                num_layers = (num_layers, 1)
 
-            repeated_values = np.delete(
-                repeated_values,
-                np.where(repeated_values == self.n_background))
+        n_real = np.around(self.n.real, 4)
+        kappa = np.around(self.n.imag, 4)
 
-            n_min, n_max = repeated_values.min(), repeated_values.max()
-            n_layers = np.linspace(n_min, n_max, num_layers)
-            n_layers = np.append(n_layers, self.n_background)
+        if num_layers[0] is not None:
+            if num_layers[0] > 1:
+                repeated_values = np.unique(n_real)
+                print(len(repeated_values))
+                print(repeated_values)
 
-        n = deepcopy(self.n)
-        n = n.real
-        n_new = np.zeros_like(self.n)
+                repeated_values = np.delete(
+                    repeated_values,
+                    np.where(repeated_values == self.n_background))
 
-        i_n, _, _ = nearest2(n_layers, n)
-        i_n = i_n.reshape(self.n.shape)
+                n_min, n_max = repeated_values.min(), repeated_values.max()
+                n_layers = np.linspace(n_min, n_max, num_layers[0])
+                n_layers = np.append(n_layers, self.n_background)
+                n_layers = np.unique(n_layers)
+                n_new = _discretize_(n_real, n_layers)
+            else:
+                n_new = n_real
+        else:
+            n_new = n_real
 
-        for i, n in enumerate(n_layers):
-            n_new[i_n == i] = n_layers[i]
-        n_new = n_new.real
-        self.n = n_new
+        if num_layers[1] is not None:
+            if num_layers[1] > 1:
+                repeated_values = np.unique(kappa)
+                print(len(repeated_values))
+                print(repeated_values)
 
-        repeated_values = np.unique(self.n)
+                k_min, k_max = repeated_values.min(), repeated_values.max()
+                k_layers = np.linspace(k_min, k_max, num_layers[1])
+                k_layers = np.unique(k_layers)
+                k_new = _discretize_(kappa, k_layers)
+            else:
+                print("kappa-max = {}".format(kappa.max()))
+                k_new = np.zeros_like(kappa)
+                k_new[kappa > kappa.max() / 2] = kappa.max()
+        else:
+            k_new = kappa
 
-        return self
+        if new_field is True:
+            t_new = self.duplicate()
+            t_new.u = np.zeros_like(t_new.u)
+            t_new.n = n_new + 1j * k_new
+            return t_new
+        else:
+            self.n = n_new + 1j * k_new
+            return self
 
     def image(self, filename, n_max, n_min, angle=0, invert=False):
         """Converts an image file in an xz-refraction index matrix.
@@ -783,9 +825,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             r0 (float, float): (x0,z0) position of the center of lens, for example (0 * um, 20 * um)
-              for plane-convergent z0 is the location of the plane
-              for convergent-plane (angle =180*degrees) the thickness has to be
-                  added to z0
+                for plane-convergent z0 is the location of the plane
+                for convergent-plane (angle =180*degrees) the thickness has to be added to z0
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float): radius of the curved surface
             thickness (float): thickness at the center of the lens

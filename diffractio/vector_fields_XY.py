@@ -1158,8 +1158,7 @@ class Vector_field_XY(object):
             self.Ez = Ez_new
             self.X = X_new
             self.Y = Y_new
-
-        elif new_field is True:
+        else:
             field = Vector_field_XY(x=x_new,
                                     y=y_new,
                                     wavelength=self.wavelength)

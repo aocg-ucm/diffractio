@@ -358,6 +358,7 @@ class Scalar_field_XZ(object):
                     centerz - 1:centerz + 1] = 1
             filtro1 = filtro1 / sum(sum(filtro1))
             self.n = fftshift(ifft2(fft2(self.n) * fft2(filtro1)))
+            percentage_filtered = 0
         elif type_filter == 2:
             # Filtro 1D, solo ejecuta cuando hay diferencias de índice eje x
             lineas_filtradas = np.zeros_like(self.z)
