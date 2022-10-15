@@ -64,7 +64,7 @@ author = u"Luis Miguel Sanchez Brea"
 #
 # The short X.Y version.
 # version = diffractio.__version__
-version = '0.1.0'
+version = '0.1.1'
 # The full version, including alpha/beta/rc tags.
 # release = diffractio.__version__
 release = version
@@ -146,8 +146,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [(master_doc, 'diffractio',
-              u'Python diffraction and interference Documentation', [author],
-              1)]
+              u'Python diffraction and interference Documentation', [author
+                                                                     ], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------------
 

@@ -243,14 +243,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             maximum = np.abs(self.u.max())
             self.u = self.u / maximum
 
-    def mask_from_function(self,
-                           r0,
-                           index,
-                           f1,
-                           f2,
-                           radius,
-                           v_globals={},
-                           mask=True):
+    def mask_from_function(self, r0, index, f1, f2, radius=0, v_globals={}):
         """ phase mask defined between 2 surfaces $f_1$ and $f_2$:  $h(x,y)=f_2(x,y)-f_1(x,y)$
 
         Parameters:
@@ -268,12 +261,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         k = 2 * pi / self.wavelength
 
-        if mask is True:
+        if radius[0] > 0:
             amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
             amplitude.circle(r0, radius, 0 * degrees)
             t = amplitude.u
         else:
-            t = ones_like(self.X)
+            t = 1
 
         v_locals = {'self': self, 'sp': sp, 'degrees': degrees}
 
@@ -993,7 +986,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = np.abs(ring2.u - ring1.u)
 
-    def rings(self, r0, inner_radius, outer_radius, mask=True):
+    def rings(self, r0, inner_radius, outer_radius):
         """Structure based on several rings, with radius given by inner_radius and outer_radius.
 
         Parameters:
@@ -1008,14 +1001,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         radius = outer_radius.max()
 
-        # Definicion de la amplitude y la phase
-        if mask is True:
-            amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
-            amplitude.circle(r0, radius, angle)
-            t = amplitude.u
-        else:
-            t = ones_like(self.X)
-
         u = np.zeros_like(self.X)
         ring = Scalar_mask_XY(self.x, self.y, self.wavelength)
 
@@ -1027,7 +1012,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u
 
-        self.u[t == 0] = 0
         return self
 
     def cross(self, r0, size, angle=0 * degrees):

@@ -1952,7 +1952,9 @@ class Scalar_field_XY(object):
             print("not in kinds")
 
         if has_colorbar in ('horizontal', 'vertical'):
-            plt.colorbar(orientation=has_colorbar, shrink=0.5, pad=0.15)
+            plt.colorbar(orientation=has_colorbar, shrink=0.5)
+
+        plt.tight_layout()
         if not filename == '':
             plt.savefig(filename,
                         dpi=300,

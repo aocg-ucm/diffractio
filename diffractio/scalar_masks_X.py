@@ -88,9 +88,8 @@ class Scalar_mask_X(Scalar_field_X):
                            f1=0,
                            f2=0,
                            v_globals={},
-                           mask=True,
                            x0=0 * um,
-                           radius=100 * um):
+                           radius=0 * um):
         """Phase mask defined between two surfaces :math:`f_1` and :math:`f_2`: :math:`h(x,y)=f_2(x,y)-f_1(x,y)`, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
         Parameters:
@@ -105,13 +104,12 @@ class Scalar_mask_X(Scalar_field_X):
 
         k = 2 * np.pi / self.wavelength
 
-        if mask is True:
+        if radius > 0:
             amplitude = Scalar_mask_X(self.x, self.wavelength)
             amplitude.slit(x0, radius)
             t = amplitude.u
         else:
-            t = np.ones_like(self.X)
-
+            t = 1
         v_locals = {'self': self, 'np': np, 'degrees': degrees}
 
         F2 = eval(f2, v_globals, v_locals)
@@ -124,8 +122,7 @@ class Scalar_mask_X(Scalar_field_X):
                         array1=None,
                         array2=None,
                         interp_kind='quadratic',
-                        mask=True,
-                        radius=100 * um,
+                        radius=0 * um,
                         x0=0 * um):
         """Phase mask defined between two surfaces defined by arrays: array1 and array2, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
 
@@ -141,12 +138,12 @@ class Scalar_mask_X(Scalar_field_X):
 
         k = 2 * np.pi / self.wavelength
 
-        if mask is True:
+        if radius > 0:
             amplitude = Scalar_mask_X(self.x, self.wavelength)
             amplitude.slit(x0, radius)
             t = amplitude.u
         else:
-            t = np.ones_like(self.x)
+            t = 1
 
         f1_interp = interp1d(array1[:, 0],
                              array1[:, 1],
@@ -379,9 +376,6 @@ class Scalar_mask_X(Scalar_field_X):
             focal (float, float) or (float): focal length of lens
             refraction index (float): refraction index of the lens
 
-        Example:
-            lens_spherical(x0=0 * um, radius=100 * um,
-                focal(5 * mm,, angle=0 * degrees, mask=True)
         """
 
         k = 2 * np.pi / self.wavelength

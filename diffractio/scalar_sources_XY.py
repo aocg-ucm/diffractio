@@ -153,13 +153,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self,
-                       A=1,
-                       r0=(0 * um, 0 * um),
-                       z0=-1000 * um,
-                       mask=True,
-                       radius=100 * um,
-                       normalize=False):
+    def spherical_wave(self, r0, z0, A=1, radius=0, normalize=False):
         """Spherical wave.
 
         Parameters:
@@ -177,7 +171,7 @@ class Scalar_source_XY(Scalar_field_XY):
         R2 = (self.X - x0)**2 + (self.Y - y0)**2
         Rz = sqrt((self.X - x0)**2 + (self.Y - y0)**2 + z0**2)
 
-        if mask is True:
+        if radius > 0:
             amplitude = (R2 <= radius**2)
         else:
             amplitude = 1
@@ -336,7 +330,7 @@ class Scalar_source_XY(Scalar_field_XY):
             c_nm (list): list of integers with coefficients
 
         Example:
-             zernike_beam(A=1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1], mask=True)
+             zernike_beam(A=1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1])
         """
 
         # normalizing to radius 1

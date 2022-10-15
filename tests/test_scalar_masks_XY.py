@@ -475,8 +475,7 @@ class Test_Scalar_masks_XY(object):
         t1 = Scalar_mask_XY(x, y, wavelength)
         t1.rings(r0=(0, 0),
                  inner_radius=inner_radius,
-                 outer_radius=outer_radius,
-                 mask=True)
+                 outer_radius=outer_radius)
         t1.draw(kind='intensity')
 
         t1.save_data(filename=filename + '.npz')
@@ -582,8 +581,7 @@ class Test_Scalar_masks_XY(object):
                               f1='1*degrees*self.Y',
                               f2='1*degrees*self.X',
                               v_globals=None,
-                              radius=(100 * um, 100 * um),
-                              mask=True)
+                              radius=(100 * um, 100 * um))
         t1.draw(kind='field')
 
         t1.save_data(filename=filename + '.npz')
@@ -624,8 +622,7 @@ class Test_Scalar_masks_XY(object):
                               f1=f1,
                               f2=f2,
                               v_globals=v_globals,
-                              radius=(100 * um, 100 * um),
-                              mask=True)
+                              radius=(100 * um, 100 * um))
         t1.draw(kind='field')
 
         focal = v_globals['R2'] / (index - 1)

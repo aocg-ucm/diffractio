@@ -57,7 +57,8 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM', 'CZT'
+        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM', 'CZT',
+        'RS', 'VRS'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
@@ -65,6 +66,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.0.14',
+    version='0.1.1',
     zip_safe=False,
 )

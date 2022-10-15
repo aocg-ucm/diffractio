@@ -133,22 +133,6 @@ class Vector_mask_XY(Vector_field_XY):
             new_field.clear_field()
         return new_field
 
-    # def rotate(self, angle, new_mask=False):
-    #     """Rotates the mask a certain angle.abs
-    #
-    #     Parameters:
-    #         angle (float): rotation angle in radians
-    #         new_mask (bool): if True generates a new mask
-    #
-    #     Returns:
-    #         if new_mask is True: Vector_mask_XY
-    #     """
-    #
-    #     # TODO:
-    #     # como no quiero hacerlo como en pypol hay que sacar la funcion analitica
-    #
-    #     pass
-
     def apply_circle(self, r0=None, radius=None):
         """The same circular mask is applied to all the Jones Matrix.
 
