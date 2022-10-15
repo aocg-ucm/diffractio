@@ -1,4 +1,5 @@
 nbsphinx
+traitlets>=5
 numpy
 scipy
 matplotlib
@@ -11,5 +12,5 @@ py_pol
 ipywidgets
 ipympl
 nodejs
-opencv-python
+# opencv-python
 # mayavi
