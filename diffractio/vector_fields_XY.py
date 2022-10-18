@@ -811,6 +811,9 @@ class Vector_field_XY(object):
 
         Returns:
             E_out (variable): Output field. It depends on the size of xout, yout, and z.
+
+        References:
+             [Light: Science and Applications, 9(1), (2020)] 
         """
         if xout is None:
             xout = self.x

@@ -152,7 +152,7 @@ In some modules, videos can be generated for a better analysis of optical fields
 Vector beams
 ==================================
 
-Here, we implement new classes where the $E_x$, $E_y$, and $E_z$ fields are generated and propagated using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
+Here, we implement new classes where the E_x, E_y, and E_z fields are generated and propagated using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
 Also, simple and complex polarizing masks can be created.
 
 **Intensity of vector field**

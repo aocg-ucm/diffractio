@@ -1115,6 +1115,10 @@ class Scalar_field_XY(object):
 
         Returns:
             u_out: Scalar_field_** depending of the input scheme. When all the parameters are numbers, it returns the complex field at that point.
+        
+        
+        References:
+             [Light: Science and Applications, 9(1), (2020)] 
         """
 
         if xout is None:

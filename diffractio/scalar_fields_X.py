@@ -704,6 +704,9 @@ class Scalar_field_X(object):
 
         Returns:
             u_out: Complex amplitude of the outgoing light beam
+
+        References:
+             [Light: Science and Applications, 9(1), (2020)] 
         """
 
         if xout is None:

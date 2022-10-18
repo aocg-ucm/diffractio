@@ -11,6 +11,7 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    installation
    usage
    modules
+   new
    tutorials
    examples
    functioning
