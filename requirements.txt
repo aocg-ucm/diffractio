@@ -1,16 +1,17 @@
 nbsphinx
-traitlets>=5
+traitlets
+nodejs
 numpy
 scipy
 matplotlib
+py_pol
 screeninfo
 Pillow
 numexpr
 pandas
-psutil
-py_pol
 ipywidgets
 ipympl
-nodejs
+
+# psutil
 # opencv-python
 # mayavi

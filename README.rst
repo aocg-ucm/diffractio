@@ -142,10 +142,10 @@ Also drawings can be easily obtained, for intensity, phase, fields, etc.
 
 In some modules, videos can be generated for a better analysis of optical fields.
 
-.. image:: readme4.png
+.. image:: readme6.png
    :width: 600
 
-.. image:: readme5.png
+.. image:: readme6.png
    :width: 600
 
 
@@ -157,12 +157,12 @@ Also, simple and complex polarizing masks can be created.
 
 **Intensity of vector field**
 
-.. image:: readme6.png
+.. image:: readme4.png
    :width: 700
 
 **Polarization: Stokes parameters**
 
-.. image:: readme7.png
+.. image:: readme5.png
    :width: 700
 
 

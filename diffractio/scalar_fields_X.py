@@ -564,7 +564,7 @@ class Scalar_field_X(object):
         rmax = xout.max()
         dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
                         (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
-        self.quality = dr_ideal / dr_real / np.sqrt(2)
+        self.quality = dr_ideal / dr_real / 2
 
         if verbose is True:
             if (self.quality.min() > 1):
@@ -626,11 +626,12 @@ class Scalar_field_X(object):
 
     def RS(self,
            z=10 * mm,
-           n=1,
-           matrix=False,
-           new_field=True,
-           fast=False,
            amplification=1,
+           n=1,
+           new_field=True,
+           matrix=False,
+           xout=None,
+           fast=False,
            kind='z',
            verbose=True):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
@@ -638,8 +639,8 @@ class Scalar_field_X(object):
         Parameters:
             z (float): Distance to observation plane. if z<0 inverse propagation is executed
             n (float): Refraction index
-            matrix (bool): If True, the result of the function is a numpy.array
             new_field (bool): if False the computation goes to self.u, if True a new instance is produced
+            matrix (bool): If True, the result of the function is a numpy.array
             fast (bool): Instead of using Hankle function for RS kernel uses expotential
             amplification (int): number of frames in x direction
             kind (str): 'z'. In some circunstamces the function is used for other integrals
@@ -664,6 +665,10 @@ class Scalar_field_X(object):
         x0 = linspace(-amplification * width_x / 2,
                       amplification * width_x / 2, num_pixels * amplification)
 
+        if xout is not None:
+            positions_x = positions_x + xout
+            x0 = x0 + xout - width_x / 2
+
         u_field = np.zeros_like(x0, dtype=complex)
         qualities = np.zeros((amplification))
         for i, xi in zip(list(range(len(positions_x))),
@@ -686,12 +691,82 @@ class Scalar_field_X(object):
         if new_field is True:
             field_output = Scalar_field_X(x=x0, wavelength=self.wavelength)
             field_output.u = u_field
-            field_output.quality = qualities.min()
+            field_output.quality = qualities
             return field_output
         else:
             self.x = x0
             self.u = u_field
-            self.quality = qualities.min()
+            self.quality = qualities
+
+    # def RS(self,
+    #        z=10 * mm,
+    #        amplification=1,
+    #        n=1,
+    #        new_field=True,
+    #        matrix=False,
+    #        xout=None,
+    #        yout=None
+    #        fast=False,
+    #        kind='z',
+    #        verbose=True):
+    #     """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
+
+    #     Parameters:
+    #         z (float): Distance to observation plane. if z<0 inverse propagation is executed
+    #         n (float): Refraction index
+    #         new_field (bool): if False the computation goes to self.u, if True a new instance is produced
+    #         matrix (bool): If True, the result of the function is a numpy.array
+    #         fast (bool): Instead of using Hankle function for RS kernel uses expotential
+    #         amplification (int): number of frames in x direction
+    #         kind (str): 'z'. In some circunstamces the function is used for other integrals
+    #         verbose (bool): if True it writes to shell
+
+    #     Returns:
+    #         If New_field is True:  Scalar_field_X,
+    #         If matrix is True: numpy.array()
+    #         Else: None
+
+    #     Info:
+    #         This approach a quality parameter: If self.quality>1, propagation is right.
+    #     """
+
+    #     width_x = self.x[-1] - self.x[0]
+    #     num_pixels = len(self.x)
+
+    #     positions_x = -amplification * width_x / 2 + array(
+    #         list(range(amplification))) * width_x
+
+    #     x0 = linspace(-amplification * width_x / 2,
+    #                   amplification * width_x / 2, num_pixels * amplification)
+
+    #     u_field = np.zeros_like(x0, dtype=complex)
+    #     qualities = np.zeros((amplification))
+    #     for i, xi in zip(list(range(len(positions_x))),
+    #                      np.flipud(positions_x)):
+    #         u3 = self._RS_(z=z,
+    #                        n=n,
+    #                        matrix=False,
+    #                        new_field=True,
+    #                        fast=fast,
+    #                        kind=kind,
+    #                        xout=xi,
+    #                        verbose=verbose)
+    #         xshape = slice(i * num_pixels, (i + 1) * num_pixels)
+    #         u_field[xshape] = u3.u
+    #         qualities[i] = u3.quality
+
+    #     if matrix is True:
+    #         return u_field
+
+    #     if new_field is True:
+    #         field_output = Scalar_field_X(x=x0, wavelength=self.wavelength)
+    #         field_output.u = u_field
+    #         field_output.quality = qualities.min()
+    #         return field_output
+    #     else:
+    #         self.x = x0
+    #         self.u = u_field
+    #         self.quality = qualities.min()
 
     def CZT(self, z, xout=None, verbose=False):
         """Chirped z-transform.
@@ -907,6 +982,43 @@ class Scalar_field_X(object):
         pos_transitions, type_transitions, raising, falling = get_edges(
             self.x, self.u, kind_transition, min_step, verbose, filename)
         return pos_transitions, type_transitions, raising, falling
+
+    def get_RS_minimum_z(self, n=1, quality=1, verbose=True):
+        """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter
+
+
+            Args:
+                n (float): refraction index of the surrounding medium.
+                quality (int, optional): quality. Defaults to 1.
+                verbose (bool, optional): prints info. Defaults to True.
+
+            Returns:
+                z_min (float): z_min for quality_factor>quality
+            """
+
+        range_x = self.x[-1] - self.x[0]
+        num_x = len(self.x)
+
+        dx = range_x / num_x
+        dr_real = dx
+        rmax = range_x
+
+        factor = (((quality * dr_real + rmax)**2 -
+                   (self.wavelength / n)**2 - rmax**2) / 2 * n /
+                  self.wavelength)**2 - rmax**2
+
+        if factor > 0:
+            z_min = np.sqrt(factor)
+        else:
+            z_min = 0
+
+        if verbose:
+            if z_min > 1000:
+                print("z min = {:2.2f} mm".format(z_min / mm))
+            else:
+                print("z min = {:2.2f} um".format(z_min))
+
+        return z_min
 
     def draw(self,
              kind='intensity',
@@ -1224,3 +1336,58 @@ def extended_polychromatic_source(function_process,
     intensity = intensity / (spectrum.sum() * len(x0s))
 
     return intensity, u_s, time_proc
+
+
+def quality_factor(range_x, num_x, z, wavelength, n=1, verbose=False):
+    """Determine the quality factor for RS algorithm
+
+    Args:
+        x (np.array): x array with positions
+        z (float): observation distance
+        wavelength (float): wavelength)
+        n (float): refraction index
+
+    Returns:
+        _type_: _description_
+    """
+
+    dx = range_x / num_x
+    dr_real = dx
+    rmax = range_x
+
+    dr_ideal = np.sqrt((wavelength / n)**2 + rmax**2 + 2 *
+                       (wavelength / n) * np.sqrt(rmax**2 + z**2)) - rmax
+    quality = dr_ideal / dr_real
+
+    if verbose:
+        print("Quality factor = {:2.2f}".format(quality))
+
+    return quality
+
+
+def get_RS_minimum_z(range_x, num_x, wavelength, n=1, quality=1, verbose=True):
+    """_summary_
+
+    Args:
+        range_x (float): range_x
+        num_x (int): num_x
+        z (float): z
+        wavelength (float): wavelength
+        quality (int, optional): quality. Defaults to 1.
+        verbose (bool, optional): prints info. Defaults to True.
+
+    Returns:
+        _type_: _description_
+    """
+
+    dr_real = range_x / num_x
+    rmax = range_x
+
+    zmin = np.sqrt((((quality * dr_real + rmax)**2 -
+                     (wavelength / n)**2 - rmax**2) / 2 * n / wavelength)**2 -
+                   rmax**2)
+
+    if verbose:
+        print("z min = {:2.2f}".format(zmin))
+
+    return zmin

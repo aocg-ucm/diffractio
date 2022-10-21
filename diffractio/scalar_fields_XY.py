@@ -853,14 +853,14 @@ class Scalar_field_XY(object):
         dx = xout[1] - xout[0]
         dy = yout[1] - yout[0]
 
-        # quality parameter
         dr_real = sqrt(dx**2 + dy**2)
         rmax = sqrt((xout**2).max() + (yout**2).max())
         dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
                         (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
         self.quality = dr_ideal / dr_real
+
         if verbose is True:
-            if (self.quality.min() > 1):
+            if (self.quality.min() >= 0.99):
                 print('Good result: factor {:2.2f}'.format(self.quality),
                       end='\r')
             else:
@@ -932,6 +932,8 @@ class Scalar_field_XY(object):
            n=1,
            new_field=True,
            matrix=False,
+           xout=None,
+           yout=None,
            kind='z',
            verbose=False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
@@ -940,7 +942,10 @@ class Scalar_field_XY(object):
             amplification (int, int): number of frames in x and y direction
             z (float): distance to observation plane. if z<0 inverse propagation is executed
             n (float): refraction index
-            new_field (bool): if False the computation goes to self.u, if True a new instance is produced
+            new_field (bool): if False the computation goes to self.u, if True a new instance is produced.
+            matrix(Bool): if True returns a matrix, else a Scalar_field_XY
+            xout (float): If not None, the sampling area is moved. This is the left position
+            yout (float): If not None, the sampling area y moved. This is the lower position.
             kind (str):
             verbose (bool): if True it writes to shell
 
@@ -955,13 +960,12 @@ class Scalar_field_XY(object):
         """
 
         amplification_x, amplification_y = amplification
+        ancho_x = self.x[-1] - self.x[0]
+        ancho_y = self.y[-1] - self.y[0]
+        num_pixels_x = len(self.x)
+        num_pixels_y = len(self.y)
 
         if amplification_x * amplification_y > 1:
-
-            ancho_x = self.x[-1] - self.x[0]
-            ancho_y = self.y[-1] - self.y[0]
-            num_pixels_x = len(self.x)
-            num_pixels_y = len(self.y)
 
             posiciones_x = -amplification_x * ancho_x / 2 + array(
                 list(range(amplification_x))) * ancho_x
@@ -1005,26 +1009,47 @@ class Scalar_field_XY(object):
                     self.x = X0
                     self.y = Y0
         else:
-            u_s = self._RS_(z,
-                            n,
-                            new_field=new_field,
-                            out_matrix=True,
-                            kind=kind,
-                            xout=None,
-                            yout=None,
-                            verbose=verbose)
+
+            if xout is None:
+                u_s = self._RS_(z,
+                                n,
+                                new_field=new_field,
+                                out_matrix=True,
+                                kind=kind,
+                                xout=xout,
+                                yout=yout,
+                                verbose=verbose)
+            else:
+                print(self.x[0])
+                print("\n")
+                u_s = self._RS_(z,
+                                n,
+                                new_field=new_field,
+                                out_matrix=True,
+                                kind=kind,
+                                xout=-xout + self.x[0] - ancho_x / 2,
+                                yout=-yout + self.y[0] - ancho_y / 2,
+                                verbose=verbose)
 
             if matrix is True:
                 return u_s
+
+            if new_field is True:
+                U_final = Scalar_field_XY(x=self.x,
+                                          y=self.y,
+                                          wavelength=self.wavelength)
+                U_final.u = u_s
+                if xout is not None:
+                    U_final.x = self.x + xout - self.x[0]
+                    U_final.y = self.y + yout - self.y[0]
+                    U_final.X, U_final.Y = meshgrid(self.x, self.y)
+
+                return U_final
             else:
-                if new_field is True:
-                    U_final = Scalar_field_XY(x=self.x,
-                                              y=self.y,
-                                              wavelength=self.wavelength)
-                    U_final.u = u_s
-                    return U_final
-                else:
-                    self.u = u_s
+                self.u = u_s
+                self.x = self.x + xout - self.x[0]
+                self.y = self.y + yout - self.y[0]
+                self.X, self.Y = meshgrid(self.x, self.y)
 
     def WPM(self,
             fn,
@@ -1901,6 +1926,46 @@ class Scalar_field_XY(object):
         """
         return normalize_field(self, new_field)
 
+    def get_RS_minimum_z(self, n=1, quality=1, verbose=True):
+        """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter
+
+            Args:
+                n (float): refraction index of the surrounding medium.
+                quality (int, optional): quality. Defaults to 1.
+                verbose (bool, optional): prints info. Defaults to True.
+
+            Returns:
+                z_min (float): z_min for quality_factor>quality
+            """
+
+        range_x = self.x[-1] - self.x[0]
+        range_y = self.y[-1] - self.y[0]
+        num_x = len(self.x)
+        num_y = len(self.y)
+
+        dx = range_x / num_x
+        dy = range_y / num_y
+        dr_real = np.sqrt(dx**2 + dy**2)
+        rmax = np.sqrt(range_x**2 + range_y**2)
+
+        factor = (((quality * dr_real + rmax)**2 -
+                   (self.wavelength / n)**2 - rmax**2) / 2 * n /
+                  self.wavelength)**2 - rmax**2
+
+        if factor > 0:
+            z_min = np.sqrt(factor)
+            z_min = z_min / 2
+        else:
+            z_min = 0
+
+        if verbose:
+            if z_min > 1000:
+                print("z min = {:2.2f} mm".format(z_min / mm))
+            else:
+                print("z min = {:2.2f} um".format(z_min))
+
+        return z_min
+
     def draw(self,
              kind='intensity',
              logarithm=False,
@@ -2358,3 +2423,85 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
         u_final = u_final + Imz * u_temp
 
     return u_final
+
+
+def get_RS_minimum_z(range_x,
+                     range_y,
+                     num_x,
+                     num_y,
+                     wavelength,
+                     n=1,
+                     quality=1,
+                     verbose=True):
+    """_summary_
+
+    Args:
+        range_x (float): range_x
+        range_y (float): range_y
+        num_x (int): num_x
+        num_y (int): num_y
+        z (float): z
+        wavelength (float): wavelength
+        quality (int, optional): quality. Defaults to 1.
+        verbose (bool, optional): prints info. Defaults to True.
+
+    Returns:
+        z_min (float): z_min for quality_factor>quality
+    """
+
+    dx = range_x / num_x
+    dy = range_y / num_y
+    dr_real = np.sqrt(dx**2 + dy**2)
+    rmax = np.sqrt(range_x**2 + range_y**2)
+
+    factor = (
+        ((quality * dr_real + rmax)**2 -
+         (wavelength / n)**2 - rmax**2) / 2 * n / wavelength)**2 - rmax**2
+
+    if factor > 0:
+        zmin = np.sqrt(factor)
+        zmin = zmin / 2
+    else:
+        zmin = 0
+
+    if verbose:
+        print("z min = {:2.2f}".format(zmin))
+
+    return zmin
+
+
+def quality_factor(range_x,
+                   range_y,
+                   num_x,
+                   num_y,
+                   z,
+                   wavelength,
+                   n=1,
+                   verbose=False):
+    """Determine the quality factor for RS algorithm
+
+    Args:
+        x (np.array): x array with positions
+        y (np.array): y array with positions
+        z (float): observation distance
+        wavelength (float): wavelength)
+        n (float): refraction index
+
+    Returns:
+        _type_: _description_
+    """
+
+    dx = range_x / num_x
+    dy = range_y / num_y
+    dr_real = np.sqrt(dx**2 + dy**2)
+    rmax = np.sqrt(range_x**2 + range_y**2)
+
+    dr_ideal = np.sqrt((wavelength / n)**2 + rmax**2 + 2 *
+                       (wavelength / n) * np.sqrt(rmax**2 + z**2)) - rmax
+    quality = dr_ideal / dr_real
+    quality = quality * 2
+
+    if verbose:
+        print("Quality factor = {:2.2f}".format(quality))
+
+    return quality
