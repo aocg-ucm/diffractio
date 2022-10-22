@@ -340,7 +340,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                          num_repetitions,
                          position='center',
                          new_field=True):
-        """Repeat the structure n times.
+        """Repeat the structure (n x m) times.
 
         Parameters:
             num_repetitions (int, int): Number of repetitions of the mask
@@ -371,10 +371,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                             num_repetitions[1] * y_max,
                             num_repetitions[1] * len(y0))
 
-        # range_x = x_new[-1] - x_new[0]
         center_x = (x_new[-1] + x_new[0]) / 2
-
-        # range_y = y_new[-1] - y_new[0]
         center_y = (y_new[-1] + y_new[0]) / 2
 
         if position == 'center':

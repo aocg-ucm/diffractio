@@ -400,6 +400,48 @@ class Scalar_field_X(object):
         for xi in x_pos[1:]:
             self.insert_mask(t1, xi, clean=False, kind_position=kind_position)
 
+    def repeat_structure(self,
+                         num_repetitions,
+                         position='center',
+                         new_field=True):
+        """Repeat the structure n times.
+
+        Parameters:
+            num_repetitions (int): Number of repetitions of the mask
+            position (string or number): 'center', 'previous' or initial position. Initial x
+            new_field (bool): If True, a new mask is produced, else, the mask is modified.
+            
+        """
+
+        u0 = self.u
+        x0 = self.x
+        wavelength = self.wavelength
+
+        u_new = np.tile(u0, num_repetitions)
+
+        x_min = x0[0]
+        x_max = x0[-1]
+
+        x_new = np.linspace(num_repetitions * x_min, num_repetitions * x_max,
+                            num_repetitions * len(x0))
+
+        if position == 'center':
+            center_x = (x_new[-1] + x_new[0]) / 2
+            x_new = x_new - center_x
+        elif position == 'previous':
+            x_new = x_new - x_new[0] + x0[0]
+
+        elif isinstance(position, (int, float)):
+            x_new = x_new - x_new[0] + position
+
+        if new_field is True:
+            t_new = Scalar_field_X(x=x_new, wavelength=wavelength)
+            t_new.u = u_new
+            return t_new
+        else:
+            self.u = u_new
+            self.x = x_new
+
     def fft(self,
             z=None,
             shift=True,

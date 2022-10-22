@@ -18,6 +18,7 @@ Examples
    source/examples/lenses.ipynb
    source/examples/fresnel_lens.ipynb
    source/examples/talbot_effect.ipynb
+   source/examples/dammann.ipynb
    source/examples/variable_refraction_index.ipynb
    source/examples/vector_double_slit_experiment.ipynb
    source/examples/VRS_paper.ipynb

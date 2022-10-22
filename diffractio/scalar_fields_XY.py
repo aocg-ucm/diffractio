@@ -2063,8 +2063,8 @@ class Scalar_field_XY(object):
                                        **kwargs)
         plt.tight_layout()
 
-        # if self.type == 'Scalar_mask_XY':
-        #    plt.clim(0, 1)
+        if self.type == 'Scalar_mask_XY':
+            plt.clim(0, 1)
 
         return id_fig, IDax, IDimage
 
