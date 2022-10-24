@@ -52,7 +52,7 @@ class Vector_source_XY(Vector_field_XY):
     """
 
     def __init__(self, x, y, wavelength, info=''):
-        super(self.__class__, self).__init__(x, y, wavelength, info)
+        super().__init__(x, y, wavelength, info)
         self.type = 'Vector_source_XY'
 
     def constant_polarization(self,

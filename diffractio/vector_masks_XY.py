@@ -38,7 +38,7 @@ from .vector_sources_XY import Vector_source_XY
 class Vector_mask_XY(Vector_field_XY):
 
     def __init__(self, x, y, wavelength, info=''):
-        super(self.__class__, self).__init__(x, y, wavelength, info)
+        super().__init__(x, y, wavelength, info)
         self.type = 'Vector_mask_XY'
 
         self.M00 = np.zeros_like(self.X, dtype=complex)

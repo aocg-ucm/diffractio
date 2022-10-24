@@ -29,9 +29,8 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 class Scalar_mask_XYZ(Scalar_field_XYZ):
 
     def __init__(self, x, y, z, wavelength, n_background=1., info=''):
-        # print("init de Scalar_mask_XYZ")
-        super(self.__class__, self).__init__(x, y, z, wavelength, n_background,
-                                             info)
+        super().__init__(x, y, z, wavelength, n_background, info)
+        self.type = 'Scalar_mask_XYZ'
 
     def object_by_surfaces(self,
                            r0,

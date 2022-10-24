@@ -68,7 +68,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def __init__(self, x=None, y=None, wavelength=None, info=""):
         # print("init de Scalar_mask_XY")
-        super(self.__class__, self).__init__(x, y, wavelength, info)
+        super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 
     def set_amplitude(self, q=1, positive=0, amp_min=0, amp_max=1):

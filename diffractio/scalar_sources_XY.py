@@ -64,7 +64,7 @@ class Scalar_source_XY(Scalar_field_XY):
     """
 
     def __init__(self, x=None, y=None, wavelength=None, info=""):
-        super(self.__class__, self).__init__(x, y, wavelength, info)
+        super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
 
     def plane_wave(self, A=1, theta=0 * degrees, phi=0 * degrees, z0=0 * um):

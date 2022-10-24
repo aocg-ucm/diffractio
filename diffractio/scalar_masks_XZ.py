@@ -73,8 +73,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         wavelength: wavelength of light
         n_backgraound: refraction index of background
         info: text to describe the instance of the class"""
-        super(self.__class__, self).__init__(x, z, wavelength, n_background,
+        super().__init__(x, z, wavelength, n_background,
                                              info)
+        self.type = 'Scalar_mask_XZ'
 
     def extrude_mask(self, t, z0, z1, refraction_index, v_globals={}, angle=0):
         """
