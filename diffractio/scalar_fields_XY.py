@@ -50,7 +50,7 @@ The magnitude is related to microns: `micron = 1.`
     * draw_several_fields
     * draw2D
     * several_propagations
-    * kernelRS, kernelRSinverse, kernelFresnel
+    * kernelRS, kernelRSinverse, kernelFresnel, WPM_schmidt_kernel
 """
 
 import copy
@@ -981,7 +981,6 @@ class Scalar_field_XY(object):
 
             U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
 
-            # TODO: pass to multiprocessing
             for i, xi in zip(list(range(len(posiciones_x))),
                              flipud(posiciones_x)):
                 for j, yi in zip(list(range(len(posiciones_y))),
