@@ -1026,10 +1026,7 @@ class Scalar_field_XZ(object):
                 self.u[:, j] = uj * filter_edge + self.u[:, j]
 
             if verbose is True:
-                if sys.version_info.major == 3:
-                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
-                else:
-                    print("{}/{}".format(j, num_steps))
+                print("{}/{}".format(j, num_steps), sep='\r', end='\r')
 
         t2 = time.time()
         if verbose is True:

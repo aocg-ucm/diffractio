@@ -860,9 +860,16 @@ class Scalar_field_X(object):
                 delta_out[0] = (xend - xstart) / (num_x - 1)
 
             # calculating scalar diffraction below
-            F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-                1j * k / 2 / z * (xout**2))
-            F = np.exp(1j * k / 2 / z * (self.x**2))
+
+            R = np.sqrt(xout**2 + z**2)
+            F0 = (0.5j * k * z / R) * hankel1(1, k * R)
+
+            R = np.sqrt(self.x**2 + z**2)
+            F = (0.5j * k * z / R) * hankel1(1, k * R)
+
+            # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
+            #     1j * k / 2 / z * (xout**2))
+            # F = np.exp(1j * k / 2 / z * (self.x**2))
             u0 = self.u * F
 
             fs = self.wavelength * z / dx  # dimension of the imaging plane
@@ -892,10 +899,16 @@ class Scalar_field_X(object):
                     delta_out[0] = (xend - xstart) / (num_x - 1)
 
                 # calculating scalar diffraction below
-                F0 = np.exp(1j * k * z_now) / (
-                    1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
-                                                           (xout**2))
-                F = np.exp(1j * k / 2 / z_now * (self.x**2))
+                R = np.sqrt(xout**2 + z_now**2)
+                F0 = (0.5j * k * z_now / R) * hankel1(1, k * R)
+
+                R = np.sqrt(self.x**2 + z_now**2)
+                F = (0.5j * k * z_now / R) * hankel1(1, k * R)
+
+                # F0 = np.exp(1j * k * z_now) / (
+                #     1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
+                #                                            (xout**2))
+                # F = np.exp(1j * k / 2 / z_now * (self.x**2))
                 u0 = self.u * F
 
                 fs = self.wavelength * z_now / dx  # dimension of the imaging plane
