@@ -667,7 +667,7 @@ class Scalar_field_X(object):
             self.u = Usalida
 
     def RS(self,
-           z=10 * mm,
+           z,
            amplification=1,
            n=1,
            new_field=True,

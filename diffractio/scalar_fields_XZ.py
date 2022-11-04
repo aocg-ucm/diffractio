@@ -797,12 +797,12 @@ class Scalar_field_XZ(object):
 
     def RS(self,
            xout=None,
-           yout=None,
            verbose=False,
            num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
+            xout (float): init position of output position
             verbose (bool): shows the quality of algorithm (>1 good)
             num_processors (int): number of processors for multiprocessing
 
