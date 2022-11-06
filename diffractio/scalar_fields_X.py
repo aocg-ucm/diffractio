@@ -66,7 +66,8 @@ from . import degrees, mm, np, plt
 
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x
+from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
+                         Bluestein_dft_x, get_k, ndgrid, nearest2)
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
@@ -933,6 +934,157 @@ class Scalar_field_X(object):
                 u_out.u = u_zs.transpose()
 
         return u_out
+
+    def WPM(self,
+            fn,
+            zs,
+            num_sampling=None,
+            ROI=None,
+            x_pos=None,
+            z_pos=None,
+            get_u_max=False,
+            has_edges=True,
+            pow_edge=80,
+            verbose=False):
+        """WPM method used for very dense sampling. It does not storages the intensity distribution at propagation, but only selected areas. The areas to be stored are:
+            - global view with a desired sampling given by num_sampling.
+            - intensity at the last plane.
+            - Intensity at plane with maximum intensity (focus of a lens, for example)
+            - Region of interest given by ROI.
+
+        Parameters:
+            fn (function): Function that returns the refraction index at a plane in a numpy.array
+            zs (np.array): linspace with positions z where to evaluate the field.
+            num_sampling (int, int) or None: If None, it does not storage intermediate data. Otherwise, it stores a small XZ matrix which size in num_sampling.
+            ROI (np.array, np.array) or None: x and z arrays with positions and sampling to store. It is used when we need to store with a high density a small area of the total field.
+            x_pos (float or None): If not None, a high density longitudinal array with the field at x_pos position is stored.
+            z_pos (float or None): If not None, a high density transversal array with the field at z_pos is stored.
+            get_u_max (bool): If True, returns field at z position with maximum intensity.
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian.
+            verbose (bool): If True prints information.
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
+        """
+        from diffractio.scalar_masks_XZ import Scalar_mask_XZ
+
+        k0 = 2 * np.pi / self.wavelength
+        dx = self.x[1] - self.x[0]
+        dz = zs[1] - zs[0]
+
+        kx = get_k(self.x, flavour='+')
+        k_perp2 = kx**2
+        k_perp = kx
+
+        if has_edges is False:
+            filter_edge = 1
+        else:
+            filter_edge = np.exp(-(self.x / self.x[0])**pow_edge)
+
+        u_iter = self.duplicate()
+
+        # STORING field at maximum intensity
+        if get_u_max is True:
+            u_max = self.duplicate()
+            I_max = 0.
+            z_max = 0
+        else:
+            u_max = None
+            z_max = None
+
+        # Storing intensities at axis (x=x_pos)
+        if x_pos is not None:
+            from diffractio.scalar_fields_Z import Scalar_field_Z
+            u_axis_x = Scalar_field_Z(zs, self.wavelength)
+            index_x_axis, _, _ = nearest(self.x, x_pos)
+        else:
+            u_axis_x = None
+
+            # Storing fields at axis (x=x_pos)
+        if z_pos is not None:
+            u_axis_z = self.duplicate()
+            index_zpos, _, _ = nearest(zs, z_pos)
+        else:
+            u_axis_z = None
+
+        # STORING global view matrices
+        if num_sampling is not None:
+            len_x, len_z = num_sampling
+            xout_gv = np.linspace(self.x[0], self.x[-1], len_x)
+            zout_gv = np.linspace(zs[0], zs[-1], len_z)
+            u_out_gv = Scalar_mask_XZ(xout_gv,
+                                      zout_gv,
+                                      self.wavelength,
+                                      info='from WPM_no_storage_1D')
+            indexes_x_gv, _, _ = nearest2(self.x, xout_gv)
+            indexes_z_gv, _, _ = nearest2(zs, zout_gv)
+            u_out_gv.n = fn(xout_gv, zout_gv, self.wavelength)
+        else:
+            u_out_gv = None
+
+        # STORING ROI
+        if ROI is not None:
+            xout_roi, zout_roi = ROI
+            u_out_roi = Scalar_mask_XZ(xout_roi,
+                                       zout_roi,
+                                       self.wavelength,
+                                       info='from WPM_no_storage_1D')
+            indexes_x_roi, _, _ = nearest2(self.x, xout_roi)
+            indexes_z_roi, _, _ = nearest2(zs, zout_roi)
+            u_out_roi.n = fn(xout_roi, zout_roi, self.wavelength)
+        else:
+            u_out_roi = None
+
+        t1 = time.time()
+        num_steps = len(zs)
+        iz_out_gv = 0
+        iz_out_roi = 0
+
+        for j in range(1, num_steps):
+            refraction_index = fn(self.x, np.array([
+                zs[j - 1],
+            ]), self.wavelength)
+            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0,
+                                          k_perp2, dz) * filter_edge
+
+            if x_pos is not None:
+                u_axis_x.u[j] = u_iter.u[index_x_axis]
+
+            if z_pos is not None:
+                if j == index_zpos:
+                    u_axis_z.u = u_iter.u
+
+            if num_sampling is not None:
+                if j in indexes_z_gv:
+                    u_out_gv.u[:, iz_out_gv] = u_iter.u[indexes_x_gv]
+                    iz_out_gv = iz_out_gv + 1
+
+            if ROI is not None:
+                if j in indexes_z_roi:
+                    u_out_roi.u[:, iz_out_roi] = u_iter.u[indexes_x_roi]
+                    iz_out_roi = iz_out_roi + 1
+
+            if get_u_max is True:
+                current_intensity = np.max(np.abs(u_iter.u)**2)
+                if current_intensity > I_max:
+                    I_max = u_iter.intensity().max()
+                    u_max.u = u_iter.u
+                    z_max = zs[j]
+
+            if verbose is True:
+                print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+
+        t2 = time.time()
+        if verbose is True:
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                t2 - t1, (t2 - t1) / len(zs) * 1000))
+
+        return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
     def normalize(self, new_field=False):
         """Normalizes the field so that intensity.max()=1.
