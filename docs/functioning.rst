@@ -14,3 +14,4 @@ About functiong
    source/functioning/power_z_propagation.ipynb
    source/functioning/phase_intensity.ipynb
    source/functioning/quality_factor.ipynb
+   source/functioning/WPM_ws.ipynb
