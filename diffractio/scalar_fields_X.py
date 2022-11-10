@@ -963,6 +963,15 @@ class Scalar_field_X(object):
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian.
             verbose (bool): If True prints information.
+        
+        Returns:
+            u_iter (Scalar_field_X): final field
+            u_out_gv (Scalar_field_XZ): global view
+            u_out_roi (Scalar_field_XZ): field at ROI positions
+            u_axis_x (Scalar_field_X): field at position z_pos
+            u_axis_z (Scalar_field_Z): field at position x_pos
+            u_max (Scalar_field_X): field at position with maximum intensity
+            z_max (float): position with maximum intensity
 
         References:
 

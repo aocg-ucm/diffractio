@@ -11,6 +11,7 @@ from numpy import (array, exp, ones_like, pi, linspace, tile, angle, zeros)
 import scipy.ndimage as ndimage
 from scipy.signal import fftconvolve
 from numpy.fft import fft, ifft
+from scipy.ndimage import rank_filter
 
 from . import mm
 
@@ -173,41 +174,39 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
 
     return b
 
+def find_local_maxima(y):
+    """Determine local maxima in a numpy array.
+    
+    Args:
+        y (numpy.ndarray): variable with local maxima.
 
-def Bluestein_dft_xy_backup(x, f1, f2, fs, mout):
-    """Bluestein dft
+    Returns:
+        (numpy.ndarray): i positions of local maxima.
 
-    Parameters:
-        x (_type_): _description_
-        f1 (_type_): _description_
-        f2 (_type_): _description_
-        fs (_type_): _description_
-        mout (_type_): _description_
+    Todo:
+        Add a filter to remove noise.
+
     """
+    y_dilate = rank_filter(y, -1, size=3)
+    Trues = y_dilate == y
+    return np.where(Trues == True)[0]
 
-    m, n = x.shape
-    f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
-    f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
-    a = exp(1j * 2 * pi * f11 / fs)
-    w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
-    h = np.arange(-m + 1, max(mout, m))
-    mp = m + mout - 1
-    h = w**((h**2) / 2)
-    ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
-    b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
-    tmp = tile(b, (n, 1)).T
-    b = fft(x * tmp, 2**nextpow2(mp), axis=0)
 
-    b = ifft(b * tile(ft, (n, 1)).T, axis=0)
-    b = b[m:mp + 1, 0:n].T * tile(h[m - 1:mp], (n, 1))
-    l = np.linspace(0, mout - 1, mout)
-    l = l / mout * (f22 - f11) + f11
-    Mshift = -m / 2
-    Mshift = tile(exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs), (n, 1))
-    b = b * Mshift
+def find_local_minima(y):
+    """Determine local minima in a numpy array.
+    
+    Args:
+        y (numpy.ndarray): variable with local minima.
 
-    return b
-
+    Returns:
+        (numpy.ndarray): i positions of local minima.
+        
+    Todo:
+        Add a filter to remove noise.
+    """
+    y_erode = rank_filter(y, -0, size=3)
+    Trues = y_erode == y
+    return np.where(Trues == True)[0]
 
 def reduce_to_1(class_diffractio):
     """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
