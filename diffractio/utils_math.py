@@ -192,7 +192,7 @@ def find_local_maxima(y):
     return np.where(Trues == True)[0]
 
 
-def find_local_minima(y):
+def find_local_minima(y, pixels_interpolation=0, pixels_filter=0):
     """Determine local minima in a numpy array.
     
     Args:
@@ -203,10 +203,23 @@ def find_local_minima(y):
         
     Todo:
         Add a filter to remove noise.
+        Interpolation to obtain fractionary part
     """
+
     y_erode = rank_filter(y, -0, size=3)
     Trues = y_erode == y
-    return np.where(Trues == True)[0]
+    i_minima_integer = np.where(Trues == True)[0]
+
+    if pixels_interpolation==0:
+        i_minima_frac = i_minima_integer
+    else:
+        i_minima_frac = np.zeros_like(i_minima_integer)
+        for j in i_minima_frac:
+            x = j-pixels_interpolation:j+pixels_interpolation
+            
+
+
+    return i_minima_integer
 
 def reduce_to_1(class_diffractio):
     """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
