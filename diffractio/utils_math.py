@@ -172,7 +172,7 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
                      (n, 1))
     b = b * Mshift
 
-    return
+    return b
 
 
 def find_local_extrema(kind,
