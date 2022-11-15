@@ -172,54 +172,70 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
                      (n, 1))
     b = b * Mshift
 
-    return b
-
-def find_local_maxima(y):
-    """Determine local maxima in a numpy array.
-    
-    Args:
-        y (numpy.ndarray): variable with local maxima.
-
-    Returns:
-        (numpy.ndarray): i positions of local maxima.
-
-    Todo:
-        Add a filter to remove noise.
-
-    """
-    y_dilate = rank_filter(y, -1, size=3)
-    Trues = y_dilate == y
-    return np.where(Trues == True)[0]
+    return
 
 
-def find_local_minima(y, pixels_interpolation=0, pixels_filter=0):
+def find_local_extrema(kind,
+                       y,
+                       x,
+                       pixels_interpolation=0,
+                       pixels_filter=0):
     """Determine local minima in a numpy array.
-    
-    Args:
-        y (numpy.ndarray): variable with local minima.
 
+    Args:
+        kind (str): 'maxima', 'minima'
+        y (numpy.ndarray): variable with local minima.
+        x (numpy.ndarray): x position
     Returns:
         (numpy.ndarray): i positions of local minima.
-        
+
     Todo:
         Add a filter to remove noise.
-        Interpolation to obtain fractionary part
     """
 
-    y_erode = rank_filter(y, -0, size=3)
-    Trues = y_erode == y
-    i_minima_integer = np.where(Trues == True)[0]
-
-    if pixels_interpolation==0:
-        i_minima_frac = i_minima_integer
+    if pixels_filter == 0:
+        pass
     else:
-        i_minima_frac = np.zeros_like(i_minima_integer)
-        for j in i_minima_frac:
-            x = j-pixels_interpolation:j+pixels_interpolation
-            
+        pass
+
+    if kind == 'minima':
+        y_erode = rank_filter(y, -0, size=3)
+        Trues = y_erode == y
+    elif kind == 'maxima':
+        y_dilate = rank_filter(y, -1, size=3)
+        Trues = y_dilate == y
+    else:
+        print("bad parameter in find_local_extrema: only 'maxima or 'minima'")
+
+    i_pos_integer = np.where(Trues == True)[0]
+    i_pos_integer = i_pos_integer[1:-1]
+    x_minima = x[i_pos_integer]
+    y_minima = y[i_pos_integer]
+
+    if pixels_interpolation == 0:
+        x_minima_frac = x_minima
+        y_minima_frac = y_minima
+    else:
+        x_minima_frac = np.zeros_like(x_minima, dtype=float)
+        y_minima_frac = np.zeros_like(x_minima, dtype=float)
+        for i_j, j in enumerate(i_pos_integer):
+            # print(j, i_j)
+            js = np.array(
+                np.arange(j - pixels_interpolation,
+                          j + pixels_interpolation + 1))
+            # print(js)
+            p_j = np.polyfit(x[js], y[js], 2)
+            y_minima_interp = np.poly1d(p_j)
+            # print(p_j)
+            x_minima_frac[i_j] = -p_j[1] / (2 * p_j[0])
+            # print(y_minima_frac[i_j])
+
+            y_minima_frac[i_j] = y_minima_interp(x_minima_frac[i_j])
+
+    return x_minima_frac, y_minima_frac, i_pos_integer
 
 
-    return i_minima_integer
+
 
 def reduce_to_1(class_diffractio):
     """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
