@@ -55,7 +55,6 @@ The magnitude is related to microns: `micron = 1.`
 
 import copy
 import datetime
-import sys
 import time
 
 import matplotlib.animation as animation
@@ -67,12 +66,14 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import degrees, mm, np, plt, seconds, um
+from . import  np, plt
+from . import degrees, mm,  seconds, um
+
 from .config import CONF_DRAWING
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import (get_edges, get_k, ndgrid, nearest, reduce_to_1,
+from .utils_math import (get_edges, get_k, ndgrid, nearest, nearest2, reduce_to_1,
                          rotate_image, Bluestein_dft_xy)
 from .utils_optics import beam_width_2D, field_parameters, normalize_field
 from .scalar_fields_X import Scalar_field_X
@@ -1051,37 +1052,49 @@ class Scalar_field_XY(object):
                 self.X, self.Y = meshgrid(self.x, self.y)
 
     def WPM(self,
-            fn,
-            z_ini,
-            z_end,
-            dz,
-            has_edges=True,
-            matrix=False,
-            verbose=False):
-        """
-        WPM Methods.
-        'schmidt method is very fast, only needs discrete number of refraction indexes'
-
+                       fn,
+                       zs,
+                       num_sampling=(512, 512),
+                       ROI=(None, None),
+                       r_pos=None,
+                       z_pos=None,
+                       get_u_max=False,
+                       has_edges=True,
+                       pow_edge=80,
+                       matrix=False,
+                       verbose=False):
+        """WPM method used for very dense sampling. It does not storages the intensity distribution at propagation, but only selected areas. The areas to be stored are:
+            - global view with a desired sampling given by num_sampling.
+            - intensity at the last plane.
+            - Intensity at plane with maximum intensity (focus of a lens, for example)
+            - Region of interest given by ROI.
 
         Parameters:
-            fn - índice de refracción función:
-            kind (str): 'schmidt, scalar, TE, TM
-            filter (1, or np.array): filter for edges
-            matrix (bool): if True returns a matrix else
-            verbose (bool): If True prints information
+            fn (function): Function that returns the refraction index at a plane in a numpy.array
+            zs (np.array): linspace with positions z where to evaluate the field.
+            num_sampling (int, int) or None: If None, it does not storage intermediate data. Otherwise, it stores a small XZ matrix which size in num_sampling.
+            ROI (np.array, np.array) or None: x and z arrays with positions and sampling to store. It is used when we need to store with a high density a small area of the total field.
+            r_pos (float or None): If not None, a high density longitudinal array with the field at x_pos position is stored.
+            z_pos (float or None): If not None, a high density transversal array with the field at z_pos is stored.
+            get_u_max (bool): If True, returns field at z position with maximum intensity.
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian.
+            verbose (bool): If True prints information.
 
         References:
 
             1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
             2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
 
         """
-        z_now = z_ini
+        from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
         k0 = 2 * np.pi / self.wavelength
         x = self.x
         y = self.y
-        # dx = x[1] - x[0]
-        # dy = y[1] - y[0]
+        dx = x[1] - x[0]
+        dy = y[1] - y[0]
+        dz = zs[1] - zs[0]
 
         u_iter = Scalar_field_XY(self.x, self.y, self.wavelength)
 
@@ -1091,41 +1104,143 @@ class Scalar_field_XY(object):
         KX, KY = np.meshgrid(kx, ky)
 
         k_perp2 = KX**2 + KY**2
-        # k_perp = np.sqrt(k_perp2)
-
-        num_steps = int(z_end / dz)
+        k_perp = np.sqrt(k_perp2)
 
         if has_edges is False:
             filter_edge = 1
         else:
-            gaussX = np.exp(-(self.X / (self.x[0]))**86)
-            gaussY = np.exp(-(self.Y / (self.y[0]))**86)
+            gaussX = np.exp(-(self.X / (self.x[0]))**pow_edge)
+            gaussY = np.exp(-(self.Y / (self.y[0]))**pow_edge)
             filter_edge = (gaussX * gaussY)
 
-        t1 = time.time()
+        u_iter = self.duplicate()
 
-        u_iter.u = self.u
-        for j in range(0, num_steps):
+        # STORING field at maximum intensity
+        if get_u_max is True:
+            u_max = self.duplicate()
+            I_max = 0.
+            z_max = 0
+        else:
+            u_max = None
+            z_max = None
+
+        # Storing intensities at axis (x=0,0 de momento)
+        intensities = np.zeros_like(zs)
+        index_x_axis, _, _ = nearest(x, 0.)
+        index_y_axis, _, _ = nearest(y, 0.)
+
+        # Storing intensities at axis (x=x_pos)
+        if r_pos is not None:
+            from diffractio.scalar_fields_Z import Scalar_field_Z
+            x_pos, y_pos = r_pos
+            u_axis_x = Scalar_field_Z(zs, self.wavelength)
+            index_x_axis, _, _ = nearest(x, x_pos)
+            index_y_axis, _, _ = nearest(y, y_pos)
+        else:
+            u_axis_x = None
+
+        # Storing fields at plane
+        if z_pos is not None:
+            u_axis_z = self.duplicate()
+            index_zpos, _, _ = nearest(zs, z_pos)
+        else:
+            u_axis_z = None
+
+        # STORING global view matrices
+        if num_sampling is not None:
+
+            len_x, len_y, len_z = num_sampling
+            xout_gv = np.linspace(x[0], x[-1], len_x)
+            yout_gv = np.linspace(y[0], y[-1], len_y)
+            zout_gv = np.linspace(zs[0], zs[-1], len_z)
+            u_out_gv = Scalar_field_XYZ(xout_gv,
+                                        yout_gv,
+                                        zout_gv,
+                                        self.wavelength,
+                                        info='from WPM_no_storage_2D')
+            indexes_x_gv, _, _ = nearest2(x, xout_gv)
+            indexes_y_gv, _, _ = nearest2(y, yout_gv)
+            indexes_z_gv, _, _ = nearest2(zs, zout_gv)
+            indexes_X_gv, indexes_Y_gv = np.meshgrid(indexes_x_gv, indexes_y_gv)
+
+            u_out_gv.n = fn(xout_gv, yout_gv, zout_gv, self.wavelength)
+        else:
+            u_out_gv = None
+
+        # STORING ROI
+        if ROI is not None:
+            xout_roi, yout_roi, zout_roi = ROI
+            u_out_roi = Scalar_field_XYZ(xout_roi,
+                                         yout_roi,
+                                         zout_roi,
+                                         self.wavelength,
+                                         info='from WPM_no_storage_2D')
+            indexes_x_roi, _, _ = nearest2(x, xout_roi)
+            indexes_y_roi, _, _ = nearest2(y, yout_roi)
+            indexes_z_roi, _, _ = nearest2(zs, zout_roi)
+
+            indexes_X_roi, indexes_Y_roi = np.meshgrid(
+                indexes_x_roi, indexes_y_roi)
+            # indexes_x_roi = np.unique(indexes_x_roi)
+            # indexes_y_roi = np.unique(indexes_y_roi)
+            # indexes_z_roi = np.unique(indexes_z_roi)
+
+            u_out_roi.n = fn(xout_roi, yout_roi, zout_roi, self.wavelength)
+        else:
+            u_out_roi = None
+
+        t1 = time.time()
+        num_steps = len(zs)
+        iz_out_gv = 0
+        iz_out_roi = 0
+
+        for j in range(1, num_steps):
             refraction_index = fn(x, y, np.array([
-                z_now,
+                zs[j - 1],
             ]), self.wavelength)
 
-            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0,
-                                          k_perp2, dz) * filter_edge
+            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0, k_perp2,
+                                          dz) * filter_edge
 
-            z_now = z_now + dz
+            current_intensity = np.max(np.abs(u_iter.u)**2)
+            intensities[j] = u_iter.intensity()[index_x_axis, index_y_axis]
+
+            if r_pos is not None:
+                u_axis_x.u[j] = u_iter.u[index_x_axis, index_y_axis]
+
+            if z_pos is not None:
+                if j == index_zpos:
+                    u_axis_z.u = u_iter.u
+
+            if num_sampling is not None:
+                if j in indexes_z_gv:
+                    u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_X_gv,
+                                                           indexes_Y_gv]
+                    iz_out_gv = iz_out_gv + 1
+
+            if ROI is not None:
+                if j in indexes_z_roi:
+                    u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_X_roi,
+                                                             indexes_Y_roi]
+                    iz_out_roi = iz_out_roi + 1
+
+            if get_u_max is True:
+                current_intensity = np.max(np.abs(u_iter.u)**2)
+                if current_intensity > I_max:
+                    I_max = u_iter.intensity().max()
+                    u_max.u = u_iter.u
+                    z_max = zs[j]
+
             if verbose is True:
                 print("{}/{}".format(j, num_steps), sep='\r', end='\r')
 
         t2 = time.time()
+
         if verbose is True:
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / num_steps * 1000))
 
-        if matrix is True:
-            return u_iter.u
-        else:
-            self.u = u_iter.u
+        return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
     def CZT(self, z, xout=None, yout=None, verbose=False):
         """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
@@ -1139,8 +1254,8 @@ class Scalar_field_XY(object):
 
         Returns:
             u_out: Scalar_field_** depending of the input scheme. When all the parameters are numbers, it returns the complex field at that point.
-        
-        
+
+
         References:
              [Light: Science and Applications, 9(1), (2020)] 
         """
