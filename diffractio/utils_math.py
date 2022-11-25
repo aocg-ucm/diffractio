@@ -212,7 +212,7 @@ def find_local_extrema(kind,
     x_minima = x[i_pos_integer]
     y_minima = y[i_pos_integer]
 
-    if pixels_interpolation == 0:
+    if pixels_interpolation == 0 or pixels_interpolation == None:
         x_minima_frac = x_minima
         y_minima_frac = y_minima
     else:
