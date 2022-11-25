@@ -327,7 +327,7 @@ class Scalar_source_XY(Scalar_field_XY):
             radius (float): width of the beam
             n (list): list of integers with orders
             m (list): list of integers with orders
-            c_nm (list): list of integers with coefficients
+            c_nm (list): list of coefficients, in radians
 
         Example:
              zernike_beam(A=1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1])
