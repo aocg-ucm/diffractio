@@ -41,10 +41,10 @@ class Vector_mask_XY(Vector_field_XY):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_mask_XY'
 
-        self.M00 = np.zeros_like(self.X, dtype=complex)
-        self.M01 = np.zeros_like(self.X, dtype=complex)
-        self.M10 = np.zeros_like(self.X, dtype=complex)
-        self.M11 = np.zeros_like(self.X, dtype=complex)
+        self.M00 = np.ones_like(self.X, dtype=complex)
+        self.M01 = np.ones_like(self.X, dtype=complex)
+        self.M10 = np.ones_like(self.X, dtype=complex)
+        self.M11 = np.ones_like(self.X, dtype=complex)
 
         del self.Ex, self.Ey, self.Ez
 
