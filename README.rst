@@ -1,7 +1,8 @@
 ================================================
 Python Diffraction-Interference module
 ================================================
-
+.. image:: https://img.shields.io/pypi/dm/diffractio
+        :target: https://pypi.org/project/diffractio/
 
 .. image:: https://img.shields.io/pypi/v/diffractio.svg
         :target: https://pypi.org/project/diffractio/
@@ -266,3 +267,8 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+
+____
+
+pytest --cov=diffractio tests/
