@@ -562,7 +562,7 @@ class Test_Scalar_fields_XZ(object):
                 filename='')
         save_figure_test(newpath, func_name, add_name='_int')
 
-        filename = '{}{}_video.mp4'.format(newpath, func_name)
+        filename = '{}{}{}.{}'.format(newpath, func_name, '_video', 'mp4')
 
         seconds = 1
         u1.video(kind='intensity',

@@ -85,3 +85,5 @@ target/
 .env
 
 tests_results*/
+
+htmlcov/
