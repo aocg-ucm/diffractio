@@ -66,15 +66,15 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import  np, plt
-from . import degrees, mm,  seconds, um
+from . import np, plt
+from . import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import (get_edges, get_k, ndgrid, nearest, nearest2, reduce_to_1,
-                         rotate_image, Bluestein_dft_xy)
+from .utils_math import (get_edges, get_k, ndgrid, nearest, nearest2,
+                         reduce_to_1, rotate_image, Bluestein_dft_xy)
 from .utils_optics import beam_width_2D, field_parameters, normalize_field
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -328,13 +328,15 @@ class Scalar_field_XY(object):
                   filename="",
                   kind='amplitude',
                   binarize=False,
+                  cmap='gray',
                   info=""):
         """Create a mask in a file, for example, ablation or litography engraver
 
         Parameters:
             filename (str): file name
-            kind (str): save amplitude or phase
+            kind (str): save amplitude, phase or intensity. If intensity it is normalized to (0,1)
             binarize (bool): If True convert the mask in (0,1) levels
+            cmap (str): colormap. (gray)
             info (str): info of the mask
 
         Returns:
@@ -357,6 +359,10 @@ class Scalar_field_XY(object):
             mask = (mask - mask.min()) / (mask.max() - mask.min())
             mask = mask * filter
 
+        elif kind == 'intensity':
+            mask = np.abs(self.u)**2
+            cmap='hot'
+
         if binarize is True:
             mask_min = mask.min()
             mask_max = mask.max()
@@ -368,7 +374,7 @@ class Scalar_field_XY(object):
 
             mask = mask2
 
-        plt.imsave(filename, mask, cmap='gray', dpi=100, origin='lower')
+        plt.imsave(filename, mask, cmap=cmap, dpi=100, origin='lower')
         plt.close()
 
         # important data
@@ -1052,17 +1058,17 @@ class Scalar_field_XY(object):
                 self.X, self.Y = meshgrid(self.x, self.y)
 
     def WPM(self,
-                       fn,
-                       zs,
-                       num_sampling=(512, 512),
-                       ROI=(None, None),
-                       r_pos=None,
-                       z_pos=None,
-                       get_u_max=False,
-                       has_edges=True,
-                       pow_edge=80,
-                       matrix=False,
-                       verbose=False):
+            fn,
+            zs,
+            num_sampling=(512, 512),
+            ROI=(None, None),
+            r_pos=None,
+            z_pos=None,
+            get_u_max=False,
+            has_edges=True,
+            pow_edge=80,
+            matrix=False,
+            verbose=False):
         """WPM method used for very dense sampling. It does not storages the intensity distribution at propagation, but only selected areas. The areas to be stored are:
             - global view with a desired sampling given by num_sampling.
             - intensity at the last plane.
@@ -1161,7 +1167,8 @@ class Scalar_field_XY(object):
             indexes_x_gv, _, _ = nearest2(x, xout_gv)
             indexes_y_gv, _, _ = nearest2(y, yout_gv)
             indexes_z_gv, _, _ = nearest2(zs, zout_gv)
-            indexes_X_gv, indexes_Y_gv = np.meshgrid(indexes_x_gv, indexes_y_gv)
+            indexes_X_gv, indexes_Y_gv = np.meshgrid(indexes_x_gv,
+                                                     indexes_y_gv)
 
             u_out_gv.n = fn(xout_gv, yout_gv, zout_gv, self.wavelength)
         else:
@@ -1179,8 +1186,8 @@ class Scalar_field_XY(object):
             indexes_y_roi, _, _ = nearest2(y, yout_roi)
             indexes_z_roi, _, _ = nearest2(zs, zout_roi)
 
-            indexes_X_roi, indexes_Y_roi = np.meshgrid(
-                indexes_x_roi, indexes_y_roi)
+            indexes_X_roi, indexes_Y_roi = np.meshgrid(indexes_x_roi,
+                                                       indexes_y_roi)
             # indexes_x_roi = np.unique(indexes_x_roi)
             # indexes_y_roi = np.unique(indexes_y_roi)
             # indexes_z_roi = np.unique(indexes_z_roi)
@@ -1199,8 +1206,8 @@ class Scalar_field_XY(object):
                 zs[j - 1],
             ]), self.wavelength)
 
-            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0, k_perp2,
-                                          dz) * filter_edge
+            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0,
+                                          k_perp2, dz) * filter_edge
 
             current_intensity = np.max(np.abs(u_iter.u)**2)
             intensities[j] = u_iter.intensity()[index_x_axis, index_y_axis]

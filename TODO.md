@@ -7,8 +7,8 @@
 - draw(kind='fft') x -> bad angles
 - draw_several_fields for X, XY, and XZ, not only XY
 
-
 ## In process
+
 - filter_refraction_index -> smooth_refraction_index
 - discretize_refraction_index, so that smooth_refraction_index can be used with WPM.
 - XZ and XYZ: function for interactive drawing I(x,y;z).

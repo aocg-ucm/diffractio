@@ -134,19 +134,51 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         return (num_pixels_1 / num_pixels) * (delta_x * delta_y)
 
-    def inverse_amplitude(self):
-        """Inverts the amplitude of the mask, phase is equal as initial"""
+    def inverse_amplitude(self, new_field=False):
+        """Inverts the amplitude of the mask, phase is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
+            
+            
+        Returns:
+            Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
+        """
+
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
-        self.u = (1 - amplitude) * exp(1.j * phase)
+        new_amplitude = (1 - amplitude) * exp(1.j * phase)
 
-    def inverse_phase(self):
-        """Inverts the phase of the mask, amplitude is equal as initial"""
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            new.u = new_amplitude
+            return new
+
+    def inverse_phase(self, new_field=False):
+        """Inverts the phase of the mask, amplitude is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
+            
+            
+        Returns:
+            Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
+        """
+
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
-        self.u = amplitude * exp(-1.j * phase)
+        new_amplitude = amplitude * exp(-1.j * phase)
+
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            new.u = new_amplitude
+            return new
 
     def filter(self, mask, new_field=True, binarize=False, normalize=False):
         """Widens a field using a mask
@@ -1861,12 +1893,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
-    def roughness(self, t, s):
+    def roughness(self, t, s, refraction_index=-1):
         """Generation of a rough surface. According to Ogilvy p.224
 
         Parameters:
             t (float, float): (tx, ty), correlation length of roughness
             s (float): std of heights
+            refraction_index (float): refraction index, if -1 it is reflexion
 
         Example:
             roughness(t=(50 * um, 25 * um), s=1 * um)
@@ -1875,7 +1908,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         h_corr = roughness_2D(self.x, self.y, t, s)
 
         k = 2 * pi / self.wavelength
-        self.u = exp(-1.j * k * 2 * h_corr)
+        self.u = exp(1.j * k * (refraction_index - 1) * h_corr)
         return h_corr
 
     def circle_rough(self, r0, radius, angle, sigma):
