@@ -795,10 +795,7 @@ class Scalar_field_XZ(object):
         nx = len(self.x)
         return S[nx - 1:]
 
-    def RS(self,
-           xout=None,
-           verbose=False,
-           num_processors=num_max_processors):
+    def RS(self, xout=None, verbose=False, num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
@@ -1692,6 +1689,7 @@ class Scalar_field_XZ(object):
                              x0=0 * um,
                              logarithm=False,
                              normalize=False,
+                             z_scale='um',
                              draw=True,
                              filename=''):
         """Determine and draws longitudinal profile
@@ -1710,6 +1708,14 @@ class Scalar_field_XZ(object):
 
         imenor, _, _ = nearest(vector=self.x, number=x0)
 
+        if z_scale == 'um':
+            factor = 1
+            xlabel = 'z (um)'
+
+        elif z_scale == 'mm':
+            factor = 1000
+            xlabel = 'z (mm)'
+
         if kind == 'refraction_index':
             n_profile = np.abs(self.n[imenor, :])
             I_drawing = n_profile
@@ -1720,12 +1726,15 @@ class Scalar_field_XZ(object):
 
         if draw is True:
             plt.figure(facecolor='w', edgecolor='k')
-            plt.plot(self.z, I_drawing, 'k', linewidth=2)  # 'k-o'
-            plt.axis([self.z[0], self.z[-1], I_drawing.min(), I_drawing.max()])
+            plt.plot(self.z / factor, I_drawing, 'k', linewidth=2)  # 'k-o'
+            plt.axis([
+                self.z[0] / factor, self.z[-1] / factor,
+                I_drawing.min(),
+                I_drawing.max()
+            ])
 
-            texto = 'I(z, x=%d um)' % (x0)
-            plt.xlabel('z (um)')
-            plt.ylabel(texto)
+            plt.xlabel(xlabel)
+            plt.ylabel('I(z, x = {:2.2f} $\mu$m)'.format(x0))
 
             if not filename == '':
                 plt.savefig(filename,
@@ -1829,6 +1838,7 @@ class Scalar_field_XZ(object):
     def beam_widths(self,
                     kind='FWHM1D',
                     has_draw=[True, False],
+                    z_scale='um',
                     percentage=0.5,
                     remove_background=None,
                     verbose=False):
@@ -1844,6 +1854,14 @@ class Scalar_field_XZ(object):
             (numpy.array) widths:  for each distance z
             (numpy.array) positions_center: positions of centers for each z
         """
+
+        if z_scale == 'um':
+            factor = 1
+            xlabel = 'z (um)'
+
+        elif z_scale == 'mm':
+            factor = 1000
+            xlabel = 'z (mm)'
 
         widths = np.zeros_like(self.z)
         positions_center = np.zeros_like(self.z)
@@ -1862,8 +1880,8 @@ class Scalar_field_XZ(object):
 
         if has_draw[0] is True:
             plt.figure()
-            plt.plot(self.z, widths, 'r', label='axis')
-            plt.xlabel("z ($\mu$m)")
+            plt.plot(self.z / factor, widths, 'r', label='axis')
+            plt.xlabel(xlabel)
             plt.ylabel("widths ($\mu$m)")
             plt.legend()
 

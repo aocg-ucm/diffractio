@@ -195,6 +195,17 @@ class Scalar_field_X(object):
         new_field.u = self.u * other.u
         return new_field
 
+    def conjugate(self, new_field=True):
+        """Conjugates the field
+        """
+
+        if new_field is True:
+            u_new = self.duplicate()
+            u_new.u = np.conj(self.u)
+            return u_new
+        else:
+            self.u = np.conj(self.u)
+
     def duplicate(self, clear=False):
         """Duplicates the instance
 

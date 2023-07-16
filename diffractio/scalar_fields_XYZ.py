@@ -282,6 +282,17 @@ class Scalar_field_XYZ(object):
 
         return Xrot, Yrot, Zrot
 
+    def conjugate(self, new_field=True):
+        """Conjugates the field
+        """
+
+        if new_field is True:
+            u_new = self.duplicate()
+            u_new.u = np.conj(self.u)
+            return u_new
+        else:
+            self.u = np.conj(self.u)
+
     def normalize(self, new_field=False):
         """Normalizes the field so that intensity.max()=1.
 
