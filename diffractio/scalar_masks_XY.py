@@ -498,12 +498,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[u > 1] = 1
         self.u = u
 
-    def photon_sieve(self, t1, r0):
+    def photon_sieve(self, t1, r0, top_one=True):
         """Generates a matrix of shapes given in t1.
 
         Parameters:
             t1 (Scalar_mask_XY): Mask of the desired figure to be drawn
             r0 (float, float) or (np.array, np.array): (x,y) point or points where mask is 1
+            top_one (bool): If True, max(mask) = 1
 
 
         Returns:
@@ -532,7 +533,8 @@ class Scalar_mask_XY(Scalar_field_XY):
                 uj[i_xcercano, j_ycercano] = 1
         num_points = int(uj.sum())
         u = fftconvolve(uj, t1.u, mode='same')
-        u[u > 1] = 1
+        if top_one:
+            u[u > 1] = 1
         self.u = u
         return num_points
 

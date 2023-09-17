@@ -176,6 +176,9 @@ def draw_several_fields(fields,
 
     percentage_intensity = CONF_DRAWING['percentage_intensity']
 
+    if type(logarithm) in (int, float, bool):
+        logarithm = logarithm * np.ones(len(fields))
+
     for i in sorted(range(num_dibujos)):
         c = fields[i]
         id_fig.add_subplot(col, fil, i + 1)
@@ -210,8 +213,8 @@ def draw_several_fields(fields,
             image = np.real(c.u)
             colormap = CONF_DRAWING['color_real']
 
-        if logarithm > 0 and kind in ('intensity', 'amplitude', 'real'):
-            image = np.log(logarithm * image + 1)
+        if logarithm[i] != 0 and kind in ('intensity', 'amplitude', 'real'):
+            image = np.log(logarithm[i] * image + 1)
 
         if normalize == 'maximum' and kind in ('intensity', 'amplitude',
                                                'real'):
