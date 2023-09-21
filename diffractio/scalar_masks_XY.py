@@ -37,9 +37,12 @@ import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
                    ones_like, pi, shape, sin, sqrt, zeros, zeros_like)
+from diffractio.utils_math import cart2pol
+
 from PIL import Image
 from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
+
 
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -895,6 +898,24 @@ class Scalar_mask_XY(Scalar_field_XY):
         ipasa = Xrot**2 / radiusx**2 + Yrot**2 / radiusy**2 < 1
         u[ipasa] = 1
         self.u = u
+
+    def circular_sector(self, r0, radius, angle0, angle1):
+        """Generates a circular sector.
+
+        Args:
+            r0 (int, int): position of center
+            radius (float): radius
+            angle0 (float): initial angle in radians.
+            end_angle (float): end angle in radias.d
+
+        """
+
+        [rho, theta] = cart2pol(self.X - r0[0], self.Y - r0[1])
+
+        ix = (theta > angle0) & (theta <= angle1) & (rho < radius)
+        self.u[ix] = 1
+        
+        return self
 
     def super_gauss(self, r0, radius, power=2, angle=0 * degrees):
         """Supergauss mask.
