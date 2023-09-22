@@ -899,23 +899,24 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
-    def circular_sector(self, r0, radius, angle0, angle1):
+    def circular_sector(self, r0, radii, angles):
         """Generates a circular sector.
 
         Args:
             r0 (int, int): position of center
-            radius (float): radius
-            angle0 (float): initial angle in radians.
-            end_angle (float): end angle in radias.d
+            radii (float) or (float, float): radius
+            angles (float, float): initial and final angle in radians.
 
         """
 
+        if isinstance(radii, float):
+            radii = (0, radii)
+
         [rho, theta] = cart2pol(self.X - r0[0], self.Y - r0[1])
 
-        ix = (theta > angle0) & (theta <= angle1) & (rho < radius)
+        ix = (theta > angles[0]) & (theta <= angles[1]) & (rho >= radii[0]) & (rho < radii[1])
         self.u[ix] = 1
-        
-        return self
+    
 
     def super_gauss(self, r0, radius, power=2, angle=0 * degrees):
         """Supergauss mask.
