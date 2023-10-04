@@ -42,7 +42,7 @@ from diffractio.utils_math import cart2pol
 from PIL import Image
 from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
-
+import matplotlib.path as mpath
 
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -471,7 +471,119 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
-    # TODO: 8 pointed star
+    def polygon(self, vertices):
+        """Draws a polygon with the vertices given in a Nx2 numpy array.
+
+        Args:
+            vertices (np.array): Nx2 array with the x,y positions of the vertices.
+
+        Example:
+            x0 = np.linspace(-3 * mm, 3 * mm, 512)
+            y0 = np.linspace(-3 * mm, 3 * mm, 512)
+            wavelength = 0.6328 *um
+            vertices = np.array([(0 * mm, 0 * mm), (2 * mm, 0 * mm), (2 * mm, 1 * mm),
+                                (0 * mm, 1 * mm)])
+            t = Scalar_mask_XY(x0, y0, wavelength)
+            t.polygon(vertices)
+            t.draw()
+        """
+
+        num_x, num_y = self.u.shape
+
+        verticesx, _, _ = nearest2(self.y, vertices[:, 1])
+        verticesy, _, _ = nearest2(self.x, vertices[:, 0])
+
+        i_vertices = np.column_stack((verticesx, verticesy))
+
+        # Create the coordinates of the matrix
+        coordinates = np.column_stack(
+            (np.repeat(np.arange(num_x),
+                       num_y), np.tile(np.arange(num_y), num_x)))
+
+        # Create the Path object of the polygon
+        path = mpath.Path(i_vertices)
+
+        # Verificar si cada punto de la matriz está dentro del polígono
+        in_polygon = path.contains_points(coordinates)
+
+        # Check if each point in the array is inside the polygon
+        self.u[in_polygon.reshape((num_x, num_y))] = 1
+
+    def regular_polygon(self, num_vertices, radius, angle=0):
+        """Generates a regular polygon.
+
+        Args:
+            num_vertices (int): num_vertices
+            radius (float): external radius
+            angle (float): angle of rotation
+        
+        Returns:
+            vertices (np.array): position of vertices
+
+        """
+
+        i_vertices = np.array(range(num_vertices + 1))
+        angles = 2 * np.pi * i_vertices / num_vertices
+
+        x_vertices = radius * np.cos(angles - angle + 90 * degrees)
+        y_vertices = radius * np.sin(angles - angle + 90 * degrees)
+
+        vertices = np.column_stack((x_vertices, y_vertices))
+
+        self.polygon(vertices)
+
+        return vertices
+
+    def star(self, num_peaks, radii, angle=0):
+        """Generates a regular polygon
+
+        Args:
+            num_peaks (int): number of peaks.
+            radii (float, float): external radius
+            angle (float): angle of rotation
+        
+        Returns:
+            vertices (np.array): position of vertices
+
+        Example:
+            x0 = np.linspace(-3 * mm, 3 * mm, 512)
+            y0 = np.linspace(-3 * mm, 3 * mm, 512)
+            wavelength = 0.6328 *um
+            t = Scalar_mask_XY(x0, y0, wavelength)
+            vertices = t.stars(5, (2*mm,1*mm), 0*degrees)
+            t.draw()
+
+        """
+        radii = np.array(radii)
+
+        i_vertices = np.array(range(num_peaks))
+        angles = 2 * np.pi * i_vertices / num_peaks
+
+        phase_shift = 2 * np.pi / (2 * num_peaks)
+
+        x_vertices_max = radii[0] * np.cos(angles - angle + 90 * degrees)
+        y_vertices_max = radii[0] * np.sin(angles - angle + 90 * degrees)
+        vertices_max = np.column_stack((x_vertices_max, y_vertices_max))
+
+        x_vertices_min = radii[1] * np.cos(angles - angle + phase_shift +
+                                           90 * degrees)
+        y_vertices_min = radii[1] * np.sin(angles - angle + phase_shift +
+                                           90 * degrees)
+        vertices_min = np.column_stack((x_vertices_min, y_vertices_min))
+
+        # Find the maximum number of rows between both matrices
+        max_num_rows = 2 * num_peaks
+
+        # Create an empty interleaved matrix with twice the number of rows
+        interleaved_matrix = np.empty((max_num_rows, 2))
+
+        # Interleave the rows from both matrices
+        interleaved_matrix[:max_num_rows:2] = vertices_max
+        interleaved_matrix[1:max_num_rows:2] = vertices_min
+
+        self.polygon(interleaved_matrix)
+
+        return interleaved_matrix
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
@@ -914,9 +1026,9 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         [rho, theta] = cart2pol(self.X - r0[0], self.Y - r0[1])
 
-        ix = (theta > angles[0]) & (theta <= angles[1]) & (rho >= radii[0]) & (rho < radii[1])
+        ix = (theta > angles[0]) & (theta <= angles[1]) & (rho >= radii[0]) & (
+            rho < radii[1])
         self.u[ix] = 1
-    
 
     def super_gauss(self, r0, radius, power=2, angle=0 * degrees):
         """Supergauss mask.
