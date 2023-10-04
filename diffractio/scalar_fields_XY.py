@@ -1643,7 +1643,7 @@ class Scalar_field_XY(object):
                     print("{}/{}".format(i, num_z), sep="\r", end="\r")
 
                 R = np.sqrt(Xout**2 + Yout**2 + z_now**2)
-                if z > 0:
+                if z_now > 0:
                     F0 = 1 / (2 * np.pi) * np.exp(
                         1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
                 else:
@@ -1651,7 +1651,7 @@ class Scalar_field_XY(object):
                         -1.j * k * R) * z_now / R**2 * (1 / R + 1.j * k)
 
                 R = np.sqrt(self.X**2 + self.Y**2 + z_now**2)
-                if z > 0:
+                if z_now > 0:
                     F = 1 / (2 * np.pi) * np.exp(
                         1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
                 else:
