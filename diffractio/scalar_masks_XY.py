@@ -1392,10 +1392,14 @@ class Scalar_mask_XY(Scalar_field_XY):
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         #t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
         t2.u = sin(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
-        t2.u[t2.u > 0] = levels[0]
-        t2.u[t2.u <= 0] = levels[1]
+
+        if kind == 'amplitude':
+            t2.u[t2.u > 0] = levels[0]
+            t2.u[t2.u <= 0] = levels[1]
 
         if kind == 'phase':
+            t2.u[t2.u > 0] = 1
+            t2.u[t2.u <= 0] = 0
             t2.u = exp(1j * t2.u * phase)
 
         self.u = t2.u * t1
@@ -1920,35 +1924,32 @@ class Scalar_mask_XY(Scalar_field_XY):
         amplitud = amin + (amax - amin) * t.u
         self.u = amplitud * np.exp(1j * phase * t.u)
 
-    def blazed_grating(self, period, height, index, x0, angle=0 * degrees):
-        """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
+    def blazed_grating(self, period, phase_max, x0, angle=0 * degrees):
+        """Blazed grating.
 
          Parameters:
             period (float): period of the grating
-            height (float): height of the blazed grating
-            index (float): refraction index
+            phase_max (float): maximum phase of the blazed grating
             x0 (float): initial displacement of the grating
             angle (float): angle of the grating in radians
 
         Example:
-            blazed_grating(period=40 * um, height=2 * um, index=1.5, x0, angle=0 * degrees)
+            blazed_grating(period=40 * um, phase_max=2*np.pi, x0, angle=0 * degrees)
         """
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
         # Inclinacion de las franjas
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
-        # Calculo de la pendiente
-        pendiente = height / period
-        # Calculo de la height
-        h = (Xrot) * pendiente
+        num_periods = (self.x[-1] - self.x[0]) / period
 
-        # Calculo del a phase
-        phase = k * (index - 1) * h
-        # Definicion del origen
-        phase = phase - phase.min()
-        # Normalizacion entre 0 y 2pi
-        phase = np.remainder(phase, 2 * pi)
-        self.u = exp(1j * phase)
+        # Height computation
+        phase = (Xrot - x0) * phase_max * num_periods / (self.x[-1] -
+                                                         self.x[0])
+
+        # normalization between 0 and 2pi
+        phase = np.remainder(phase, phase_max)
+        self.u = np.exp(1j * phase)
+        return self
 
     def grating_2D(self,
                    r0,

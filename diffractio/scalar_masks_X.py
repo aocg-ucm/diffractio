@@ -254,19 +254,19 @@ class Scalar_mask_X(Scalar_field_X):
 
         self.u = t
 
-    def prism(self, x0, n, anglex):
+    def prism(self, x0, n, angle):
         """Prism.
 
         Parameters:
             x0 (float): vertex of prism
             n (float): refraction_index
-            anglex (float): angle of prism
+            angle (float): angle of prism
 
         """
 
         k = 2 * np.pi / self.wavelength
 
-        h = (self.x - x0) * np.sin(anglex)
+        h = (self.x - x0) * np.tan(angle)
         self.u = np.exp(1j * k * (n - 1) * h)
 
         h = h - h.min()
@@ -656,38 +656,29 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = self.u * np.exp(1j * phase * t.u)
         return t.u
 
-    def blazed_grating(
-        self,
-        x0,
-        period,
-        height,
-        n,
-    ):
+    def blazed_grating(self, x0, period, phase_max):
         """Phase, blazed grating. The phase shift is determined by heigth and refraction index.
 
         Parameters:
             x0 (float): shift of the grating
             period (float): period of the grating
-            height (float): height of grating
-            n (float): refraction index of grating
+            phase_max (float): maximum_phase_differences
+
+        returns:
+            phase (np.array): phase for each position
         """
 
         k = 2 * np.pi / self.wavelength
 
         # Slope computation
-        slope = height / period
+        num_periods = (self.x[-1] - self.x[0]) / period
 
         # Height computation
-        h = (self.x - x0) * slope
-
-        # Phase computation
-        phase = k * (n - 1) * h
-
-        # removing phase min
-        phase = phase - phase.min()
+        phase = (self.x - x0) * phase_max * num_periods / (self.x[-1] -
+                                                           self.x[0])
 
         # normalization between 0 and 2pi
-        phase = np.remainder(phase, 2 * np.pi)
+        phase = np.remainder(phase, phase_max)
         self.u = np.exp(1j * phase)
         return phase
 
