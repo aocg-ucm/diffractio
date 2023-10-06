@@ -1540,7 +1540,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u * t
 
-    def angular_grating(self, r0, period, phase, radius, is_binary=True):
+    def angular_grating(self, r0, num_petals, phase, radius, is_binary=True):
         """Angular grating.
 
         Parameters:
@@ -1551,7 +1551,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             is_binary (bool): if True binary else, scaled
 
         Example:
-            angular_grating(r0=(0 * um, 0 * um), period=20 * um,
+            angular_grating(r0=(0 * um, 0 * um), num_petals =20,
                             phase=0 * um, radius=400 * um, is_binary=True)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
@@ -1561,7 +1561,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = (1 + sin(2 * pi * (theta - phase) / period)) / 2
+        t = (1 + sin((theta - phase) * num_petals)) / 2
         if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
