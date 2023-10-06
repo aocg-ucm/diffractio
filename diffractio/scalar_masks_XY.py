@@ -1561,7 +1561,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = (1 + sin((theta - phase) * num_petals)) / 2
+        t = (1 + np.cos((theta - phase) * num_petals)) / 2
         if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
