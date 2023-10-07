@@ -165,13 +165,19 @@ Beta state
 --------------------------------
 
 * Fix bugs:
+
   - Bug in XYZ video
+
   - Blazed grating wrong defined. 
 
 * New features:
+
   - XY masks: new polygon, regular_polygon, and star functions.
+
   - XY masks: new circular_sector function.
+
   - X, XY, XYZ fields: new conjugate function.
+
   - WPM function without storing all the data.
 
 
