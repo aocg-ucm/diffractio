@@ -128,7 +128,7 @@ Beta state
   - Remove mask parameter from lenses. This may produce incompatibilities with former code
   - Improving drawings
 
-0.1.1 (2023-01-01)
+0.1.1 (2022-10-16)
 --------------------------------
 * Vector fields are not longer paraxial.
 
@@ -161,7 +161,7 @@ Beta state
 * Smooth_refraction index can be used also for Wave Propagation Method algorithm (WPM).
 
 
-0.1.2 (2023-10-07)
+0.1.3 (2023-10-07)
 --------------------------------
 
 * Fix bugs:

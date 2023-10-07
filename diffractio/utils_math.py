@@ -1004,7 +1004,33 @@ def laguerre_polynomial_nk(x, n=4, k=5):
     return summation
 
 
+
 def get_k(x, flavour='-'):
+    """provides k vector from x vector. With flavour set to "-", the axis will be inverse-fftshifted,
+        thus its DC part being the first index. 
+
+    Parameters:
+        x (np.array): x array
+        flavour (str): '-' (for ifftshifted axis)
+
+    Returns:
+        kx (np.array): k vector
+
+    Fixed by Bob-Swinkels
+
+    """
+    num_x = x.size
+    integerFrom = int( np.floor((1-num_x) / 2 ) )
+    integerTo = int( np.floor((num_x-1) / 2) )
+    intRange = np.linspace(integerFrom, integerTo, num_x) # ordered k axis, DC is at int(np.floor(num_x/2))
+    if flavour == '-':
+        intRange = np.fft.ifftshift(intRange) # leading zero (DC) frequency
+    dx = x[1] - x[0]
+    dk = 2 * np.pi / (num_x * dx)
+    return dk * intRange
+
+
+def get_k_deprecated(x, flavour='-'):
     """provides k vector from x vector. Two flavours are provided (ordered + or disordered - )
 
     Parameters:

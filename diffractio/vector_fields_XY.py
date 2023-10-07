@@ -87,6 +87,8 @@ class Vector_field_XY(object):
         self.type = 'Vector_field_XY'
         self.info = info
         self.date = get_date()
+        self.CONF_DRAWING = CONF_DRAWING
+
 
     def __str__(self):
         """Represents data from class."""

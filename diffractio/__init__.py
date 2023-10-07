@@ -42,7 +42,7 @@ from .config import CONF_DRAWING
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 name = 'diffractio'
 
@@ -64,3 +64,7 @@ date_test = now.strftime("%Y-%m-%d_%H")
 number_types = (int, float, complex, np.int32, np.float64)
 
 num_max_processors = multiprocessing.cpu_count()
+
+
+from matplotlib import rcParams
+rcParams['figure.dpi']=75
