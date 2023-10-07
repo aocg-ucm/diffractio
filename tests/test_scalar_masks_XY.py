@@ -903,8 +903,7 @@ class Test_Scalar_masks_XY(object):
         period = 125 * um
         red = Scalar_mask_XY(x, y, wavelength)
         red.blazed_grating(period=period,
-                           height=2 * um,
-                           index=1.5,
+                           phase_max=2 * np.pi,
                            x0=0,
                            angle=0 * degrees)
         red.draw(kind='phase')

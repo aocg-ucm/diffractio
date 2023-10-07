@@ -626,8 +626,9 @@ class Scalar_mask_XY(Scalar_field_XY):
             (int): number of points in the mask
 
         """
-
-        x0, y0 = r0
+        r0 = np.array(r0)
+        x0 = r0[:,0]
+        y0 = r0[:,1]
         u = np.zeros_like(self.X)
         uj = np.zeros_like(self.X)
 

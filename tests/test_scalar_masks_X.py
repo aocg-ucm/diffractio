@@ -104,7 +104,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.prism(x0=0, n=1.5, anglex=1 * degrees)
+        t1.prism(x0=0, n=1.5, angle=1 * degrees)
         t1.draw(kind='phase')
 
         t1.save_data(filename=filename + '.npz')
@@ -316,7 +316,7 @@ class Test_Scalar_masks_X(object):
         wavelength = 0.6238 * um
         period = 125 * um
         red = Scalar_mask_X(x, wavelength)
-        red.blazed_grating(x0=0, period=period, height=2 * um, n=1.5)
+        red.blazed_grating(x0=0, period=period, phase_max=2 * np.pi)
         red.draw(kind='phase')
 
         red.save_data(filename=filename + '.npz')
