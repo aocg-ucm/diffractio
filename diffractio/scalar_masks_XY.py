@@ -627,8 +627,8 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         """
         r0 = np.array(r0)
-        x0 = r0[:,0]
-        y0 = r0[:,1]
+        x0 = r0[:, 0]
+        y0 = r0[:, 1]
         u = np.zeros_like(self.X)
         uj = np.zeros_like(self.X)
 
@@ -2136,6 +2136,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         References:
             https://en.wikipedia.org/wiki/Superellipse
+            
 
         Example:
             super_ellipse(r0=(0 * um, 0 * um), radius=(250 * \
@@ -2165,6 +2166,62 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Definition of transmittance
         u = np.zeros_like(self.X)
         ipasa = np.abs((Xrot) / radiusx)**nx + np.abs((Yrot) / radiusy)**ny < 1
+        u[ipasa] = 1
+        self.u = u
+
+    def superformula(self, r0, radius, n, m, angle=0 * degrees):
+        """superformula. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
+
+        Parameters:
+            r0 (float, float): center of super_ellipse
+            radius (float, float): radius of the super_ellipse
+            n (float, float, float):  n1, n2, n3 parameters
+            m (float): num of petals
+            angle (float): angle of rotation in radians
+
+
+        Note:
+            n1 = n2 = 1: for a square
+            n1 = n2 = 2: for a circle
+            n1 = n2 = 0.5: for a superellipse
+
+        References:
+            Gielis, J. "A Generic Geometric Transformation that Unifies a Wide Range of Natural and Abstract Shapes." Amer. J. Botany 90, 333-338, 2003.
+            https://mathworld.wolfram.com/Superellipse.html
+
+        Example:
+            superformula(r0=(0, 0),  radius=(1.5 * mm, 1.5 * mm), n=(1, 1, 1), m=8, angle=0 * degrees)       
+        """
+
+        if isinstance(r0, (float, int)):
+            x0, y0 = (r0, r0)
+        else:
+            x0, y0 = r0
+
+        n1, n2, n3 = n
+
+        if isinstance(radius, (float, int)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+
+        # Rotation of the super-ellipse
+        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
+
+        R = np.sqrt(Xrot**2 + Yrot**2)
+        Theta = np.arctan2(Yrot, Xrot)
+
+        # Definition of transmittance
+        u = np.zeros_like(self.u)
+
+        factor = max(radiusx, radiusy)
+
+        term1 = np.abs(np.cos(0.25 * m * Theta) / (radiusx / factor))**n2
+        term2 = np.abs(np.sin(0.25 * m * Theta) / (radiusy / factor))**n3
+        r_theta = (term1 + term2)**(-1 / n1) * factor
+
+        ipasa = R < r_theta
+
         u[ipasa] = 1
         self.u = u
 
