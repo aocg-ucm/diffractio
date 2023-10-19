@@ -2671,7 +2671,7 @@ class Scalar_field_XY(object):
 
 
 def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
-    """Kernel for RS propagation. There is a bug accordig: Juan Valencia <valen167@umn.edu>  210131
+    """Kernel for RS propagation. 
 
     Parameters:
         X(numpy.array): positions x
@@ -2713,13 +2713,13 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     k = 2 * pi * n / wavelength
     R = sqrt(X**2 + Y**2 + z**2)
     if kind == 'z':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * z / R * (1 / R + 1.j * k)
+        return 1 / (2 * pi) * exp(-1.j * k * R) * z / R**2 * (1 / R + 1.j * k)
     elif kind == 'x':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * X / R * (1 / R + 1.j * k)
+        return 1 / (2 * pi) * exp(-1.j * k * R) * X / R**2 * (1 / R + 1.j * k)
     elif kind == 'y':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R * (1 / R + 1.j * k)
+        return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R**2 * (1 / R + 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * (1 / R + 1.j * k)
+        return 1 / (2 * pi) * exp(-1.j * k * R)  / R * (1 / R + 1.j * k)
 
 
 def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
