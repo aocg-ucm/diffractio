@@ -203,17 +203,24 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def apply_scalar_mask(self, u_mask):
+    def apply_scalar_mask(self,mask,state):
         """The same mask u_mask is applied to all the Jones Matrix.
 
         Parameters:
             u_mask (scalar_mask_XY): mask to apply.
 
         """
-        self.M00 = self.M00 * u_mask.u
-        self.M01 = self.M01 * u_mask.u
-        self.M10 = self.M10 * u_mask.u
-        self.M11 = self.M11 * u_mask.u
+
+        t = np.abs(mask.u)**2
+       
+        self.M00 = state[0,0] * t
+        self.M01 = state[0,1] * t
+        self.M10 = state[1,0] * t
+        self.M11 = state[1,1] * t
+
+        #Corrección: Cambiar los elementos de la matriz iguales a -0 por 0, para representar las fases correctamente.
+        self.M01.real = np.where(np.real(self.M01)==-0,0,np.real(self.M01))
+        self.M10.real = np.where(np.real(self.M10)==-0,0,np.real(self.M10))
 
     def complementary_masks(self,
                             mask,
@@ -461,7 +468,7 @@ class Vector_mask_XY(Vector_field_XY):
                                    extent=extension,
                                    origin='lower')
             im1.set_clim(-180, 180)
-            axs[1, 1].set_title("J12")
+            axs[1, 1].set_title("J11")
 
             plt.suptitle("phases", fontsize=15)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
