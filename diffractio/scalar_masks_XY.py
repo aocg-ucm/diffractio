@@ -70,7 +70,6 @@ class Scalar_mask_XY(Scalar_field_XY):
     """
 
     def __init__(self, x=None, y=None, wavelength=None, info=""):
-        # print("init de Scalar_mask_XY")
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 

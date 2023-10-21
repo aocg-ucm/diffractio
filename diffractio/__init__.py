@@ -65,6 +65,6 @@ number_types = (int, float, complex, np.int32, np.float64)
 
 num_max_processors = multiprocessing.cpu_count()
 
-
 from matplotlib import rcParams
-rcParams['figure.dpi']=75
+
+rcParams['figure.dpi'] = 75

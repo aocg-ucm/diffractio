@@ -252,8 +252,8 @@ class Vector_mask_XY(Vector_field_XY):
             t[t >= 0.5] = 1
 
         self.M00 = t * state_1[0, 0] + (1 - t) * state_0[0, 0]
-        self.M01 = t * state_1[0, 1] + (1 - t) * state_0[1, 0]
-        self.M10 = t * state_1[1, 0] + (1 - t) * state_0[0, 1]
+        self.M01 = t * state_1[0, 1] + (1 - t) * state_0[0, 1]
+        self.M10 = t * state_1[1, 0] + (1 - t) * state_0[1, 0]
         self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
 
     def multilevel_mask(self, mask, states, discretize=True, normalize=True):
@@ -280,16 +280,14 @@ class Vector_mask_XY(Vector_field_XY):
             mask_new.u = mask_new.u * num_levels - 0.5
 
         mask_new.u = np.real(mask_new.u)
-        mask_new.u = mask_new.u.astype(np.int)
+        mask_new.u = mask_new.u.astype(int)
 
         for i, state in enumerate(states):
-            # print(state)
             i_level = (mask_new.u == i)
             self.M00[i_level] = state.M[0, 0, 0]
             self.M01[i_level] = state.M[0, 1, 0]
             self.M11[i_level] = state.M[1, 1, 0]
             self.M10[i_level] = state.M[1, 0, 0]
-            # print(self.M00[i_level][0], self.M01[i_level][0], self.M10[i_level][0], self.M11[i_level][0])
 
     def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol polarization.Jones_matrix.
@@ -428,8 +426,8 @@ class Vector_mask_XY(Vector_field_XY):
             im1.set_clim(0, a_max)
             axs[1, 1].set_title("J11")
 
-            plt.suptitle("amplitudes", fontsize=20)
-            cax = plt.axes([.89, 0.2, 0.03, 0.6])
+            plt.suptitle("amplitudes", fontsize=15)
+            cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
 
@@ -476,7 +474,7 @@ class Vector_mask_XY(Vector_field_XY):
             im1.set_clim(-180, 180)
             axs[1, 1].set_title("J12")
 
-            plt.suptitle("phases", fontsize=20)
+            plt.suptitle("phases", fontsize=15)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
             cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
@@ -487,6 +485,93 @@ class Vector_mask_XY(Vector_field_XY):
             elif range_scale == 'mm':
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
+
+        if kind in ('jones', 'all'):
+            plt.set_cmap(CONF_DRAWING['color_stokes'])
+
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.25,
+                                        'wspace': 0.025
+                                    })
+            fig.set_figwidth(xsize)
+            fig.set_figheight(1.25 * ysize)
+
+            im1 = axs[0, 0].imshow(np.real(self.M00),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[0, 0].set_title("J00")
+
+            im1 = axs[0, 1].imshow(np.real(self.M01),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[0, 1].set_title("J01")
+
+            im1 = axs[1, 0].imshow(np.real(self.M10),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[1, 0].set_title("J10")
+
+            im1 = axs[1, 1].imshow(np.real(self.M11),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[1, 1].set_title("J11")
+
+            #intensity_max = np.real(self.M00.max())
+
+            plt.tight_layout()
+            plt.suptitle("Jones Real", fontsize=15)
+            cax = plt.axes([0.89, 0.2, 0.03, 0.6])
+            cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
+
+            fig, axs = plt.subplots(2,
+                                    2,
+                                    sharex='col',
+                                    sharey='row',
+                                    gridspec_kw={
+                                        'hspace': 0.25,
+                                        'wspace': 0.025
+                                    })
+            fig.set_figwidth(xsize)
+            fig.set_figheight(1.25 * ysize)
+
+            im1 = axs[0, 0].imshow(np.imag(self.M00),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[0, 0].set_title("J00")
+
+            im1 = axs[0, 1].imshow(np.imag(self.M01),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[0, 1].set_title("J01")
+
+            im1 = axs[1, 0].imshow(np.imag(self.M10),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[1, 0].set_title("J10")
+
+            im1 = axs[1, 1].imshow(np.imag(self.M11),
+                                   extent=extension,
+                                   origin='lower')
+            im1.set_clim(-1, 1)
+            axs[1, 1].set_title("J11")
+
+            #intensity_max = np.real(self.M00.max())
+
+            plt.tight_layout()
+            plt.suptitle("Jones Imaginario", fontsize=15)
+            cax = plt.axes([0.89, 0.2, 0.03, 0.6])
+            cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
         # if kind in ('phase', 'all'):
         #     plt.set_cmap(CONF_DRAWING['color_phase'])

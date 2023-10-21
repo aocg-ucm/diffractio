@@ -56,7 +56,7 @@ class Scalar_source_X(Scalar_field_X):
         self.type = 'Scalar_source_X'
 
     def plane_wave(self, A=1, theta=0 * degrees, z0=0 * um):
-        """Plane wave. self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
+        """Plane wave. 
 
         Parameters:
             A (float): maximum amplitude

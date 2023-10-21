@@ -176,7 +176,7 @@ class Scalar_field_XY(object):
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        TODO:  It can be improved for maks (not having less than 1)
+        TODO:  It can be improved for masks (not having less than 1)
         """
         u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
         u3.u = self.u - other.u
@@ -1656,8 +1656,7 @@ class Scalar_field_XY(object):
                         1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
                 else:
                     F = 1 / (2 * np.pi) * np.exp(
-                        -1.j * k * R) * z_now / R**2 * (1 / R + 1.j * k)          
-
+                        -1.j * k * R) * z_now / R**2 * (1 / R + 1.j * k)
 
                 u0 = self.u * F
 
@@ -1774,7 +1773,7 @@ class Scalar_field_XY(object):
         z_profile = scipy.ndimage.map_coordinates(image.transpose(),
                                                   np.vstack((x, y)),
                                                   order=order)
-        z_profile[-1]=z_profile[-2]
+        z_profile[-1] = z_profile[-2]
 
         return h, z_profile, point1, point2
 
@@ -2719,7 +2718,7 @@ def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
     elif kind == 'y':
         return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R**2 * (1 / R + 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(-1.j * k * R)  / R * (1 / R + 1.j * k)
+        return 1 / (2 * pi) * exp(-1.j * k * R) / R * (1 / R + 1.j * k)
 
 
 def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):

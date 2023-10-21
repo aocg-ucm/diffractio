@@ -53,7 +53,7 @@ class Scalar_mask_X(Scalar_field_X):
 
     def __init__(self, x=None, wavelength=None, n_background=1, info=""):
         """equal than Scalar_field_X"""
-        super().__init__(x, wavelength, info)
+        super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_mask_X'
 
     def filter(self, mask, new_field=True, binarize=False, normalize=False):
