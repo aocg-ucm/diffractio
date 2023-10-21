@@ -182,6 +182,8 @@ Beta state
 
   - WPM function without storing all the data.
 
+  - X fields: inverse_amplitude, inverse_phase, pupil
+
 
 Future
 --------------------------------

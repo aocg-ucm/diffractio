@@ -71,6 +71,7 @@ from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
+from .scalar_masks_X import Scalar_mask_X
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -343,6 +344,52 @@ class Scalar_field_X(object):
         """
         self.u = u0.u
 
+    def inverse_amplitude(self, new_field=False):
+        """Inverts the amplitude of the mask, phase is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_X object, else, it modifies the existing object.
+            
+            
+        Returns:
+            Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
+        """
+
+        amplitude = np.abs(self.u)
+        phase = np.angle(self.u)
+
+        new_amplitude = (1 - amplitude) * np.exp(1.j * phase)
+
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_X(self.x, self.wavelength)
+            new.u = new_amplitude
+            return new
+
+    def inverse_phase(self, new_field=False):
+        """Inverts the phase of the mask, amplitude is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_X object, else, it modifies the existing object.
+            
+            
+        Returns:
+            Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
+        """
+
+        amplitude = np.abs(self.u)
+        phase = np.angle(self.u)
+
+        new_amplitude = amplitude * np.exp(-1.j * phase)
+
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_X(self.x, self.wavelength)
+            new.u = new_amplitude
+            return new
+
     def filter(self, size=0):
         """
         """
@@ -393,6 +440,24 @@ class Scalar_field_X(object):
         else:
             i_pos = (self.x > t1.x[0]) * (self.x < t1.x[-1])
             self.u[i_pos] = u_new[i_pos]
+
+    def pupil(self, x0, radius):
+        """Place a pupil in the field. 
+        
+
+        Parameters:
+            x0 (float): center of pupil.
+            radius (float): radius of pupil.
+
+        """
+        xmin = x0 - radius
+        xmax = x0 + radius
+
+        pupil = np.zeros_like(self.x)
+        ix = (self.x < xmax) & (self.x > xmin)
+        pupil[ix] = 1
+
+        self.u = self.u * pupil
 
     def insert_array_masks(self, t1, x_pos, clean=True, kind_position='left'):
         """Insert several identical masks t1 in self.u according to positions x_pos
@@ -758,7 +823,7 @@ class Scalar_field_X(object):
     #        n=1,
     #        new_field=True,
     #        matrix=False,
-    #        xout=None,
+    #        xout=None,None
     #        yout=None
     #        fast=False,
     #        kind='z',
@@ -822,7 +887,7 @@ class Scalar_field_X(object):
     #         self.u = u_field
     #         self.quality = qualities.min()
 
-    def CZT(self, z, xout=None, verbose=False):
+    def CZT(self, z, xout, verbose=False):
         """Chirped z-transform.
 
         Parameters:

@@ -9,8 +9,9 @@ import sys
 import types
 
 import numpy as np
-from diffractio import eps, no_date, plt, um
+from diffractio import eps, no_date, plt, um, mm
 from diffractio.scalar_fields_X import Scalar_field_X
+from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.utils_multiprocessing import _pickle_method, _unpickle_method
 from diffractio.utils_tests import comparison, save_figure_test
 
@@ -32,6 +33,7 @@ if not os.path.exists(newpath):
 
 
 class Test_Scalar_fields_X(object):
+
     def test_add(self):
         pass
 
@@ -50,7 +52,7 @@ class Test_Scalar_fields_X(object):
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.ones_like(x, dtype=complex)
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
 
         solution = np.zeros_like(t1.u)
         t1.clear_field()
@@ -72,14 +74,35 @@ class Test_Scalar_fields_X(object):
         t1.draw()
 
         save_figure_test(newpath, func_name, add_name='_saved')
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
 
         t2 = Scalar_field_X(x, wavelength)
-        t2.load_data(filename=filename+'.npz')
+        t2.load_data(filename=filename + '.npz')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_loaded')
 
         assert True
+
+    def test_amplitude_phase(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        x = np.linspace(-1 * mm, 1 * mm, 1024)
+        wavelength = 0.6328 * um
+
+        u0 = Scalar_mask_X(x, wavelength)
+        u0.slit(x0=0, size=1 * mm)
+        u0.inverse_amplitude()
+        u0.draw()
+        save_figure_test(newpath, func_name, add_name='_1')
+
+        u1 = Scalar_mask_X(x, wavelength)
+        u1.lens(x0=0, focal=100 * mm)
+        u1.inverse_phase()
+        u1.draw('phase')
+        save_figure_test(newpath, func_name, add_name='_2')
+
+        assert True, func_name
 
     def test_cut_resample(self):
         func_name = sys._getframe().f_code.co_name
@@ -95,14 +118,13 @@ class Test_Scalar_fields_X(object):
         t1.save_data(filename=filename)
         save_figure_test(newpath, func_name, add_name='_1')
 
-        t2 = t1.cut_resample(
-            x_limits=(-250 * um, 250 * um),
-            num_points=1024,
-            new_field=True,
-            interp_kind='quadratic')
+        t2 = t1.cut_resample(x_limits=(-250 * um, 250 * um),
+                             num_points=1024,
+                             new_field=True,
+                             interp_kind='quadratic')
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_2')
-        t2.save_data(filename=filename + '2'+'.npz')
+        t2.save_data(filename=filename + '2' + '.npz')
 
         solution = np.array((512, 1024))
         proposal = np.array((len(t1.u), len(t2.u)))
@@ -122,13 +144,33 @@ class Test_Scalar_fields_X(object):
         t2 = Scalar_field_X(x2, wavelength)
         t2.u = np.sin(2 * np.pi * x2 / 50)
 
-        t1.insert_mask(
-            t2, x0_mask1=-100 * um, clean=False, kind_position='center')
-        t1.insert_mask(
-            t2, x0_mask1=100 * um, clean=False, kind_position='center')
+        t1.insert_mask(t2,
+                       x0_mask1=-100 * um,
+                       clean=False,
+                       kind_position='center')
+        t1.insert_mask(t2,
+                       x0_mask1=100 * um,
+                       clean=False,
+                       kind_position='center')
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
+        save_figure_test(newpath, func_name)
+        assert True, func_name
+
+    def test_pupil(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        x = np.linspace(-1 * mm, 1 * mm, 1024)
+        wavelength = 0.6328 * um
+
+        t1 = Scalar_mask_X(x, wavelength)
+        t1.lens(x0=0, focal=100 * mm)
+        t1.pupil(x0=0, radius=750 * um)
+        t1.draw('field')
+
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True, func_name
 
@@ -147,14 +189,13 @@ class Test_Scalar_fields_X(object):
         t2 = Scalar_field_X(x2, wavelength)
         t2.u = np.sin(2 * np.pi * x2 / 50)
 
-        t1.insert_array_masks(
-            t2,
-            x_pos=[-400, -200, 0, 200, 400],
-            clean=True,
-            kind_position='center')
+        t1.insert_array_masks(t2,
+                              x_pos=[-400, -200, 0, 200, 400],
+                              clean=True,
+                              kind_position='center')
         t1.draw()
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name, add_name='_1')
 
         assert True, func_name
@@ -175,11 +216,10 @@ class Test_Scalar_fields_X(object):
         t2.u = np.ones_like(x2, dtype=complex)
 
         t1 = Scalar_field_X(x1, wavelength)
-        t1.insert_array_masks(
-            t2,
-            x_pos=[-400, -200, 0, 200, 400],
-            clean=True,
-            kind_position='center')
+        t1.insert_array_masks(t2,
+                              x_pos=[-400, -200, 0, 200, 400],
+                              clean=True,
+                              kind_position='center')
 
         pos_transitions, type_transitions, raising, falling = t1.get_edges(
             kind_transition='amplitude', min_step=.05)
@@ -187,7 +227,7 @@ class Test_Scalar_fields_X(object):
         print(type_transitions)
         t1.draw(kind='intensity')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
 
         solution = np.linspace(-450 * um, 450 * um, 10)
@@ -209,16 +249,15 @@ class Test_Scalar_fields_X(object):
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100)
 
-        t2 = t1.fft(
-            z=None,
-            shift=True,
-            remove0=False,
-            matrix=False,
-            new_field=True,
-            verbose=False)
+        t2 = t1.fft(z=None,
+                    shift=True,
+                    remove0=False,
+                    matrix=False,
+                    new_field=True,
+                    verbose=False)
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_1')
-        t2.save_data(filename=filename+'.npz')
+        t2.save_data(filename=filename + '.npz')
         assert True
 
     def test_ifft(self):
@@ -233,28 +272,26 @@ class Test_Scalar_fields_X(object):
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100)
-        t1.save_data(filename=filename + '_direct'+'.npz')
+        t1.save_data(filename=filename + '_direct' + '.npz')
 
-        t2 = t1.fft(
-            z=None,
-            shift=True,
-            remove0=False,
-            matrix=False,
-            new_field=True,
-            verbose=False)
+        t2 = t1.fft(z=None,
+                    shift=True,
+                    remove0=False,
+                    matrix=False,
+                    new_field=True,
+                    verbose=False)
         t2.draw()
         save_figure_test(newpath, func_name, add_name='_direct')
 
-        t3 = t2.ifft(
-            z=None,
-            shift=True,
-            remove0=False,
-            matrix=False,
-            new_field=True,
-            verbose=False)
+        t3 = t2.ifft(z=None,
+                     shift=True,
+                     remove0=False,
+                     matrix=False,
+                     new_field=True,
+                     verbose=False)
         t3.draw()
         save_figure_test(newpath, func_name, add_name='_ifft')
-        t3.save_data(filename=filename + '_ifft'+'.npz')
+        t3.save_data(filename=filename + '_ifft' + '.npz')
 
         assert True
 
@@ -274,7 +311,7 @@ class Test_Scalar_fields_X(object):
 
         u1 = t1.RS(z=2000 * um, new_field=True)
         u1.draw(kind='intensity')
-        u1.save_data(filename=filename + '2'+'.npz')
+        u1.save_data(filename=filename + '2' + '.npz')
 
         save_figure_test(newpath, func_name, add_name='_RS')
 
@@ -296,7 +333,7 @@ class Test_Scalar_fields_X(object):
 
         u1 = t1.RS(z=2000 * um, new_field=True, amplification=3)
         u1.draw(kind='intensity')
-        t1.save_data(filename=filename + '2'+'.npz')
+        t1.save_data(filename=filename + '2' + '.npz')
 
         save_figure_test(newpath, func_name, add_name='_RS*3')
 
@@ -318,7 +355,7 @@ class Test_Scalar_fields_X(object):
         u0.u[np.bitwise_and(x > -4 * um, x < 4 * um)] = 1
         u0.draw(kind='intensity')
         save_figure_test(newpath, func_name, add_name='_mask')
-        u0.save_data(filename=filename + '_mask'+'.npz')
+        u0.save_data(filename=filename + '_mask' + '.npz')
 
         u0.MTF(kind='mm', has_draw=True)
         plt.xlim(-250, 250)
@@ -351,7 +388,7 @@ class Test_Scalar_fields_X(object):
         save_figure_test(newpath, func_name, add_name='_fill')
         t1.draw(kind='field')
 
-        t1.save_data(filename=filename+'.npz')
+        t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name, add_name='_field')
 
         assert True

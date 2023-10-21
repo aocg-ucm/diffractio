@@ -180,19 +180,16 @@ class Scalar_mask_X(Scalar_field_X):
 
         self.u = u
 
-    def slit(self, x0=0, size=100 * um):
+    def slit(self, x0, size):
         """Slit: 1 inside, 0 outside
 
         Parameters:
             x0 (float): center of slit
             size (float): size of slit
         """
-
-        # Definicion de la slit
         xmin = x0 - size / 2
         xmax = x0 + size / 2
 
-        # Definicion de la transmitancia
         u = np.zeros_like(self.x)
         ix = (self.x < xmax) & (self.x > xmin)
         u[ix] = 1
@@ -1001,6 +998,7 @@ class Scalar_mask_X(Scalar_field_X):
         for i0j, j in zip(code, list(range(len(code)))):
             t2.slit(x0 + (j + 0.5) * bit_width, bit_width)
             t.u = t.u + i0j * t2.u
+
         self.u[-1] = self.u[-2]
         self.u = t.u
 
