@@ -203,17 +203,30 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def apply_scalar_mask(self, u_mask):
-        """The same mask u_mask is applied to all the Jones Matrix.
+    def apply_scalar_mask(self, mask, state, is_intensity=True):
+        """The same mask (binary) is applied to all the Jones Matrix.
 
         Parameters:
-            u_mask (scalar_mask_XY): mask to apply.
-
+            mask (scalar_mask_XY): mask to apply.
+            state (Jones Matrix): Polarization state to apply
+            is intensity (bool): If True, abs(mask)**2 is applied.
         """
-        self.M00 = self.M00 * u_mask.u
-        self.M01 = self.M01 * u_mask.u
-        self.M10 = self.M10 * u_mask.u
-        self.M11 = self.M11 * u_mask.u
+
+        if is_intensity:
+            t = np.abs(mask.u)**2
+        else:
+            t = mask.u
+
+        self.M00 = state[0, 0] * t
+        self.M01 = state[0, 1] * t
+        self.M10 = state[1, 0] * t
+        self.M11 = state[1, 1] * t
+
+        # Change elements = -0 to 0, to represent correctly phases.
+        self.M01.real = np.where(np.real(self.M01) == -0, 0, np.real(self.M01))
+        self.M10.real = np.where(np.real(self.M10) == -0, 0, np.real(self.M10))
+        self.M00.real = np.where(np.real(self.M00) == -0, 0, np.real(self.M00))
+        self.M11.real = np.where(np.real(self.M11) == -0, 0, np.real(self.M11))
 
     def complementary_masks(self,
                             mask,
