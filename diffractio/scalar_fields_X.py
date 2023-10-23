@@ -71,7 +71,6 @@ from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
-from .scalar_masks_X import Scalar_mask_X
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -354,6 +353,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
+        from .scalar_masks_X import Scalar_mask_X
 
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
@@ -377,6 +377,8 @@ class Scalar_field_X(object):
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
+
+        from .scalar_masks_X import Scalar_mask_X
 
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)

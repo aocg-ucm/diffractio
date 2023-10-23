@@ -95,12 +95,7 @@ class Scalar_source_X(Scalar_field_X):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self,
-                       A=1,
-                       x0=0 * um,
-                       z0=-1000 * um,
-                       radius=100 * um,
-                       normalize=False):
+    def spherical_wave(self, A, x0, z0, radius, normalize=False):
         """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         Parameters:
