@@ -60,7 +60,7 @@ class Test_Vector_fields_XY(object):
                           kind='amplitude')
 
         vc = Vector_mask_XY(x0, y0, wavelength)
-        vc.apply_scalar_mask(u_mask=mask)
+        vc.scalar_to_vector_mask(u_mask=mask)
 
         vp = Vector_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(azimuth=0 * degrees)

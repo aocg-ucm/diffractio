@@ -54,7 +54,7 @@ class Test_vector_masks_XY(object):
 
         # mask vectorial
         EM = Vector_mask_XY(x0, y0, wavelength)
-        EM.apply_scalar_mask(u_mask=mask)
+        EM.scalar_to_vector_mask(u_mask=mask)
 
         EM.draw(kind='all')
         save_figure_test(newpath, func_name, add_name='')
