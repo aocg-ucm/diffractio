@@ -178,6 +178,8 @@ Beta state
 
   - XY masks: new circular_sector function.
 
+  - XY masks: new lens_cyliindrical function.
+
   - X, XY, XYZ fields: new conjugate function.
 
   - WPM function without storing all the data.

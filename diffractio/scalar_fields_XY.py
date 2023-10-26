@@ -290,6 +290,24 @@ class Scalar_field_XY(object):
         u_rotate = u_real_rotate + 1j * u_imag_rotate
         self.u = u_rotate
 
+    def apodization(self, power=10):
+        """Multiply field by an apodizer. The apodizer is a super_gauss function.
+
+        Args:
+            power (int, optional): size of apodization. Defaults to 10.
+
+
+        """
+        width_x = (self.x[-1] - self.x[0]) / 2
+        width_y = (self.y[-1] - self.y[0]) / 2
+
+        center_x = (self.x[-1] + self.x[0]) / 2
+        center_y = (self.y[-1] + self.y[0]) / 2
+
+        t = np.exp(-((self.X - center_x) / width_x)**power -
+                   ((self.Y - center_y) / width_y)**power)
+        self.u = t
+
     def clear_field(self):
         """Removes the field: self.u=0.
         """
@@ -1566,13 +1584,12 @@ class Scalar_field_XY(object):
                 F0 = 1 / (2 * np.pi) * np.exp(
                     1.j * k * R1) * z / R1**2 * (1 / R1 - 1.j * k)
                 F = 1 / (2 * np.pi) * np.exp(
-                    1.j * k * R2) * z / R2**2 * (1 / R2 - 1.j * k)            
+                    1.j * k * R2) * z / R2**2 * (1 / R2 - 1.j * k)
             else:
                 F0 = 1 / (2 * np.pi) * np.exp(
                     -1.j * k * R1) * z / R1**2 * (1 / R1 + 1.j * k)
                 F = 1 / (2 * np.pi) * np.exp(
                     -1.j * k * R2) * z / R2**2 * (1 / R2 + 1.j * k)
-
 
             k_factor = z * dx * dy * self.wavelength
 
@@ -1582,7 +1599,7 @@ class Scalar_field_XY(object):
             fsx = self.wavelength * z / dx  # dimension of the imaging plane
             fsy = self.wavelength * z / dy  # dimension of the imaging plane
 
-            if num_x == 1 and num_y==1:
+            if num_x == 1 and num_y == 1:
                 u0 = self.u * F
                 fy1 = ystart + fsy / 2
                 fy2 = yend + fsy / 2
@@ -1592,9 +1609,8 @@ class Scalar_field_XY(object):
                 fx2 = xend + fsx / 2
                 u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
                 u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
-          
 
-            elif num_x >1  and num_y > 1:
+            elif num_x > 1 and num_y > 1:
                 u0 = self.u * F
 
                 fy1 = ystart + fsy / 2
@@ -1605,12 +1621,10 @@ class Scalar_field_XY(object):
                 fx2 = xend + fsx / 2
                 u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
                 u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
-
-
 
             elif num_x > 1 and num_y == 1:
                 u0 = self.u * F
-                
+
                 # one-dimensional FFT in the other direction
                 fx1 = xstart + fsx / 2
                 fx2 = xend + fsx / 2
@@ -1621,24 +1635,17 @@ class Scalar_field_XY(object):
                 u0 = Bluestein_dft_xy(u0, fy1, fy2, fsy, num_y)
                 u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
 
-
-
-
-            elif num_x ==1  and num_y > 1:
+            elif num_x == 1 and num_y > 1:
                 u0 = self.u * F
                 fx1 = xstart + fsx / 2
                 fx2 = xend + fsx / 2
-                u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)               
+                u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
                 fy1 = ystart + fsy / 2
                 fy2 = yend + fsy / 2
                 u0 = Bluestein_dft_xy(u0, fy1, fy2, fsy, num_y)
 
-
                 # one-dimensional FFT in the other direction
-                u0 = F0 * u0 * k_factor # obtain the complex amplitude of the outgoing light beam
-
-
-
+                u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
 
             u0 = u0.squeeze()
 
@@ -1648,12 +1655,12 @@ class Scalar_field_XY(object):
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                u_out.u = u0.transpose()[: ,0]
+                u_out.u = u0.transpose()[:, 0]
                 return u_out
 
             elif num_x == 1 and num_y > 1:
                 u_out = Scalar_field_X(yout, self.wavelength)
-                u_out.u = u0[:,0]
+                u_out.u = u0[:, 0]
 
                 return u_out
 
@@ -1679,13 +1686,12 @@ class Scalar_field_XY(object):
                     F0 = 1 / (2 * np.pi) * np.exp(
                         1.j * k * R1) * z_now / R1**2 * (1 / R1 - 1.j * k)
                     F = 1 / (2 * np.pi) * np.exp(
-                        1.j * k * R2) * z_now / R2**2 * (1 / R2 - 1.j * k)               
+                        1.j * k * R2) * z_now / R2**2 * (1 / R2 - 1.j * k)
                 else:
                     F0 = 1 / (2 * np.pi) * np.exp(
                         -1.j * k * R1) * z_now / R1**2 * (1 / R1 + 1.j * k)
                     F = 1 / (2 * np.pi) * np.exp(
                         -1.j * k * R2) * z_now / R2**2 * (1 / R2 + 1.j * k)
-
 
                 u0 = self.u * F
 
@@ -1711,7 +1717,7 @@ class Scalar_field_XY(object):
                     fx2 = xend + fsx / 2
                     u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
                     u0 = u0.transpose()
-                    
+
                 elif num_x == 1 and num_y == 1:
                     fy1 = ystart + fsy / 2
                     fy2 = yend + fsy / 2
@@ -1738,7 +1744,7 @@ class Scalar_field_XY(object):
                 elif num_x > 1 and num_y == 1:
                     u_zs[:, i] = u0[0, :] * k_factor
                 elif num_x == 1 and num_y > 1:
-                    u_zs[:, i] = u0[0,:] * k_factor
+                    u_zs[:, i] = u0[0, :] * k_factor
 
                 elif num_x > 1 and num_y > 1:
                     u_zs[:, :, i] = u0.transpose() * k_factor

@@ -1348,6 +1348,47 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3 * np.exp(1j * 2 * np.pi * (n1 - n0) * t / self.wavelength)
 
+    def lens_cylindrical(self,
+                         x0,
+                         focal,
+                         refraction_index=1.5,
+                         radius=0,
+                         angle=0 * degrees):
+        """Cylindrical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition. When the refraction index decreases, the radius of curvature decrases and less paraxial. When refraction_index is None or 0, then the paraxial approximation is used
+
+        Parameters:
+            x0 (float): center of lens
+            focal (float): focal length of lens
+            refraction_index (float): refraction index
+            radius (float): radius of lens mask
+
+        lens_spherical:
+            lens(r0=0, radius= 200 * um, focal= 10 * mm, refraction_index=1.5)
+        """
+
+        k = 2 * np.pi / self.wavelength
+
+        r0 = (x0, 0)
+
+        Xrot, Yrot = self.__rotate__(angle, r0)
+
+        if radius > 0:
+            amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            amplitude.circle(r0, radius, angle)
+            t = amplitude.u
+        else:
+            t = 1
+
+        if refraction_index in (None, 0):
+            phase = -k * Xrot**2 / (2 * focal)
+        else:
+            R = (refraction_index - 1) * focal
+            h = (np.sqrt(R**2 - Xrot**2) - R)
+            h[R**2 - (Xrot**2) < 0] = 0
+            phase = k * (refraction_index - 1) * h
+
+        self.u = t * np.exp(1j * phase)
+
     def fresnel_lens(self,
                      r0,
                      focal,

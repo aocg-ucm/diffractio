@@ -664,6 +664,23 @@ class Test_Scalar_masks_XY(object):
         save_figure_test(newpath, func_name, add_name='_elliptical')
         assert True
 
+    def test_lens_cylindrical(self):
+        func_name = sys._getframe().f_code.co_name
+        filename = '{}{}'.format(newpath, func_name)
+
+        num_data = 512
+        length = 400 * um
+        x = np.linspace(-length / 2, length / 2, num_data)
+        y = np.linspace(-length / 2, length / 2, num_data)
+        wavelength = 0.6328 * um
+
+        t0 = Scalar_mask_XY(x, y, wavelength)
+        t0.lens_cylindrical(x0=0 * um, focal=2.5 * mm, angle=0 * degrees)
+        t0.draw(kind='phase')
+        save_figure_test(newpath, func_name)
+        t0.save_data(filename=filename + '.npz')
+        assert True
+
     def test_lens_fresnel(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
