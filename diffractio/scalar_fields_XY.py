@@ -267,7 +267,7 @@ class Scalar_field_XY(object):
 
         return u3
 
-    def rotate(self, angle, position=None):
+    def rotate(self, angle, position=None, new_field=False):
         """Rotation of X,Y with respect to position. If position is not given, rotation is with respect to the center of the image
 
         Parameters:
@@ -288,7 +288,13 @@ class Scalar_field_XY(object):
         u_imag_rotate = rotate_image(self.x, self.y, np.imag(self.u),
                                      -angle * 180 / pi, center_rotation)
         u_rotate = u_real_rotate + 1j * u_imag_rotate
-        self.u = u_rotate
+
+        if new_field is True:
+            u_new = Scalar_field_XY(self.x, self.y, self.wavelength)
+            u_new.u = u_rotate
+            return u_new
+        else:
+            self.u = u_rotate
 
     def apodization(self, power=10):
         """Multiply field by an apodizer. The apodizer is a super_gauss function.

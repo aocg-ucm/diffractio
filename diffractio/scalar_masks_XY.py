@@ -649,7 +649,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         num_points = int(uj.sum())
         u = fftconvolve(uj, t1.u, mode='same')
         if top_one:
-            u[u > 1] = 1
+            A = np.abs(u)
+            phase = np.angle(u)
+            A[A > 1] = 1
+            u = A * np.exp(1j * phase)
+            #u[u > 1] = 1
         self.u = u
         return num_points
 
@@ -1257,7 +1261,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             t = 1
 
         self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
-                                     (2 * f2)))
+                                     (2 * f2)) + 1.j * np.pi)
 
     def lens_spherical(self, r0, focal, refraction_index=1.5, radius=0):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
