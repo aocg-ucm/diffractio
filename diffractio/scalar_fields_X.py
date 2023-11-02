@@ -355,6 +355,7 @@ class Scalar_field_X(object):
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
         from .scalar_masks_X import Scalar_mask_X
+
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
 
@@ -377,7 +378,7 @@ class Scalar_field_X(object):
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
-        from .scalar_masks_X import Scalar_mask_X
+
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
 
