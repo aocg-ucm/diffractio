@@ -71,7 +71,7 @@ class Scalar_source_XY(Scalar_field_XY):
         """Plane wave. self.u = A * exp(1.j * k *
                          (self.X * sin(theta) * cos(phi) +
                           self.Y * sin(theta) * sin(phi) + z0 * cos(theta)))
-        
+
         According to https://en.wikipedia.org/wiki/Spherical_coordinate_system: physics (ISO 80000-2:2019 convention)
 
         Parameters:
@@ -159,24 +159,35 @@ class Scalar_source_XY(Scalar_field_XY):
         Parameters:
             A (float): maximum amplitude
             r0 (float, float): (x,y) position of source
-            z0 (float): z position of source
-            mask (bool): If true, masks the spherical wave with radius
-            radius (float): size of slit for mask
+            z0 (float) or (float, float): z0 or (zx0, zy0) position of source. When two parameters, the source is stigmatic
+            radius (float): radius for mask
             normalize (bool): If True, maximum of field is 1
         """
 
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
         x0, y0 = r0
+        if isinstance(z0, (int, float)):
+            z0 = (z0, z0)
+        z0x, z0y = z0
 
         R2 = (self.X - x0)**2 + (self.Y - y0)**2
-        Rz = sqrt((self.X - x0)**2 + (self.Y - y0)**2 + z0**2)
+        # Rz = sqrt((self.X - x0)**2 + (self.Y - y0)**2 + z0**2)
+        if z0x == 0:
+            R_x = 1e10
+        else:
+            R_x = np.sqrt((self.X - x0)**2 + z0x**2)
+
+        if z0y == 0:
+            R_y = 1e10
+        else:
+            R_y = np.sqrt((self.Y - y0)**2 + z0y**2)
 
         if radius > 0:
             amplitude = (R2 <= radius**2)
         else:
             amplitude = 1
 
-        self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
+        self.u = amplitude * A * np.exp(-1.j * np.sign(z0x) * k * R_x)*np.exp(-1.j * np.sign(z0y) * k * R_y) / np.sqrt(R_x*R_y)
 
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
