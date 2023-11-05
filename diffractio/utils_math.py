@@ -208,7 +208,7 @@ def find_local_extrema(kind,
         print("bad parameter in find_local_extrema: only 'maxima or 'minima'")
 
     i_pos_integer = np.where(Trues == True)[0]
-    i_pos_integer = i_pos_integer[1:-1]
+    i_pos_integer = i_pos_integer[0:-1]
     x_minima = x[i_pos_integer]
     y_minima = y[i_pos_integer]
 
