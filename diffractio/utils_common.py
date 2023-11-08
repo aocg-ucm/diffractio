@@ -167,6 +167,12 @@ def load_data_common(cls, filename, verbose=False):
 
         if verbose is True:
             print(dict0.keys())
+        
+        if dict0 is not None:
+            if isinstance(dict0, dict):
+                self.__dict__ = dict0
+            else:
+                raise Exception('no dictionary in load_data')
 
         return dict0
 

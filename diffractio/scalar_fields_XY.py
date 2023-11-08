@@ -350,11 +350,7 @@ class Scalar_field_XY(object):
         """
         dict0 = load_data_common(self, filename)
 
-        if dict0 is not None:
-            if isinstance(dict0, dict):
-                self.__dict__ = dict0
-            else:
-                raise Exception('no dictionary in load_data')
+
 
         if verbose is True:
             print(dict0.keys())
