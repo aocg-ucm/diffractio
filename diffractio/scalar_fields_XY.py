@@ -492,8 +492,8 @@ class Scalar_field_XY(object):
                                                  kx=kxu,
                                                  ky=kxu,
                                                  s=0)
-            u_new_abs = f_interp_abs(x_new, y_new)
-            u_new_phase = f_interp_phase(x_new, y_new)
+            u_new_abs = f_interp_abs(y_new, x_new)
+            u_new_phase = f_interp_phase(y_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
         else:
