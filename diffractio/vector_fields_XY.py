@@ -889,13 +889,13 @@ class Vector_field_XY(object):
 
         elif num_z > 1:
             if verbose is True:
-                print("1/3")
+                print("1/3", end='\r')
             e0x_zs = e0x.CZT(z, xout, yout, verbose=verbose)
             if verbose is True:
-                print("2/3")
+                print("2/3", end='\r')
             e0y_zs = e0y.CZT(z, xout, yout, verbose=verbose)
             if verbose is True:
-                print("3/3")
+                print("3/3", end='\r')
             e0z_zs = e0x_zs.duplicate()
 
             u_zs = np.zeros_like(e0x_zs.u)

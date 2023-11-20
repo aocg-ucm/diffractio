@@ -397,7 +397,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         a_max = np.abs((a00, a01, a10, a11)).max()
 
-        if kind in ('amplitudes', 'jones_ap'):
+        if kind in ('amplitude', 'all'):
             plt.set_cmap(CONF_DRAWING['color_intensity'])
             fig, axs = plt.subplots(2,
                                     2,
@@ -438,7 +438,7 @@ class Vector_mask_XY(Vector_field_XY):
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
-        if kind in ('phases', 'jones_ap'):
+        if kind in ('phases', 'all'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
             fig, axs = plt.subplots(2,
                                     2,
@@ -527,7 +527,7 @@ class Vector_mask_XY(Vector_field_XY):
             #intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
-            plt.suptitle("Jones Real", fontsize=15)
+            plt.suptitle("$\Re$ (Jones)", fontsize=15)
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
@@ -569,7 +569,7 @@ class Vector_mask_XY(Vector_field_XY):
             #intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
-            plt.suptitle("Jones Imaginario", fontsize=15)
+            plt.suptitle("$\Im$ (Jones)", fontsize=15)
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
