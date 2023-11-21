@@ -15,7 +15,7 @@ with open('HISTORY.rst', encoding='utf8') as history_file:
 # ]
 
 requirements = [
-    'screeninfo', 'Pillow', 'numexpr', 'pandas', 'psutil', 'py_pol',
+    'screeninfo', 'Pillow', 'numexpr', 'pandas','py_pol',
     'ipywidgets', 'ipympl', 'opencv-python'
 ]
 
@@ -31,15 +31,11 @@ setup(
     author="Luis Miguel Sanchez Brea",
     author_email='optbrea@ucm.es',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta,
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -57,8 +53,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'Rayleigh-Sommerfeld', 'Beam Propagation Method', 'BPM', 'WPM', 'CZT',
-        'RS', 'VRS'
+         'BPM', 'WPM', 'CZT',  'RS', 'VRS'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
@@ -66,6 +61,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.1.8',
+    version='0.1.9',
     zip_safe=False,
 )

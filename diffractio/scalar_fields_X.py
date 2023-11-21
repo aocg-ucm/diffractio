@@ -1337,6 +1337,7 @@ class Scalar_field_X(object):
             return
 
         amplitude, intensity, phase = field_parameters(self.u)
+        phase[intensity<0.001*intensity.max()]=0
 
         plt.figure()
 
