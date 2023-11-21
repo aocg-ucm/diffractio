@@ -1343,7 +1343,7 @@ class Scalar_field_XYZ(object):
             self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
-    def draw_XYZ(self,
+    def draw_XYZ_deprecated(self,
                  kind='intensity',
                  logarithm=False,
                  normalize='',
@@ -1357,7 +1357,7 @@ class Scalar_field_XYZ(object):
             pixel_size (float, float, float): pixels for drawing
             """
         try:
-            from .utils_slicer import slicerLM
+            from .utils_slicer_deprecated import slicerLM
             is_slicer = True
         except ImportError:
             print("slicerLM is not loaded.")
@@ -1385,7 +1385,7 @@ class Scalar_field_XYZ(object):
         else:
             return
 
-    def draw_volume(self, logarithm=0, normalize='', maxintensity=None):
+    def draw_volume_deprecated(self, logarithm=0, normalize='', maxintensity=None):
         """Draws  XYZ field with mlab
 
         Parameters:
@@ -1438,14 +1438,14 @@ class Scalar_field_XYZ(object):
         else:
             return
 
-    def draw_refraction_index(self, kind='real'):
+    def draw_refraction_index_deprecated(self, kind='real'):
         """Draws XYZ refraction index with slicer
 
         Parameters:
             kind (str): 'real', 'imag', 'abs'
         """
         try:
-            from .utils_slicer import slicerLM
+            from .utils_slicer_deprecated import slicerLM
             is_slicer = True
         except ImportError:
             print("slicerLM is not loaded.")
@@ -1487,9 +1487,7 @@ class Scalar_field_XYZ(object):
             frame (bool): figure with or without axis.
             verbose (bool): If True prints
 
-        TODO: Implement kind, now only intensity
-            include logarithm and normalize
-            check
+        TODO: include logarithm and normalize
         """
 
         def f(x, kind):

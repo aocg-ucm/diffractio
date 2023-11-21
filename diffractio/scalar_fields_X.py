@@ -72,6 +72,7 @@ from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
 
+
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 num_max_processors = multiprocessing.cpu_count()
@@ -377,8 +378,6 @@ class Scalar_field_X(object):
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
-
-        from .scalar_masks_X import Scalar_mask_X
 
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
@@ -962,10 +961,10 @@ class Scalar_field_X(object):
             # obtain the complex amplitude of the outgoing light beam
 
             if num_x == 1:
-                return u0
+                return 1j*u0
             else:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                u_out.u = u0
+                u_out.u = 1j*u0
 
         else:
             u_zs = np.zeros((len(z), num_x), dtype=complex)
@@ -1004,12 +1003,12 @@ class Scalar_field_X(object):
             if num_x == 1:
                 from diffractio.scalar_fields_Z import Scalar_field_Z
                 u_out = Scalar_field_Z(z=z, wavelength=self.wavelength)
-                u_out.u = u_zs
+                u_out.u = 1j*u_zs
                 return u_out
             else:
                 from diffractio.scalar_fields_XZ import Scalar_field_XZ
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
-                u_out.u = u_zs.transpose()
+                u_out.u = 1j*u_zs.transpose()
 
         return u_out
 
@@ -1337,6 +1336,7 @@ class Scalar_field_X(object):
             return
 
         amplitude, intensity, phase = field_parameters(self.u)
+        phase[intensity<0.001*intensity.max()]=0
 
         plt.figure()
 

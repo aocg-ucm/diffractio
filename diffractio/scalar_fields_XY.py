@@ -350,12 +350,6 @@ class Scalar_field_XY(object):
         """
         dict0 = load_data_common(self, filename)
 
-        if dict0 is not None:
-            if isinstance(dict0, dict):
-                self.__dict__ = dict0
-            else:
-                raise Exception('no dictionary in load_data')
-
         if verbose is True:
             print(dict0.keys())
 
@@ -496,8 +490,8 @@ class Scalar_field_XY(object):
                                                  kx=kxu,
                                                  ky=kxu,
                                                  s=0)
-            u_new_abs = f_interp_abs(x_new, y_new)
-            u_new_phase = f_interp_phase(x_new, y_new)
+            u_new_abs = f_interp_abs(y_new, x_new)
+            u_new_phase = f_interp_phase(y_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
         else:
@@ -1657,23 +1651,23 @@ class Scalar_field_XY(object):
 
             if num_x == 1 and num_y == 1:
                 # just 1 number
-                return u0.mean()
+                return 1j*u0.mean()
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                u_out.u = u0.transpose()[:, 0]
+                u_out.u = 1j*u0.transpose()[:, 0]
                 return u_out
 
             elif num_x == 1 and num_y > 1:
                 u_out = Scalar_field_X(yout, self.wavelength)
-                u_out.u = u0[:, 0]
+                u_out.u = 1j*u0[:, 0]
 
                 return u_out
 
             elif num_x > 1 and num_y > 1:
                 from diffractio.scalar_fields_XY import Scalar_field_XY
                 u_out = Scalar_field_XY(xout, yout, self.wavelength)
-                u_out.u = u0
+                u_out.u = 1j*u0
                 return u_out
 
         elif num_z > 1:
@@ -1757,26 +1751,26 @@ class Scalar_field_XY(object):
 
             if num_x == 1 and num_y == 1:
                 u_out = Scalar_field_Z(z, self.wavelength)
-                u_out.u = u_zs
+                u_out.u = 1j*u_zs
                 return u_out
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
-                u_out.u = u_zs
+                u_out.u = 1j*u_zs
                 return u_out
 
             elif num_x == 1 and num_y > 1:
                 u_out = Scalar_field_XZ(yout, z, self.wavelength)
-                u_out.u = u_zs
+                u_out.u = 1j*u_zs
                 return u_out
 
             elif num_x > 1 and num_y > 1:
                 from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
                 u_out = Scalar_field_XYZ(xout, yout, z, self.wavelength)
-                u_out.u = u_zs
+                u_out.u = 1j*u_zs
                 return u_out
 
-        return u_out
+        return 1j*u_out
 
     def profile(self,
                 point1='',

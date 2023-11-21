@@ -161,8 +161,16 @@ Beta state
 * Smooth_refraction index can be used also for Wave Propagation Method algorithm (WPM).
 
 
-0.1.8 (2023-10-07)
+0.1.9 (2023-11-21)
 --------------------------------
+
+* Improvement:
+
+  - XYZ drawings is removed temporally.
+
+  - utils_slicer.py is deprecated.
+
+  -  
 
 * Fix bugs:
 

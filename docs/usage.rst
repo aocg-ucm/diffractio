@@ -173,7 +173,8 @@ XY Vector fields
 
 .. code-block:: python
 
-  from diffractio import degrees, mm, nm, np, plt, sp, um
+  from diffractio import np, sp, plt
+from diffractio import nm, um, mm, degrees
 
   from diffractio.scalar_sources_XY import Scalar_source_XY
   from diffractio.scalar_masks_XY import Scalar_mask_XY

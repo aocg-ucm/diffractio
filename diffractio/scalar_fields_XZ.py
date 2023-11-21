@@ -525,8 +525,8 @@ class Scalar_field_XZ(object):
                                                  kx=kxu,
                                                  ky=kxu,
                                                  s=0)
-            u_new_abs = f_interp_abs(x_new, z_new)
-            u_new_phase = f_interp_phase(x_new, z_new)
+            u_new_abs = f_interp_abs(z_new, x_new)
+            u_new_phase = f_interp_phase(z_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
             n_interp_real = RectBivariateSpline(self.x,

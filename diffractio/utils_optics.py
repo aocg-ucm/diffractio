@@ -81,16 +81,19 @@ def roughness_2D(x, y, t, s):
     width = x[-1] - x[0]
     largo = y[-1] - y[0]
     dx = x[1] - x[0]
+    dy = y[1] - y[0]
     L_ancho = width / (2 * dx)
-    L_largo = largo / (2 * dx)
-    M = round(4 * tx / (sqrt(2) * dx))
-    N_ancho = int(np.floor(L_ancho + M))
-    N_largo = int(np.floor(L_largo + M))
+    L_largo = largo / (2 * dy)
+    Mx = round(4 * tx / (sqrt(2) * dx))
+    My = round(4 * ty / (sqrt(2) * dy))
+    
+    N_ancho = int(np.floor(L_ancho + Mx))
+    N_largo = int(np.floor(L_largo + My))
 
-    desp_ancho, desp_largo = meshgrid(np.arange(-M, M + 1),
-                                      np.arange(-M, M + 1))
+    desp_ancho, desp_largo = meshgrid(np.arange(-Mx, Mx + 1),
+                                      np.arange(-My, My + 1))
     desp_ancho = desp_ancho * dx
-    desp_largo = desp_largo * dx
+    desp_largo = desp_largo * dy
 
     pesos = exp(-2 * (desp_ancho**2 / tx**2 + desp_largo**2 / ty**2))
     pesos = np.abs(pesos / sqrt((pesos**2).sum()))

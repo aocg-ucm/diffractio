@@ -96,7 +96,8 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(A=1, x0=0 * um, z0=5 * mm, radius=200 * um)
+        u0.spherical_wave(A=1, x0=0 * um, z0=5 * mm)
+        u0.pupil(x0=0, radius=200*um)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
@@ -111,7 +112,8 @@ class Test_Scalar_sources_X(object):
         wavelength = 0.6328 * um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(A=1, x0=0 * um, z0=-5 * mm, radius=200 * um)
+        u0.spherical_wave(A=1, x0=0 * um, z0=-5 * mm)
+        u0.pupil(x0=0, radius=200*um)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
