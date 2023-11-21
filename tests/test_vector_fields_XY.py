@@ -57,10 +57,13 @@ class Test_Vector_fields_XY(object):
         mask.fresnel_lens(r0=(0 * um, 0 * um),
                           radius=(125 * um, 125 * um),
                           focal=(2 * mm, 2 * mm),
-                          kind='amplitude')
+                          kind='amplitudes')
+
+        state=np.array([[1,0], [0,1j]])
+
 
         vc = Vector_mask_XY(x0, y0, wavelength)
-        vc.scalar_to_vector_mask(u_mask=mask)
+        vc.scalar_to_vector_mask(mask=mask, state=state)
 
         vp = Vector_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(azimuth=0 * degrees)

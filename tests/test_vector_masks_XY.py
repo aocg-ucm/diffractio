@@ -53,10 +53,13 @@ class Test_vector_masks_XY(object):
                   angle=0 * degrees)
 
         # mask vectorial
+        state = np.array([[1,0],[1,1j]])
+        
+        
         EM = Vector_mask_XY(x0, y0, wavelength)
-        EM.scalar_to_vector_mask(u_mask=mask)
+        EM.scalar_to_vector_mask(mask=mask, state=state)
 
-        EM.draw(kind='all')
+        EM.draw(kind='jones_ap')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
@@ -76,14 +79,14 @@ class Test_vector_masks_XY(object):
                           radius=(125 * um, 125 * um),
                           focal=(2 * mm, 2 * mm),
                           angle=0 * degrees,
-                          kind='amplitude')
+                          kind='amplitudes')
 
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.complementary_masks(mask=mask,
                                state_0=np.array([[1, 0], [0, 0]]),
                                state_1=np.array([[0, 0], [0, 1]]))
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')
@@ -106,7 +109,7 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.from_py_pol(PL)
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')
@@ -126,7 +129,7 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.polarizer_linear(azimuth=0 * degrees)
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')
@@ -146,7 +149,7 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.quarter_waveplate(azimuth=0 * degrees)
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')
@@ -166,7 +169,7 @@ class Test_vector_masks_XY(object):
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.half_waveplate(azimuth=0 * degrees)
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')
@@ -189,7 +192,7 @@ class Test_vector_masks_XY(object):
                               p2=0.1,
                               azimuth=0 * degrees)
 
-        EM.draw(kind='amplitude')
+        EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')
         EM.draw(kind='phase')
         save_figure_test(newpath, func_name, add_name='_phase')

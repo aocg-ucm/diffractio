@@ -350,8 +350,6 @@ class Scalar_field_XY(object):
         """
         dict0 = load_data_common(self, filename)
 
-
-
         if verbose is True:
             print(dict0.keys())
 

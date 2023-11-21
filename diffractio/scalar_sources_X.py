@@ -95,7 +95,7 @@ class Scalar_source_X(Scalar_field_X):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self, A, x0, z0, radius, normalize=False):
+    def spherical_wave(self, A, x0, z0, normalize=False):
         """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         Parameters:
@@ -103,7 +103,6 @@ class Scalar_source_X(Scalar_field_X):
             x0 (float): x position of source
             z0 (float): z position of source
             mask (bool): If true, masks the spherical wave with radius
-            radius (float): size of slit for mask
             normalize (bool): If True, maximum of field is 1
         """
         k = 2 * pi / self.wavelength

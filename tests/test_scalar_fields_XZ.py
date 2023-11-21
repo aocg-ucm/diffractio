@@ -144,7 +144,7 @@ class Test_Scalar_fields_XZ(object):
 
         u1.rotate_field(angle=22.5 * degrees,
                         center_rotation=(0, 100),
-                        kind='all')
+                        kind='jones_ap')
         u1.draw_refraction_index(draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_n')
         u1.draw(logarithm=True, draw_borders=True)
