@@ -989,7 +989,7 @@ class Scalar_mask_X(Scalar_field_X):
             i0_zeros = np.zeros_like(code)
             code = np.vstack((i0_zeros, i0_ones, code, i0_ones)).reshape(
                 (-1, ), order='F')
-            bit_width = bit_width / 4
+            bit_width = bit_width / 2
 
         t = Scalar_mask_X(self.x, self.wavelength)
         t2 = Scalar_mask_X(self.x, self.wavelength)
