@@ -203,7 +203,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def apply_scalar_mask(self, mask, state, is_intensity=True):
+    def scalar_to_vector_mask(self, mask, state, is_intensity=True):
         """The same mask (binary) is applied to all the Jones Matrix.
 
         Parameters:
@@ -212,10 +212,10 @@ class Vector_mask_XY(Vector_field_XY):
             is intensity (bool): If True, abs(mask)**2 is applied.
         """
 
-        if is_intensity:
-            t = np.abs(mask.u)**2
-        else:
-            t = mask.u
+        # if is_intensity:
+        #     t = np.abs(mask.u)**2
+        # else:
+        t = mask.u
 
         self.M00 = state[0, 0] * t
         self.M01 = state[0, 1] * t
@@ -371,11 +371,11 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m0
 
-    def draw(self, kind='amplitude', range_scale='um'):
+    def draw(self, kind='amplitudes', range_scale='um'):
         """Draws the mask. It must be different to sources.
 
         Parameters:
-            kind (str): 'amplitude', 'phase', 'field', 'jones', 'all'
+            kind (str): 'amplitudes', 'phases', 'jones', 'jones_ap'.
         """
         from matplotlib import rcParams
         # def draw_masks(self, kind='fields'):
@@ -397,7 +397,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         a_max = np.abs((a00, a01, a10, a11)).max()
 
-        if kind in ('amplitude', 'field', 'all'):
+        if kind in ('amplitude', 'all'):
             plt.set_cmap(CONF_DRAWING['color_intensity'])
             fig, axs = plt.subplots(2,
                                     2,
@@ -438,7 +438,7 @@ class Vector_mask_XY(Vector_field_XY):
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
-        if kind in ('phases', 'field', 'all'):
+        if kind in ('phases', 'all'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
             fig, axs = plt.subplots(2,
                                     2,
@@ -486,7 +486,7 @@ class Vector_mask_XY(Vector_field_XY):
                 axs[1, 0].set_xlabel(r'x (mm)')
                 axs[1, 0].set_ylabel(r'y (mm)')
 
-        if kind in ('jones', 'all'):
+        if kind in ('jones'):
             plt.set_cmap(CONF_DRAWING['color_stokes'])
 
             fig, axs = plt.subplots(2,
