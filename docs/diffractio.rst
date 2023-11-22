@@ -140,10 +140,10 @@ diffractio.utils\_optics module
    :undoc-members:
    :show-inheritance:
 
-diffractio.utils\_slicer module
--------------------------------
+diffractio.utils\_slicer\_deprecated module
+-------------------------------------------
 
-.. automodule:: diffractio.utils_slicer
+.. automodule:: diffractio.utils_slicer_deprecated
    :members:
    :undoc-members:
    :show-inheritance:

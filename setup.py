@@ -31,7 +31,7 @@ setup(
     author="Luis Miguel Sanchez Brea",
     author_email='optbrea@ucm.es',
     classifiers=[
-        'Development Status :: 4 - Beta,
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -61,6 +61,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://bitbucket.org/optbrea/diffractio/src/master/',
-    version='0.1.9',
+    version='0.2.1',
     zip_safe=False,
 )
