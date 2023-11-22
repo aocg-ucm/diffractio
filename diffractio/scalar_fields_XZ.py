@@ -946,7 +946,85 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
+
     def WPM(self,
+            kind = 'schmidt',
+            has_edges=True,
+            pow_edge=80,
+            matrix=False,
+            verbose=False):
+        """
+        WPM Method. 'schmidt method is very fast, only needs discrete number of refraction indexes'
+
+
+        Parameters:
+            kind (str): 'schmidt', 'scalar'
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
+            matrix (bool): if True returns a matrix else
+            verbose (bool): If True prints information
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
+        """
+
+        k0 = 2 * np.pi / self.wavelength
+        x = self.x
+        z = self.z
+        dx = x[1] - x[0]
+        dz = z[1] - z[0]
+
+        self.u[:, 0] = self.u0.u
+        kx = get_k(x, flavour='+')
+        k_perp2 = kx**2
+        k_perp = kx
+
+        X, KP = np.meshgrid(x, k_perp)
+
+        if has_edges is False:
+            filter_edge = 1
+        else:
+            filter_edge = np.exp(-(self.x / (self.x[0]))**pow_edge)
+
+        t1 = time.time()
+
+        num_steps = len(self.z)
+        for j in range(1, num_steps):
+
+            if kind == 'schmidt':
+                self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(
+                    self.u[:, j - 1], self.n[:, j - 1], k0, k_perp2,
+                    dz) * filter_edge
+            elif kind == 'scalar':
+
+                Nj, KP = np.meshgrid(self.n[:, j - 1], k_perp)
+                X, UJ = np.meshgrid(x, fftshift(fft(self.u[:, j - 1])))
+
+                kz = csqrt((Nj * k0)**2 - KP**2)
+                Pj = np.exp(1j * kz * dz)
+
+                WXj = UJ * np.exp(1j * KP * (X - x[0]))
+
+                uj = np.mean(WXj * Pj, 0)
+                self.u[:, j] = uj * filter_edge + self.u[:, j]
+
+            if verbose is True:
+                print("{}".format(j), sep='\r', end='\r')
+
+
+        t2 = time.time()
+        if verbose is True:
+            print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                t2 - t1, (t2 - t1) / len(self.z) * 1000))
+
+        if matrix is True:
+            return self.u
+
+    def WPM_deprecated(self,
             kind='schmidt',
             has_edges=True,
             pow_edge=80,
@@ -1033,67 +1111,6 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
-    def M_xz(self, j, kx):
-        """
-        Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
-        “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
-        """
-        # simple parameters
-
-        k0 = 2 * np.pi / self.wavelength
-
-        z = self.z
-        x = self.x
-
-        num_x = self.x.size
-        num_z = self.z.size
-
-        dz = z[1] - z[0]
-        dx = x[1] - x[0]
-
-        nj = self.n[:, j]
-        nj_1 = self.n[:, j - 1]
-
-        n_med = nj.mean()
-        n_1_med = nj_1.mean()
-
-        # parameters
-        NJ, KX = np.meshgrid(nj, kx)
-        NJ_1, KX = np.meshgrid(nj_1, kx)
-
-        k_perp = KX + eps
-
-        kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
-        kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
-
-        tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
-        t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
-
-        kj_1 = NJ_1 * k0
-        fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
-        # cuidado no es la misma definición, me parece que está repetido
-        e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
-        eg_xj_1 = fj_1 * e_xj_1
-        # cuidado no es la misma definición, me parece que está mal por no ser simétrica
-
-        p001 = 0
-        p002 = tg_TM * (1 - 1j * eg_xj_1)
-        p111 = t_TE
-        p112 = 0
-
-        # M00
-        M00 = (p001 + p002)
-
-        # M01
-        M01 = 0
-
-        # M10
-        M10 = 0
-
-        # M11
-        M11 = (p111 + p112)
-
-        return M00, M01, M10, M11
 
     def RS_polychromatic(self,
                          initial_field,

@@ -480,8 +480,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             x0 = np.linspace(-3 * mm, 3 * mm, 512)
             y0 = np.linspace(-3 * mm, 3 * mm, 512)
             wavelength = 0.6328 *um
-            vertices = np.array([(0 * mm, 0 * mm), (2 * mm, 0 * mm), (2 * mm, 1 * mm),
-                                (0 * mm, 1 * mm)])
+            vertices = np.array([(0 * mm, 0 * mm), (2 * mm, 0 * mm), (2 * mm, 1 * mm),(0 * mm, 1 * mm)])
             t = Scalar_mask_XY(x0, y0, wavelength)
             t.polygon(vertices)
             t.draw()
