@@ -161,7 +161,7 @@ Beta state
 * Smooth_refraction index can be used also for Wave Propagation Method algorithm (WPM).
 
 
-0.2.2 (2023-11-21)
+0.2.3 (2023-11-21)
 --------------------------------
 
 * Improvement:
