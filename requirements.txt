@@ -12,6 +12,4 @@ pandas
 ipywidgets
 ipympl
 
-# psutil
 # opencv-python
-# mayavi
