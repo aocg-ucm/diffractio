@@ -4,6 +4,11 @@
 # readthedocs-sphinx-search==0.1.1
 
 # Defining the exact version will make sure things don't break
-sphinx
+
+
+
+sphinx>=1.4
+ipykernel
+nbsphinx
 sphinx_rtd_theme
 readthedocs-sphinx-search
