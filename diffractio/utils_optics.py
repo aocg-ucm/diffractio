@@ -860,7 +860,7 @@ def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
 
 
 
-def fresnel_equations_kx(kx, wavelength,  n1, n2, has_draw=True):
+def fresnel_equations_kx(kx, wavelength,  n1, n2, outputs=[True, True, True, True], has_draw=True, kind = 'amplitude_phase'):
     """Fresnel_equations where input are kx part of wavevector.
 
     Args:
@@ -868,11 +868,15 @@ def fresnel_equations_kx(kx, wavelength,  n1, n2, has_draw=True):
         wavelength (float): wavelength
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
         has_draw (bool, optional): if True, it draw. Defaults to False.
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
 
     Returns:
         _type_: t_TM, t_TE, r_TM, r_TE  (TM is parallel and TE is perpendicular)
     """
+    
+    outputs = np.array(outputs)
     
     k0 = 2 * np.pi / wavelength
 
@@ -888,53 +892,94 @@ def fresnel_equations_kx(kx, wavelength,  n1, n2, has_draw=True):
     kz_2[reflexion_total] = 1.j*np.sqrt(-alpha[reflexion_total])
     
     
-
-    r_TE = (kz_1 - kz_2)/(kz_1 + kz_2) # perpendicular
+    t_TM, t_TE, r_TM, r_TE = None, None, None, None
     
-    t_TE = 2 * kz_1 / (kz_1 + kz_2)  # perpendicular
-
-    r_TM = (n2**2*kz_1 - n1**2 * kz_2)/(n2**2 * kz_1 + n1**2 * kz_2) # paralelo
+    if outputs[0]:
+        t_TM = 2 * n1 * n2 * kz_1 / (n2**2*kz_1 + n1**2 * kz_2) # paralelo
+    if outputs[1]:
+        t_TE = 2 * kz_1 / (kz_1 + kz_2)  # perpendicular
+    if outputs[2]:
+        r_TM = (n2**2*kz_1 - n1**2 * kz_2)/(n2**2 * kz_1 + n1**2 * kz_2) # paralelo
+    if outputs[3]:
+        r_TE = (kz_1 - kz_2)/(kz_1 + kz_2) # perpendicular
+        
     
-    t_TM = 2 * n1 * n2 * kz_1 / (n2**2*kz_1 + n1**2 * kz_2) # paralelo
-
-    
-    if has_draw:
+    if has_draw and outputs.sum()>0:
             fig, axs = plt.subplots(1,2, figsize=(12,4))
             
-            axs[0].plot(kx, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
-            axs[0].plot(kx, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
+            if kind == 'amplitude_phase':
+                if outputs[0]:
+                    axs[0].plot(kx, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
+                if outputs[1]:
+                    axs[0].plot(kx, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
+                if outputs[2]:
+                    axs[0].plot(kx, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
+                if outputs[3]:
+                    axs[0].plot(kx, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
 
-            axs[0].plot(kx, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
-            axs[0].plot(kx, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
+                axs[0].legend()
+                axs[0].grid()
 
-            axs[0].legend()
-            axs[0].grid()
+                axs[1].set_xlim(kx[0], kx[-1])
+                axs[0].set_xlabel(r'$k_x$')
+                axs[0].set_title('amplitude')
 
-            axs[1].set_xlim(kx[0], kx[-1])
-            axs[0].set_xlabel(r'$k_x$')
-            axs[0].set_title('amplitude')
+                if outputs[0]:
+                    axs[1].plot(kx, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+                if outputs[1]:
+                    axs[1].plot(kx, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+                if outputs[2]:
+                    axs[1].plot(kx, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+                if outputs[3]:
+                    axs[1].plot(kx, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
 
+                axs[1].legend()
+                axs[1].grid()
+                axs[1].set_xlim(kx[0], kx[-1])
+                axs[0].set_xlabel(r'$k_x$')
+                axs[1].set_title(r'phase $(^o)$')
+                axs[1].set_ylim(-190,190)
+                axs[1].set_yticks([-180, -90, 0, 90, 180])
+                
+            elif kind == 'real_imag':
+                if outputs[0]:
+                    axs[0].plot(kx, np.real(t_TM), 'r', label = '$t_{TM, par}$')
+                if outputs[1]:
+                    axs[0].plot(kx, np.real(t_TE),  'b', label = '$t_{TE, perp}$')
+                if outputs[2]:
+                    axs[0].plot(kx, np.real(r_TM), 'r-.', label = '$r_{TM, par}$')
+                if outputs[3]:
+                    axs[0].plot(kx, np.real(r_TE),  'b-.', label = '$r_{TE, perp}$')
 
-            axs[1].plot(kx, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
-            axs[1].plot(kx, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+                axs[0].legend()
+                axs[0].grid()
 
-            axs[1].plot(kx, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
-            axs[1].plot(kx, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+                axs[0].set_xlim(kx[0], kx[-1])
+                axs[0].set_xlabel(r'$k_x$')
+                axs[0].set_title('real')
 
-            axs[1].legend()
-            axs[1].grid()
-            axs[1].set_xlim(kx[0], kx[-1])
-            axs[0].set_xlabel(r'$k_x$')
-            axs[1].set_title(r'phase $(^o)$')
-            axs[1].set_ylim(-180,180)
-            axs[1].set_yticks([-180, -90, 0, 90, 180])
+                if outputs[0]:
+                    axs[1].plot(kx, np.imag(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+                if outputs[1]:
+                    axs[1].plot(kx, np.imag(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+                if outputs[2]:
+                    axs[1].plot(kx, np.imag(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+                if outputs[3] :
+                    axs[1].plot(kx, np.imag(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+
+                axs[1].legend()
+                axs[1].grid()
+                axs[1].set_xlim(kx[0], kx[-1])
+                axs[1].set_xlabel(r'$k_x$')
+                axs[1].set_title(r'imag')
+
 
         # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
 
     return t_TM, t_TE, r_TM, r_TE  #paralelo, perpendicular
 
 
-def transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False):
+def transmitances_reflectances_kx(kx, wavelength, n1, n2,  outputs=[True, True, True, True], has_draw=False):
     """Transmitances and reflectances, where input are kx part of wavevector.
 
     Args:
@@ -943,10 +988,14 @@ def transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False):
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
         has_draw (bool, optional): if True, it draw. Defaults to False.
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
 
     Returns:
         _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
+    
+    outputs = np.array(outputs)
+    
     k0 = 2 * np.pi / wavelength
     
 
@@ -962,20 +1011,31 @@ def transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False):
     
 
     
-    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx, wavelength, n1, n2, has_draw=False)
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx, wavelength, n1, n2, outputs, has_draw=False)
+
+    T_TM, T_TE, R_TM, R_TE = None, None, None, None
+
+
     
-    T_TM = kz_2 / kz_1 * np.abs(t_TM)**2
-    T_TE = kz_2 / kz_1 * np.abs(t_TE)**2
-    R_TM = np.abs(r_TM)**2
-    R_TE = np.abs(r_TE)**2
+    if outputs[0]:
+        T_TM = kz_2 / kz_1 * np.abs(t_TM)**2
+    if outputs[1]:
+        T_TE = kz_2 / kz_1 * np.abs(t_TE)**2
+    if outputs[2]:
+        R_TM = np.abs(r_TM)**2
+    if outputs[3]:
+        R_TE = np.abs(r_TE)**2
     
     if has_draw:
         plt.figure()
-        plt.plot(kx, T_TM, 'r', label = '$T_{TM, par}$')
-        plt.plot(kx, T_TE,  'b', label = '$T_{TE, perp}$')
-
-        plt.plot(kx, R_TM, 'r-.', label = '$R_{TM, par}$')
-        plt.plot(kx, R_TE,  'b-.', label = '$R_{TE, perp}$')
+        if outputs[0]:
+            plt.plot(kx, T_TM, 'r', label = '$T_{TM, par}$')
+        if outputs[1]:
+                plt.plot(kx, T_TE,  'b', label = '$T_{TE, perp}$')
+        if outputs[2]:
+            plt.plot(kx, R_TM, 'r-.', label = '$R_{TM, par}$')
+        if outputs[3]:
+            plt.plot(kx, R_TE,  'b-.', label = '$R_{TE, perp}$')
 
         plt.xlabel('$k_x$')
         plt.legend()
@@ -986,7 +1046,7 @@ def transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False):
     return T_TM, T_TE, R_TM, R_TE  #paralelo, perpendicular
 
 
-def fresnel_equations(theta, wavelength, n1, n2, has_draw=False):
+def fresnel_equations(theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False, kind='amplitude_phase'):
     """Fresnel equations and reflectances, where input are angles of incidence.
 
     Args:
@@ -994,25 +1054,32 @@ def fresnel_equations(theta, wavelength, n1, n2, has_draw=False):
         wavelength (float): wavelength
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
         has_draw (bool, optional): if True, it draw. Defaults to False.
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
 
     Returns:
         _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
     
+    outputs = np.array(outputs)
+    
     k0 = 2 * np.pi / wavelength
     kx = n1 * k0 * np.sin(theta)
 
-    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx,  wavelength, n1, n2, has_draw=False)
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx,  wavelength, n1, n2,outputs, has_draw=False)
 
-    if has_draw:
-            fig, axs = plt.subplots(1,2, figsize=(12,4))
-            
-            axs[0].plot(theta/degrees, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
-            axs[0].plot(theta/degrees, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
-
-            axs[0].plot(theta/degrees, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
-            axs[0].plot(theta/degrees, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
+    if has_draw and outputs.sum()>0:
+        fig, axs = plt.subplots(1,2, figsize=(12,4))
+        if kind == 'amplitude_phase':
+            if outputs[0]:
+                axs[0].plot(theta/degrees, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
+            if outputs[1]:
+                axs[0].plot(theta/degrees, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
+            if outputs[2]:
+                axs[0].plot(theta/degrees, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
+            if outputs[3]:
+                axs[0].plot(theta/degrees, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
 
             axs[0].legend()
             axs[0].grid()
@@ -1021,27 +1088,62 @@ def fresnel_equations(theta, wavelength, n1, n2, has_draw=False):
             axs[0].set_xlabel(r'$\theta (^o)$')
             axs[0].set_title('amplitude')
 
-
-            axs[1].plot(theta/degrees, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
-            axs[1].plot(theta/degrees, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
-
-            axs[1].plot(theta/degrees, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
-            axs[1].plot(theta/degrees, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+            if outputs[0]:
+                axs[1].plot(theta/degrees, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+            if outputs[1]:
+                axs[1].plot(theta/degrees, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+            if outputs[2]:
+                axs[1].plot(theta/degrees, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+            if outputs[3]:
+                axs[1].plot(theta/degrees, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
 
             axs[1].legend()
             axs[1].grid()
             axs[1].set_xlim(theta[0]/degrees, theta[-1]/degrees)
             axs[1].set_xlabel(r'$\theta (^o)$')
             axs[1].set_title(r'phase $(^o)$')
-            axs[1].set_ylim(-180,180)
+            axs[1].set_ylim(-190,190)
             axs[1].set_yticks([-180, -90, 0, 90, 180])
+            
+        elif kind == 'real_imag':
+            if outputs[0]:
+                axs[0].plot(theta/degrees, np.real(t_TM), 'r', label = '$t_{TM, par}$')
+            if outputs[1]:
+                axs[0].plot(theta/degrees, np.real(t_TE),  'b', label = '$t_{TE, perp}$')
+            if outputs[2]:
+                axs[0].plot(theta/degrees, np.real(r_TM), 'r-.', label = '$r_{TM, par}$')
+            if outputs[3]:
+                axs[0].plot(theta/degrees, np.real(r_TE),  'b-.', label = '$r_{TE, perp}$')
+
+            axs[0].legend()
+            axs[0].grid()
+
+            axs[0].set_xlim(theta[0]/degrees, theta[-1]/degrees)
+            axs[1].set_xlabel(r'$\theta (^o)$')
+            axs[0].set_title('real')
+
+            if outputs[0]:
+                axs[1].plot(theta/degrees, np.imag(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+            if outputs[1]:
+                axs[1].plot(theta/degrees, np.imag(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+            if outputs[2]:
+                axs[1].plot(theta/degrees, np.imag(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+            if outputs[3]:
+                axs[1].plot(theta/degrees, np.imag(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(theta[0]/degrees, theta[-1]/degrees)
+            axs[1].set_xlabel(r'$\theta (^o)$')
+            axs[1].set_title(r'imag')
+
 
 
     return t_TM, t_TE, r_TM, r_TE  #paralelo, perpendicular
 
 
 
-def transmitances_reflectances(theta, wavelength, n1, n2, has_draw=False):
+def transmitances_reflectances(theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False):
 
     """Transmitances and reflectances, where input are angles of incidence.
 
@@ -1051,24 +1153,29 @@ def transmitances_reflectances(theta, wavelength, n1, n2, has_draw=False):
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
         has_draw (bool, optional): if True, it draw. Defaults to False.
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
 
     Returns:
         _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    
+    outputs = np.array(outputs)
+
     
     k0 = 2 * np.pi / wavelength
     kx = k0 * n1 * np.sin(theta)    
 
-    T_TM, T_TE, R_TM, R_TE = transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False)
+    T_TM, T_TE, R_TM, R_TE = transmitances_reflectances_kx(kx, wavelength, n1, n2, outputs, has_draw=False)
     
     if has_draw:
         plt.figure()
-        plt.plot(theta, T_TM, 'r', label = '$T_{TM, par}$')
-        plt.plot(theta, T_TE,  'b', label = '$T_{TE, perp}$')
-
-        plt.plot(theta, R_TM, 'r-.', label = '$R_{TM, par}$')
-        plt.plot(theta, R_TE,  'b-.', label = '$R_{TE, perp}$')
+        if outputs[0]:
+            plt.plot(theta/degrees, T_TM, 'r', label = '$T_{TM, par}$')
+        if outputs[1]:
+            plt.plot(theta/degrees, T_TE,  'b', label = '$T_{TE, perp}$')
+        if outputs[2]:
+            plt.plot(theta/degrees, R_TM, 'r-.', label = '$R_{TM, par}$')
+        if outputs[3]:
+            plt.plot(theta/degrees, R_TE,  'b-.', label = '$R_{TE, perp}$')
 
         plt.xlabel(r'$\theta (^o)$')
         plt.legend()
