@@ -859,244 +859,219 @@ def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
     return depth
 
 
-def fresnel_coefficients_dielectric(theta_i, n1, n2):
-    """Components rs, rp, ts y tp - Fresnel queations
 
-    Parameters:
-        theta_i (numpy.array or float): angle of incidence.
-        n1 (float): refraction index of first medium
-        n2 (float): refraction index of second medium
+def fresnel_equations_kx(kx, wavelength,  n1, n2, has_draw=True):
+    """Fresnel_equations where input are kx part of wavevector.
 
-    Returns:
-        (numpy.array or float): r_perp
-        (numpy.array or float): r_par
-        (numpy.array or float): t_perp
-        (numpy.array or float): t_par
-    """
-
-    theta_t = arcsin(n1 * sin(theta_i) / n2)
-
-    cos_i = cos(theta_i)
-    cos_t = cos(theta_t)
-
-    r_par = (n2 * cos_i - n1 * cos_t) / (n2 * cos_i + n1 * cos_t)
-    r_perp = (n1 * cos_i - n2 * cos_t) / (n1 * cos_i + n2 * cos_t)
-    t_par = (2 * n1 * cos_i) / (n2 * cos_i + n1 * cos_t)
-    t_perp = (2 * n1 * cos_i) / (n1 * cos_i + n2 * cos_t)
-
-    return r_perp, r_par, t_perp, t_par
-
-
-def reflectance_transmitance_dielectric(theta_i, n1, n2):
-    """Transmittances R_perp, R_par, T_perp, T_par - Fresnel queations
-
-    Parameters:
-        theta_i (numpy.array or float): angle of incidence.
-        n1 (float): refraction index of first medium
-        n2 (float): refraction index of second medium
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
 
     Returns:
-        (numpy.array or float): R_perp
-        (numpy.array or float): R_par
-        (numpy.array or float): T_perp
-        (numpy.array or float): T_par
+        _type_: t_TM, t_TE, r_TM, r_TE  (TM is parallel and TE is perpendicular)
     """
-    r_perp, r_par, t_perp, t_par = fresnel_coefficients_dielectric(
-        n1, theta_i, n2)
+    
+    k0 = 2 * np.pi / wavelength
 
-    theta_t = arcsin(n1 * sin(theta_i) / n2)
+    kz_1 = np.sqrt((n1 * k0)**2 - kx**2)
 
-    cos_i = cos(theta_i)
-    cos_t = cos(theta_t)
+    
+    alpha = (n2 * k0)**2 - kx**2
+    normal = alpha>=0
+    reflexion_total = alpha < 0
+    
+    kz_2 = np.zeros_like(kx,dtype=complex)
+    kz_2[normal] = np.sqrt(alpha[normal])
+    kz_2[reflexion_total] = 1.j*np.sqrt(-alpha[reflexion_total])
+    
+    
 
-    R_perp = np.abs(r_perp)**2
-    R_par = np.abs(r_par)**2
-    T_perp = np.abs(t_perp)**2 * (n2 * cos_t) / (n1 * cos_i)
-    T_par = np.abs(t_par)**2 * (n2 * cos_t) / (n1 * cos_i)
+    r_TE = (kz_1 - kz_2)/(kz_1 + kz_2) # perpendicular
+    
+    t_TE = 2 * kz_1 / (kz_1 + kz_2)  # perpendicular
 
-    return R_perp, R_par, T_perp, T_par
+    r_TM = (n2**2*kz_1 - n1**2 * kz_2)/(n2**2 * kz_1 + n1**2 * kz_2) # paralelo
+    
+    t_TM = 2 * n1 * n2 * kz_1 / (n2**2*kz_1 + n1**2 * kz_2) # paralelo
+
+    
+    if has_draw:
+            fig, axs = plt.subplots(1,2, figsize=(12,4))
+            
+            axs[0].plot(kx, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
+            axs[0].plot(kx, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
+
+            axs[0].plot(kx, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
+            axs[0].plot(kx, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
+
+            axs[0].legend()
+            axs[0].grid()
+
+            axs[1].set_xlim(kx[0], kx[-1])
+            axs[0].set_xlabel(r'$k_x$')
+            axs[0].set_title('amplitude')
 
 
-def fresnel_coefficients_complex(theta_i, n1, n2c):
+            axs[1].plot(kx, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+            axs[1].plot(kx, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+
+            axs[1].plot(kx, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+            axs[1].plot(kx, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(kx[0], kx[-1])
+            axs[0].set_xlabel(r'$k_x$')
+            axs[1].set_title(r'phase $(^o)$')
+            axs[1].set_ylim(-180,180)
+            axs[1].set_yticks([-180, -90, 0, 90, 180])
+
+        # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
+
+    return t_TM, t_TE, r_TM, r_TE  #paralelo, perpendicular
+
+
+def transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False):
+    """Transmitances and reflectances, where input are kx part of wavevector.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    Calcula las components rs y rp mediante las eq. de Fresnel
-    n^=n-ik
-    example:
-        theta_i=linspace(0*degrees,90*degrees,10),
+    k0 = 2 * np.pi / wavelength
+    
 
-    Los parametros de entrada pueden ser arrays de numeros.
-    Para drawlos el array debe ser theta_i
-    n2c puede ser complejo
+    kz_1 = np.sqrt((n1 * k0)**2 - kx**2)
+
+    alpha = (n2 * k0)**2 - kx**2
+    normal = alpha>=0
+    reflexion_total = alpha < 0
+    
+    kz_2 = np.zeros_like(kx,dtype=complex)
+    kz_2[normal] = np.sqrt(alpha[normal])
+    kz_2[reflexion_total] = 1.j*np.sqrt(-alpha[reflexion_total])
+    
+
+    
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx, wavelength, n1, n2, has_draw=False)
+    
+    T_TM = kz_2 / kz_1 * np.abs(t_TM)**2
+    T_TE = kz_2 / kz_1 * np.abs(t_TE)**2
+    R_TM = np.abs(r_TM)**2
+    R_TE = np.abs(r_TE)**2
+    
+    if has_draw:
+        plt.figure()
+        plt.plot(kx, T_TM, 'r', label = '$T_{TM, par}$')
+        plt.plot(kx, T_TE,  'b', label = '$T_{TE, perp}$')
+
+        plt.plot(kx, R_TM, 'r-.', label = '$R_{TM, par}$')
+        plt.plot(kx, R_TE,  'b-.', label = '$R_{TE, perp}$')
+
+        plt.xlabel('$k_x$')
+        plt.legend()
+        plt.grid()
+
+        # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
+
+    return T_TM, T_TE, R_TM, R_TE  #paralelo, perpendicular
+
+
+def fresnel_equations(theta, wavelength, n1, n2, has_draw=False):
+    """Fresnel equations and reflectances, where input are angles of incidence.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    # Precalculos
-    kiz = cos(theta_i)
-    ktcz = sqrt(n2c**2 - n1**2 * sin(theta_i)**2)
-    ktc2 = n2c**2
-    ki2 = n1**2
+    
+    k0 = 2 * np.pi / wavelength
+    kx = n1 * k0 * np.sin(theta)
 
-    # Calculo de los coeficientes de Fresnel
-    r_perp = (kiz - ktcz) / (kiz + ktcz)
-    t_perp = 2 * kiz / (kiz + ktcz)
-    r_par = (kiz * ktc2 - ktcz * ki2) / (kiz * ktc2 + ktcz * ki2)
-    t_par = 2 * kiz * ktc2 / (kiz * ktc2 + ktcz * ki2)
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx,  wavelength, n1, n2, has_draw=False)
 
-    return r_perp, r_par, t_perp, t_par
+    if has_draw:
+            fig, axs = plt.subplots(1,2, figsize=(12,4))
+            
+            axs[0].plot(theta/degrees, np.abs(t_TM), 'r', label = '$t_{TM, par}$')
+            axs[0].plot(theta/degrees, np.abs(t_TE),  'b', label = '$t_{TE, perp}$')
+
+            axs[0].plot(theta/degrees, np.abs(r_TM), 'r-.', label = '$r_{TM, par}$')
+            axs[0].plot(theta/degrees, np.abs(r_TE),  'b-.', label = '$r_{TE, perp}$')
+
+            axs[0].legend()
+            axs[0].grid()
+
+            axs[0].set_xlim(theta[0]/degrees, theta[-1]/degrees)
+            axs[0].set_xlabel(r'$\theta (^o)$')
+            axs[0].set_title('amplitude')
 
 
-def reflectance_transmitance_complex(theta_i, n1, n2c):
+            axs[1].plot(theta/degrees, np.angle(t_TM)/degrees, 'r', label = '$t_{TM, par}$')
+            axs[1].plot(theta/degrees, np.angle(t_TE)/degrees,  'b', label = '$t_{TE, perp}$')
+
+            axs[1].plot(theta/degrees, np.angle(r_TM)/degrees, 'r-.', label = '$r_{TM, par}$')
+            axs[1].plot(theta/degrees, np.angle(r_TE)/degrees,  'b-.', label = '$r_{TE, perp}$')
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(theta[0]/degrees, theta[-1]/degrees)
+            axs[1].set_xlabel(r'$\theta (^o)$')
+            axs[1].set_title(r'phase $(^o)$')
+            axs[1].set_ylim(-180,180)
+            axs[1].set_yticks([-180, -90, 0, 90, 180])
+
+
+    return t_TM, t_TE, r_TM, r_TE  #paralelo, perpendicular
+
+
+
+def transmitances_reflectances(theta, wavelength, n1, n2, has_draw=False):
+
+    """Transmitances and reflectances, where input are angles of incidence.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    Calcula las components rs y rp mediante las eq. de Fresnel
-    n^=n-ik
-    example:
-        theta_i=linspace(0*degrees,90*degrees,10),
+    
+    
+    k0 = 2 * np.pi / wavelength
+    kx = k0 * n1 * np.sin(theta)    
 
-    Los parametros de entrada pueden ser arrays de numeros.
-    Para drawlos el array debe ser theta_i
-    n2c puede ser complejo
-    """
+    T_TM, T_TE, R_TM, R_TE = transmitances_reflectances_kx(kx, wavelength, n1, n2, has_draw=False)
+    
+    if has_draw:
+        plt.figure()
+        plt.plot(theta, T_TM, 'r', label = '$T_{TM, par}$')
+        plt.plot(theta, T_TE,  'b', label = '$T_{TE, perp}$')
 
-    # Coeficientes de Fresnel
-    r_perp, r_par, t_perp, t_par = fresnel_coefficients_complex(
-        n1, theta_i, n2c)
+        plt.plot(theta, R_TM, 'r-.', label = '$R_{TM, par}$')
+        plt.plot(theta, R_TE,  'b-.', label = '$R_{TE, perp}$')
 
-    # Reflectancia
-    R_perp = np.abs(r_perp)**2
-    R_par = np.abs(r_par)**2
+        plt.xlabel(r'$\theta (^o)$')
+        plt.legend()
+        plt.grid()
 
-    # Precalculo
-    kiz = cos(theta_i)
-    ki2 = n1**2
-    ktcz = sqrt(n2c**2 - n1**2 * sin(theta_i)**2)
-    ktc2 = n2c**2
-    n2R = real(n2c)
-    kappa2 = imag(n2c)
-    B = n2R**2 - kappa2**2 - n1**2 * sin(theta_i)**2
-    ktz = sqrt(0.5 * (B + sqrt(B**2 + 4 * n2R**2 * kappa2**2)))
-
-    # Transmitancias
-    T_perp = ktz * np.abs(t_perp)**2 / kiz
-    T_par = ki2 * real(ktcz / ktc2) * np.abs(t_par)**2 / kiz
-
-    return R_perp, R_par, T_perp, T_par
-
-
-def draw_fresnel_coefficients(theta_i,
-                              n1,
-                              n2,
-                              r_perp,
-                              r_par,
-                              t_perp,
-                              t_par,
-                              filename=''):
-    """
-    Dibuja las ecuaciones de fresnel en function del angle de entrada
-    """
-
-    # Generacion de la figura
-    plt.figure()
-
-    # Amplitud
-    plt.subplot(1, 2, 1)
-    plt.plot(theta_i / degrees,
-             np.abs(r_perp) * sign(r_perp),
-             'k--',
-             lw=2,
-             label=u"$r_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.abs(r_par) * sign(r_par),
-             'k',
-             lw=2,
-             label=u"$r_{\parallel}$")
-    plt.plot(theta_i / degrees,
-             np.abs(t_perp) * sign(t_perp),
-             'r--',
-             lw=2,
-             label=r"$t_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.abs(t_par) * sign(t_par),
-             'r',
-             lw=2,
-             label=r"$t_{\parallel}$")
-
-    # Leyenda de los ejes
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$Amplitud$", fontsize=22)
-    plt.legend(loc=2, prop={'size': 18})
-
-    # Fase
-    plt.subplot(1, 2, 2)
-    plt.plot(theta_i / degrees,
-             unwrap(angle(r_perp), 2 * pi),
-             'k--',
-             lw=2,
-             label=r"$r_{\perp}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(r_par), 2 * pi),
-             'k',
-             lw=2,
-             label=r"$r_{\parallel}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(t_perp), 2 * pi),
-             'r--',
-             lw=2,
-             label=r"$t_{\perp}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(t_par), 2 * pi),
-             'r',
-             lw=2,
-             label=r"$t_{\parallel}$")
-
-    # Leyenda de los ejes
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$phase$", fontsize=22)
-    plt.legend(loc=2, prop={'size': 18})
-
-    if not filename == '':
-        plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
-
-
-def drawTransmitancias(theta_i,
-                       n1,
-                       n2,
-                       R_perp,
-                       R_par,
-                       T_perp,
-                       T_par,
-                       filename=''):
-    """
-    Dibuja las ecuaciones de fresnel en function del angle de entrada
-    """
-    # Generacion de la figura
-    plt.figure()
-    # drawing
-    plt.subplot(1, 1, 1)
-    plt.plot(theta_i / degrees,
-             np.real(R_perp),
-             'k--',
-             lw=2,
-             label=u"$R_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.real(R_par),
-             'k',
-             lw=2,
-             label=u"$R_{\parallel}$")
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$Amplitud$", fontsize=22)
-    plt.ylim(-0.01, 1.01)
-    plt.plot(theta_i / degrees,
-             np.real(T_perp),
-             'r--',
-             lw=2,
-             label=r"$T_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.real(T_par),
-             'r',
-             lw=2,
-             label=r"$T_{\parallel}$")
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$intensity$", fontsize=22)
-    plt.ylim(-0.1, 2)
-    plt.legend(loc=3, prop={'size': 18})
-
-    if not filename == '':
-        plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
+    return T_TM, T_TE, R_TM, R_TE  #paralelo, perpendicular

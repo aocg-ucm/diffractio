@@ -195,6 +195,14 @@ Beta state
   - X fields: inverse_amplitude, inverse_phase, pupil
 
 
+
+0.2.3 (2023-11-21)
+--------------------------------
+
+* Improvement:
+
+  - new fresnel_equations_kx, fresnel_equations, transmitances_reflectances_kx, transmitances_reflectances functions.
+
 Future
 --------------------------------
 
