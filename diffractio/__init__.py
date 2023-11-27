@@ -42,7 +42,7 @@ from .config import CONF_DRAWING
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 
 name = 'diffractio'
 
