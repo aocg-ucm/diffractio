@@ -505,11 +505,11 @@ class Scalar_field_XYZ(object):
 
         if u0.x.shape == self.x.shape:
             if z0 in (None, '', []):
-                self.u[:, :, 0] = self.u[:, :, 0] + u0.u.transpose()
+                self.u[:, :, 0] = self.u[:, :, 0] + u0.u
 
             else:
                 iz, _, _ = nearest(self.z, z0)
-                self.u[:, :, iz] = self.u[:, :, iz] + u0.u.tranpose()
+                self.u[:, :, iz] = self.u[:, :, iz] + u0.u
 
     def final_field(self):
         """Returns the final field as a Scalar_field_XYZ."""

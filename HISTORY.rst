@@ -196,15 +196,21 @@ Beta state
 
 
 
-0.2.5 (in progress)
+0.2.5
 --------------------------------
 
 * Improvement:
 
   - new fresnel_equations_kx, fresnel_equations, transmitances_reflectances_kx, transmitances_reflectances functions.
 
-Future
+
+
+0.2.6
 --------------------------------
 
+* New features:
 
-  - Implement plotly for drawings
+  - XZ masks: New refractive_index_from_scalar_mask_XY method.
+
+
+

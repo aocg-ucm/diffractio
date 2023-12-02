@@ -2815,7 +2815,7 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
     absorption = 0.00
 
     Ek = fftshift(fft2(u))
-    H = np.exp(1j * dz * csqrt(n**2 * k0**2 - k_perp2) - absorption)
+    H = np.exp(1j * dz * csqrt(n**2 * k0**2 - k_perp2.transpose()) - absorption)
 
     result = (ifft2(fftshift(H * Ek)))
     return result

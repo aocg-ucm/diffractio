@@ -254,6 +254,31 @@ class Scalar_field_XZ(object):
             new_field.clear_field()
         return new_field
 
+
+    def refractive_index_from_scalar_mask_XY(self, mask_XY, refraction_index_max):
+        """Transforms XY mask into XZ mask.
+            - Areas with value 0 pass to n_background.
+            - When transmittance of mask_XY  is 1, pass to refraction_index_max.
+
+        Args:
+            mask_XY (diffractio.Scalar_mask_XY): mask
+            refraction_index_max (float): real and imaginary part of maximum refraction index.
+
+        Returns:
+            _type_: _description_
+        """
+        
+        self.x = mask_XY.x
+        self.z = mask_XY.y
+        self.X, self.Z = ndgrid(self.x, self.z)
+        self.u = np.zeros_like(self.X, dtype=complex)
+        
+        
+        
+        self.n = mask_XY.u.transpose() * refraction_index_max
+        self.n[self.n<1]=self.n_background
+        
+
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
         """Rotate all the image a certain angle
 
