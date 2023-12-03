@@ -1055,8 +1055,6 @@ class Scalar_field_XY(object):
                                 yout=yout,
                                 verbose=verbose)
             else:
-                print(self.x[0])
-                print("\n")
                 u_s = self._RS_(z,
                                 n,
                                 new_field=new_field,
@@ -1141,12 +1139,24 @@ class Scalar_field_XY(object):
         k_perp2 = KX**2 + KY**2
         k_perp = np.sqrt(k_perp2)
 
+       
         if has_edges is False:
-            filter_edge = 1
+            has_filter = np.zeros_like(self.z)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
         else:
-            gaussX = np.exp(-(self.X / (self.x[0]))**pow_edge)
-            gaussY = np.exp(-(self.Y / (self.y[0]))**pow_edge)
-            filter_edge = (gaussX * gaussY)
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        y_center=(self.y[-1]+self.y[0])/2
+
+ 
+        filter_x = np.exp(-(np.abs(self.X-x_center) / width_edge)**pow_edge)
+        filter_y = np.exp(-(np.abs(self.Y-y_center) / width_edge)**pow_edge)
+        filter_function = filter_x*filter_y
+
 
         u_iter = self.duplicate()
 
@@ -1231,6 +1241,12 @@ class Scalar_field_XY(object):
         iz_out_roi = 0
 
         for j in range(1, num_steps):
+            
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
+
             refraction_index = fn(x, y, np.array([
                 zs[j - 1],
             ]), self.wavelength)

@@ -619,6 +619,7 @@ class Scalar_field_XZ(object):
         u_final.u = self.u[:, -1]
         return u_final
 
+
     def __BPM__(self,
                 has_edges=True,
                 pow_edge=80,
@@ -640,7 +641,7 @@ class Scalar_field_XZ(object):
         dz = self.z[1] - self.z[0]
 
         q1 = (0.25 * self.wavelength / 2 * dn / dz,
-              0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
+                0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
         self.quality = q1
 
         k0 = 2 * np.pi / self.wavelength
@@ -665,50 +666,52 @@ class Scalar_field_XZ(object):
         # Campo en el índice de refracción
         field = np.zeros(np.shape(self.n), dtype=complex)
 
-        if has_edges:
-            # Función supergausiana para eliminar rebotes en los edges
-            filter_edge = np.exp(-((pixelx) /
-                                   (0.99 * 0.5 * numx))**pow_edge)  # 0.98
+        if has_edges is False:
+            has_filter = np.zeros_like(self.z)
+            
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
+        else:
+            has_filter = has_edges
+        
+        
+        width_edge = 0.9*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        
+        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
         field[:, 0] = field_z
         for k in range(0, numz):
+            if has_filter[k] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
+                
+            
             if verbose is True:
-                if sys.version_info.major == 3:
-                    print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
-                else:
-                    print("BPM: {}/{}".format(k, numz).format(k, numz))
+                print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
 
             phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
-            if has_edges:
-                field_z = field_z * filter_edge + self.u[:, k]
-            else:
-                field_z = field_z + self.u[:, k]
-
-            field[:, k] = field_z
+            self.u[:, k] = self.u[:, k] + field_z * filter_edge 
 
         if matrix is True:
-            return field
-        else:
-            self.u = field
+            return self.u
 
-    def BPM(self,
-            has_edges=True,
-            pow_edge=80,
-            division=False,
-            matrix=False,
-            verbose=False):
+            
+            
+    def BPM(self,has_edges=True, pow_edge=80, division=False,  matrix=False,  verbose=False):
         """Beam propagation method (BPM).
 
-        Parameters:
-            has_edges (bool): If True absorbing edges are used.
-            pow_edge (float): If has_edges, power of the supergaussian
-            division (False, int): If False nothing, else divides the BPM algorithm in several different executions. To avoid RAM problems
-            matrix (bool): if True returns a matrix else
-            verbose (bool): shows data process by screen
+            Parameters:
+                has_edges (bool or np.array): If True absorbing edges are used. If np.array, they are 0 or 1 depending if at this z position filtering is performed.
+                pow_edge (float): If has_edges, power of the supergaussian
+                division (False, int): If False nothing, else divides the BPM algorithm in several different executions. To avoid RAM problems
+                matrix (bool): if True returns a matrix else
+                verbose (bool): shows data process by screen
 
-        References:
-           Algorithm in "Engineering optics with matlab" pag 119.
+            References:
+            Algorithm in "Engineering optics with matlab" pag 119.
         """
 
         t1 = time.time()
@@ -726,18 +729,18 @@ class Scalar_field_XZ(object):
             for i in range(num_executions):
                 if verbose is True:
                     print("{}/{}".format(i, num_executions),
-                          sep="\r",
-                          end="\r")
+                        sep="\r",
+                        end="\r")
 
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(x=self.x,
-                                     z=self.z[sl],
-                                     wavelength=self.wavelength,
-                                     n_background=self.n_background)
+                                    z=self.z[sl],
+                                    wavelength=self.wavelength,
+                                    n_background=self.n_background)
                 ui.n = self.n[:, sl]
                 ui.u0 = uf
 
-                ui.BPM(has_edges, pow_edge, matrix, verbose)
+                ui = BPM(ui, has_edges, pow_edge, matrix, verbose)
                 uf = ui.final_field().u
                 self.u[:, sl] = ui.u
 
@@ -747,6 +750,7 @@ class Scalar_field_XZ(object):
             t2 = time.time()
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
+                
 
     def BPM_inverse(self, verbose=False):
         """
@@ -1011,14 +1015,27 @@ class Scalar_field_XZ(object):
         X, KP = np.meshgrid(x, k_perp)
 
         if has_edges is False:
-            filter_edge = 1
+            has_filter = np.zeros_like(self.z)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
         else:
-            filter_edge = np.exp(-(self.x / (self.x[0]))**pow_edge)
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        
+        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
         t1 = time.time()
 
         num_steps = len(self.z)
         for j in range(1, num_steps):
+   
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
 
             if kind == 'schmidt':
                 self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(

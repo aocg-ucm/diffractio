@@ -658,22 +658,41 @@ class Scalar_field_XYZ(object):
 
         phase1 = np.exp((1j * deltaz * (KX**2 + KY**2)) / (2 * k0))
         field = np.zeros(np.shape(self.n), dtype=complex)
+        
+        
+        if has_edges is False:
+            has_filter = np.zeros_like(self.z)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
+        else:
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        y_center=(self.y[-1]+self.y[0])/2
 
-        if has_edges:
-            gaussX = np.exp(-(self.X[:, :, 0] / (self.x[0]))**pow_edge)
-            gaussY = np.exp(-(self.Y[:, :, 0] / (self.y[0]))**pow_edge)
-            filter_edge = (gaussX * gaussY)
+ 
+        filter_x = np.exp(-(np.abs(self.X[:,:,0]-x_center) / width_edge)**pow_edge)
+        filter_y = np.exp(-(np.abs(self.Y[:,:,0]-y_center) / width_edge)**pow_edge)
+        filter_function = filter_x*filter_y
+
+
 
         field[:, :, 0] = modo
         for k in range(0, numz):
+            
+            if has_filter[k] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
+            
             if verbose is True:
                 print("BPM 3D: {}/{}".format(k, numz), end="\r")
             phase2 = np.exp(-1j * self.n[:, :, k] * k0 * deltaz)
             # Aplicamos la Transformada Inversa
             modo = ifft2((fft2(modo) * phase1)) * phase2
-            if has_edges:
-                modo = modo * filter_edge
-            field[:, :, k] = modo
+            field[:, :, k] = field[:, :, k] + modo * filter_edge
             self.u = field
 
     def PWD(self, n=None, matrix=False, verbose=False):
@@ -759,26 +778,40 @@ class Scalar_field_XYZ(object):
         # k_perp = np.sqrt(k_perp2)
 
         if has_edges is False:
-            filter_edge = 1
+            has_filter = np.zeros_like(self.z)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
         else:
-            gaussX = np.exp(-(self.X[:, :, 0] / (self.x[0]))**pow_edge)
-            gaussY = np.exp(-(self.Y[:, :, 0] / (self.y[0]))**pow_edge)
-            filter_edge = (gaussX * gaussY)
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        y_center=(self.y[-1]+self.y[0])/2
+        
+        filter_x = np.exp(-(np.abs(self.X[:,:,0]-x_center) / width_edge)**pow_edge)
+        filter_y = np.exp(-(np.abs(self.Y[:,:,0]-y_center) / width_edge)**pow_edge)
+        filter_function = filter_x*filter_y
+
+
 
         t1 = time.time()
 
         num_steps = len(self.z)
         for j in range(1, num_steps):
+            
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
 
             self.u[:, :, j] = self.u[:, :, j] + WPM_schmidt_kernel(
                 self.u[:, :, j - 1], self.n[:, :, j - 1], k0, k_perp2,
                 dz) * filter_edge
 
             if verbose is True:
-                if sys.version_info.major == 3:
-                    print("{}/{}".format(j, num_steps), sep='\r', end='\r')
-                else:
-                    print("{}/{}".format(j, num_steps))
+                print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+
 
         t2 = time.time()
 
@@ -786,71 +819,6 @@ class Scalar_field_XYZ(object):
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
 
-    # def M_xyz(self, j, kx, ky):
-    #     """
-    #     TODO: sin terminar
-    #     Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
-    #     “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
-    #     """
-    #     # simple parameters
-    #
-    #     k0 = 2 * np.pi / self.wavelength
-    #
-    #     z = self.z
-    #     x = self.x
-    #     y = self.y
-    #
-    #     num_x = self.x.size
-    #     num_y = self.y.size
-    #     num_z = self.z.size
-    #
-    #     dz = z[1] - z[0]
-    #     dx = x[1] - x[0]
-    #     dx = y[1] - y[0]
-    #
-    #     nj = self.n[:, j]
-    #     nj_1 = self.n[:, j - 1]
-    #
-    #     n_med = nj.mean()
-    #     n_1_med = nj_1.mean()
-    #
-    #     # parameters
-    #     NJ, KX = np.meshgrid(nj, kx)
-    #     NJ_1, KX = np.meshgrid(nj_1, kx)
-    #
-    #     k_perp = KX + eps
-    #
-    #     kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
-    #     kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
-    #
-    #     tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
-    #     t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
-    #
-    #     kj_1 = NJ_1 * k0
-    #     fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
-    #     # cuidado no es la misma definición, me parece que está repetido
-    #     e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
-    #     eg_xj_1 = fj_1 * e_xj_1
-    #     # cuidado no es la misma definición, me parece que está mal por no ser simétrica
-    #
-    #     p001 = 0
-    #     p002 = tg_TM * (1 - 1j * eg_xj_1)
-    #     p111 = t_TE
-    #     p112 = 0
-    #
-    #     # M00
-    #     M00 = (p001 + p002)
-    #
-    #     # M01
-    #     M01 = 0
-    #
-    #     # M10
-    #     M10 = 0
-    #
-    #     # M11
-    #     M11 = (p111 + p112)
-    #
-    #     return M00, M01, M10, M11
 
     def to_Scalar_field_XY(self,
                            iz0=None,
@@ -862,10 +830,9 @@ class Scalar_field_XYZ(object):
         Parameters:
             iz0 (int): position i of z data in array
             z0 (float): position z to extract
-            class (bool): If True it returns a class
+            is_class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
 
-        TODO: Simplify and change variable name clase
         """
         if is_class is True:
             field_output = Scalar_field_XY(x=self.x,

@@ -1065,12 +1065,20 @@ class Scalar_field_X(object):
 
         kx = get_k(self.x, flavour='+')
         k_perp2 = kx**2
-        k_perp = kx
+
 
         if has_edges is False:
-            filter_edge = 1
+            has_filter = np.zeros_like(zs)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(zs)
         else:
-            filter_edge = np.exp(-(self.x / self.x[0])**pow_edge)
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        
+        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
         u_iter = self.duplicate()
 
@@ -1132,6 +1140,13 @@ class Scalar_field_X(object):
         iz_out_roi = 0
 
         for j in range(1, num_steps):
+            
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
+                
+                
             refraction_index = fn(self.x, np.array([
                 zs[j - 1],
             ]), self.wavelength)
