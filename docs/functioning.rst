@@ -15,3 +15,4 @@ About functiong
    source/functioning/phase_intensity.ipynb
    source/functioning/quality_factor.ipynb
    source/functioning/WPM_ws.ipynb
+   source/functioning/has_edges.ipynb
