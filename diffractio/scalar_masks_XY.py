@@ -1259,8 +1259,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = 1
 
-        self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
-                                     (2 * f2)) + 1.j * np.pi)
+        self.u = t * exp(-1.j * ( k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
+                                     (2 * f2)) +  np.pi))
 
     def lens_spherical(self, r0, focal, refraction_index=1.5, radius=0):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
@@ -1302,7 +1302,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t * np.exp(1j * k * (refraction_index - 1) * h)
         self.u[t == 0] = 0
 
-        return self
+        return h
 
     def aspheric(self, r0, c, k, a, n0, n1, radius=0):
         """asferic surface.

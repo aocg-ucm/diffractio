@@ -208,6 +208,10 @@ Beta state
 0.2.6
 --------------------------------
 
+* Fix bugs:
+
+  - new definition of X mask: fresnel_lens
+
 * New features:
 
   - XZ masks: New refractive_index_from_scalar_mask_XY method.

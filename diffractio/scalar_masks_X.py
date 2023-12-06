@@ -357,7 +357,7 @@ class Scalar_mask_X(Scalar_field_X):
             t[ix] = 1
 
         h = (self.x - x0)**2 / (2 * focal)
-        self.u = t * np.exp(-1.j * k * h)
+        self.u = t * np.exp(-1.j * ( k * h+np.pi))
 
         h = h - h.min()
         h = h / h.max()
@@ -391,8 +391,9 @@ class Scalar_mask_X(Scalar_field_X):
         h[(R**2 - self.x**2) < 0] = 0
         self.u = t * np.exp(1j * k * (refraction_index - 1) * h)
         self.u[t == 0] = 0
+        
+        return h
 
-        return self
 
     def aspheric(self, x0, c, k, a, n0, n1, radius):
         """Asferic surface. $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
@@ -438,13 +439,9 @@ class Scalar_mask_X(Scalar_field_X):
         self.u[m1 == 0] = 0
         return t
 
-    def fresnel_lens(self,
-                     x0,
-                     focal,
-                     kind='amplitude',
-                     binary=True,
-                     phase=np.pi,
-                     radius=100 * um):
+
+
+    def fresnel_lens(self, x0, focal, kind='phase', binary=False, phase=np.pi, radius=0 * um):
         """Fresnel lens. Amplitude phase, continuous or binary.
 
         Parameters:
@@ -457,7 +454,7 @@ class Scalar_mask_X(Scalar_field_X):
             radius (float): radius of lens mask
 
         Returns:
-            h (np.array): normalized heights [0,1] of lens
+            h (np.array): heights [0,1] of lens.
         """
         # Vector de onda
         k = 2 * np.pi / self.wavelength
@@ -471,34 +468,36 @@ class Scalar_mask_X(Scalar_field_X):
         else:
             t1 = 1
 
-        if kind == 'amplitude' and binary is True:
-            # u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
-            u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
-            u_fresnel[u_fresnel > 0] = 1
-            u_fresnel[u_fresnel <= 0] = 0
+        h =k*(self.x - x0)**2 / (2 * focal)
+        h = -h%(2*np.pi)
+        
+        
+        if kind == 'amplitude':
+            u_fresnel = np.cos(h)
+            if binary is True:
+                u_fresnel[u_fresnel > 0] = 1
+                u_fresnel[u_fresnel <= 0] = 0
+                h = u_fresnel
+            else:
+                u_fresnel = h/(2*np.pi)
 
-        elif kind == 'phase' and binary is True:
-            # u_fresnel = np.cos(k * ((self.x - x0)**2 / (2 * focal)))
-            u_fresnel = np.sin(k * ((self.x - x0)**2 / (2 * focal)))
-            u_fresnel[u_fresnel > 0] = 1
-            u_fresnel[u_fresnel <= 0] = 0
-            u_fresnel = np.exp(1j * u_fresnel * phase)
 
-        elif kind == 'phase' and binary is False:
-            u_fresnel = np.exp(-1j * k * ((self.x - x0)**2 / (2 * focal)))
-            fase = np.angle(u_fresnel) / (2 * np.pi)
-            u_fresnel = np.exp(1j * fase * phase)
+        elif kind == 'phase':
+            u_fresnel = np.exp(1j*(h+np.pi))
+            if binary is True:
+                print(h.max(), h.min())
+                u_fresnel[h > np.pi] = np.exp(1j*phase)
+                u_fresnel[h <= np.pi] = 1
+                h=np.angle(u_fresnel)*phase/np.pi
 
-        elif kind == 'amplitude' and binary is False:
-            # u_fresnel = (1 + np.cos(k * ((self.x - x0)**2 / (2 * focal)))) / 2
-            u_fresnel = (1 + np.sin(k * ((self.x - x0)**2 / (2 * focal)))) / 2
 
-        h = u_fresnel
+
         h = h - h.min()
 
         self.u = u_fresnel * t1
         h = t1 * h
-        return h / h.max()
+        return h
+
 
     def roughness(self, t=50 * um, s=1 * um):
         """Rough surface, phase
