@@ -1147,10 +1147,10 @@ class Scalar_field_X(object):
                 filter_edge = filter_function
                 
                 
-            refraction_index = fn(self.x, np.array([
+            refractive_index = fn(self.x, np.array([
                 zs[j - 1],
             ]), self.wavelength)
-            u_iter.u = WPM_schmidt_kernel(u_iter.u, refraction_index, k0,
+            u_iter.u = WPM_schmidt_kernel(u_iter.u, refractive_index, k0,
                                           k_perp2, dz) * filter_edge
 
             if x_pos is not None:
@@ -1517,10 +1517,10 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
 
         2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
     """
-    refraction_indexes = np.unique(n)
+    refractive_indexes = np.unique(n)
 
     u_final = np.zeros_like(u, dtype=complex)
-    for m, n_m in enumerate(refraction_indexes):
+    for m, n_m in enumerate(refractive_indexes):
         # print (m, n_m)
         u_temp = PWD_kernel(u, n_m, k0, k_perp2, dz)
         Imz = (n == n_m)

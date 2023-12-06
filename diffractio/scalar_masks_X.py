@@ -256,7 +256,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         Parameters:
             x0 (float): vertex of prism
-            n (float): refraction_index
+            n (float): refractive_index
             angle (float): angle of prism
 
         """
@@ -312,7 +312,7 @@ class Scalar_mask_X(Scalar_field_X):
             x0 (float): vertex of biprism
             width (float): size of biprism
             height (float): height of biprism
-            n (float): refraction_index
+            n (float): refractive_index
         """
 
         k = 2 * np.pi / self.wavelength
@@ -363,7 +363,7 @@ class Scalar_mask_X(Scalar_field_X):
         h = h / h.max()
         return h
 
-    def lens_spherical(self, x0, radius, focal, refraction_index=1.5):
+    def lens_spherical(self, x0, radius, focal, refractive_index=1.5):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
 
@@ -377,7 +377,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         k = 2 * np.pi / self.wavelength
 
-        R = (refraction_index - self.n_background) * focal
+        R = (refractive_index - self.n_background) * focal
 
         if radius == 0:
             t = 1
@@ -389,7 +389,7 @@ class Scalar_mask_X(Scalar_field_X):
         h = (np.sqrt(R**2 - self.x**2) - R)
 
         h[(R**2 - self.x**2) < 0] = 0
-        self.u = t * np.exp(1j * k * (refraction_index - 1) * h)
+        self.u = t * np.exp(1j * k * (refractive_index - 1) * h)
         self.u[t == 0] = 0
         
         return h

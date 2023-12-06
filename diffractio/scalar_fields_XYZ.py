@@ -37,7 +37,7 @@ The magnitude is related to microns: `micron = 1.`
     * draw_XY
     * draw_XZ
     * draw_volume
-    * draw_refraction_index
+    * draw_refractive_index
     * video
 
 """
@@ -326,7 +326,7 @@ class Scalar_field_XYZ(object):
 
         self.u = np.zeros(np.shape(self.u), dtype=complex)
 
-    def clear_refraction_index(self):
+    def clear_refractive_index(self):
         """clear refraction index n(x,z)=n_background."""
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
@@ -1405,7 +1405,7 @@ class Scalar_field_XYZ(object):
         else:
             return
 
-    def draw_refraction_index_deprecated(self, kind='real'):
+    def draw_refractive_index_deprecated(self, kind='real'):
         """Draws XYZ refraction index with slicer
 
         Parameters:

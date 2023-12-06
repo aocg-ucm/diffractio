@@ -748,7 +748,7 @@ class Test_Scalar_masks_XY(object):
         t1.axicon(r0=(0 * um, 0 * um),
                   radius=100 * um,
                   angle=2 * degrees,
-                  refraction_index=1.5)
+                  refractive_index=1.5)
         t1.draw(kind='phase')
 
         save_figure_test(newpath, func_name)

@@ -248,7 +248,7 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
     return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
 
 
-def refraction_index(filename, wavelength, raw=False, has_draw=True):
+def refractive_index(filename, wavelength, raw=False, has_draw=True):
     """gets refraction index from https://refractiveindex.info .
 
     * Files has to be converted to xlsx format.

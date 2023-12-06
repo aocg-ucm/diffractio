@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for XZ scalar fields*
 
 *Definition of a scalar field*
-    * instatiation, duplicate, clean_refraction_index
+    * instatiation, duplicate, clean_refractive_index
     * save, load data
     * rotate_field, cut_resample,
 
@@ -43,7 +43,7 @@ The magnitude is related to microns: `micron = 1.`
 
 *Drawing functions*
     * draw
-    * draw_refraction_index
+    * draw_refractive_index
     * draw_incident_field
     * draw_profiles_interactive
     * video
@@ -255,14 +255,14 @@ class Scalar_field_XZ(object):
         return new_field
 
 
-    def refractive_index_from_scalar_mask_XY(self, mask_XY, refraction_index_max):
+    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max):
         """Transforms XY mask into XZ mask.
             - Areas with value 0 pass to n_background.
-            - When transmittance of mask_XY  is 1, pass to refraction_index_max.
+            - When transmittance of mask_XY  is 1, pass to refractive_index_max.
 
         Args:
             mask_XY (diffractio.Scalar_mask_XY): mask
-            refraction_index_max (float): real and imaginary part of maximum refraction index.
+            refractive_index_max (float): real and imaginary part of maximum refraction index.
 
         Returns:
             _type_: _description_
@@ -275,7 +275,7 @@ class Scalar_field_XZ(object):
         
         
         
-        self.n = mask_XY.u.transpose() * refraction_index_max
+        self.n = mask_XY.u.transpose() * refractive_index_max
         self.n[self.n<1]=self.n_background
         
 
@@ -317,7 +317,7 @@ class Scalar_field_XZ(object):
         """clear field"""
         self.u = np.zeros(np.shape(self.u), dtype=complex)
 
-    def clear_refraction_index(self):
+    def clear_refractive_index(self):
         """clear refraction index n(x,z)=n_background"""
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
@@ -346,7 +346,7 @@ class Scalar_field_XZ(object):
         mask.slit(x0=x_center, size=L - 2 * size_edge)
         self.u0.u = self.u0.u * mask.u
 
-    def smooth_refraction_index(self,
+    def smooth_refractive_index(self,
                                 type_filter=2,
                                 pixels_filtering=10,
                                 max_diff_filter=0.1,
@@ -443,7 +443,7 @@ class Scalar_field_XZ(object):
 
             plt.axis(extension)
             h1.set_cmap(cm.gray_r)
-            plt.title("smooth_refraction_index: n variations", fontsize=24)
+            plt.title("smooth_refractive_index: n variations", fontsize=24)
 
         return percentage_filtered, lineas_filtradas
 
@@ -1183,7 +1183,7 @@ class Scalar_field_XZ(object):
                                  z_transitions[i_zone + 1], num_pixels_slice)
                 u1 = mask_xz(x0, z0, u_current, self.wavelength,
                              self.n_background)
-                # u1.draw_refraction_index(scale='equal')
+                # u1.draw_refractive_index(scale='equal')
                 u1.BPM()
                 u1.draw(draw_borders=False)
                 fields_BPM.append(u1)
@@ -1543,7 +1543,7 @@ class Scalar_field_XZ(object):
 
         return h1
 
-    def draw_refraction_index(self,
+    def draw_refractive_index(self,
                               kind='all',
                               draw_borders=True,
                               title='',
@@ -1667,7 +1667,7 @@ class Scalar_field_XZ(object):
         """Determine and draws longitudinal profile
 
         Parameters:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refractive_index'
             x0 (float): profile that passes through x=x0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1688,7 +1688,7 @@ class Scalar_field_XZ(object):
             factor = 1000
             xlabel = 'z (mm)'
 
-        if kind == 'refraction_index':
+        if kind == 'refractive_index':
             n_profile = np.abs(self.n[imenor, :])
             I_drawing = n_profile
         else:
@@ -1720,7 +1720,7 @@ class Scalar_field_XZ(object):
             output = amplitude
         elif kind == 'phase':
             output = phase
-        elif kind == 'refraction_index':
+        elif kind == 'refractive_index':
             output = n_profile
         else:
             output = None
@@ -1736,7 +1736,7 @@ class Scalar_field_XZ(object):
         """Determine and draws transversal profile.
 
         Parameters:
-            kind (str): type of drawing:  'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing:  'amplitude', 'intensity', 'phase', 'refractive_index'
             z0 (float): profile that passes through z=z0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1751,7 +1751,7 @@ class Scalar_field_XZ(object):
 
         imenor, _, _ = nearest(vector=self.z, number=z0)
 
-        if kind == 'refraction_index':
+        if kind == 'refractive_index':
             n_profile = np.abs(self.n[:, imenor])
             I_drawing = n_profile
         else:
@@ -1779,7 +1779,7 @@ class Scalar_field_XZ(object):
             output = amplitude
         elif kind == 'phase':
             output = phase
-        elif kind == 'refraction_index':
+        elif kind == 'refractive_index':
             output = n_profile
         else:
             output = None
@@ -1789,7 +1789,7 @@ class Scalar_field_XZ(object):
         """Search for location of maximum.
 
         Parameters:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refractive_index'
             x0 (float): profile that passes through x=x0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'

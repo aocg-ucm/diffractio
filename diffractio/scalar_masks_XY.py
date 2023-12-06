@@ -1262,7 +1262,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = t * exp(-1.j * ( k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
                                      (2 * f2)) +  np.pi))
 
-    def lens_spherical(self, r0, focal, refraction_index=1.5, radius=0):
+    def lens_spherical(self, r0, focal, refractive_index=1.5, radius=0):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
         Now, only one focal.
@@ -1270,11 +1270,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
             focal (float): focal length of lens
-            refraction_index (float): refraction index
+            refractive_index (float): refraction index
             radius (float): radius of lens mask
 
         lens_spherical:
-            lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refraction_index=1.5)
+            lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refractive_index=1.5)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -1285,7 +1285,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
         angle = 0.
 
-        R = (refraction_index - 1) * focal
+        R = (refractive_index - 1) * focal
 
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
@@ -1299,7 +1299,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         h = (np.sqrt(R**2 - (Xrot**2 + Yrot**2)) - R)
 
         h[R**2 - (Xrot**2 + Yrot**2) < 0] = 0
-        self.u = t * np.exp(1j * k * (refraction_index - 1) * h)
+        self.u = t * np.exp(1j * k * (refractive_index - 1) * h)
         self.u[t == 0] = 0
 
         return h
@@ -1354,19 +1354,19 @@ class Scalar_mask_XY(Scalar_field_XY):
     def lens_cylindrical(self,
                          x0,
                          focal,
-                         refraction_index=1.5,
+                         refractive_index=1.5,
                          radius=0,
                          angle=0 * degrees):
-        """Cylindrical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition. When the refraction index decreases, the radius of curvature decrases and less paraxial. When refraction_index is None or 0, then the paraxial approximation is used
+        """Cylindrical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition. When the refraction index decreases, the radius of curvature decrases and less paraxial. When refractive_index is None or 0, then the paraxial approximation is used
 
         Parameters:
             x0 (float): center of lens
             focal (float): focal length of lens
-            refraction_index (float): refraction index
+            refractive_index (float): refraction index
             radius (float): radius of lens mask
 
         lens_spherical:
-            lens(r0=0, radius= 200 * um, focal= 10 * mm, refraction_index=1.5)
+            lens(r0=0, radius= 200 * um, focal= 10 * mm, refractive_index=1.5)
         """
 
         k = 2 * np.pi / self.wavelength
@@ -1382,13 +1382,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = 1
 
-        if refraction_index in (None, 0):
+        if refractive_index in (None, 0):
             phase = -k * Xrot**2 / (2 * focal)
         else:
-            R = (refraction_index - 1) * focal
+            R = (refractive_index - 1) * focal
             h = (np.sqrt(R**2 - Xrot**2) - R)
             h[R**2 - (Xrot**2) < 0] = 0
-            phase = k * (refraction_index - 1) * h
+            phase = k * (refractive_index - 1) * h
 
         self.u = t * np.exp(1j * phase)
 
@@ -1450,7 +1450,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def axicon(self,
                r0,
-               refraction_index,
+               refractive_index,
                angle,
                radius=0,
                off_axis_angle=0 * degrees,
@@ -1459,7 +1459,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            refraction_index (float): refraction index
+            refractive_index (float): refraction index
             angle (float): angle of the axicon
             radius (float): radius of lens mask
             off_axis_angle (float) angle when it works off-axis
@@ -1488,7 +1488,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         else:
             self.u = u_mask * \
-                np.exp(-1j * k * (refraction_index - 1) *
+                np.exp(-1j * k * (refractive_index - 1) *
                        r * np.tan(angle)) * t_off_axis
 
     def axicon_binary(self, r0, period, radius=0):
@@ -2074,13 +2074,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
-    def roughness(self, t, s, refraction_index=-1):
+    def roughness(self, t, s, refractive_index=-1):
         """Generation of a rough surface. According to Ogilvy p.224
 
         Parameters:
             t (float, float): (tx, ty), correlation length of roughness
             s (float): std of heights
-            refraction_index (float): refraction index, if -1 it is reflexion
+            refractive_index (float): refraction index, if -1 it is reflexion
 
         Example:
             roughness(t=(50 * um, 25 * um), s=1 * um)
@@ -2089,7 +2089,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         h_corr = roughness_2D(self.x, self.y, t, s)
 
         k = 2 * pi / self.wavelength
-        self.u = exp(1.j * k * (refraction_index - 1) * h_corr)
+        self.u = exp(1.j * k * (refractive_index - 1) * h_corr)
         return h_corr
 
     def circle_rough(self, r0, radius, angle, sigma):

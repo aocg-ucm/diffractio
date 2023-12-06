@@ -196,7 +196,7 @@ Beta state
 
 
 
-0.2.5
+0.3.1
 --------------------------------
 
 * Improvement:
@@ -205,12 +205,16 @@ Beta state
 
 
 
-0.2.6
+0.3.1
 --------------------------------
 
 * Fix bugs:
 
   - new definition of X mask: fresnel_lens
+
+* Refactoring:
+
+  - refraction_index -> refractive_index ... in all words.
 
 * New features:
 
