@@ -372,6 +372,14 @@ class Scalar_field_XYZ(object):
             else:
                 raise Exception('no dictionary in load_data')
 
+
+
+    def intensity(self):
+        """Returns intensity."""
+
+        intensity = (np.abs(self.u)**2)
+        return intensity
+
     def cut_resample(self,
                      x_limits='',
                      y_limits='',
