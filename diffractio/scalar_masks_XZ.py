@@ -1220,7 +1220,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                       sign1=sign1,
                       sign2=sign2)
 
-        cond1 = "Zrot{sign1}{d1}+{cx1}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx1})*{cx1}**2*(Xrot-{x0})**2))+{a21}*(Xrot-{x0})**4+{a31}*(Xrot-{x0})**6+{a41}*(Xrot-{x0})**8+{a51}*(Xrot-{x0})**10+{651}*(Xrot-{x0})**12+{a61}*(Xrot-{x0})**14".format(
+        cond1 = "Zrot{sign1}{d1}+{cx1}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx1})*{cx1}**2*(Xrot-{x0})**2))+{a21}*(Xrot-{x0})**4+{a31}*(Xrot-{x0})**6+{a41}*(Xrot-{x0})**8+{a51}*(Xrot-{x0})**10+{61}*(Xrot-{x0})**12+{a71}*(Xrot-{x0})**14".format(
             **params)
 
         cond2 = "Zrot{sign2}{d2}+{cx2}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx2})*{cx2}**2*(Xrot-{x0})**2))+{a22}*(Xrot-{x0})**4+{a32}*(Xrot-{x0})**6+{a42}*(Xrot-{x0})**8+{a52}*(Xrot-{x0})**10+{a62}*(Xrot-{x0})**12+{a72}*(Xrot-{x0})**14".format(
