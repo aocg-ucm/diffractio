@@ -1154,7 +1154,10 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                       size,
                       a2=(0, 0),
                       a3=(0, 0),
-                      a4=(0, 0)):
+                      a4=(0, 0),
+                      a5=(0, 0),
+                      a6=(0, 0),
+                      a7=(0, 0)):
         """Define an aspheric surface as defined in Gomez-Pedrero.
 
         Parameters:
@@ -1179,6 +1182,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         a21, a22 = a2
         a31, a32 = a3
         a41, a42 = a4
+        a51, a52 = a5
+        a61, a62 = a6
+        a71, a72 = a7
         side1, side2 = 'left', 'right'
 
         if side1 == 'right':
@@ -1202,15 +1208,21 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                       a32=a32,
                       a41=a41,
                       a42=a42,
+                      a51=a51,
+                      a52=a52,
+                      a61=a61,
+                      a62=a62,
+                      a71=a71,
+                      a72=a72,                      
                       d1=z0,
                       d2=z0 + depth,
                       sign1=sign1,
                       sign2=sign2)
 
-        cond1 = "Zrot{sign1}{d1}+{cx1}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx1})*{cx1}**2*(Xrot-{x0})**2+{a21}*(Xrot-{x0})**4+{a31}*(Xrot-{x0})**6)+{a41}*(Xrot-{x0})**8)".format(
+        cond1 = "Zrot{sign1}{d1}+{cx1}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx1})*{cx1}**2*(Xrot-{x0})**2))+{a21}*(Xrot-{x0})**4+{a31}*(Xrot-{x0})**6+{a41}*(Xrot-{x0})**8+{a51}*(Xrot-{x0})**10+{a61}*(Xrot-{x0})**12+{a71}*(Xrot-{x0})**14".format(
             **params)
 
-        cond2 = "Zrot{sign2}{d2}+{cx2}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx2})*{cx2}**2*(Xrot-{x0})**2+{a22}*(Xrot-{x0})**4+{a32}*(Xrot-{x0})**6)+{a42}*(Xrot-{x0})**8)".format(
+        cond2 = "Zrot{sign2}{d2}+{cx2}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx2})*{cx2}**2*(Xrot-{x0})**2))+{a22}*(Xrot-{x0})**4+{a32}*(Xrot-{x0})**6+{a42}*(Xrot-{x0})**8+{a52}*(Xrot-{x0})**10+{a62}*(Xrot-{x0})**12+{a72}*(Xrot-{x0})**14".format(
             **params)
 
         cond3 = "(Xrot-{})<{}".format(x0, size / 2)
