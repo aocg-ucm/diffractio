@@ -65,23 +65,9 @@ from . import degrees, mm, np, plt
 
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import (
-    fft_filter,
-    get_edges,
-    nearest,
-    reduce_to_1,
-    Bluestein_dft_x,
-    get_k,
-    ndgrid,
-    nearest2,
-)
-from .utils_multiprocessing import (
-    _pickle_method,
-    _unpickle_method,
-    execute_multiprocessing,
-)
+from .utils_math import     fft_filter,    get_edges,    nearest,    reduce_to_1,    Bluestein_dft_x,    get_k,    nearest2
+from .utils_multiprocessing import     _pickle_method,    _unpickle_method,    execute_multiprocessing 
 from .utils_optics import field_parameters, normalize_field
-
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 

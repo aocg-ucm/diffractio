@@ -60,7 +60,7 @@ from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import get_k, ndgrid, nearest, reduce_to_1
+from .utils_math import get_k, ndgrid_deprecated, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 
@@ -106,7 +106,7 @@ class Scalar_field_XYZ(object):
         self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:
-            self.X, self.Y, self.Z = ndgrid(x, y, z)
+            self.X, self.Y, self.Z = np.meshgrid(x, y, z)
             self.u0 = Scalar_field_XY(x, y, wavelength)
             self.u = np.zeros_like(self.X, dtype=complex)
             self.n = n_background * np.ones_like(self.X, dtype=complex)
@@ -138,7 +138,7 @@ class Scalar_field_XYZ(object):
         self.wavelength = u0.wavelength
         self.u0 = u0
         self.amplification = 1
-        self.X, self.Y, self.Z = ndgrid(self.x, self.y, self.z)
+        self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
 
         self.u = np.zeros_like(self.X, dtype=complex)
         self.n = np.ones(np.shape(self.X),
@@ -475,7 +475,7 @@ class Scalar_field_XYZ(object):
             x_new = self.x[i_s]
             y_new = self.y[j_s]
             z_new = self.z[k_s]
-            X_new, Y_new, Z_new = ndgrid(x_new, y_new, z_new)
+            X_new, Y_new, Z_new = np.meshgrid(x_new, y_new, z_new)
             u_new = self.u[i_s, j_s, k_s]
             n_new = self.n[i_s, j_s, k_s]
 
@@ -662,7 +662,7 @@ class Scalar_field_XYZ(object):
         ky2 = np.linspace(-numy / 2, -1, int(numy / 2))
         ky = (2 * np.pi / rangoy) * np.concatenate((ky1, ky2))
 
-        KX, KY = ndgrid(kx, ky)
+        KX, KY = np.meshgrid(kx, ky)
 
         phase1 = np.exp((1j * deltaz * (KX**2 + KY**2)) / (2 * k0))
         field = np.zeros(np.shape(self.n), dtype=complex)
@@ -882,7 +882,7 @@ class Scalar_field_XYZ(object):
                 iy, tmp1, tmp2 = nearest(self.y, y0)
             else:
                 iy = iy0
-            field_output.u = np.squeeze(self.u[:, iy, :])
+            field_output.u = np.squeeze(self.u[iy, :, :])
             return field_output
 
         if matrix is True:
@@ -890,7 +890,7 @@ class Scalar_field_XYZ(object):
                 iy, tmp1, tmp2 = nearest(self.y, y0)
             else:
                 iy = iy0
-            return np.squeeze(self.u[:, iy, :])
+            return np.squeeze(self.u[ iy,:, :])
 
     def to_Scalar_field_YZ(self,
                            ix0=None,
@@ -914,7 +914,7 @@ class Scalar_field_XYZ(object):
                 ix, tmp1, tmp2 = nearest(self.x, x0)
             else:
                 iy = ix0
-            field_output.u = np.squeeze(self.u[ix, :, :])
+            field_output.u = np.squeeze(self.u[:,ix,  :])
             return field_output
 
         if matrix is True:
@@ -922,7 +922,7 @@ class Scalar_field_XYZ(object):
                 ix, _, _ = nearest(self.x, x0)
             else:
                 ix = ix0
-            return np.squeeze(self.u[ix, :, :])
+            return np.squeeze(self.u[:, ix, :])
 
     def to_Z(self,
              kind='amplitude',
@@ -946,7 +946,7 @@ class Scalar_field_XYZ(object):
         ix, _, _ = nearest(self.y, y0)
         iy, _, _ = nearest(self.x, x0)
 
-        u = np.squeeze(self.u[ix, iy, :])
+        u = np.squeeze(self.u[iy, ix, :])
 
         if kind == 'amplitude':
             y = np.abs(u)

@@ -51,7 +51,7 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
 from .vector_fields_XZ import Vector_field_XZ
 from .utils_common import load_data_common, save_data_common, get_date
-from .utils_math import ndgrid, nearest
+from .utils_math import ndgrid_deprecated, nearest
 from .utils_optics import normalize_field
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
@@ -82,7 +82,7 @@ class Vector_field_XYZ(object):
         self.y = y
         self.z = z
         self.wavelength = wavelength  # la longitud de onda
-        self.X, self.Y, self.Z = ndgrid(self.x, self.y, self.z)
+        self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
 
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)

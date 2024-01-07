@@ -9,8 +9,6 @@ For the case of Rayleigh sommefeld it is not necessary to compute all z position
 
 Nevertheless, for BPM method, intermediate computations are required. In this class, intermediate results are stored.
 
-X,Y fields are defined using ndgrid (not with meshgrid, it is different).
-
 It is required also for generating masks and fields.
 
 
@@ -73,7 +71,7 @@ from .config import CONF_DRAWING
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import (get_edges, get_k, ndgrid, nearest, nearest2,
+from .utils_math import (get_edges, get_k, nearest, nearest2,
                          reduce_to_1, rotate_image, Bluestein_dft_xy)
 from .utils_optics import beam_width_2D, field_parameters, normalize_field
 from .scalar_fields_X import Scalar_field_X
@@ -638,7 +636,7 @@ class Scalar_field_XY(object):
             self.u = ttf1
             self.x = x_new
             self.y = y_new
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
     """
 
     def fft(self,
@@ -704,7 +702,7 @@ class Scalar_field_XY(object):
             self.u = ttf1
             self.x = x_new
             self.y = y_new
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
 
     def ifft_proposal(self,
                       z=0 * mm,
@@ -771,7 +769,7 @@ class Scalar_field_XY(object):
             self.u = ttf1
             self.x = x_new
             self.y = y_new
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
 
     def ifft(self,
              z=0 * mm,
@@ -839,7 +837,7 @@ class Scalar_field_XY(object):
             self.u = ttf1
             self.x = x_new
             self.y = y_new
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
 
     def _RS_(self,
              z,
@@ -1141,9 +1139,15 @@ class Scalar_field_XY(object):
 
        
         if has_edges is False:
-            has_filter = np.zeros_like(self.z)
+            if hasattr(self, 'z'):
+                has_filter = np.zeros_like(self.z)
+            else:
+                has_filter=0
         elif isinstance(has_edges, int):
-            has_filter = np.ones_like(self.z)
+            if hasattr(self, 'z'):
+                has_filter = np.ones_like(self.z)
+            else:
+                has_filter=1      
         else:
             has_filter = has_edges
         

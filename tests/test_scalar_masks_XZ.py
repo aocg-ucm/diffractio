@@ -539,6 +539,7 @@ class Test_Scalar_masks_XZ(object):
         assert True
 
     def test_biprism(self):
+
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
         x0 = np.linspace(-100 * um, 100 * um, 256)

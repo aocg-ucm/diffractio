@@ -343,7 +343,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
     return indexes, xy_ext, extrema
 
 
-def ndgrid(*args, **kwargs):
+def ndgrid_deprecated(*args, **kwargs):
     """n-dimensional gridding like Matlab's NDGRID.
 
     Parameters:
@@ -389,22 +389,22 @@ def ndgrid(*args, **kwargs):
 
         >>> V = [[0, 1], [2, 3, 4]]
 
-        >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
+        >>> ndgrid_deprecated(*V) # an array of two arrays with shape (2, 3)
             array([[[0, 0, 0],
                 [1, 1, 1]],
                 [[2, 3, 4],
                 [2, 3, 4]]])
 
         For input vectors of different data kinds,
-        same_dtype=False makes ndgrid()
+        same_dtype=False makes ndgrid_deprecated()
         return a list of arrays with the respective dtype.
-        >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
+        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
         [array([[0, 0, 0], [1, 1, 1]]),
         array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
 
         Default is to return a single array.
 
-        >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
+        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2])
             array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
                 [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
