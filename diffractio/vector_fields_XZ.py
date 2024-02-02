@@ -469,22 +469,19 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.title("$S_z$")
 
             elif num_dims == 2:
-                x0 = self.x
-                z0 = self.z
-
                 fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
                 plt.subplot(3, 1, 1)
                 plt.title("$S_x$")
-                draw_field(np.real(Sx), x0, z0, axis, cmap='seismic')
+                draw_field(np.real(Sx), self.x, self.z, axis, cmap='seismic')
                 plt.clim(-S_lim, S_lim)
 
                 plt.subplot(3, 1, 2)
                 plt.title("$S_y$")
-                draw_field(np.real(Sy), x0, z0, axis, cmap='seismic')
+                draw_field(np.real(Sy), self.x, self.z, axis, cmap='seismic')
                 plt.clim(-S_lim, S_lim)
 
                 plt.subplot(3, 1, 3)
-                im3 = draw_field(np.real(Sz), x0, z0, axis, cmap='seismic')
+                im3 = draw_field(np.real(Sz), self.x, self.z, axis, cmap='seismic')
                 plt.clim(-S_lim, S_lim)
                 plt.title("$S_z$")
                 plt.xlabel('z ($\mu$m)')
@@ -644,7 +641,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return Sz
 
 
-    def check_energy(self):
+    def check_energy(self, I0=None):
         permeability = 4 * np.pi * 1e-7
         Z0 = 376.82
         
@@ -658,6 +655,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.plot(self.z, check_Sz, 'r', label='Sz')
         #plt.plot(self.z, check_U, 'b', label='U')
         plt.legend()
+        
+        plt.xlim(self.z[0], self.z[-1])
+        plt.grid('on')
+        
+        if I0 is not None:
+            plt.ylim(ymin=I0)
         
         return check_Sz #, check_U
 # 

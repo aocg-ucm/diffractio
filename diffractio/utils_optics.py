@@ -902,13 +902,13 @@ def fresnel_equations_kx(
 
         if kind == "amplitude_phase":
             if outputs[0]:
-                axs[0].plot(kx, np.abs(t_TM), "r", label="$t_{TM, par}$")
+                axs[0].plot(kx, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(kx, np.abs(t_TE), "b", label="$t_{TE, perp}$")
+                axs[0].plot(kx, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[0].plot(kx, np.abs(r_TM), "r-.", label="$r_{TM, par}$")
+                axs[0].plot(kx, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[0].plot(kx, np.abs(r_TE), "b-.", label="$r_{TE, perp}$")
+                axs[0].plot(kx, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$")
 
             axs[0].legend()
             axs[0].grid()
@@ -918,13 +918,13 @@ def fresnel_equations_kx(
             axs[0].set_title("amplitude")
 
             if outputs[0]:
-                axs[1].plot(kx, np.angle(t_TM) / degrees, "r", label="$t_{TM, par}$")
+                axs[1].plot(kx, np.angle(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[1].plot(kx, np.angle(t_TE) / degrees, "b", label="$t_{TE, perp}$")
+                axs[1].plot(kx, np.angle(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[1].plot(kx, np.angle(r_TM) / degrees, "r-.", label="$r_{TM, par}$")
+                axs[1].plot(kx, np.angle(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[1].plot(kx, np.angle(r_TE) / degrees, "b-.", label="$r_{TE, perp}$")
+                axs[1].plot(kx, np.angle(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
 
             axs[1].legend()
             axs[1].grid()
@@ -936,13 +936,13 @@ def fresnel_equations_kx(
 
         elif kind == "real_imag":
             if outputs[0]:
-                axs[0].plot(kx, np.real(t_TM), "r", label="$t_{TM, par}$")
+                axs[0].plot(kx, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(kx, np.real(t_TE), "b", label="$t_{TE, perp}$")
+                axs[0].plot(kx, np.real(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[0].plot(kx, np.real(r_TM), "r-.", label="$r_{TM, par}$")
+                axs[0].plot(kx, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[0].plot(kx, np.real(r_TE), "b-.", label="$r_{TE, perp}$")
+                axs[0].plot(kx, np.real(r_TE), "b-.", label="$r_{\perp, TE}$")
 
             axs[0].legend()
             axs[0].grid()
@@ -952,13 +952,13 @@ def fresnel_equations_kx(
             axs[0].set_title("real")
 
             if outputs[0]:
-                axs[1].plot(kx, np.imag(t_TM) / degrees, "r", label="$t_{TM, par}$")
+                axs[1].plot(kx, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[1].plot(kx, np.imag(t_TE) / degrees, "b", label="$t_{TE, perp}$")
+                axs[1].plot(kx, np.imag(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[1].plot(kx, np.imag(r_TM) / degrees, "r-.", label="$r_{TM, par}$")
+                axs[1].plot(kx, np.imag(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[1].plot(kx, np.imag(r_TE) / degrees, "b-.", label="$r_{TE, perp}$")
+                axs[1].plot(kx, np.imag(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
 
             axs[1].legend()
             axs[1].grid()
@@ -1020,13 +1020,13 @@ def transmitances_reflectances_kx(
     if has_draw:
         plt.figure()
         if outputs[0]:
-            plt.plot(kx, T_TM, "r", label="$T_{TM, par}$")
+            plt.plot(kx, T_TM, "r", label="$T_{\parallel, TM}$")
         if outputs[1]:
-            plt.plot(kx, T_TE, "b", label="$T_{TE, perp}$")
+            plt.plot(kx, T_TE, "b", label="$T_{\perp, TE}$")
         if outputs[2]:
-            plt.plot(kx, R_TM, "r-.", label="$R_{TM, par}$")
+            plt.plot(kx, R_TM, "r-.", label="$R_{\parallel, TM}$")
         if outputs[3]:
-            plt.plot(kx, R_TE, "b-.", label="$R_{TE, perp}$")
+            plt.plot(kx, R_TE, "b-.", label="$R_{\perp, TE}$")
 
         plt.xlabel("$k_x$")
         plt.legend()
@@ -1074,14 +1074,14 @@ def fresnel_equations(
         fig, axs = plt.subplots(1, 2, figsize=(12, 4))
         if kind == "amplitude_phase":
             if outputs[0]:
-                axs[0].plot(theta / degrees, np.abs(t_TM), "r", label="$t_{TM, par}$")
+                axs[0].plot(theta / degrees, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(theta / degrees, np.abs(t_TE), "b", label="$t_{TE, perp}$")
+                axs[0].plot(theta / degrees, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[0].plot(theta / degrees, np.abs(r_TM), "r-.", label="$r_{TM, par}$")
+                axs[0].plot(theta / degrees, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
                 axs[0].plot(
-                    theta / degrees, np.abs(r_TE), "b-.", label="$r_{TE, perp}$"
+                    theta / degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$"
                 )
 
             axs[0].legend()
@@ -1096,28 +1096,28 @@ def fresnel_equations(
                     theta / degrees,
                     np.angle(t_TM) / degrees,
                     "r",
-                    label="$t_{TM, par}$",
+                    label="$t_{\parallel, TM}$",
                 )
             if outputs[1]:
                 axs[1].plot(
                     theta / degrees,
                     np.angle(t_TE) / degrees,
                     "b",
-                    label="$t_{TE, perp}$",
+                    label="$t_{\perp, TE}$",
                 )
             if outputs[2]:
                 axs[1].plot(
                     theta / degrees,
                     np.angle(r_TM) / degrees,
                     "r-.",
-                    label="$r_{TM, par}$",
+                    label="$r_{\parallel, TM}$",
                 )
             if outputs[3]:
                 axs[1].plot(
                     theta / degrees,
                     np.angle(r_TE) / degrees,
                     "b-.",
-                    label="$r_{TE, perp}$",
+                    label="$r_{\perp, TE}$",
                 )
 
             axs[1].legend()
@@ -1130,49 +1130,48 @@ def fresnel_equations(
 
         elif kind == "real_imag":
             if outputs[0]:
-                axs[0].plot(theta / degrees, np.real(t_TM), "r", label="$t_{TM, par}$")
+                axs[0].plot(theta / degrees, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(theta / degrees, np.real(t_TE), "b", label="$t_{TE, perp}$")
+                axs[0].plot(theta / degrees, np.real(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
                 axs[0].plot(
-                    theta / degrees, np.real(r_TM), "r-.", label="$r_{TM, par}$"
+                    theta / degrees, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$"
                 )
             if outputs[3]:
                 axs[0].plot(
-                    theta / degrees, np.real(r_TE), "b-.", label="$r_{TE, perp}$"
+                    theta / degrees, np.real(r_TE), "b-.", label="$r_{\perp, TE}$"
                 )
 
             axs[0].legend()
             axs[0].grid()
-
+            axs[0].set_xlabel(r"$\theta (^o)$")
             axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
-            axs[1].set_xlabel(r"$\theta (^o)$")
             axs[0].set_title("real")
 
             if outputs[0]:
                 axs[1].plot(
-                    theta / degrees, np.imag(t_TM) / degrees, "r", label="$t_{TM, par}$"
+                    theta / degrees, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$"
                 )
             if outputs[1]:
                 axs[1].plot(
                     theta / degrees,
                     np.imag(t_TE) / degrees,
                     "b",
-                    label="$t_{TE, perp}$",
+                    label="$t_{\perp, TE}$",
                 )
             if outputs[2]:
                 axs[1].plot(
                     theta / degrees,
                     np.imag(r_TM) / degrees,
                     "r-.",
-                    label="$r_{TM, par}$",
+                    label="$r_{\parallel, TM}$",
                 )
             if outputs[3]:
                 axs[1].plot(
                     theta / degrees,
                     np.imag(r_TE) / degrees,
                     "b-.",
-                    label="$r_{TE, perp}$",
+                    label="$r_{\perp, TE}$",
                 )
 
             axs[1].legend()
@@ -1212,16 +1211,18 @@ def transmitances_reflectances(
     if has_draw:
         plt.figure()
         if outputs[0]:
-            plt.plot(theta / degrees, T_TM, "r", label="$T_{TM, par}$")
+            plt.plot(theta / degrees, T_TM, "r", label="$T_{\parallel, TM}$")
         if outputs[1]:
-            plt.plot(theta / degrees, T_TE, "b", label="$T_{TE, perp}$")
+            plt.plot(theta / degrees, T_TE, "b", label="$T_{\perp, TE}$")
         if outputs[2]:
-            plt.plot(theta / degrees, R_TM, "r-.", label="$R_{TM, par}$")
+            plt.plot(theta / degrees, R_TM, "r-.", label="$R_{\parallel, TM}$")
         if outputs[3]:
-            plt.plot(theta / degrees, R_TE, "b-.", label="$R_{TE, perp}$")
+            plt.plot(theta / degrees, R_TE, "b-.", label="$R_{\perp, TE}$")
 
+        plt.xlim(theta[0] / degrees, theta[-1] / degrees)
         plt.xlabel(r"$\theta (^o)$")
         plt.legend()
         plt.grid()
+
 
     return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular
