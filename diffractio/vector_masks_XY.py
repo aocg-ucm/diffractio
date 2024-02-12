@@ -248,7 +248,7 @@ class Vector_mask_XY(Vector_field_XY):
             state_0 = state_0.M.squeeze()
         if isinstance(state_1, Jones_matrix):
             state_1 = state_1.M.squeeze()
-            
+
         t = np.abs(mask.u)**2
         if is_binarized:
             t = t / t.max()
@@ -288,6 +288,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         for i, state in enumerate(states):
             i_level = (mask_new.u == i)
+
             self.M00[i_level] = state.M[0, 0, 0]
             self.M01[i_level] = state.M[0, 1, 0]
             self.M11[i_level] = state.M[1, 1, 0]
@@ -380,7 +381,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         Parameters:
             kind (str): 'amplitudes', 'phases', 'jones', 'jones_ap'.
-            
+
             'jones' is for real and imaginary parts.
             'jones_ap' is for amplitud and phase.
         """
@@ -479,7 +480,7 @@ class Vector_mask_XY(Vector_field_XY):
                                    extent=extension,
                                    origin='lower')
             im1.set_clim(-180, 180)
-            axs[1, 1].set_title("J12")
+            axs[1, 1].set_title("J11")
 
             plt.suptitle("phases", fontsize=15)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])

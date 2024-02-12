@@ -300,7 +300,11 @@ def normalize_draw(u, logarithm=0, normalize=False, cut_value=None):
     # u[u < 0] = 0
 
     if logarithm > 0:
-        u = np.log(logarithm * u + 1)
+        #Hacemos el valor absoluto de los valores negativos para la representación logarítmica.
+        u_sign = u
+        u = np.log(logarithm * np.abs(u) + 1)
+        if np.any(u_sign<0):
+            np.putmask(u,u_sign<0,-1*u)
 
     if normalize is False:
         pass

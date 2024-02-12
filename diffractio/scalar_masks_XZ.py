@@ -99,8 +99,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
                 refractive_index = eval(tmp_refractive_index, v_globals, v_locals)
             self.n = self.n.astype(complex)
-            self.n[index,:] = refractive_index * (1 - t.u)
-            self.n[index,:] = self.n[index,:] + self.n_background * t.u
+            self.n[index, :] = refractive_index * (1 - t.u)
+            self.n[index, :] = self.n[index, :] + self.n_background * t.u
             # self.n = refractive_index
 
     def mask_from_function(
