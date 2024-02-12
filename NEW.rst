@@ -2,42 +2,43 @@
 New Features
 ================================================
 
-In versión 0.1.1, serveral new features are available:
+0.2.3 (2023-11-21)
+--------------------------------
 
-* Vector fields are not longer paraxial.
+* Improvement:
 
-   The propagation algorithms implemented (VRS, VFFT and VCZT) provide :E_z: field. This allows to analyze longitudinal fields.
+  - XYZ drawings is removed temporally.
 
-   As a consequence the modules and classes elliminate changes their name. For example vector_paraxial_fields_X is now vector_fields_X.
+  - utils_slicer.py is deprecated.
 
+  -  
 
-* New propagation algorithm Chirped Z-Transform (CZT) is avaliable for X and XY fields.
+* Fix bugs:
 
-   This algorithms produce similar results to RS and VRS fields, but there are significant advantages:
+  - Bug in XYZ video
 
-   - The output field is not necessarily the same as the input field. This is important, for example, when analyzing the focus of a lens, since the computing time is dedicated to areas with light.
+  - Blazed grating wrong defined. 
+  
+  - bug in Scalar_field_XY.kernelRSinverse
 
-   - The output field does not necessarily have the same dimensionality of the input field. For example, when the mask is XY, we can have the data only at (x=0, y=0, z) axis.
+* New features:
 
-   - As a consequence the acceleration of the field computation can be accelerated as much as x100.
+  - XY masks: new polygon, regular_polygon, star, and superformula functions. 
 
-   - Another significant advantage is the reduction of memory usage.
+  - XY masks: new circular_sector function.
 
+  - XY masks: new lens_cyliindrical function.
 
-* New modules for visualization and data analysis are provided.
+  - X, XY, XYZ fields: new conjugate function.
 
-   - Scalar_field_Z can be used, for example, to analysis of intensity light at axis.
+  - WPM function without storing all the data.
 
-   - Vector_fields_Z, Vector_fields_XZ, and Vector_fields_XYZ have been developed, as VCZT algorithm can provide these data.
-
-   
-* Plane Wave Descomposition algorithm (PWD) is deprecated as Rayleigh-Sommerfeld algorithm (RS) produces better results.
-
-* Some importante bugs have been solved. For example the definition of the spherical coordinates in some sources (which not used standard physics criterion).
-
-* Mask parameters is removed in some XY masks, as lenses, FPZ, etc. The new way to do this is the .pupil() function.
-
-* Smooth_refraction index can be used also for Wave Propagation Method algorithm (WPM).
+  - X fields: inverse_amplitude, inverse_phase, pupil
 
 
-Warning: Some of this features make your code slightly change.
+Future
+--------------------------------
+
+  - Implement plotly for drawings
+  - Some bugs in CZT (y)
+  - VWPM

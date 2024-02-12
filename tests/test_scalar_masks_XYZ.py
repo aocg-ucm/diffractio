@@ -57,8 +57,7 @@ class Test_Scalar_masks_XYZ(object):
                                info='')
         uxyz.sphere(r0=(0 * um, 0 * um, 0 * um),
                     radius=(10 * um, 30 * um, 50 * um),
-                    refraction_index=2,
+                    refractive_index=2,
                     angles=(0 * degrees, 0 * degrees, 45 * degrees))
         uxyz.incident_field(t1)
-        uxyz.draw_refraction_index()
         assert True

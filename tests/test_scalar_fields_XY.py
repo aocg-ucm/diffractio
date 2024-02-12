@@ -400,7 +400,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field.spherical_wave()
+        field.spherical_wave(r0=(0, 0), z0=-1 * mm)
         field.draw(kind='field')
 
         real_field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -430,7 +430,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field.spherical_wave()
+        field.spherical_wave(r0=(0, 0), z0=-1 * mm)
         field.draw(kind='field')
 
         fieldImag = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
@@ -460,7 +460,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field.spherical_wave()
+        field.spherical_wave(r0=(0, 0), z0=-1 * mm)
         field.draw(kind='field')
 
         field.remove_phase(sign=False)
@@ -513,7 +513,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field.spherical_wave()
+        field.spherical_wave(r0=(0, 0), z0=-1 * mm)
         field.draw(kind='phase', normalize=None)
 
         field2 = field.binarize(kind="phase",
@@ -721,7 +721,7 @@ class Test_Scalar_fields_XY(object):
         wavelength = 0.6328 * um
 
         field1 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
-        field1.spherical_wave()
+        field1.spherical_wave(r0=(0, 0), z0=-1 * mm)
 
         field2 = Scalar_source_XY(x=x0, y=y0, wavelength=wavelength)
         field2.gauss_beam(w0=(50 * um, 100 * um),

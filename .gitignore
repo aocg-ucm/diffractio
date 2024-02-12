@@ -82,3 +82,8 @@ target/
 
 # pyenv python configuration file
 .python-
+.env
+
+tests_results*/
+
+htmlcov/

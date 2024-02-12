@@ -64,11 +64,17 @@ class Vector_field_X(object):
         self.Ex = np.zeros_like(self.x, dtype=complex)
         self.Ey = np.zeros_like(self.x, dtype=complex)
         self.Ez = np.zeros_like(self.x, dtype=complex)
+        
+        self.Hx = np.zeros_like(self.x, dtype=complex)
+        self.Hy = np.zeros_like(self.x, dtype=complex)
+        self.Hz = np.zeros_like(self.x, dtype=complex)
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Vector_field_X'
         self.info = info
         self.date = get_date()
+        self.CONF_DRAWING = CONF_DRAWING
+
 
     def __str__(self):
         """Represents data from class."""

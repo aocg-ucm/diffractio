@@ -34,7 +34,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
     def object_by_surfaces(self,
                            r0,
-                           refraction_index,
+                           refractive_index,
                            Fs,
                            angles,
                            v_globals={}):
@@ -43,7 +43,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         Parameters:
             rotation_point (float, float, float): location of the mask
-            refraction_index (float, str): can be a number or a function n(x, y,z)
+            refractive_index (float, str): can be a number or a function n(x, y,z)
             Fs (list): condtions as str that will be computed using eval
             array1 (numpy.array): array (x,y,z) that delimits the second surface
             angle (float): angle of rotation (radians)
@@ -75,16 +75,16 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         for cond in conditions:
             ipasa = ipasa & cond
 
-        self.n[ipasa] = refraction_index
+        self.n[ipasa] = refractive_index
         return ipasa
 
-    def sphere(self, r0, radius, refraction_index, angles):
+    def sphere(self, r0, radius, refractive_index, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
             Parameters:
                 r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
                 radius: (rx, ry, rz) Radius of sphere. It can be a ellipsoid. If radius is a number, then it is a sphere
-                        refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
+                        refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
         """
         if isinstance(radius, (float, int, complex)):
             radius = (radius, radius, radius)
@@ -94,14 +94,14 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         ipasa = (self.X - x0)**2 / radiusx**2 + (
             self.Y - y0)**2 / radiusy**2 + (self.Z - z0)**2 / radiusz**2 < 1
-        self.n[ipasa] = refraction_index
+        self.n[ipasa] = refractive_index
 
         return ipasa
 
     def square(self,
                r0,
                length,
-               refraction_index,
+               refractive_index,
                angles=None,
                rotation_point=None):
         """ Insert a rectangle in background. If something previous, is removed.
@@ -109,7 +109,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         Parameters:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             size (float, float, float): x,y,z size of the rectangle
-            refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float, float). Rotation point
         """
@@ -132,18 +132,18 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         ipasaz1 = self.Z >= z0 - lengthz / 2
         ipasaz2 = self.Z <= z0 + lengthz / 2
         ipasa = ipasax1 * ipasax2 * ipasay1 * ipasay2 * ipasaz1 * ipasaz2
-        self.n[ipasa] = refraction_index
+        self.n[ipasa] = refractive_index
 
         return ipasa
 
-    def cylinder(self, r0, radius, length, refraction_index, axis, angle):
+    def cylinder(self, r0, radius, length, refractive_index, axis, angle):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Parameters:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner
-            refraction_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
             axis (float float, float): axis direction
             angle (float): angle of rotation of the semi-plane, in radians
         """
@@ -177,6 +177,6 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
             Zrot=self.Z
           """
 
-        self.n[ipasa] = refraction_index
+        self.n[ipasa] = refractive_index
 
         return ipasa

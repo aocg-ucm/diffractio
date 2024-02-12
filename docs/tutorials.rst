@@ -13,8 +13,8 @@ Tutorials
    source/tutorial/scalar_XY/tutorial.rst
    source/tutorial/scalar_XYZ/tutorial.rst
    source/tutorial/vector_XY/tutorial.rst
+   source/tutorial/other/tutorial.rst
    source/tutorial/drawing/tutorial.rst
-   source/tutorial/functioning/functioning.rst
 
 
 

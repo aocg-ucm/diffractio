@@ -50,9 +50,9 @@ class Test_Scalar_masks_XZ(object):
         t1.extrude_mask(t=t0,
                         z0=z0,
                         z1=z1,
-                        refraction_index='1+0.25*(z-z0)/(z1-z0)',
+                        refractive_index='1+0.25*(z-z0)/(z1-z0)',
                         v_globals=v_globals)
-        t1.draw_refraction_index(draw_borders=False, )
+        t1.draw_refractive_index(draw_borders=False, )
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -77,9 +77,9 @@ class Test_Scalar_masks_XZ(object):
         t1.extrude_mask(t=t0,
                         z0=z0,
                         z1=z1,
-                        refraction_index=1.5,
+                        refractive_index=1.5,
                         v_globals=v_globals)
-        t1.draw_refraction_index(draw_borders=False, )
+        t1.draw_refractive_index(draw_borders=False, )
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -100,14 +100,14 @@ class Test_Scalar_masks_XZ(object):
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         t1.mask_from_function(r0=(0, 0),
-                              refraction_index=1.5,
+                              refractive_index=1.5,
                               f1=f1,
                               f2=f2,
                               z_sides=z_sides,
                               angle=0 * degrees,
                               v_globals=v_globals)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -136,7 +136,7 @@ class Test_Scalar_masks_XZ(object):
         profile2[:, 1] = np.abs(profile2[:, 1])
         t1.mask_from_array(
             r0=(0 * um, 0 * um),
-            refraction_index=1.5,
+            refractive_index=1.5,
             array1=profile1 * 1000,  # pasar a micras
             array2=profile2 * 1000,  # pasar a micras
             x_sides=(-15 * mm, 15 * mm),
@@ -144,7 +144,7 @@ class Test_Scalar_masks_XZ(object):
             v_globals={},
             interp_kind='nearest')
 
-        t1.draw_refraction_index(draw_borders=False)
+        t1.draw_refractive_index(draw_borders=False)
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -159,17 +159,17 @@ class Test_Scalar_masks_XZ(object):
         wavelength = 2 * um
 
         r0 = (0, 0)
-        refraction_index = 4
+        refractive_index = 4
         Fs = ['Xrot<3*um', 'Xrot>-3*um', 'Zrot>25*um', 'Zrot<1750*um']
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
 
         t1.object_by_surfaces(r0,
-                              refraction_index,
+                              refractive_index,
                               Fs,
                               angle=0 * degrees,
                               v_globals={})
 
-        t1.draw_refraction_index(draw_borders=True)
+        t1.draw_refractive_index(draw_borders=True)
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -178,7 +178,7 @@ class Test_Scalar_masks_XZ(object):
     def test_add_surfaces(self):
         assert True
 
-    def test_variable_refraction_index_1(self):
+    def test_variable_refractive_index_1(self):
         """
         Here the refraction index is a function of positions x,z
         """
@@ -209,16 +209,16 @@ class Test_Scalar_masks_XZ(object):
 
         t0.sphere(r0=center,
                   radius=(radius, radius),
-                  refraction_index=ref_index,
+                  refractive_index=ref_index,
                   angle=0)
 
-        t0.draw_refraction_index(draw_borders=False, scale='equal')
+        t0.draw_refractive_index(draw_borders=False, scale='equal')
 
         t0.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    def test_variable_refraction_index_2(self):
+    def test_variable_refractive_index_2(self):
         """Here the refraction index is a function of positions z"""
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -238,15 +238,15 @@ class Test_Scalar_masks_XZ(object):
         t1.extrude_mask(t=t0,
                         z0=z_min,
                         z1=z_max,
-                        refraction_index='1+0.25*np.abs(x/200)**2',
+                        refractive_index='1+0.25*np.abs(x/200)**2',
                         v_globals=v_globals)
-        t1.draw_refraction_index(draw_borders=False)
+        t1.draw_refractive_index(draw_borders=False)
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    def test_discretize_refraction_index(self):
+    def test_discretize_refractive_index(self):
 
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -275,12 +275,12 @@ class Test_Scalar_masks_XZ(object):
 
         t0.sphere(r0=center,
                   radius=(radius, radius),
-                  refraction_index=ref_index,
+                  refractive_index=ref_index,
                   angle=0)
 
-        t0.discretize_refraction_index(num_layers=6)
+        t0.discretize_refractive_index(num_layers=6)
 
-        t0.draw_refraction_index(draw_borders=False, scale='equal')
+        t0.draw_refractive_index(draw_borders=False, scale='equal')
 
         t0.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -302,23 +302,23 @@ class Test_Scalar_masks_XZ(object):
 
         t1.sphere(r0=(0, 100 * um),
                   radius=(40 * um, 40 * um),
-                  refraction_index=2.5,
+                  refractive_index=2.5,
                   angle=0)
 
         t1.sphere(r0=(0, 100 * um),
                   radius=(10 * um, 10 * um),
-                  refraction_index=1,
+                  refractive_index=1,
                   angle=0)
 
         for pos_slit in [200, 250, 300, 350]:
             t1.slit(r0=(0 * um, pos_slit * um),
                     aperture=100 * um,
                     depth=10 * um,
-                    refraction_index=1.5 - 1.5j,
-                    refraction_index_center='',
+                    refractive_index=1.5 - 1.5j,
+                    refractive_index_center='',
                     angle=0 * degrees)
 
-        t1.draw_refraction_index(draw_borders=False, scale='equal')
+        t1.draw_refractive_index(draw_borders=False, scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -343,8 +343,8 @@ class Test_Scalar_masks_XZ(object):
         t1.extrude_mask(t=t0,
                         z0=10 * um,
                         z1=50 * um,
-                        refraction_index=1.5 - 1.5j)
-        t1.draw_refraction_index(draw_borders=True)
+                        refractive_index=1.5 - 1.5j)
+        t1.draw_refractive_index(draw_borders=True)
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -367,7 +367,7 @@ class Test_Scalar_masks_XZ(object):
                  n_min=1,
                  angle=0 * degrees,
                  invert=False)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -382,10 +382,10 @@ class Test_Scalar_masks_XZ(object):
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         t1.semi_plane(r0=(0, 0),
-                      refraction_index=2,
+                      refractive_index=2,
                       angle=0 * degrees,
                       rotation_point=None)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -401,10 +401,10 @@ class Test_Scalar_masks_XZ(object):
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         t1.layer(r0=(50, 0),
                  depth=75 * um,
-                 refraction_index=2,
+                 refractive_index=2,
                  angle=0 * degrees,
                  rotation_point=None)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -421,8 +421,8 @@ class Test_Scalar_masks_XZ(object):
         t1.rectangle(r0=(0 * um, 100 * um),
                      size=(150 * um, 50 * um),
                      angle=0 * degrees,
-                     refraction_index=1.5)
-        t1.draw_refraction_index()
+                     refractive_index=1.5)
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -440,11 +440,11 @@ class Test_Scalar_masks_XZ(object):
         t1.slit(r0=(0 * um, 50 * um),
                 aperture=50 * um,
                 depth=20 * um,
-                refraction_index=1.5 + 1j,
-                refraction_index_center='',
+                refractive_index=1.5 + 1j,
+                refractive_index_center='',
                 angle=0 * degrees)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -461,10 +461,10 @@ class Test_Scalar_masks_XZ(object):
 
         t1.sphere(r0=(0, 100 * um),
                   radius=(75 * um, 75 * um),
-                  refraction_index=1.5,
+                  refractive_index=1.5,
                   angle=0 * degrees)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -480,10 +480,10 @@ class Test_Scalar_masks_XZ(object):
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         t1.semi_sphere(r0=(0, 0),
                        radius=(100, 100),
-                       refraction_index=2,
+                       refractive_index=2,
                        angle=0 * degrees)
 
-        t1.draw_refraction_index(draw_borders=True,
+        t1.draw_refractive_index(draw_borders=True,
                                  min_incr=0.01,
                                  scale='equal')
 
@@ -509,11 +509,11 @@ class Test_Scalar_masks_XZ(object):
 
         t1.wedge(r0=(0, 0),
                  length=100 * um,
-                 refraction_index=1.5,
+                 refractive_index=1.5,
                  angle_wedge=22.5 * degrees,
                  angle=0 * degrees,
                  rotation_point=None)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -529,16 +529,17 @@ class Test_Scalar_masks_XZ(object):
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         t1.prism(r0=(100 * um, 150 * um),
                  length=200 * um,
-                 refraction_index=2,
+                 refractive_index=2,
                  angle_prism=60 * degrees,
                  angle=90 * degrees)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
     def test_biprism(self):
+
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
         x0 = np.linspace(-100 * um, 100 * um, 256)
@@ -549,9 +550,9 @@ class Test_Scalar_masks_XZ(object):
         t1.biprism(r0=(0, 0),
                    length=200 * um,
                    height=50 * um,
-                   refraction_index=1.5,
+                   refractive_index=1.5,
                    angle=0)
-        t1.draw_refraction_index(draw_borders=True, scale='equal')
+        t1.draw_refractive_index(draw_borders=True, scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -572,12 +573,12 @@ class Test_Scalar_masks_XZ(object):
                           height=20 * um,
                           r0=(0 * um, 100 * um),
                           Dx=2 * um,
-                          refraction_index=1.5 + 0.5j,
+                          refractive_index=1.5 + 0.5j,
                           heigth_substrate=25 * um,
-                          refraction_index_substrate=1.5,
+                          refractive_index_substrate=1.5,
                           angle=0 * degrees)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -603,13 +604,13 @@ class Test_Scalar_masks_XZ(object):
 
         t2 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
 
-        t2.extrude_mask(t=t0, z0=10 * um, z1=50 * um, refraction_index=1.5)
+        t2.extrude_mask(t=t0, z0=10 * um, z1=50 * um, refractive_index=1.5)
         t2.extrude_mask(t=t1,
                         z0=50 * um,
                         z1=55.5 * um,
-                        refraction_index=1.5 - 1.5)
+                        refractive_index=1.5 - 1.5)
 
-        t2.draw_refraction_index(draw_borders=False)
+        t2.draw_refractive_index(draw_borders=False)
 
         t2.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -630,10 +631,10 @@ class Test_Scalar_masks_XZ(object):
                         r0=(0 * um, 200 * um),
                         length=500 * um,
                         Dx=2 * um,
-                        refraction_index=1.5,
+                        refractive_index=1.5,
                         angle=0 * degrees)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -650,10 +651,10 @@ class Test_Scalar_masks_XZ(object):
         t1.probe(r0=(0, 50 * um),
                  base=10 * um,
                  length=200 * um,
-                 refraction_index=1.5,
+                 refractive_index=1.5,
                  angle=0 * degrees)
 
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -672,11 +673,11 @@ class Test_Scalar_masks_XZ(object):
                                          aperture=50 * um,
                                          radius=50 * um,
                                          thickness=50 * um,
-                                         refraction_index=1.5,
+                                         refractive_index=1.5,
                                          angle=0 * degrees,
                                          mask=(10 * um, 3 + 0.05j))
         print("focus distance f={} um".format(focal))
-        t1.draw_refraction_index(scale='equal')
+        t1.draw_refractive_index(scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -695,11 +696,11 @@ class Test_Scalar_masks_XZ(object):
                                    aperture=300 * um,
                                    radius=(1000 * um, -250 * um),
                                    thickness=100 * um,
-                                   refraction_index=2,
+                                   refractive_index=2,
                                    angle=0 * degrees,
                                    mask=(10 * um, 3 + 0.05j))
         print("focus distance f={} um".format(focal))
-        t1.draw_refraction_index(scale='equal')
+        t1.draw_refractive_index(scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -718,11 +719,11 @@ class Test_Scalar_masks_XZ(object):
                                         aperture=100 * um,
                                         radius=50 * um,
                                         thickness=25 * um,
-                                        refraction_index=2,
+                                        refractive_index=2,
                                         angle=0 * degrees,
                                         mask=(10 * um, 3 + 0.05j))
         print("focus distance f={} um".format(focal))
-        t1.draw_refraction_index(scale='equal')
+        t1.draw_refractive_index(scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -741,11 +742,11 @@ class Test_Scalar_masks_XZ(object):
                                   aperture=100 * um,
                                   radius=(-50 * um, 50 * um),
                                   thickness=25 * um,
-                                  refraction_index=1.5,
+                                  refractive_index=1.5,
                                   angle=0 * degrees,
                                   mask=(10 * um, 3 + 0.05j))
         print("focus distance f={} um".format(focal))
-        t1.draw_refraction_index(scale='equal')
+        t1.draw_refractive_index(scale='equal')
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')
@@ -763,10 +764,10 @@ class Test_Scalar_masks_XZ(object):
                        size=(200 * um, 25 * um),
                        t=10 * um,
                        s=10 * um,
-                       refraction_index=1.5,
+                       refractive_index=1.5,
                        angle=0,
                        rotation_point=None)
-        t1.draw_refraction_index()
+        t1.draw_refractive_index()
 
         t1.save_data(filename=filename + '.npz', add_name='')
         save_figure_test(newpath, func_name, add_name='')

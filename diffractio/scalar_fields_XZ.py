@@ -26,7 +26,7 @@ The magnitude is related to microns: `micron = 1.`
 *Class for XZ scalar fields*
 
 *Definition of a scalar field*
-    * instatiation, duplicate, clean_refraction_index
+    * instatiation, duplicate, clean_refractive_index
     * save, load data
     * rotate_field, cut_resample,
 
@@ -43,7 +43,7 @@ The magnitude is related to microns: `micron = 1.`
 
 *Drawing functions*
     * draw
-    * draw_refraction_index
+    * draw_refractive_index
     * draw_incident_field
     * draw_profiles_interactive
     * video
@@ -78,7 +78,7 @@ from .scalar_masks_X import Scalar_mask_X
 from .scalar_sources_X import Scalar_source_X
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
-from .utils_math import get_k, ndgrid, nearest, reduce_to_1, rotate_image
+from .utils_math import get_k, ndgrid_deprecated, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize_field
 
@@ -127,7 +127,7 @@ class Scalar_field_XZ(object):
         self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:
-            self.X, self.Z = ndgrid(x, z)
+            self.X, self.Z = np.meshgrid(x, z)
             self.u0 = Scalar_field_X(x, wavelength)
             self.u = np.zeros_like(self.X, dtype=complex)
             self.n = n_background * np.ones(np.shape(self.X), dtype=complex)
@@ -254,6 +254,31 @@ class Scalar_field_XZ(object):
             new_field.clear_field()
         return new_field
 
+
+    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max):
+        """Transforms XY mask into XZ mask.
+            - Areas with value 0 pass to n_background.
+            - When transmittance of mask_XY  is 1, pass to refractive_index_max.
+
+        Args:
+            mask_XY (diffractio.Scalar_mask_XY): mask
+            refractive_index_max (float): real and imaginary part of maximum refraction index.
+
+        Returns:
+            _type_: _description_
+        """
+        
+        self.x = mask_XY.x
+        self.z = mask_XY.y
+        self.X, self.Z = np.meshgrid(self.x, self.z)
+        self.u = np.zeros_like(self.X, dtype=complex)
+        
+        
+        
+        self.n = mask_XY.u* refractive_index_max
+        self.n[self.n<1]=self.n_background
+        
+
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
         """Rotate all the image a certain angle
 
@@ -292,7 +317,7 @@ class Scalar_field_XZ(object):
         """clear field"""
         self.u = np.zeros(np.shape(self.u), dtype=complex)
 
-    def clear_refraction_index(self):
+    def clear_refractive_index(self):
         """clear refraction index n(x,z)=n_background"""
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
@@ -321,7 +346,7 @@ class Scalar_field_XZ(object):
         mask.slit(x0=x_center, size=L - 2 * size_edge)
         self.u0.u = self.u0.u * mask.u
 
-    def smooth_refraction_index(self,
+    def smooth_refractive_index(self,
                                 type_filter=2,
                                 pixels_filtering=10,
                                 max_diff_filter=0.1,
@@ -371,11 +396,11 @@ class Scalar_field_XZ(object):
                              (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
-                max_diff = np.abs(np.diff(self.n[:, i])).max()
+                max_diff = np.abs(np.diff(self.n[i,:])).max()
                 if max_diff > max_diff_filter:
                     lineas_filtradas[i] = 1
-                    self.n[:, i] = fftshift(
-                        ifft(fft(self.n[:, i]) * fft(filtro1)))
+                    self.n[i,:] = fftshift(
+                        ifft(fft(self.n[i,:]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
             percentage_filtered = 100 * num_filtrados / len(self.z)
         elif type_filter == 3:
@@ -387,11 +412,11 @@ class Scalar_field_XZ(object):
             filtro1[centerz - pixels_filtering:centerz + pixels_filtering] = 1
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.x)):
-                max_diff = np.abs(np.diff(self.n[i, :])).max()
+                max_diff = np.abs(np.diff(self.n[:,i])).max()
                 if max_diff > max_diff_filter:
                     lineas_filtradas[i] = 1
-                    self.n[i, :] = fftshift(
-                        ifft(fft(self.n[i, :]) * fft(filtro1)))
+                    self.n[:,i] = fftshift(
+                        ifft(fft(self.n[:,i]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
             percentage_filtered = 100 * num_filtrados / len(self.x)
 
@@ -418,7 +443,7 @@ class Scalar_field_XZ(object):
 
             plt.axis(extension)
             h1.set_cmap(cm.gray_r)
-            plt.title("smooth_refraction_index: n variations", fontsize=24)
+            plt.title("smooth_refractive_index: n variations", fontsize=24)
 
         return percentage_filtered, lineas_filtradas
 
@@ -525,8 +550,8 @@ class Scalar_field_XZ(object):
                                                  kx=kxu,
                                                  ky=kxu,
                                                  s=0)
-            u_new_abs = f_interp_abs(x_new, z_new)
-            u_new_phase = f_interp_phase(x_new, z_new)
+            u_new_abs = f_interp_abs(z_new, x_new)
+            u_new_phase = f_interp_phase(z_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
             n_interp_real = RectBivariateSpline(self.x,
@@ -594,6 +619,7 @@ class Scalar_field_XZ(object):
         u_final.u = self.u[:, -1]
         return u_final
 
+
     def __BPM__(self,
                 has_edges=True,
                 pow_edge=80,
@@ -615,7 +641,7 @@ class Scalar_field_XZ(object):
         dz = self.z[1] - self.z[0]
 
         q1 = (0.25 * self.wavelength / 2 * dn / dz,
-              0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
+                0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
         self.quality = q1
 
         k0 = 2 * np.pi / self.wavelength
@@ -640,50 +666,52 @@ class Scalar_field_XZ(object):
         # Campo en el índice de refracción
         field = np.zeros(np.shape(self.n), dtype=complex)
 
-        if has_edges:
-            # Función supergausiana para eliminar rebotes en los edges
-            filter_edge = np.exp(-((pixelx) /
-                                   (0.99 * 0.5 * numx))**pow_edge)  # 0.98
+        if has_edges is False:
+            has_filter = np.zeros_like(self.z)
+            
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
+        else:
+            has_filter = has_edges
+        
+        
+        width_edge = 0.9*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        
+        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
-        field[:, 0] = field_z
+        field[0,:] = field_z
         for k in range(0, numz):
-            if verbose is True:
-                if sys.version_info.major == 3:
-                    print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
-                else:
-                    print("BPM: {}/{}".format(k, numz).format(k, numz))
-
-            phase2 = np.exp(1j * self.n[:, k] * k0 * deltaz)
-            field_z = ifft((fft(field_z) * phase1)) * phase2
-            if has_edges:
-                field_z = field_z * filter_edge + self.u[:, k]
+            if has_filter[k] == 0:
+                filter_edge = 1
             else:
-                field_z = field_z + self.u[:, k]
+                filter_edge = filter_function
+                
+            
+            if verbose is True:
+                print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
 
-            field[:, k] = field_z
+            phase2 = np.exp(1j * self.n[k,:] * k0 * deltaz)
+            field_z = ifft((fft(field_z) * phase1)) * phase2
+            self.u[k,:] = self.u[k,:] + field_z * filter_edge 
 
         if matrix is True:
-            return field
-        else:
-            self.u = field
+            return self.u
 
-    def BPM(self,
-            has_edges=True,
-            pow_edge=80,
-            division=False,
-            matrix=False,
-            verbose=False):
+            
+            
+    def BPM(self,has_edges=True, pow_edge=80, division=False,  matrix=False,  verbose=False):
         """Beam propagation method (BPM).
 
-        Parameters:
-            has_edges (bool): If True absorbing edges are used.
-            pow_edge (float): If has_edges, power of the supergaussian
-            division (False, int): If False nothing, else divides the BPM algorithm in several different executions. To avoid RAM problems
-            matrix (bool): if True returns a matrix else
-            verbose (bool): shows data process by screen
+            Parameters:
+                has_edges (bool or np.array): If True absorbing edges are used. If np.array, they are 0 or 1 depending if at this z position filtering is performed.
+                pow_edge (float): If has_edges, power of the supergaussian
+                division (False, int): If False nothing, else divides the BPM algorithm in several different executions. To avoid RAM problems
+                matrix (bool): if True returns a matrix else
+                verbose (bool): shows data process by screen
 
-        References:
-           Algorithm in "Engineering optics with matlab" pag 119.
+            References:
+            Algorithm in "Engineering optics with matlab" pag 119.
         """
 
         t1 = time.time()
@@ -701,20 +729,20 @@ class Scalar_field_XZ(object):
             for i in range(num_executions):
                 if verbose is True:
                     print("{}/{}".format(i, num_executions),
-                          sep="\r",
-                          end="\r")
+                        sep="\r",
+                        end="\r")
 
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(x=self.x,
-                                     z=self.z[sl],
-                                     wavelength=self.wavelength,
-                                     n_background=self.n_background)
-                ui.n = self.n[:, sl]
+                                    z=self.z[sl],
+                                    wavelength=self.wavelength,
+                                    n_background=self.n_background)
+                ui.n = self.n[sl,:]
                 ui.u0 = uf
 
-                ui.BPM(has_edges, pow_edge, matrix, verbose)
+                ui = BPM(ui, has_edges, pow_edge, matrix, verbose)
                 uf = ui.final_field().u
-                self.u[:, sl] = ui.u
+                self.u[sl,:] = ui.u
 
             if matrix is True:
                 return self.u
@@ -722,6 +750,7 @@ class Scalar_field_XZ(object):
             t2 = time.time()
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
+                
 
     def BPM_inverse(self, verbose=False):
         """
@@ -739,7 +768,7 @@ class Scalar_field_XZ(object):
                                     wavelength=self.wavelength,
                                     n_background=self.n_background)
         c_inverse.n = np.fliplr(self.n)
-        c_inverse.u0.u = np.conjugate(self.u[:, -1])
+        c_inverse.u0.u = np.conjugate(self.u[-1,:])
         c_inverse.u = np.zeros_like(self.u)
         c_inverse.BPM(verbose)
 
@@ -795,10 +824,7 @@ class Scalar_field_XZ(object):
         nx = len(self.x)
         return S[nx - 1:]
 
-    def RS(self,
-           xout=None,
-           verbose=False,
-           num_processors=num_max_processors):
+    def RS(self, xout=None, verbose=False, num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
@@ -835,13 +861,7 @@ class Scalar_field_XZ(object):
                 self.quality))
         else:
             if verbose is True:
-                if sys.version_info.major == 3:
-                    print('Good result: factor {:2.2f}'.format(self.quality),
-                          sep="\r",
-                          end="\r")
-                else:
-                    print('Good result: factor {:2.2f}'.format(self.quality))
-                print()
+                print('Good result: factor {:2.2f}'.format(self.quality),sep="\r", end="\r")
 
         # matrix W para integracion simpson
         a = [2, 4]
@@ -893,18 +913,11 @@ class Scalar_field_XZ(object):
             pool.close()
             pool.join()
             for i in range(len(self.z)):
-                self.u[:, i] = t[i]
+                self.u[i,:] = t[i]
         time2 = time.time()
 
         if verbose is True:
-            if sys.version_info.major == 3:
-                print("time in RS= {}. num proc= {}".format(
-                    time2 - time1, num_processors),
-                      sep="\r",
-                      end="\r")
-            else:
-                print("time in RS= {}. num proc= {}".format(
-                    time2 - time1, num_processors))
+            print("time in RS= {}. num proc= {}".format(  time2 - time1, num_processors),  sep="\r", end="\r")
 
         return self.u
 
@@ -941,27 +954,26 @@ class Scalar_field_XZ(object):
             result = self.u[:, i]
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, i + 1] = result_next
-            if sys.version_info.major == 3:
+            if verbose: 
                 print("{}/{}".format(i, num_steps), sep='\r', end='\r')
-            else:
-                print("{}/{}".format(i, num_steps))
+
 
         if matrix is True:
             return self.u
 
+
     def WPM(self,
-            kind='schmidt',
+            kind = 'schmidt',
             has_edges=True,
             pow_edge=80,
             matrix=False,
             verbose=False):
         """
-        WPM Methods.
-        'schmidt method is very fast, only needs discrete number of refraction indexes'
+        WPM Method. 'schmidt method is very fast, only needs discrete number of refraction indexes'
 
 
         Parameters:
-            kind (str): 'schmidt, scalar, TE, TM
+            kind (str): 'schmidt', 'scalar'
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns a matrix else
@@ -981,7 +993,7 @@ class Scalar_field_XZ(object):
         dx = x[1] - x[0]
         dz = z[1] - z[0]
 
-        self.u[:, 0] = self.u0.u
+        self.u[0,:] = self.u0.u
         kx = get_k(x, flavour='+')
         k_perp2 = kx**2
         k_perp = kx
@@ -989,44 +1001,48 @@ class Scalar_field_XZ(object):
         X, KP = np.meshgrid(x, k_perp)
 
         if has_edges is False:
-            filter_edge = 1
+            has_filter = np.zeros_like(self.z)
+        elif isinstance(has_edges, int):
+            has_filter = np.ones_like(self.z)
         else:
-            filter_edge = np.exp(-(self.x / (self.x[0]))**pow_edge)
+            has_filter = has_edges
+        
+        
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center=(self.x[-1]+self.x[0])/2
+        
+        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
         t1 = time.time()
 
         num_steps = len(self.z)
         for j in range(1, num_steps):
+   
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
 
             if kind == 'schmidt':
-                self.u[:, j] = self.u[:, j] + WPM_schmidt_kernel(
-                    self.u[:, j - 1], self.n[:, j - 1], k0, k_perp2,
+                self.u[ j,:] = self.u[j,:] + WPM_schmidt_kernel(
+                    self.u[j - 1,:], self.n[ j - 1,:], k0, k_perp2,
                     dz) * filter_edge
-            else:
-                print("{}".format(j), sep='\r', end='\r')
+            elif kind == 'scalar':
 
-                Nj, KP = np.meshgrid(self.n[:, j - 1], k_perp)
-                X, UJ = np.meshgrid(x, fftshift(fft(self.u[:, j - 1])))
+                Nj, KP = np.meshgrid(self.n[j - 1,:], k_perp)
+                X, UJ = np.meshgrid(x, fftshift(fft(self.u[j - 1,:])))
 
                 kz = csqrt((Nj * k0)**2 - KP**2)
                 Pj = np.exp(1j * kz * dz)
 
-                if kind == 'TM':
-                    M00, _, _, M11 = self.M_xz(j=j, kx=kx)
-                    M = M00
-                elif kind == 'TE':
-                    M00, _, _, M11 = self.M_xz(j=j, kx=kx)
-                    M = M11
-                elif kind == 'scalar':
-                    M = 1
-
-                WXj = M * UJ * np.exp(1j * KP * (X - x[0]))
+                WXj = UJ * np.exp(1j * KP * (X - x[0]))
 
                 uj = np.mean(WXj * Pj, 0)
-                self.u[:, j] = uj * filter_edge + self.u[:, j]
+                self.u[j,:] =  self.u[j,:] + uj * filter_edge
 
             if verbose is True:
-                print("{}/{}".format(j, num_steps), sep='\r', end='\r')
+                print("{}".format(j), sep='\r', end='\r')
+
 
         t2 = time.time()
         if verbose is True:
@@ -1036,67 +1052,6 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
-    def M_xz(self, j, kx):
-        """
-        Refraction matrix given in eq. 18 from  M. W. Fertig and K.-H. Brenner,
-        “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
-        """
-        # simple parameters
-
-        k0 = 2 * np.pi / self.wavelength
-
-        z = self.z
-        x = self.x
-
-        num_x = self.x.size
-        num_z = self.z.size
-
-        dz = z[1] - z[0]
-        dx = x[1] - x[0]
-
-        nj = self.n[:, j]
-        nj_1 = self.n[:, j - 1]
-
-        n_med = nj.mean()
-        n_1_med = nj_1.mean()
-
-        # parameters
-        NJ, KX = np.meshgrid(nj, kx)
-        NJ_1, KX = np.meshgrid(nj_1, kx)
-
-        k_perp = KX + eps
-
-        kz_j = np.sqrt((n_med * k0)**2 - k_perp**2)
-        kz_j_1 = np.sqrt((n_1_med * k0)**2 - k_perp**2)
-
-        tg_TM = 2 * NJ_1**2 * kz_j / (NJ**2 * kz_j_1 + NJ_1**2 * kz_j)
-        t_TE = 2 * kz_j_1 / (kz_j_1 + kz_j)
-
-        kj_1 = NJ_1 * k0
-        fj_1 = k_perp**2 / (NJ_1**2 * kj_1**2)
-        # cuidado no es la misma definición, me parece que está repetido
-        e_xj_1 = np.gradient(NJ_1**2, dx, axis=0)
-        eg_xj_1 = fj_1 * e_xj_1
-        # cuidado no es la misma definición, me parece que está mal por no ser simétrica
-
-        p001 = 0
-        p002 = tg_TM * (1 - 1j * eg_xj_1)
-        p111 = t_TE
-        p112 = 0
-
-        # M00
-        M00 = (p001 + p002)
-
-        # M01
-        M01 = 0
-
-        # M10
-        M10 = 0
-
-        # M11
-        M11 = (p111 + p112)
-
-        return M00, M01, M10, M11
 
     def RS_polychromatic(self,
                          initial_field,
@@ -1126,7 +1081,7 @@ class Scalar_field_XZ(object):
                                  self.n_background)
         for i, wavelength in enumerate(wavelengths):
             if verbose:
-                print(i)
+                print("{}/{}".format(i,len(wavelengths)), end='\r')
             u_temp.wavelength = wavelength
             self.u = np.zeros_like(self.X, dtype=complex)
             u_ini = initial_field(wavelength)
@@ -1214,7 +1169,7 @@ class Scalar_field_XZ(object):
                                  z_transitions[i_zone + 1], num_pixels_slice)
                 u1 = mask_xz(x0, z0, u_current, self.wavelength,
                              self.n_background)
-                # u1.draw_refraction_index(scale='equal')
+                # u1.draw_refractive_index(scale='equal')
                 u1.BPM()
                 u1.draw(draw_borders=False)
                 fields_BPM.append(u1)
@@ -1397,7 +1352,7 @@ class Scalar_field_XZ(object):
             if reduction_z == 0:
                 reduction_z = 1
 
-            n_new = self.n[::reduction_x, ::reduction_z]
+            n_new = self.n[::reduction_z, ::reduction_x]
             z_new = self.z[::reduction_z]
             x_new = self.x[::reduction_x]
 
@@ -1408,30 +1363,31 @@ class Scalar_field_XZ(object):
             z_new = self.z[::reduce_matrix[1]]
             x_new = self.x[::reduce_matrix[0]]
 
-        mode = 2
+        mode = 1
         if mode == 1:
             diff1 = gradient(np.abs(n_new), axis=0)
             diff2 = gradient(np.abs(n_new), axis=1)
         elif mode == 2:
             diff1 = diff(np.abs(n_new), axis=0)
             diff2 = diff(np.abs(n_new), axis=1)
-            # print diff1.shape, diff2.shape, len(self.z), len(self.x)
-            diff1 = np.append(diff1, np.zeros((1, len(z_new))), axis=0)
-            diff2 = np.append(diff2, np.zeros((len(x_new), 1)), axis=1)
-            # print diff1.shape, diff2.shape
+            # print(diff1.shape, diff2.shape, len(self.z), len(self.x))
+            diff1 = np.append(diff1, np.zeros((1,len(x_new))), axis=0)
+            diff2 = np.append(diff2, np.zeros((len(z_new),1)), axis=1)
+            # print(diff1.shape, diff2.shape)
 
         # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
         t = np.abs(diff1) + np.abs(diff2)
 
-        ix, iy = (t > min_incr).nonzero()
-        self.borders = z_new[iy], x_new[ix]
+        iz , ix  = (t > min_incr).nonzero()
+        # print(iz, ix, z_new.shape, x_new.shape)
+        self.borders = z_new[iz], x_new[ix]
 
         if has_draw:
             plt.figure()
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
-            plt.imshow(t, extent=extension, alpha=0.5)
+            plt.imshow(t.transpose(), extent=extension, aspect='auto', alpha=0.5, cmap='gray')
 
-        return z_new[iy], x_new[ix]
+        return self.borders
 
     def draw(self,
              kind='intensity',
@@ -1560,21 +1516,25 @@ class Scalar_field_XZ(object):
 
         if draw_borders is True:
             if edge_matrix is not None:
-                border0, border1 = edge_matrix
+                borderz, borderx = edge_matrix
+                # print("tengo")
             else:
                 if self.borders is None:
+                    # print("no tengo")
                     self.surface_detection(1, min_incr, reduce_matrix)
-                border0 = self.borders[0]
-                border1 = self.borders[1]
+                borderz = self.borders[0]
+                borderx = self.borders[1]
 
-            plt.plot(border0, border1, 'w.', ms=0.5)
+            # print("draw edges")
+            # print(self.borders)
+            plt.plot(borderz, borderx, 'w.', ms=0.5)
 
         if not filename == '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
-    def draw_refraction_index(self,
+    def draw_refractive_index(self,
                               kind='all',
                               draw_borders=True,
                               title='',
@@ -1610,7 +1570,7 @@ class Scalar_field_XZ(object):
             n_draw = np.imag(self.n)
 
         if reduce_matrix is False:
-            h1 = plt.imshow(n_draw,
+            h1 = plt.imshow(n_draw.transpose(),
                             interpolation='bilinear',
                             aspect='auto',
                             origin='lower',
@@ -1626,14 +1586,14 @@ class Scalar_field_XZ(object):
             if reduction_z == 0:
                 reduction_z = 1
             n_new = n_draw[::reduction_z, ::reduction_x]
-            h1 = plt.imshow(n_new,
+            h1 = plt.imshow(n_new.transpose(),
                             interpolation='bilinear',
                             aspect='auto',
                             origin='lower',
                             extent=extension)
         else:
             n_new = n_draw[::reduce_matrix[0], ::reduce_matrix[1]]
-            h1 = plt.imshow(n_new,
+            h1 = plt.imshow(n_new.transpose(),
                             interpolation='bilinear',
                             aspect='auto',
                             origin='lower',
@@ -1692,12 +1652,13 @@ class Scalar_field_XZ(object):
                              x0=0 * um,
                              logarithm=False,
                              normalize=False,
+                             z_scale='um',
                              draw=True,
                              filename=''):
         """Determine and draws longitudinal profile
 
         Parameters:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refractive_index'
             x0 (float): profile that passes through x=x0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1710,22 +1671,33 @@ class Scalar_field_XZ(object):
 
         imenor, _, _ = nearest(vector=self.x, number=x0)
 
-        if kind == 'refraction_index':
-            n_profile = np.abs(self.n[imenor, :])
+        if z_scale == 'um':
+            factor = 1
+            xlabel = 'z (um)'
+
+        elif z_scale == 'mm':
+            factor = 1000
+            xlabel = 'z (mm)'
+
+        if kind == 'refractive_index':
+            n_profile = np.abs(self.n[:, imenor])
             I_drawing = n_profile
         else:
-            u = np.squeeze(self.u[imenor, :])
+            u = np.squeeze(self.u[:, imenor])
             I_drawing = prepare_drawing(u, kind, logarithm, normalize)
             amplitude, intensity, phase = field_parameters(u)
 
         if draw is True:
             plt.figure(facecolor='w', edgecolor='k')
-            plt.plot(self.z, I_drawing, 'k', linewidth=2)  # 'k-o'
-            plt.axis([self.z[0], self.z[-1], I_drawing.min(), I_drawing.max()])
+            plt.plot(self.z / factor, I_drawing, 'k', linewidth=2)  # 'k-o'
+            plt.axis([
+                self.z[0] / factor, self.z[-1] / factor,
+                I_drawing.min(),
+                I_drawing.max()
+            ])
 
-            texto = 'I(z, x=%d um)' % (x0)
-            plt.xlabel('z (um)')
-            plt.ylabel(texto)
+            plt.xlabel(xlabel)
+            plt.ylabel('I(z, x = {:2.2f} $\mu$m)'.format(x0))
 
             if not filename == '':
                 plt.savefig(filename,
@@ -1739,7 +1711,7 @@ class Scalar_field_XZ(object):
             output = amplitude
         elif kind == 'phase':
             output = phase
-        elif kind == 'refraction_index':
+        elif kind == 'refractive_index':
             output = n_profile
         else:
             output = None
@@ -1755,7 +1727,7 @@ class Scalar_field_XZ(object):
         """Determine and draws transversal profile.
 
         Parameters:
-            kind (str): type of drawing:  'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing:  'amplitude', 'intensity', 'phase', 'refractive_index'
             z0 (float): profile that passes through z=z0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1770,11 +1742,11 @@ class Scalar_field_XZ(object):
 
         imenor, _, _ = nearest(vector=self.z, number=z0)
 
-        if kind == 'refraction_index':
-            n_profile = np.abs(self.n[:, imenor])
+        if kind == 'refractive_index':
+            n_profile = np.abs(self.n[imenor, :])
             I_drawing = n_profile
         else:
-            u = np.squeeze(self.u[:, imenor])
+            u = np.squeeze(self.u[imenor, :])
             I_drawing = prepare_drawing(u, kind, logarithm, normalize)
             amplitude, intensity, phase = field_parameters(u)
 
@@ -1798,7 +1770,7 @@ class Scalar_field_XZ(object):
             output = amplitude
         elif kind == 'phase':
             output = phase
-        elif kind == 'refraction_index':
+        elif kind == 'refractive_index':
             output = n_profile
         else:
             output = None
@@ -1808,7 +1780,7 @@ class Scalar_field_XZ(object):
         """Search for location of maximum.
 
         Parameters:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refraction_index'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'refractive_index'
             x0 (float): profile that passes through x=x0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1820,7 +1792,7 @@ class Scalar_field_XZ(object):
         """
         intensity = np.abs(self.u)**2
 
-        ix, iz = np.unravel_index(intensity.argmax(), intensity.shape)
+        iz , ix= np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
             print(("x = {:2.3f} um, z = {:2.3f} um".format(
                 self.x[ix], self.z[iz])))
@@ -1829,6 +1801,7 @@ class Scalar_field_XZ(object):
     def beam_widths(self,
                     kind='FWHM1D',
                     has_draw=[True, False],
+                    z_scale='um',
                     percentage=0.5,
                     remove_background=None,
                     verbose=False):
@@ -1844,6 +1817,14 @@ class Scalar_field_XZ(object):
             (numpy.array) widths:  for each distance z
             (numpy.array) positions_center: positions of centers for each z
         """
+
+        if z_scale == 'um':
+            factor = 1
+            xlabel = 'z (um)'
+
+        elif z_scale == 'mm':
+            factor = 1000
+            xlabel = 'z (mm)'
 
         widths = np.zeros_like(self.z)
         positions_center = np.zeros_like(self.z)
@@ -1862,8 +1843,8 @@ class Scalar_field_XZ(object):
 
         if has_draw[0] is True:
             plt.figure()
-            plt.plot(self.z, widths, 'r', label='axis')
-            plt.xlabel("z ($\mu$m)")
+            plt.plot(self.z / factor, widths, 'r', label='axis')
+            plt.xlabel(xlabel)
             plt.ylabel("widths ($\mu$m)")
             plt.legend()
 

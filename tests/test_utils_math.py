@@ -17,7 +17,7 @@ import sys
 
 import numpy as np
 from diffractio import eps, no_date
-from diffractio.utils_math import (amplitude2phase, binarize, distance, ndgrid,
+from diffractio.utils_math import (amplitude2phase, binarize, distance, ndgrid_deprecated,
                                    nearest, nearest2, normalize)
 from diffractio.utils_tests import comparison
 
@@ -76,12 +76,14 @@ class Test_utils_math(object):
         proposal, _, _ = nearest2(x, x)
         assert comparison(proposal, solution, eps), func_name
 
-    def test_ndgrid(self):
+    def test_meshgrid(self):
         func_name = sys._getframe().f_code.co_name
 
-        solution = np.array([[0, 0, 0], [1, 1, 1]])
+        solution = np.array([[0, 1], [0, 1],[0, 1]])
         x, y = [0, 1], [2, 3, 4]
-        X, Y = ndgrid(x, y)
+        X, Y = np.meshgrid(x, y)
+        print(X)
+        print(solution)
         proposal = X
         assert comparison(proposal, solution, eps), func_name
 

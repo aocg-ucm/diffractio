@@ -3,15 +3,18 @@
 """ General purpose optics functions """
 
 import pandas as pd
-from numpy import (angle, arcsin, cos, exp, imag, meshgrid, pi, real, sign,
-                   sin, sqrt, unwrap)
 
 from . import degrees, np, plt
-from .utils_math import (fft_convolution1d, fft_convolution2d, find_extrema,
-                         ndgrid, nearest)
+from .utils_math import (
+    fft_convolution1d,
+    fft_convolution2d,
+    find_extrema,
+    ndgrid_deprecated,
+    nearest,
+)
 
 
-def roughness_1D(x, t, s, kind='normal'):
+def roughness_1D(x, t, s, kind="normal"):
     """Rough surface, 1D
 
     Parameters:
@@ -45,11 +48,11 @@ def roughness_1D(x, t, s, kind='normal'):
 
     pesos = np.abs(pesos / np.sqrt((pesos**2).sum()))
 
-    if kind == 'normal':
+    if kind == "normal":
         h_no_corr = s * np.random.randn(2 * N_ancho + 1)
         h_corr = fft_convolution1d(h_no_corr, pesos)
-        h_corr = h_corr[0:len(x)]
-    elif kind == 'uniform':
+        h_corr = h_corr[0 : len(x)]
+    elif kind == "uniform":
         h_corr = s * (np.random.rand(len(x)) - 0.5)
     return h_corr
 
@@ -81,23 +84,25 @@ def roughness_2D(x, y, t, s):
     width = x[-1] - x[0]
     largo = y[-1] - y[0]
     dx = x[1] - x[0]
+    dy = y[1] - y[0]
     L_ancho = width / (2 * dx)
-    L_largo = largo / (2 * dx)
-    M = round(4 * tx / (sqrt(2) * dx))
-    N_ancho = int(np.floor(L_ancho + M))
-    N_largo = int(np.floor(L_largo + M))
+    L_largo = largo / (2 * dy)
+    Mx = round(4 * tx / (np.sqrt(2) * dx))
+    My = round(4 * ty / (np.sqrt(2) * dy))
 
-    desp_ancho, desp_largo = meshgrid(np.arange(-M, M + 1),
-                                      np.arange(-M, M + 1))
+    N_ancho = int(np.floor(L_ancho + Mx))
+    N_largo = int(np.floor(L_largo + My))
+
+    desp_ancho, desp_largo = np.meshgrid(np.arange(-Mx, Mx + 1), np.arange(-My, My + 1))
     desp_ancho = desp_ancho * dx
-    desp_largo = desp_largo * dx
+    desp_largo = desp_largo * dy
 
-    pesos = exp(-2 * (desp_ancho**2 / tx**2 + desp_largo**2 / ty**2))
-    pesos = np.abs(pesos / sqrt((pesos**2).sum()))
+    pesos = np.exp(-2 * (desp_ancho**2 / tx**2 + desp_largo**2 / ty**2))
+    pesos = np.abs(pesos / np.sqrt((pesos**2).sum()))
 
     h_no_corr = s * np.random.randn(2 * N_ancho + 1, 2 * N_largo + 1)
     h_corr = fft_convolution2d(h_no_corr, pesos)
-    h_corr = h_corr[0:len(x), 0:len(y)]
+    h_corr = h_corr[0 : len(x), 0 : len(y)]
     return h_corr
 
 
@@ -116,20 +121,20 @@ def beam_width_1D(u, x, remove_background=None):
         https://en.wikipedia.org/wiki/Beam_diameter
     """
 
-    intensity = np.abs(u)**4
+    intensity = np.abs(u) ** 4
 
     if remove_background is True:
         intensity = intensity - intensity - min()
 
     P = (intensity).sum()
     x_mean = (intensity * x).sum() / P
-    x2_mean = (intensity * (x - x_mean)**2).sum() / P
-    width_x = 4 * sqrt(x2_mean)
+    x2_mean = (intensity * (x - x_mean) ** 2).sum() / P
+    width_x = 4 * np.sqrt(x2_mean)
     return width_x, x_mean
 
 
 def width_percentage(x, y, percentage=0.5, verbose=False):
-    """ beam width (2*sigma) given at a certain height from maximum
+    """beam width (2*sigma) given at a certain height from maximum
 
     Parameters:
         x (np.array): x
@@ -199,21 +204,21 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
 
 
     """
-    X, Y = ndgrid(x, y)
+    X, Y = np.meshgrid(x, y)
     if remove_background is True:
         intensity = intensity - intensity - min()
 
     P = intensity.sum()
     x_mean = (intensity * X).sum() / P
     y_mean = (intensity * Y).sum() / P
-    x2_mean = (intensity * (X - x_mean)**2).sum() / P
-    y2_mean = (intensity * (Y - y_mean)**2).sum() / P
+    x2_mean = (intensity * (X - x_mean) ** 2).sum() / P
+    y2_mean = (intensity * (Y - y_mean) ** 2).sum() / P
     xy_mean = (intensity * (X - x_mean) * (Y - y_mean)).sum() / P
     # gamma = (x2_mean - y2_mean) / np.abs(x2_mean - y2_mean + 1e-16)
     gamma = np.sign(x2_mean - y2_mean + 0.0000000001)
-    rt = sqrt((x2_mean - y2_mean)**2 + 4 * xy_mean**2)
-    dx = 2 * sqrt(2) * sqrt(x2_mean + y2_mean + gamma * rt)
-    dy = 2 * sqrt(2) * sqrt(x2_mean + y2_mean - gamma * rt)
+    rt = np.sqrt((x2_mean - y2_mean) ** 2 + 4 * xy_mean**2)
+    dx = 2 * np.sqrt(2) * np.sqrt(x2_mean + y2_mean + gamma * rt)
+    dy = 2 * np.sqrt(2) * np.sqrt(x2_mean + y2_mean - gamma * rt)
 
     # print(gamma)
     # print(rt)
@@ -229,23 +234,22 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
         u0 = Scalar_field_XY(x, y, 1)
         u0.u = np.sqrt(intensity)
         u0.draw()
-        ellipse = Ellipse(xy=(x_mean, y_mean),
-                          width=dy,
-                          height=dx,
-                          angle=-principal_axis / degrees)
+        ellipse = Ellipse(
+            xy=(x_mean, y_mean), width=dy, height=dx, angle=-principal_axis / degrees
+        )
 
         ax = plt.gca()
         ax.add_artist(ellipse)
         ellipse.set_clip_box(ax.bbox)
         ellipse.set_alpha(0.75)
-        ellipse.set_facecolor('none')
+        ellipse.set_facecolor("none")
         ellipse.set_edgecolor([1, 1, 1])
         ellipse.set_linewidth(3)
 
     return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
 
 
-def refraction_index(filename, wavelength, raw=False, has_draw=True):
+def refractive_index(filename, wavelength, raw=False, has_draw=True):
     """gets refraction index from https://refractiveindex.info .
 
     * Files has to be converted to xlsx format.
@@ -265,20 +269,20 @@ def refraction_index(filename, wavelength, raw=False, has_draw=True):
     """
     data = pd.read_excel(filename)
 
-    wavelengths = data['Wavelength, µm'].values.astype(float)
-    n = data['n'].values.astype(float)
-    kappa = data['k'].values.astype(float)
+    wavelengths = data["Wavelength, µm"].values.astype(float)
+    n = data["n"].values.astype(float)
+    kappa = data["k"].values.astype(float)
 
     if has_draw is True:
         fig, ax1 = plt.subplots()
-        ax1.set_xlabel('wavelengths (nm)')
-        ax1.plot(wavelengths, n, 'r', label='n')
-        ax1.set_ylabel('n', color='r')
-        ax1.tick_params(axis='y', labelcolor='r')
+        ax1.set_xlabel("wavelengths (nm)")
+        ax1.plot(wavelengths, n, "r", label="n")
+        ax1.set_ylabel("n", color="r")
+        ax1.tick_params(axis="y", labelcolor="r")
         ax2 = ax1.twinx()
-        ax2.plot(wavelengths, kappa, 'b', label=r'$\kappa$')
-        ax2.set_ylabel(r'$\kappa$', color='b')
-        ax2.tick_params(axis='y', labelcolor='b')
+        ax2.plot(wavelengths, kappa, "b", label=r"$\kappa$")
+        ax2.set_ylabel(r"$\kappa$", color="b")
+        ax2.tick_params(axis="y", labelcolor="b")
         fig.tight_layout()
         fig.legend()
 
@@ -295,18 +299,14 @@ def refraction_index(filename, wavelength, raw=False, has_draw=True):
         return f_n(wavelength), f_kappa(wavelength)
 
 
-def FWHM1D(x,
-           intensity,
-           percentage=0.5,
-           remove_background=None,
-           has_draw=False):
+def FWHM1D(x, intensity, percentage=0.5, remove_background=None, has_draw=False):
     """FWHM1D
 
     remove_background = 'min', 'mean', None"""
 
-    if remove_background == 'mean':
+    if remove_background == "mean":
         I_background = intensity.mean()
-    elif remove_background == 'min':
+    elif remove_background == "min":
         I_background = intensity.min()
     else:
         I_background = 0
@@ -328,8 +328,9 @@ def FWHM1D(x,
     slope_left = (intensity[i_left + 1] - intensity[i_left]) / delta_x
 
     i_right, _, distance_right = nearest(right, percentage * amp_max)
-    slope_right = (intensity[i_max + i_right] -
-                   intensity[i_max + i_right - 1]) / delta_x
+    slope_right = (
+        intensity[i_max + i_right] - intensity[i_max + i_right - 1]
+    ) / delta_x
 
     i_right = i_right + i_max
 
@@ -348,32 +349,28 @@ def FWHM1D(x,
             intensity = intensity + intensity.min()
         plt.figure()
 
-        plt.plot(x, intensity, 'k', lw=2)
-        plt.plot([x[0], x[-1]], [amp_max, amp_max], 'r--')
-        plt.plot([x[0], x[-1]], [amp_med, amp_med], 'r--')
+        plt.plot(x, intensity, "k", lw=2)
+        plt.plot([x[0], x[-1]], [amp_max, amp_max], "r--")
+        plt.plot([x[0], x[-1]], [amp_med, amp_med], "r--")
 
-        plt.plot(x[i_max], intensity[i_max], 'ro', ms=8)
-        plt.plot(x[int(i_right)], intensity[int(i_left)], 'ro', ms=8)
-        plt.plot(x[int(i_left)], intensity[int(i_right)], 'ro', ms=8)
+        plt.plot(x[i_max], intensity[i_max], "ro", ms=8)
+        plt.plot(x[int(i_right)], intensity[int(i_left)], "ro", ms=8)
+        plt.plot(x[int(i_left)], intensity[int(i_right)], "ro", ms=8)
         plt.ylim(ymin=0)
         plt.xlim(x[0], x[-1])
 
     return np.squeeze(FWHM_x)
 
 
-def FWHM2D(x,
-           y,
-           intensity,
-           percentage=0.5,
-           remove_background='None',
-           has_draw=False,
-           xlim=None):
+def FWHM2D(
+    x, y, intensity, percentage=0.5, remove_background="None", has_draw=False, xlim=None
+):
     """TODO: perform profiles at several angles and fit to a ellipse.
-        Get dx, dy, angle, x_center, y_center"""
+    Get dx, dy, angle, x_center, y_center"""
     # Ix = intensity.mean(axis=0)
     # Iy = intensity.mean(axis=1)
 
-    i_pos, _, I_max = find_extrema(intensity.transpose(), x, y, kind='max')
+    i_pos, _, I_max = find_extrema(intensity.transpose(), x, y, kind="max")
 
     Ix = intensity[:, i_pos[0, 1]]
     Iy = intensity[i_pos[0, 0], :]
@@ -393,32 +390,27 @@ def FWHM2D(x,
     return FWHM_x, FWHM_y
 
 
-def DOF(z,
-        widths,
-        w_factor=np.sqrt(2),
-        w_fixed=0,
-        has_draw=False,
-        verbose=False):
+def DOF(z, widths, w_factor=np.sqrt(2), w_fixed=0, has_draw=False, verbose=False):
     """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
-Parameters:
+    Parameters:
 
-    z (np.array): z positions
-    widths (np.array): width at positions z
-    w_factor (float): range to determine z where   w = w_factor * w0, being w0 the beam waist
-    w_fixed (float): If it is not 0, then it is used as w_min
-    has_draw (bool): if True draws the depth of focus
-    verbose (bool): if True, prints data
+        z (np.array): z positions
+        widths (np.array): width at positions z
+        w_factor (float): range to determine z where   w = w_factor * w0, being w0 the beam waist
+        w_fixed (float): If it is not 0, then it is used as w_min
+        has_draw (bool): if True draws the depth of focus
+        verbose (bool): if True, prints data
 
-References:
+    References:
 
-    B. E. A. Saleh and M. C. Teich, Fundamentals of photonics. john Wiley & sons, 2nd ed. 2007. Eqs (3.1-18) (3.1-22) page 79
+        B. E. A. Saleh and M. C. Teich, Fundamentals of photonics. john Wiley & sons, 2nd ed. 2007. Eqs (3.1-18) (3.1-22) page 79
 
-Returns:
+    Returns:
 
-    (float): Depth of focus
-    (float): beam waist
-    (float, float, float): postions (z_min, z_0, z_max) of the depth of focus
+        (float): Depth of focus
+        (float): beam waist
+        (float, float, float): postions (z_min, z_0, z_max) of the depth of focus
     """
 
     if w_fixed == 0:
@@ -449,31 +441,32 @@ Returns:
     if has_draw:
         plt.figure()
 
-        plt.plot(z, widths, 'k', lw=2)
-        plt.plot(z, -widths, 'k', lw=2)
-        plt.plot(z, np.zeros_like(z), 'k-.', lw=2)
+        plt.plot(z, widths, "k", lw=2)
+        plt.plot(z, -widths, "k", lw=2)
+        plt.plot(z, np.zeros_like(z), "k-.", lw=2)
 
-        plt.plot([z[i_left], z[i_left]], [-widths[i_left], widths[i_left]],
-                 'r--')
-        plt.plot([z[i_right + i_w0], z[i_right + i_w0]],
-                 [-widths[i_right + i_w0], widths[i_right + i_w0]], 'r--')
-        plt.annotate(text='',
-                     xy=(z[i_left], -widths[i_right + i_w0]),
-                     xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
-                     arrowprops=dict(arrowstyle='<->'))
-        plt.text(z[i_w0], -widths.mean(), '$z_{R}$', fontsize=18)
+        plt.plot([z[i_left], z[i_left]], [-widths[i_left], widths[i_left]], "r--")
+        plt.plot(
+            [z[i_right + i_w0], z[i_right + i_w0]],
+            [-widths[i_right + i_w0], widths[i_right + i_w0]],
+            "r--",
+        )
+        plt.annotate(
+            text="",
+            xy=(z[i_left], -widths[i_right + i_w0]),
+            xytext=(z[i_right + i_w0], -widths[i_right + i_w0]),
+            arrowprops=dict(arrowstyle="<->"),
+        )
+        plt.text(z[i_w0], -widths.mean(), "$z_{R}$", fontsize=18)
         plt.xlim(z[0], z[-1])
         plt.ylim(-widths.max(), widths.max())
 
-    return z_rayleigh, beam_waist, np.array(
-        [z[i_left], z[i_w0], z[i_right + i_w0]])
+    return z_rayleigh, beam_waist, np.array([z[i_left], z[i_w0], z[i_right + i_w0]])
 
 
-def detect_intensity_range(x,
-                           intensity,
-                           percentage=0.95,
-                           has_draw=True,
-                           logarithm=True):
+def detect_intensity_range(
+    x, intensity, percentage=0.95, has_draw=True, logarithm=True
+):
     """Determines positions x_min, x_max where intensity of the beam is percentage
 
     Parameters:
@@ -518,23 +511,19 @@ def detect_intensity_range(x,
             I_min2 = I_min
             I_max2 = I_max
 
-        ax.plot(x, I2, c='r', alpha=1, lw=4)
+        ax.plot(x, I2, c="r", alpha=1, lw=4)
 
         x_bordes = [x_min, x_max, x_max, x_min, x_min]
         y_bordes = [I_min2, I_min2, I_max2, I_max2, I_min2]
 
-        ax.fill(x_bordes, y_bordes, c='r', alpha=0.25)
+        ax.fill(x_bordes, y_bordes, c="r", alpha=0.25)
 
     return x_min, x_max
 
 
-def MTF_ideal(frequencies,
-              wavelength,
-              diameter,
-              focal,
-              kind,
-              verbose=False,
-              has_draw=False):
+def MTF_ideal(
+    frequencies, wavelength, diameter, focal, kind, verbose=False, has_draw=False
+):
     """Determines the ideal MTF of a lens.
 
     References:
@@ -556,14 +545,14 @@ def MTF_ideal(frequencies,
     """
 
     F_number = focal / diameter
-    frequency_max = 1000. / (wavelength * F_number)  # porque mido en micras
+    frequency_max = 1000.0 / (wavelength * F_number)  # porque mido en micras
     fx_norm = np.abs(frequencies / frequency_max)
 
-    if kind == '1D':
+    if kind == "1D":
         MTF = 1 - np.abs(fx_norm)
         MTF[fx_norm > 1] = 0
 
-    elif kind == '2D':
+    elif kind == "2D":
         fx2 = np.arccos(fx_norm)
         MTF = np.real(2 / np.pi * (fx2 - np.cos(fx2) * np.sin(fx2)))
 
@@ -574,12 +563,11 @@ def MTF_ideal(frequencies,
         # MTF[isH1] = 2 - MTF[isH1]
 
     if verbose is True:
-        print("frecuencia de bin_level = {:4.2f} lineas/mm".format(
-            frequency_max))
+        print("frecuencia de bin_level = {:4.2f} lineas/mm".format(frequency_max))
 
     if has_draw is True:
         plt.figure()
-        plt.plot(frequencies, MTF, 'k')
+        plt.plot(frequencies, MTF, "k")
         plt.xlabel("$f_x (mm^{-1})$", fontsize=18)
         plt.ylabel("MTF", fontsize=18)
 
@@ -651,12 +639,15 @@ def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose=False):
     if verbose is True:
         print(" MTF Parameters:")
         print("- Strehl_ratio      = {:2.2f}".format(strehl_ratio))
-        print("- MTF_ratio @ {:2.2f}  = {:2.2f}".format(
-            lines_mm, mtf_50_ratio))
-        print("- freq @ {:2.2f}  real (lines/mm) = {:2.2f}".format(
-            lines_mm, freq_50_real))
-        print("- freq @ {:2.2f}  ideal (lines/mm) = {:2.2f}".format(
-            lines_mm, freq_50_ideal))
+        print("- MTF_ratio @ {:2.2f}  = {:2.2f}".format(lines_mm, mtf_50_ratio))
+        print(
+            "- freq @ {:2.2f}  real (lines/mm) = {:2.2f}".format(lines_mm, freq_50_real)
+        )
+        print(
+            "- freq @ {:2.2f}  ideal (lines/mm) = {:2.2f}".format(
+                lines_mm, freq_50_ideal
+            )
+        )
 
     return strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
 
@@ -671,7 +662,7 @@ def gauss_spectrum(wavelengths, w_central, Dw, normalize=True):
         normalize: if True sum of weights is 1
     """
 
-    weigths = exp(-(wavelengths - w_central)**2 / (2 * Dw**2))
+    weigths = np.exp(-((wavelengths - w_central) ** 2) / (2 * Dw**2))
 
     if normalize is True:
         weights = weigths / weigths.sum()
@@ -689,7 +680,7 @@ def lorentz_spectrum(wavelengths, w_central, Dw, normalize=True):
         normalize: if True sum of weights is 1
     """
 
-    weigths = 1 / (1 + ((wavelengths - w_central) / (Dw / 2))**2)
+    weigths = 1 / (1 + ((wavelengths - w_central) / (Dw / 2)) ** 2)
 
     if normalize is True:
         weights = weigths / weigths.sum()
@@ -725,9 +716,8 @@ def normalize_field(self, new_field=False):
         (np.array): normalized field.
     """
 
-    if self.type[0:6] == 'Scalar':
-
-        max_amplitude = np.sqrt(np.abs(self.u)**2).max()
+    if self.type[0:6] == "Scalar":
+        max_amplitude = np.sqrt(np.abs(self.u) ** 2).max()
 
         if new_field is False:
             self.u = self.u / max_amplitude
@@ -736,10 +726,10 @@ def normalize_field(self, new_field=False):
             field_new.u = self.u / max_amplitude
             return field_new
 
-    elif self.type[0:6] == 'Vector':
+    elif self.type[0:6] == "Vector":
         max_amplitude = np.sqrt(
-            np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
-            np.abs(self.Ez)**2).max()
+            np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
+        ).max()
 
         if new_field is False:
             self.Ex = self.Ex / max_amplitude
@@ -799,7 +789,7 @@ def field_parameters(u, has_amplitude_sign=False):
 
     """
 
-    intensity = np.abs(u)**2
+    intensity = np.abs(u) ** 2
     phase = np.angle(u)
 
     if has_amplitude_sign is True:
@@ -856,244 +846,383 @@ def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
     return depth
 
 
-def fresnel_coefficients_dielectric(theta_i, n1, n2):
-    """Components rs, rp, ts y tp - Fresnel queations
+def fresnel_equations_kx(
+    kx,
+    wavelength,
+    n1,
+    n2,
+    outputs=[True, True, True, True],
+    has_draw=True,
+    kind="amplitude_phase",
+):
+    """Fresnel_equations where input are kx part of wavevector.
 
-    Parameters:
-        theta_i (numpy.array or float): angle of incidence.
-        n1 (float): refraction index of first medium
-        n2 (float): refraction index of second medium
-
-    Returns:
-        (numpy.array or float): r_perp
-        (numpy.array or float): r_par
-        (numpy.array or float): t_perp
-        (numpy.array or float): t_par
-    """
-
-    theta_t = arcsin(n1 * sin(theta_i) / n2)
-
-    cos_i = cos(theta_i)
-    cos_t = cos(theta_t)
-
-    r_par = (n2 * cos_i - n1 * cos_t) / (n2 * cos_i + n1 * cos_t)
-    r_perp = (n1 * cos_i - n2 * cos_t) / (n1 * cos_i + n2 * cos_t)
-    t_par = (2 * n1 * cos_i) / (n2 * cos_i + n1 * cos_t)
-    t_perp = (2 * n1 * cos_i) / (n1 * cos_i + n2 * cos_t)
-
-    return r_perp, r_par, t_perp, t_par
-
-
-def reflectance_transmitance_dielectric(theta_i, n1, n2):
-    """Transmittances R_perp, R_par, T_perp, T_par - Fresnel queations
-
-    Parameters:
-        theta_i (numpy.array or float): angle of incidence.
-        n1 (float): refraction index of first medium
-        n2 (float): refraction index of second medium
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
 
     Returns:
-        (numpy.array or float): R_perp
-        (numpy.array or float): R_par
-        (numpy.array or float): T_perp
-        (numpy.array or float): T_par
-    """
-    r_perp, r_par, t_perp, t_par = fresnel_coefficients_dielectric(
-        n1, theta_i, n2)
-
-    theta_t = arcsin(n1 * sin(theta_i) / n2)
-
-    cos_i = cos(theta_i)
-    cos_t = cos(theta_t)
-
-    R_perp = np.abs(r_perp)**2
-    R_par = np.abs(r_par)**2
-    T_perp = np.abs(t_perp)**2 * (n2 * cos_t) / (n1 * cos_i)
-    T_par = np.abs(t_par)**2 * (n2 * cos_t) / (n1 * cos_i)
-
-    return R_perp, R_par, T_perp, T_par
-
-
-def fresnel_coefficients_complex(theta_i, n1, n2c):
-    """
-    Calcula las components rs y rp mediante las eq. de Fresnel
-    n^=n-ik
-    example:
-        theta_i=linspace(0*degrees,90*degrees,10),
-
-    Los parametros de entrada pueden ser arrays de numeros.
-    Para drawlos el array debe ser theta_i
-    n2c puede ser complejo
-    """
-    # Precalculos
-    kiz = cos(theta_i)
-    ktcz = sqrt(n2c**2 - n1**2 * sin(theta_i)**2)
-    ktc2 = n2c**2
-    ki2 = n1**2
-
-    # Calculo de los coeficientes de Fresnel
-    r_perp = (kiz - ktcz) / (kiz + ktcz)
-    t_perp = 2 * kiz / (kiz + ktcz)
-    r_par = (kiz * ktc2 - ktcz * ki2) / (kiz * ktc2 + ktcz * ki2)
-    t_par = 2 * kiz * ktc2 / (kiz * ktc2 + ktcz * ki2)
-
-    return r_perp, r_par, t_perp, t_par
-
-
-def reflectance_transmitance_complex(theta_i, n1, n2c):
-    """
-    Calcula las components rs y rp mediante las eq. de Fresnel
-    n^=n-ik
-    example:
-        theta_i=linspace(0*degrees,90*degrees,10),
-
-    Los parametros de entrada pueden ser arrays de numeros.
-    Para drawlos el array debe ser theta_i
-    n2c puede ser complejo
+        _type_: t_TM, t_TE, r_TM, r_TE  (TM is parallel and TE is perpendicular)
     """
 
-    # Coeficientes de Fresnel
-    r_perp, r_par, t_perp, t_par = fresnel_coefficients_complex(
-        n1, theta_i, n2c)
+    outputs = np.array(outputs)
 
-    # Reflectancia
-    R_perp = np.abs(r_perp)**2
-    R_par = np.abs(r_par)**2
+    k0 = 2 * np.pi / wavelength
 
-    # Precalculo
-    kiz = cos(theta_i)
-    ki2 = n1**2
-    ktcz = sqrt(n2c**2 - n1**2 * sin(theta_i)**2)
-    ktc2 = n2c**2
-    n2R = real(n2c)
-    kappa2 = imag(n2c)
-    B = n2R**2 - kappa2**2 - n1**2 * sin(theta_i)**2
-    ktz = sqrt(0.5 * (B + sqrt(B**2 + 4 * n2R**2 * kappa2**2)))
+    kz_1 = np.sqrt((n1 * k0) ** 2 - kx**2)
 
-    # Transmitancias
-    T_perp = ktz * np.abs(t_perp)**2 / kiz
-    T_par = ki2 * real(ktcz / ktc2) * np.abs(t_par)**2 / kiz
+    alpha = (n2 * k0) ** 2 - kx**2
+    normal = alpha >= 0
+    reflexion_total = alpha < 0
 
-    return R_perp, R_par, T_perp, T_par
+    kz_2 = np.zeros_like(kx, dtype=complex)
+    kz_2[normal] = np.sqrt(alpha[normal])
+    kz_2[reflexion_total] = 1.0j * np.sqrt(-alpha[reflexion_total])
+
+    t_TM, t_TE, r_TM, r_TE = None, None, None, None
+
+    if outputs[0]:
+        t_TM = 2 * n1 * n2 * kz_1 / (n2**2 * kz_1 + n1**2 * kz_2)  # paralelo
+    if outputs[1]:
+        t_TE = 2 * kz_1 / (kz_1 + kz_2)  # perpendicular
+    if outputs[2]:
+        r_TM = (n2**2 * kz_1 - n1**2 * kz_2) / (
+            n2**2 * kz_1 + n1**2 * kz_2
+        )  # paralelo
+    if outputs[3]:
+        r_TE = (kz_1 - kz_2) / (kz_1 + kz_2)  # perpendicular
+
+    if has_draw and outputs.sum() > 0:
+        fig, axs = plt.subplots(1, 2, figsize=(12, 4))
+
+        if kind == "amplitude_phase":
+            if outputs[0]:
+                axs[0].plot(kx, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[0].plot(kx, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[0].plot(kx, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
+            if outputs[3]:
+                axs[0].plot(kx, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$")
+
+            axs[0].legend()
+            axs[0].grid()
+
+            axs[1].set_xlim(kx[0], kx[-1])
+            axs[0].set_xlabel(r"$k_x$")
+            axs[0].set_title("amplitude")
+
+            if outputs[0]:
+                axs[1].plot(kx, np.angle(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[1].plot(kx, np.angle(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[1].plot(kx, np.angle(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
+            if outputs[3]:
+                axs[1].plot(kx, np.angle(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(kx[0], kx[-1])
+            axs[0].set_xlabel(r"$k_x$")
+            axs[1].set_title(r"phase $(^o)$")
+            axs[1].set_ylim(-190, 190)
+            axs[1].set_yticks([-180, -90, 0, 90, 180])
+
+        elif kind == "real_imag":
+            if outputs[0]:
+                axs[0].plot(kx, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[0].plot(kx, np.real(t_TE), "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[0].plot(kx, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$")
+            if outputs[3]:
+                axs[0].plot(kx, np.real(r_TE), "b-.", label="$r_{\perp, TE}$")
+
+            axs[0].legend()
+            axs[0].grid()
+
+            axs[0].set_xlim(kx[0], kx[-1])
+            axs[0].set_xlabel(r"$k_x$")
+            axs[0].set_title("real")
+
+            if outputs[0]:
+                axs[1].plot(kx, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[1].plot(kx, np.imag(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[1].plot(kx, np.imag(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
+            if outputs[3]:
+                axs[1].plot(kx, np.imag(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(kx[0], kx[-1])
+            axs[1].set_xlabel(r"$k_x$")
+            axs[1].set_title(r"imag")
+
+    # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
+
+    return t_TM, t_TE, r_TM, r_TE  # paralelo, perpendicular
 
 
-def draw_fresnel_coefficients(theta_i,
-                              n1,
-                              n2,
-                              r_perp,
-                              r_par,
-                              t_perp,
-                              t_par,
-                              filename=''):
+def transmitances_reflectances_kx(
+    kx, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False
+):
+    """Transmitances and reflectances, where input are kx part of wavevector.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    Dibuja las ecuaciones de fresnel en function del angle de entrada
+
+    outputs = np.array(outputs)
+
+    k0 = 2 * np.pi / wavelength
+
+    kz_1 = np.sqrt((n1 * k0) ** 2 - kx**2)
+
+    alpha = (n2 * k0) ** 2 - kx**2
+    normal = alpha >= 0
+    reflexion_total = alpha < 0
+
+    kz_2 = np.zeros_like(kx, dtype=complex)
+    kz_2[normal] = np.sqrt(alpha[normal])
+    kz_2[reflexion_total] = 1.0j * np.sqrt(-alpha[reflexion_total])
+
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(
+        kx, wavelength, n1, n2, outputs, has_draw=False
+    )
+
+    T_TM, T_TE, R_TM, R_TE = None, None, None, None
+
+    if outputs[0]:
+        T_TM = kz_2 / kz_1 * np.abs(t_TM) ** 2
+    if outputs[1]:
+        T_TE = kz_2 / kz_1 * np.abs(t_TE) ** 2
+    if outputs[2]:
+        R_TM = np.abs(r_TM) ** 2
+    if outputs[3]:
+        R_TE = np.abs(r_TE) ** 2
+
+    if has_draw:
+        plt.figure()
+        if outputs[0]:
+            plt.plot(kx, T_TM, "r", label="$T_{\parallel, TM}$")
+        if outputs[1]:
+            plt.plot(kx, T_TE, "b", label="$T_{\perp, TE}$")
+        if outputs[2]:
+            plt.plot(kx, R_TM, "r-.", label="$R_{\parallel, TM}$")
+        if outputs[3]:
+            plt.plot(kx, R_TE, "b-.", label="$R_{\perp, TE}$")
+
+        plt.xlabel("$k_x$")
+        plt.legend()
+        plt.grid()
+
+        # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
+
+    return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular
+
+
+def fresnel_equations(
+    theta,
+    wavelength,
+    n1,
+    n2,
+    outputs=[True, True, True, True],
+    has_draw=False,
+    kind="amplitude_phase",
+):
+    """Fresnel equations and reflectances, where input are angles of incidence.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+        kind (str): It draw 'amplitude_phase' or 'real_imag'
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
 
-    # Generacion de la figura
-    plt.figure()
+    outputs = np.array(outputs)
 
-    # Amplitud
-    plt.subplot(1, 2, 1)
-    plt.plot(theta_i / degrees,
-             np.abs(r_perp) * sign(r_perp),
-             'k--',
-             lw=2,
-             label=u"$r_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.abs(r_par) * sign(r_par),
-             'k',
-             lw=2,
-             label=u"$r_{\parallel}$")
-    plt.plot(theta_i / degrees,
-             np.abs(t_perp) * sign(t_perp),
-             'r--',
-             lw=2,
-             label=r"$t_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.abs(t_par) * sign(t_par),
-             'r',
-             lw=2,
-             label=r"$t_{\parallel}$")
+    k0 = 2 * np.pi / wavelength
+    kx = n1 * k0 * np.sin(theta)
 
-    # Leyenda de los ejes
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$Amplitud$", fontsize=22)
-    plt.legend(loc=2, prop={'size': 18})
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(
+        kx, wavelength, n1, n2, outputs, has_draw=False
+    )
 
-    # Fase
-    plt.subplot(1, 2, 2)
-    plt.plot(theta_i / degrees,
-             unwrap(angle(r_perp), 2 * pi),
-             'k--',
-             lw=2,
-             label=r"$r_{\perp}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(r_par), 2 * pi),
-             'k',
-             lw=2,
-             label=r"$r_{\parallel}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(t_perp), 2 * pi),
-             'r--',
-             lw=2,
-             label=r"$t_{\perp}$")
-    plt.plot(theta_i / degrees,
-             unwrap(angle(t_par), 2 * pi),
-             'r',
-             lw=2,
-             label=r"$t_{\parallel}$")
+    if has_draw and outputs.sum() > 0:
+        fig, axs = plt.subplots(1, 2, figsize=(12, 4))
+        if kind == "amplitude_phase":
+            if outputs[0]:
+                axs[0].plot(theta / degrees, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[0].plot(theta / degrees, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[0].plot(theta / degrees, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
+            if outputs[3]:
+                axs[0].plot(
+                    theta / degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$"
+                )
 
-    # Leyenda de los ejes
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$phase$", fontsize=22)
-    plt.legend(loc=2, prop={'size': 18})
+            axs[0].legend()
+            axs[0].grid()
 
-    if not filename == '':
-        plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
+            axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[0].set_xlabel(r"$\theta (^o)$")
+            axs[0].set_title("amplitude")
+
+            if outputs[0]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.angle(t_TM) / degrees,
+                    "r",
+                    label="$t_{\parallel, TM}$",
+                )
+            if outputs[1]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.angle(t_TE) / degrees,
+                    "b",
+                    label="$t_{\perp, TE}$",
+                )
+            if outputs[2]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.angle(r_TM) / degrees,
+                    "r-.",
+                    label="$r_{\parallel, TM}$",
+                )
+            if outputs[3]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.angle(r_TE) / degrees,
+                    "b-.",
+                    label="$r_{\perp, TE}$",
+                )
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[1].set_xlabel(r"$\theta (^o)$")
+            axs[1].set_title(r"phase $(^o)$")
+            axs[1].set_ylim(-190, 190)
+            axs[1].set_yticks([-180, -90, 0, 90, 180])
+
+        elif kind == "real_imag":
+            if outputs[0]:
+                axs[0].plot(theta / degrees, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
+            if outputs[1]:
+                axs[0].plot(theta / degrees, np.real(t_TE), "b", label="$t_{\perp, TE}$")
+            if outputs[2]:
+                axs[0].plot(
+                    theta / degrees, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$"
+                )
+            if outputs[3]:
+                axs[0].plot(
+                    theta / degrees, np.real(r_TE), "b-.", label="$r_{\perp, TE}$"
+                )
+
+            axs[0].legend()
+            axs[0].grid()
+            axs[0].set_xlabel(r"$\theta (^o)$")
+            axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[0].set_title("real")
+
+            if outputs[0]:
+                axs[1].plot(
+                    theta / degrees, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$"
+                )
+            if outputs[1]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.imag(t_TE) / degrees,
+                    "b",
+                    label="$t_{\perp, TE}$",
+                )
+            if outputs[2]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.imag(r_TM) / degrees,
+                    "r-.",
+                    label="$r_{\parallel, TM}$",
+                )
+            if outputs[3]:
+                axs[1].plot(
+                    theta / degrees,
+                    np.imag(r_TE) / degrees,
+                    "b-.",
+                    label="$r_{\perp, TE}$",
+                )
+
+            axs[1].legend()
+            axs[1].grid()
+            axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[1].set_xlabel(r"$\theta (^o)$")
+            axs[1].set_title(r"imag")
+
+    return t_TM, t_TE, r_TM, r_TE  # paralelo, perpendicular
 
 
-def drawTransmitancias(theta_i,
-                       n1,
-                       n2,
-                       R_perp,
-                       R_par,
-                       T_perp,
-                       T_par,
-                       filename=''):
+def transmitances_reflectances(
+    theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False
+):
+    """Transmitances and reflectances, where input are angles of incidence.
+
+    Args:
+        kx (np.array): kx
+        wavelength (float): wavelength
+        n1 (float): refraction index of first materia
+        n2 (float): refraction index of second materia
+        has_draw (bool, optional): if True, it draw. Defaults to False.
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
+
+    Returns:
+        _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)
     """
-    Dibuja las ecuaciones de fresnel en function del angle de entrada
-    """
-    # Generacion de la figura
-    plt.figure()
-    # drawing
-    plt.subplot(1, 1, 1)
-    plt.plot(theta_i / degrees,
-             np.real(R_perp),
-             'k--',
-             lw=2,
-             label=u"$R_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.real(R_par),
-             'k',
-             lw=2,
-             label=u"$R_{\parallel}$")
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$Amplitud$", fontsize=22)
-    plt.ylim(-0.01, 1.01)
-    plt.plot(theta_i / degrees,
-             np.real(T_perp),
-             'r--',
-             lw=2,
-             label=r"$T_{\perp}$")
-    plt.plot(theta_i / degrees,
-             np.real(T_par),
-             'r',
-             lw=2,
-             label=r"$T_{\parallel}$")
-    plt.xlabel(r"$\phi (degrees)$", fontsize=22)
-    plt.ylabel(r"$intensity$", fontsize=22)
-    plt.ylim(-0.1, 2)
-    plt.legend(loc=3, prop={'size': 18})
+    outputs = np.array(outputs)
 
-    if not filename == '':
-        plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
+    k0 = 2 * np.pi / wavelength
+    kx = k0 * n1 * np.sin(theta)
+
+    T_TM, T_TE, R_TM, R_TE = transmitances_reflectances_kx(
+        kx, wavelength, n1, n2, outputs, has_draw=False
+    )
+
+    if has_draw:
+        plt.figure()
+        if outputs[0]:
+            plt.plot(theta / degrees, T_TM, "r", label="$T_{\parallel, TM}$")
+        if outputs[1]:
+            plt.plot(theta / degrees, T_TE, "b", label="$T_{\perp, TE}$")
+        if outputs[2]:
+            plt.plot(theta / degrees, R_TM, "r-.", label="$R_{\parallel, TM}$")
+        if outputs[3]:
+            plt.plot(theta / degrees, R_TE, "b-.", label="$R_{\perp, TE}$")
+
+        plt.xlim(theta[0] / degrees, theta[-1] / degrees)
+        plt.xlabel(r"$\theta (^o)$")
+        plt.legend()
+        plt.grid()
+
+
+    return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular

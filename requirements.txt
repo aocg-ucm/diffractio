@@ -1,4 +1,3 @@
-nbsphinx
 traitlets
 nodejs
 numpy
@@ -12,6 +11,4 @@ pandas
 ipywidgets
 ipympl
 
-# psutil
 # opencv-python
-# mayavi

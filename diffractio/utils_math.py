@@ -208,7 +208,7 @@ def find_local_extrema(kind,
         print("bad parameter in find_local_extrema: only 'maxima or 'minima'")
 
     i_pos_integer = np.where(Trues == True)[0]
-    i_pos_integer = i_pos_integer[1:-1]
+    i_pos_integer = i_pos_integer[0:-1]
     x_minima = x[i_pos_integer]
     y_minima = y[i_pos_integer]
 
@@ -343,7 +343,7 @@ def find_extrema(array2D, x, y, kind='max', verbose=False):
     return indexes, xy_ext, extrema
 
 
-def ndgrid(*args, **kwargs):
+def ndgrid_deprecated(*args, **kwargs):
     """n-dimensional gridding like Matlab's NDGRID.
 
     Parameters:
@@ -389,22 +389,22 @@ def ndgrid(*args, **kwargs):
 
         >>> V = [[0, 1], [2, 3, 4]]
 
-        >>> ndgrid(*V) # an array of two arrays with shape (2, 3)
+        >>> ndgrid_deprecated(*V) # an array of two arrays with shape (2, 3)
             array([[[0, 0, 0],
                 [1, 1, 1]],
                 [[2, 3, 4],
                 [2, 3, 4]]])
 
         For input vectors of different data kinds,
-        same_dtype=False makes ndgrid()
+        same_dtype=False makes ndgrid_deprecated()
         return a list of arrays with the respective dtype.
-        >>> ndgrid([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
+        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
         [array([[0, 0, 0], [1, 1, 1]]),
         array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
 
         Default is to return a single array.
 
-        >>> ndgrid([0, 1], [1.0, 1.1, 1.2])
+        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2])
             array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
                 [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
     """
@@ -1004,7 +1004,33 @@ def laguerre_polynomial_nk(x, n=4, k=5):
     return summation
 
 
+
 def get_k(x, flavour='-'):
+    """provides k vector from x vector. With flavour set to "-", the axis will be inverse-fftshifted,
+        thus its DC part being the first index. 
+
+    Parameters:
+        x (np.array): x array
+        flavour (str): '-' (for ifftshifted axis)
+
+    Returns:
+        kx (np.array): k vector
+
+    Fixed by Bob-Swinkels
+
+    """
+    num_x = x.size
+    integerFrom = int( np.floor((1-num_x) / 2 ) )
+    integerTo = int( np.floor((num_x-1) / 2) )
+    intRange = np.linspace(integerFrom, integerTo, num_x) # ordered k axis, DC is at int(np.floor(num_x/2))
+    if flavour == '-':
+        intRange = np.fft.ifftshift(intRange) # leading zero (DC) frequency
+    dx = x[1] - x[0]
+    dk = 2 * np.pi / (num_x * dx)
+    return dk * intRange
+
+
+def get_k_deprecated(x, flavour='-'):
     """provides k vector from x vector. Two flavours are provided (ordered + or disordered - )
 
     Parameters:

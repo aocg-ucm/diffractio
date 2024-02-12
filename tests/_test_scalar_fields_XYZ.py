@@ -148,7 +148,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.cylinder(r0=(0 * um, 0 * um, 0),
                       radius=(20 * um, 20 * um),
                       length=longitud,
-                      refraction_index=1.5,
+                      refractive_index=1.5,
                       axis=(0, 0, 0),
                       angle=0 * degrees)
 
@@ -173,7 +173,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz = Scalar_mask_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.sphere(r0=(0 * um, 0 * um, 200 * um),
                     radius=(50 * um, 50 * um, 50 * um),
-                    refraction_index=2 + 1j,
+                    refractive_index=2 + 1j,
                     angles=(0 * degrees, 0 * degrees, 0 * degrees))
 
         uxyz.incident_field(u0=t1)
@@ -310,12 +310,12 @@ class Test_Scalar_fields_XYZ(object):
         #     r0=(0 * um, 0 * um, 0),
         #     radius=(2 * radiusFibra, 2 * radiusFibra),
         #     length=longitud,
-        #     refraction_index=2)
+        #     refractive_index=2)
 
         uxyz.BPM()
 
         uxyz.draw_XYZ(logarithm=True, normalize='maximum')
-        uxyz.draw_refraction_index()
+        uxyz.draw_refractive_index()
         uxyz.draw_XZ(y0=0.01,
                      logarithm=True,
                      normalize='false',
@@ -436,10 +436,10 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(u2)
         uxyz.sphere(r0=(0 * um, 0 * um, radiusFibra),
                     radius=(radiusFibra, radiusFibra, radiusFibra),
-                    refraction_index=2,
+                    refractive_index=2,
                     angles=(0, 0, 0))
 
-        # uxyz.draw_refraction_index()
+        # uxyz.draw_refractive_index()
         uxyz.draw_XYZ()
         uxyz2 = uxyz.cut_resample(x_limits=(-25 * um, 25 * um),
                                   y_limits=(-25 * um, 25 * um),
@@ -449,7 +449,7 @@ class Test_Scalar_fields_XYZ(object):
                                   interp_kind=(3, 1))
 
         uxyz2.draw_XYZ()
-        # uxyz2.draw_refraction_index()
+        # uxyz2.draw_refractive_index()
         uxyz2.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True

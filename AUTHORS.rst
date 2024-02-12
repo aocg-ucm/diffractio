@@ -18,8 +18,8 @@ Development Lead
 Contributors
 --------------
 
+* Ángela Soria Garcia
+
 * Jesús del Hoyo Muñoz
 
-* Ángela Soria García 
-
-* Joaquín Andrés Porras
+* Francisco Javier Torcal-Milla

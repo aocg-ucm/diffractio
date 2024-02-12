@@ -51,7 +51,7 @@ from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_common import load_data_common, save_data_common, get_date
 from .utils_drawing import normalize_draw, reduce_matrix_size
-from .utils_math import get_edges, get_k, ndgrid, nearest, rotate_image, Bluestein_dft_xy
+from .utils_math import get_edges, get_k, nearest, rotate_image, Bluestein_dft_xy
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -87,6 +87,8 @@ class Vector_field_XY(object):
         self.type = 'Vector_field_XY'
         self.info = info
         self.date = get_date()
+        self.CONF_DRAWING = CONF_DRAWING
+
 
     def __str__(self):
         """Represents data from class."""
@@ -571,7 +573,7 @@ class Vector_field_XY(object):
             field_output.x = kx
             field_output.y = ky
 
-            field_output.X, field_output.Y = ndgrid(field_output.x,
+            field_output.X, field_output.Y = np.meshgrid(field_output.x,
                                                     field_output.y)
             field_output.Ex = Esx
             field_output.Ey = Esy
@@ -588,7 +590,7 @@ class Vector_field_XY(object):
             self.Ez = Esz
             self.x = kx
             self.y = ky
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
 
             if has_draw:
                 self.draw(kind='intensities')
@@ -716,8 +718,7 @@ class Vector_field_XY(object):
             field_output.x = kx
             field_output.y = ky
 
-            field_output.X, field_output.Y = ndgrid(field_output.x,
-                                                    field_output.y)
+            field_output.X, field_output.Y = np.meshgrid(field_output.x,field_output.y)
             field_output.Ex = Esx
             field_output.Ey = Esy
             field_output.Ez = Esz
@@ -733,7 +734,7 @@ class Vector_field_XY(object):
             self.Ez = Esz
             self.x = kx
             self.y = ky
-            self.X, self.Y = ndgrid(self.x, self.y)
+            self.X, self.Y = np.meshgrid(self.x, self.y)
 
             if has_draw:
                 self.draw(kind='intensities')
@@ -887,13 +888,13 @@ class Vector_field_XY(object):
 
         elif num_z > 1:
             if verbose is True:
-                print("1/3")
+                print("1/3", end='\r')
             e0x_zs = e0x.CZT(z, xout, yout, verbose=verbose)
             if verbose is True:
-                print("2/3")
+                print("2/3", end='\r')
             e0y_zs = e0y.CZT(z, xout, yout, verbose=verbose)
             if verbose is True:
-                print("3/3")
+                print("3/3", end='\r')
             e0z_zs = e0x_zs.duplicate()
 
             u_zs = np.zeros_like(e0x_zs.u)

@@ -49,8 +49,9 @@ from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
+from .vector_fields_XZ import Vector_field_XZ
 from .utils_common import load_data_common, save_data_common, get_date
-from .utils_math import ndgrid, nearest
+from .utils_math import ndgrid_deprecated, nearest
 from .utils_optics import normalize_field
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
@@ -81,7 +82,7 @@ class Vector_field_XYZ(object):
         self.y = y
         self.z = z
         self.wavelength = wavelength  # la longitud de onda
-        self.X, self.Y, self.Z = ndgrid(self.x, self.y, self.z)
+        self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
 
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
@@ -91,6 +92,8 @@ class Vector_field_XYZ(object):
         self.type = 'Vector_field_XYZ'
         self.info = info
         self.date = get_date()
+        self.CONF_DRAWING = CONF_DRAWING
+
 
     def __str__(self):
         """Represents data from class."""
@@ -456,7 +459,9 @@ class Vector_field_XYZ(object):
                 iy, tmp1, tmp2 = nearest(self.y, y0)
             else:
                 iy = iy0
-            field_output.u = np.squeeze(self.u[:, iy, :])
+            field_output.Ex = np.squeeze(self.Ex[:, iy, :])
+            field_output.Ey = np.squeeze(self.Ey[:, iy, :])
+            field_output.Ez = np.squeeze(self.Ez[:, iy, :])
             return field_output
 
         if matrix is True:
@@ -464,7 +469,7 @@ class Vector_field_XYZ(object):
                 iy, tmp1, tmp2 = nearest(self.y, y0)
             else:
                 iy = iy0
-            return np.squeeze(self.u[:, iy, :])
+            return np.squeeze(self.Ex[:, iy, :]), np.squeeze(self.Ey[:, iy, :]), np.squeeze(self.Ez[:, iy, :])
 
     def to_Vector_field_YZ(self,
                            ix0=None,
@@ -488,7 +493,9 @@ class Vector_field_XYZ(object):
                 ix, tmp1, tmp2 = nearest(self.x, x0)
             else:
                 iy = ix0
-            field_output.u = np.squeeze(self.u[ix, :, :])
+            field_output.Ex = np.squeeze(self.Ex[ix, :, :])
+            field_output.Ey = np.squeeze(self.Ey[ix, :, :])
+            field_output.Ez = np.squeeze(self.Ez[ix, :, :])            
             return field_output
 
         if matrix is True:
@@ -496,7 +503,7 @@ class Vector_field_XYZ(object):
                 ix, _, _ = nearest(self.x, x0)
             else:
                 ix = ix0
-            return np.squeeze(self.u[ix, :, :])
+            return np.squeeze(self.Ex[ix, :, :]), np.squeeze(self.Ey[ix, :, :]), np.squeeze(self.Ez[ix, :, :])
 
     def to_Z(self,
              kind='amplitude',

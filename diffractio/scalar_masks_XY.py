@@ -37,9 +37,12 @@ import matplotlib.figure as mpfig
 import matplotlib.image as mpimg
 from numpy import (angle, arctan, arctan2, cos, exp, linspace, meshgrid, ones,
                    ones_like, pi, shape, sin, sqrt, zeros, zeros_like)
+from diffractio.utils_math import cart2pol
+
 from PIL import Image
 from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
+import matplotlib.path as mpath
 
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -67,7 +70,6 @@ class Scalar_mask_XY(Scalar_field_XY):
     """
 
     def __init__(self, x=None, y=None, wavelength=None, info=""):
-        # print("init de Scalar_mask_XY")
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 
@@ -134,19 +136,51 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         return (num_pixels_1 / num_pixels) * (delta_x * delta_y)
 
-    def inverse_amplitude(self):
-        """Inverts the amplitude of the mask, phase is equal as initial"""
+    def inverse_amplitude(self, new_field=False):
+        """Inverts the amplitude of the mask, phase is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
+            
+            
+        Returns:
+            Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
+        """
+
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
-        self.u = (1 - amplitude) * exp(1.j * phase)
+        new_amplitude = (1 - amplitude) * exp(1.j * phase)
 
-    def inverse_phase(self):
-        """Inverts the phase of the mask, amplitude is equal as initial"""
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            new.u = new_amplitude
+            return new
+
+    def inverse_phase(self, new_field=False):
+        """Inverts the phase of the mask, amplitude is equal as initial
+        
+        Parameters:
+            new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
+            
+            
+        Returns:
+            Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
+        """
+
         amplitude = np.abs(self.u)
         phase = angle(self.u)
 
-        self.u = amplitude * exp(-1.j * phase)
+        new_amplitude = amplitude * exp(-1.j * phase)
+
+        if new_field is False:
+            self.u = new_amplitude
+        else:
+            new = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            new.u = new_amplitude
+            return new
 
     def filter(self, mask, new_field=True, binarize=False, normalize=False):
         """Widens a field using a mask
@@ -436,7 +470,118 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
-    # TODO: 8 pointed star
+    def polygon(self, vertices):
+        """Draws a polygon with the vertices given in a Nx2 numpy array.
+
+        Args:
+            vertices (np.array): Nx2 array with the x,y positions of the vertices.
+
+        Example:
+            x0 = np.linspace(-3 * mm, 3 * mm, 512)
+            y0 = np.linspace(-3 * mm, 3 * mm, 512)
+            wavelength = 0.6328 *um
+            vertices = np.array([(0 * mm, 0 * mm), (2 * mm, 0 * mm), (2 * mm, 1 * mm),(0 * mm, 1 * mm)])
+            t = Scalar_mask_XY(x0, y0, wavelength)
+            t.polygon(vertices)
+            t.draw()
+        """
+
+        num_x, num_y = self.u.shape
+
+        verticesx, _, _ = nearest2(self.y, vertices[:, 1])
+        verticesy, _, _ = nearest2(self.x, vertices[:, 0])
+
+        i_vertices = np.column_stack((verticesx, verticesy))
+
+        # Create the coordinates of the matrix
+        coordinates = np.column_stack(
+            (np.repeat(np.arange(num_x),
+                       num_y), np.tile(np.arange(num_y), num_x)))
+
+        # Create the Path object of the polygon
+        path = mpath.Path(i_vertices)
+
+        # Verificar si cada punto de la matriz está dentro del polígono
+        in_polygon = path.contains_points(coordinates)
+
+        # Check if each point in the array is inside the polygon
+        self.u[in_polygon.reshape((num_x, num_y))] = 1
+
+    def regular_polygon(self, num_vertices, radius, angle=0):
+        """Generates a regular polygon.
+
+        Args:
+            num_vertices (int): num_vertices
+            radius (float): external radius
+            angle (float): angle of rotation
+        
+        Returns:
+            vertices (np.array): position of vertices
+
+        """
+
+        i_vertices = np.array(range(num_vertices + 1))
+        angles = 2 * np.pi * i_vertices / num_vertices
+
+        x_vertices = radius * np.cos(angles - angle + 90 * degrees)
+        y_vertices = radius * np.sin(angles - angle + 90 * degrees)
+
+        vertices = np.column_stack((x_vertices, y_vertices))
+
+        self.polygon(vertices)
+
+        return vertices
+
+    def star(self, num_peaks, radii, angle=0):
+        """Generates a regular polygon
+
+        Args:
+            num_peaks (int): number of peaks.
+            radii (float, float): external radius
+            angle (float): angle of rotation
+        
+        Returns:
+            vertices (np.array): position of vertices
+
+        Example:
+            x0 = np.linspace(-3 * mm, 3 * mm, 512)
+            y0 = np.linspace(-3 * mm, 3 * mm, 512)
+            wavelength = 0.6328 *um
+            t = Scalar_mask_XY(x0, y0, wavelength)
+            vertices = t.stars(5, (2*mm,1*mm), 0*degrees)
+            t.draw()
+
+        """
+        radii = np.array(radii)
+
+        i_vertices = np.array(range(num_peaks))
+        angles = 2 * np.pi * i_vertices / num_peaks
+
+        phase_shift = 2 * np.pi / (2 * num_peaks)
+
+        x_vertices_max = radii[0] * np.cos(angles - angle + 90 * degrees)
+        y_vertices_max = radii[0] * np.sin(angles - angle + 90 * degrees)
+        vertices_max = np.column_stack((x_vertices_max, y_vertices_max))
+
+        x_vertices_min = radii[1] * np.cos(angles - angle + phase_shift +
+                                           90 * degrees)
+        y_vertices_min = radii[1] * np.sin(angles - angle + phase_shift +
+                                           90 * degrees)
+        vertices_min = np.column_stack((x_vertices_min, y_vertices_min))
+
+        # Find the maximum number of rows between both matrices
+        max_num_rows = 2 * num_peaks
+
+        # Create an empty interleaved matrix with twice the number of rows
+        interleaved_matrix = np.empty((max_num_rows, 2))
+
+        # Interleave the rows from both matrices
+        interleaved_matrix[:max_num_rows:2] = vertices_max
+        interleaved_matrix[1:max_num_rows:2] = vertices_min
+
+        self.polygon(interleaved_matrix)
+
+        return interleaved_matrix
 
     def triangle(self, r0=None, slope=2.0, height=50 * um, angle=0 * degrees):
         """Create a triangle mask. It uses the equation of a straight line: y = -slope * (x - x0) + y0
@@ -466,20 +611,22 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[u > 1] = 1
         self.u = u
 
-    def photon_sieve(self, t1, r0):
+    def photon_sieve(self, t1, r0, top_one=True):
         """Generates a matrix of shapes given in t1.
 
         Parameters:
             t1 (Scalar_mask_XY): Mask of the desired figure to be drawn
             r0 (float, float) or (np.array, np.array): (x,y) point or points where mask is 1
+            top_one (bool): If True, max(mask) = 1
 
 
         Returns:
             (int): number of points in the mask
 
         """
-
-        x0, y0 = r0
+        r0 = np.array(r0)
+        x0 = r0[:, 0]
+        y0 = r0[:, 1]
         u = np.zeros_like(self.X)
         uj = np.zeros_like(self.X)
 
@@ -500,7 +647,12 @@ class Scalar_mask_XY(Scalar_field_XY):
                 uj[i_xcercano, j_ycercano] = 1
         num_points = int(uj.sum())
         u = fftconvolve(uj, t1.u, mode='same')
-        u[u > 1] = 1
+        if top_one:
+            A = np.abs(u)
+            phase = np.angle(u)
+            A[A > 1] = 1
+            u = A * np.exp(1j * phase)
+            #u[u > 1] = 1
         self.u = u
         return num_points
 
@@ -862,6 +1014,25 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
+    def circular_sector(self, r0, radii, angles):
+        """Generates a circular sector.
+
+        Args:
+            r0 (int, int): position of center
+            radii (float) or (float, float): radius
+            angles (float, float): initial and final angle in radians.
+
+        """
+
+        if isinstance(radii, float):
+            radii = (0, radii)
+
+        [rho, theta] = cart2pol(self.X - r0[0], self.Y - r0[1])
+
+        ix = (theta > angles[0]) & (theta <= angles[1]) & (rho >= radii[0]) & (
+            rho < radii[1])
+        self.u[ix] = 1
+
     def super_gauss(self, r0, radius, power=2, angle=0 * degrees):
         """Supergauss mask.
 
@@ -1088,10 +1259,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = 1
 
-        self.u = t * exp(-1.j * k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
-                                     (2 * f2)))
+        self.u = t * exp(-1.j * ( k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
+                                     (2 * f2)) +  np.pi))
 
-    def lens_spherical(self, r0, focal, refraction_index=1.5, radius=0):
+    def lens_spherical(self, r0, focal, refractive_index=1.5, radius=0):
         """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
         When the refraction index decreases, the radius of curvature decrases and less paraxial.
         Now, only one focal.
@@ -1099,11 +1270,11 @@ class Scalar_mask_XY(Scalar_field_XY):
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
             focal (float): focal length of lens
-            refraction_index (float): refraction index
+            refractive_index (float): refraction index
             radius (float): radius of lens mask
 
         lens_spherical:
-            lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refraction_index=1.5)
+            lens(r0=(0 * um, 0 * um), radius= 200 * um, focal= 10 * mm, refractive_index=1.5)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -1114,7 +1285,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         x0, y0 = r0
         angle = 0.
 
-        R = (refraction_index - 1) * focal
+        R = (refractive_index - 1) * focal
 
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
@@ -1128,10 +1299,10 @@ class Scalar_mask_XY(Scalar_field_XY):
         h = (np.sqrt(R**2 - (Xrot**2 + Yrot**2)) - R)
 
         h[R**2 - (Xrot**2 + Yrot**2) < 0] = 0
-        self.u = t * np.exp(1j * k * (refraction_index - 1) * h)
+        self.u = t * np.exp(1j * k * (refractive_index - 1) * h)
         self.u[t == 0] = 0
 
-        return self
+        return h
 
     def aspheric(self, r0, c, k, a, n0, n1, radius=0):
         """asferic surface.
@@ -1180,6 +1351,47 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t3 * np.exp(1j * 2 * np.pi * (n1 - n0) * t / self.wavelength)
 
+    def lens_cylindrical(self,
+                         x0,
+                         focal,
+                         refractive_index=1.5,
+                         radius=0,
+                         angle=0 * degrees):
+        """Cylindrical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition. When the refraction index decreases, the radius of curvature decrases and less paraxial. When refractive_index is None or 0, then the paraxial approximation is used
+
+        Parameters:
+            x0 (float): center of lens
+            focal (float): focal length of lens
+            refractive_index (float): refraction index
+            radius (float): radius of lens mask
+
+        lens_spherical:
+            lens(r0=0, radius= 200 * um, focal= 10 * mm, refractive_index=1.5)
+        """
+
+        k = 2 * np.pi / self.wavelength
+
+        r0 = (x0, 0)
+
+        Xrot, Yrot = self.__rotate__(angle, r0)
+
+        if radius > 0:
+            amplitude = Scalar_mask_XY(self.x, self.y, self.wavelength)
+            amplitude.circle(r0, radius, angle)
+            t = amplitude.u
+        else:
+            t = 1
+
+        if refractive_index in (None, 0):
+            phase = -k * Xrot**2 / (2 * focal)
+        else:
+            R = (refractive_index - 1) * focal
+            h = (np.sqrt(R**2 - Xrot**2) - R)
+            h[R**2 - (Xrot**2) < 0] = 0
+            phase = k * (refractive_index - 1) * h
+
+        self.u = t * np.exp(1j * phase)
+
     def fresnel_lens(self,
                      r0,
                      focal,
@@ -1224,17 +1436,21 @@ class Scalar_mask_XY(Scalar_field_XY):
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
         #t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
         t2.u = sin(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
-        t2.u[t2.u > 0] = levels[0]
-        t2.u[t2.u <= 0] = levels[1]
+
+        if kind == 'amplitude':
+            t2.u[t2.u > 0] = levels[0]
+            t2.u[t2.u <= 0] = levels[1]
 
         if kind == 'phase':
+            t2.u[t2.u > 0] = 1
+            t2.u[t2.u <= 0] = 0
             t2.u = exp(1j * t2.u * phase)
 
         self.u = t2.u * t1
 
     def axicon(self,
                r0,
-               refraction_index,
+               refractive_index,
                angle,
                radius=0,
                off_axis_angle=0 * degrees,
@@ -1243,7 +1459,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            refraction_index (float): refraction index
+            refractive_index (float): refraction index
             angle (float): angle of the axicon
             radius (float): radius of lens mask
             off_axis_angle (float) angle when it works off-axis
@@ -1272,7 +1488,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         else:
             self.u = u_mask * \
-                np.exp(-1j * k * (refraction_index - 1) *
+                np.exp(-1j * k * (refractive_index - 1) *
                        r * np.tan(angle)) * t_off_axis
 
     def axicon_binary(self, r0, period, radius=0):
@@ -1368,7 +1584,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u * t
 
-    def angular_grating(self, r0, period, phase, radius, is_binary=True):
+    def angular_grating(self, r0, num_petals, phase, radius, is_binary=True):
         """Angular grating.
 
         Parameters:
@@ -1379,7 +1595,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             is_binary (bool): if True binary else, scaled
 
         Example:
-            angular_grating(r0=(0 * um, 0 * um), period=20 * um,
+            angular_grating(r0=(0 * um, 0 * um), num_petals =20,
                             phase=0 * um, radius=400 * um, is_binary=True)
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
@@ -1389,7 +1605,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         r = sqrt((self.X - x0)**2 + (self.Y - y0)**2)
         theta = arctan((self.Y - y0) / (self.X - x0))
         # Region de transmitancia
-        t = (1 + sin(2 * pi * (theta - phase) / period)) / 2
+        t = (1 + np.cos((theta - phase) * num_petals)) / 2
         if is_binary is True:
             i0 = t <= 0.5
             t[i0] = 0
@@ -1752,35 +1968,32 @@ class Scalar_mask_XY(Scalar_field_XY):
         amplitud = amin + (amax - amin) * t.u
         self.u = amplitud * np.exp(1j * phase * t.u)
 
-    def blazed_grating(self, period, height, index, x0, angle=0 * degrees):
-        """Binary grating (amplitude and/or phase). The minimum and maximum value of amplitude and phase can be controlled.
+    def blazed_grating(self, period, phase_max, x0, angle=0 * degrees):
+        """Blazed grating.
 
          Parameters:
             period (float): period of the grating
-            height (float): height of the blazed grating
-            index (float): refraction index
+            phase_max (float): maximum phase of the blazed grating
             x0 (float): initial displacement of the grating
             angle (float): angle of the grating in radians
 
         Example:
-            blazed_grating(period=40 * um, height=2 * um, index=1.5, x0, angle=0 * degrees)
+            blazed_grating(period=40 * um, phase_max=2*np.pi, x0, angle=0 * degrees)
         """
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
         # Inclinacion de las franjas
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
-        # Calculo de la pendiente
-        pendiente = height / period
-        # Calculo de la height
-        h = (Xrot) * pendiente
+        num_periods = (self.x[-1] - self.x[0]) / period
 
-        # Calculo del a phase
-        phase = k * (index - 1) * h
-        # Definicion del origen
-        phase = phase - phase.min()
-        # Normalizacion entre 0 y 2pi
-        phase = np.remainder(phase, 2 * pi)
-        self.u = exp(1j * phase)
+        # Height computation
+        phase = (Xrot - x0) * phase_max * num_periods / (self.x[-1] -
+                                                         self.x[0])
+
+        # normalization between 0 and 2pi
+        phase = np.remainder(phase, phase_max)
+        self.u = np.exp(1j * phase)
+        return self
 
     def grating_2D(self,
                    r0,
@@ -1861,12 +2074,13 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = amin + (amax - amin) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
-    def roughness(self, t, s):
+    def roughness(self, t, s, refractive_index=-1):
         """Generation of a rough surface. According to Ogilvy p.224
 
         Parameters:
             t (float, float): (tx, ty), correlation length of roughness
             s (float): std of heights
+            refractive_index (float): refraction index, if -1 it is reflexion
 
         Example:
             roughness(t=(50 * um, 25 * um), s=1 * um)
@@ -1875,7 +2089,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         h_corr = roughness_2D(self.x, self.y, t, s)
 
         k = 2 * pi / self.wavelength
-        self.u = exp(-1.j * k * 2 * h_corr)
+        self.u = exp(1.j * k * (refractive_index - 1) * h_corr)
         return h_corr
 
     def circle_rough(self, r0, radius, angle, sigma):
@@ -1965,6 +2179,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         References:
             https://en.wikipedia.org/wiki/Superellipse
+            
 
         Example:
             super_ellipse(r0=(0 * um, 0 * um), radius=(250 * \
@@ -1994,6 +2209,62 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Definition of transmittance
         u = np.zeros_like(self.X)
         ipasa = np.abs((Xrot) / radiusx)**nx + np.abs((Yrot) / radiusy)**ny < 1
+        u[ipasa] = 1
+        self.u = u
+
+    def superformula(self, r0, radius, n, m, angle=0 * degrees):
+        """superformula. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
+
+        Parameters:
+            r0 (float, float): center of super_ellipse
+            radius (float, float): radius of the super_ellipse
+            n (float, float, float):  n1, n2, n3 parameters
+            m (float): num of petals
+            angle (float): angle of rotation in radians
+
+
+        Note:
+            n1 = n2 = 1: for a square
+            n1 = n2 = 2: for a circle
+            n1 = n2 = 0.5: for a superellipse
+
+        References:
+            Gielis, J. "A Generic Geometric Transformation that Unifies a Wide Range of Natural and Abstract Shapes." Amer. J. Botany 90, 333-338, 2003.
+            https://mathworld.wolfram.com/Superellipse.html
+
+        Example:
+            superformula(r0=(0, 0),  radius=(1.5 * mm, 1.5 * mm), n=(1, 1, 1), m=8, angle=0 * degrees)       
+        """
+
+        if isinstance(r0, (float, int)):
+            x0, y0 = (r0, r0)
+        else:
+            x0, y0 = r0
+
+        n1, n2, n3 = n
+
+        if isinstance(radius, (float, int)):
+            radiusx, radiusy = (radius, radius)
+        else:
+            radiusx, radiusy = radius
+
+        # Rotation of the super-ellipse
+        Xrot, Yrot = self.__rotate__(angle, (x0, y0))
+
+        R = np.sqrt(Xrot**2 + Yrot**2)
+        Theta = np.arctan2(Yrot, Xrot)
+
+        # Definition of transmittance
+        u = np.zeros_like(self.u)
+
+        factor = max(radiusx, radiusy)
+
+        term1 = np.abs(np.cos(0.25 * m * Theta) / (radiusx / factor))**n2
+        term2 = np.abs(np.sin(0.25 * m * Theta) / (radiusy / factor))**n3
+        r_theta = (term1 + term2)**(-1 / n1) * factor
+
+        ipasa = R < r_theta
+
         u[ipasa] = 1
         self.u = u
 

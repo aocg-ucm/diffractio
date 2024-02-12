@@ -3,11 +3,11 @@ Python Diffraction-Interference module
 ================================================
 
 
-.. image:: https://img.shields.io/pypi/v/diffractio.svg
+.. image:: https://img.shields.io/pypi/dm/diffractio
         :target: https://pypi.org/project/diffractio/
 
-.. image:: https://img.shields.io/travis/optbrea/diffractio.svg
-        :target: https://bitbucket.org/optbrea/diffractio/src/master/
+.. image:: https://img.shields.io/pypi/v/diffractio.svg
+        :target: https://pypi.org/project/diffractio/
 
 .. image:: https://readthedocs.org/projects/diffractio/badge/?version=latest
         :target: https://diffractio.readthedocs.io/en/latest/
@@ -134,7 +134,6 @@ Several propagation algorithms for propagation of light are implemented in the *
 
 * **Vector Chirped Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
 
-    """
 
 The fields, masks and sources can be stored in files.
 
@@ -145,8 +144,7 @@ In some modules, videos can be generated for a better analysis of optical fields
 .. image:: readme6.png
    :width: 600
 
-.. image:: readme6.png
-   :width: 600
+
 
 
 Vector beams
@@ -198,6 +196,17 @@ Authors
 .. image:: logoUCM.png
    :width: 125
    :align: right
+
+
+
+Collaborators
+---------------------------
+
+* Ángela Soria Garcia
+
+* Jesús del Hoyo Muñoz
+
+* Francisco Javier Torcal-Milla
 
 
 

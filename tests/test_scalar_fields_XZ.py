@@ -58,7 +58,7 @@ def _func_polychromatic_BPM_(wavelength):
     u1.rectangle(r0=(-100 * um, 1500 * um),
                  size=(200 * um, 1000 * um),
                  angle=0 * degrees,
-                 refraction_index=4)
+                 refractive_index=4)
 
     return u1
 
@@ -73,7 +73,7 @@ def generate_BPM_field():
     u1.incident_field(u0)
     u1.sphere(r0=(0 * um, 0 * um),
               radius=(25 * um, 25 * um),
-              refraction_index=2)
+              refractive_index=2)
     u1.BPM(verbose=False)
 
     return u1
@@ -93,7 +93,7 @@ def generate_BPM_gauss():
     f1.gauss_beam(A=1, x0=0, z0=250 * um, w0=10 * um, theta=0 * degrees)
 
     u1 = Scalar_field_XZ(x=x0, z=z0, wavelength=wavelength)
-    u1.clear_refraction_index()
+    u1.clear_refractive_index()
     u1.incident_field(f1)
     u1.BPM(verbose=False)
     return u1
@@ -122,11 +122,11 @@ class Test_Scalar_fields_XZ(object):
                            aperture=300 * um,
                            radius=(1000 * um, -250 * um),
                            thickness=100 * um,
-                           refraction_index=2,
+                           refractive_index=2,
                            angle=0 * degrees,
                            mask=(10 * um, 3 + 0.05j))
 
-        u1.smooth_refraction_index(type_filter=3,
+        u1.smooth_refractive_index(type_filter=3,
                                    pixels_filtering=2,
                                    max_diff_filter=0.01,
                                    draw_check=False)
@@ -138,14 +138,14 @@ class Test_Scalar_fields_XZ(object):
                 draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_wo')
 
-        u1.draw_refraction_index(draw_borders=True)
+        u1.draw_refractive_index(draw_borders=True)
 
         save_figure_test(newpath, func_name, add_name='_no')
 
         u1.rotate_field(angle=22.5 * degrees,
                         center_rotation=(0, 100),
-                        kind='all')
-        u1.draw_refraction_index(draw_borders=True)
+                        kind='jones_ap')
+        u1.draw_refractive_index(draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_n')
         u1.draw(logarithm=True, draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_wi')
@@ -185,7 +185,7 @@ class Test_Scalar_fields_XZ(object):
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.sphere(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
-                  refraction_index=2)
+                  refractive_index=2)
 
         u1.info = """info:
             test_save_load():
@@ -218,10 +218,10 @@ class Test_Scalar_fields_XZ(object):
         u1.biprism(r0=(0, 0),
                    length=200 * um,
                    height=50 * um,
-                   refraction_index=1.5,
+                   refractive_index=1.5,
                    angle=0)
 
-        u1.draw_refraction_index(draw_borders=True, scale='equal')
+        u1.draw_refractive_index(draw_borders=True, scale='equal')
         u1.BPM()
         u1.draw(logarithm=True,
                 normalize='maximum',
@@ -250,8 +250,8 @@ class Test_Scalar_fields_XZ(object):
         u1.slit(r0=(0 * um, 10 * um),
                 aperture=40 * um,
                 depth=10 * um,
-                refraction_index=1,
-                refraction_index_center='',
+                refractive_index=1,
+                refractive_index_center='',
                 angle=0 * degrees)
 
         u1.BPM(verbose=False)
@@ -260,7 +260,7 @@ class Test_Scalar_fields_XZ(object):
         u1.save_data(filename=filename + '.npz', add_name='_before')
         save_figure_test(newpath, func_name, add_name='_before')
 
-        u1.draw_refraction_index(draw_borders=True)
+        u1.draw_refractive_index(draw_borders=True)
         u1.save_data(filename=filename + '.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_n_before')
 
@@ -273,7 +273,7 @@ class Test_Scalar_fields_XZ(object):
         u1.save_data(filename=filename + '.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_after')
 
-        u1.draw_refraction_index(draw_borders=True)
+        u1.draw_refractive_index(draw_borders=True)
 
         u1.save_data(filename=filename + '.npz', add_name='_after')
         save_figure_test(newpath, func_name, add_name='_n_after')
@@ -376,13 +376,13 @@ class Test_Scalar_fields_XZ(object):
         u1.slit(r0=(10 * um, 0 * um),
                 aperture=200 * um,
                 depth=15 * um,
-                refraction_index=1 + 5j,
-                refraction_index_center='',
+                refractive_index=1 + 5j,
+                refractive_index_center='',
                 angle=0 * degrees)
         u1.biprism(r0=(10 * um, 0 * um),
                    length=200 * um,
                    height=15 * um,
-                   refraction_index=1.5,
+                   refractive_index=1.5,
                    angle=0 * degrees)
         u1.BPM()
         u1.draw(kind='intensity', draw_borders=True)
@@ -444,9 +444,9 @@ class Test_Scalar_fields_XZ(object):
         u1.rectangle(r0=(0 * um, 100 * um),
                      size=(150 * um, 50 * um),
                      angle=45 * degrees,
-                     refraction_index=1.5 - 0 * .00025j)
+                     refractive_index=1.5 - 0 * .00025j)
 
-        u1.draw_refraction_index()
+        u1.draw_refractive_index()
         u1.BPM(verbose=False)
         u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
 
@@ -473,9 +473,9 @@ class Test_Scalar_fields_XZ(object):
         u1.rectangle(r0=(0 * um, 100 * um),
                      size=(150 * um, 50 * um),
                      angle=45 * degrees,
-                     refraction_index=1.5 - 0 * .00025j)
+                     refractive_index=1.5 - 0 * .00025j)
 
-        u1.draw_refraction_index()
+        u1.draw_refractive_index()
         u1.WPM(verbose=False)
         u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
 
@@ -562,13 +562,15 @@ class Test_Scalar_fields_XZ(object):
                 filename='')
         save_figure_test(newpath, func_name, add_name='_int')
 
+        filename = '{}{}{}.{}'.format(newpath, func_name, '_video', 'mp4')
+
         seconds = 1
         u1.video(kind='intensity',
                  logarithm=True,
                  normalize=False,
                  time_video=10 * seconds,
                  frames_reduction=5,
-                 filename='creating_video.mp4',
+                 filename=filename,
                  dpi=100)
 
         assert True
@@ -587,7 +589,7 @@ class Test_Scalar_fields_XZ(object):
         u1.mask_field(size_edge=5 * um)
         u1.sphere(r0=(0 * um, 20 * um),
                   radius=(20 * um, 20 * um),
-                  refraction_index=1.5)
+                  refractive_index=1.5)
         u1.BPM(verbose=False)
         u1.draw_profiles_interactive(kind='intensity',
                                      logarithm=True,
@@ -611,7 +613,7 @@ class Test_Scalar_fields_XZ(object):
         u1.mask_field(size_edge=5 * um)
         u1.sphere(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
-                  refraction_index=2)
+                  refractive_index=2)
         u1.BPM(verbose=False)
         u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
         save_figure_test(newpath, func_name, add_name='')
@@ -634,7 +636,7 @@ class Test_Scalar_fields_XZ(object):
         u1.mask_field(size_edge=5 * um)
         u1.sphere(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
-                  refraction_index=2)
+                  refractive_index=2)
         u1.BPM(verbose=False)
         u1.draw(logarithm=True, normalize='maximum', draw_borders=True)
         save_figure_test(newpath, func_name, add_name='')
@@ -666,8 +668,8 @@ class Test_Scalar_fields_XZ(object):
         # u1.sphere(
         #     r0=(0, 2 * radius_sphere),
         #     radius=(radius_sphere, radius_sphere),
-        #     refraction_index=dielectrico)
-        # u1.draw_refraction_index()
+        #     refractive_index=dielectrico)
+        # u1.draw_refractive_index()
         # u1.BPM(verbose=False)
         u1 = u_focus
         u1.draw(logarithm=False, normalize=False, draw_borders=True)
@@ -697,9 +699,9 @@ class Test_Scalar_fields_XZ(object):
         u1.rectangle(r0=(0 * um, 45 * um),
                      size=(25 * um, 25 * um),
                      angle=0 * degrees,
-                     refraction_index=1.5)
+                     refractive_index=1.5)
 
-        u1.draw_refraction_index(draw_borders=True, min_incr=0.001)
+        u1.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u1.BPM(verbose=False)
         u1.draw(logarithm=True,
                 normalize='maximum',
@@ -750,9 +752,9 @@ class Test_Scalar_fields_XZ(object):
         u1.rectangle(r0=(0 * um, 45 * um),
                      size=(25 * um, 25 * um),
                      angle=0 * degrees,
-                     refraction_index=4)
+                     refractive_index=4)
 
-        u1.draw_refraction_index(draw_borders=True, min_incr=0.001)
+        u1.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u1.BPM(verbose=False)
         u1.draw(logarithm=True,
                 normalize='maximum',
@@ -763,7 +765,7 @@ class Test_Scalar_fields_XZ(object):
         # Hago la inverse y drawing los resultados
         u1.u[:, -1] = 1
         u2 = u1.BPM_back_propagation()
-        # u2.draw_refraction_index(draw_borders=True, min_incr=0.001)
+        # u2.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u2.draw(logarithm=True,
                 normalize='maximum',
                 draw_borders=True,
@@ -795,16 +797,16 @@ class Test_Scalar_fields_XZ(object):
         u1.rectangle(r0=(0 * um, 45 * um),
                      size=(25 * um, 25 * um),
                      angle=0 * degrees,
-                     refraction_index=2)
+                     refractive_index=2)
 
-        u1.draw_refraction_index(draw_borders=True, min_incr=0.001)
+        u1.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u1.incident_field(u0, z0=80 * um)
 
         # Hago la inverse y drawing los resultados
         u2 = u1.BPM_back_propagation()
         # u2.draw_incident_field(
         #     kind='intensity', logarithm=False, normalize=False, filename='')
-        u2.draw_refraction_index(draw_borders=True, min_incr=0.001)
+        u2.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u2.draw(logarithm=True,
                 normalize='maximum',
                 draw_borders=True,
@@ -837,16 +839,16 @@ class Test_Scalar_fields_XZ(object):
 
         u1.sphere(r0=(0, 40 * um),
                   radius=(radius_sphere, radius_sphere),
-                  refraction_index=1)
+                  refractive_index=1)
 
-        u1.smooth_refraction_index(type_filter=3,
+        u1.smooth_refractive_index(type_filter=3,
                                    pixels_filtering=2,
                                    max_diff_filter=0.01,
                                    draw_check=False)
         save_figure_test(newpath, func_name, add_name='_n_diff')
 
         u1.BPM(verbose=False)
-        u1.draw_refraction_index(scale='scaled')
+        u1.draw_refractive_index(scale='scaled')
         save_figure_test(newpath, func_name, add_name='_n')
 
         u1.draw(kind='intensity',
