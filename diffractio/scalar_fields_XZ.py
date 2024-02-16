@@ -254,7 +254,6 @@ class Scalar_field_XZ(object):
             new_field.clear_field()
         return new_field
 
-
     def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max):
         """Transforms XY mask into XZ mask.
             - Areas with value 0 pass to n_background.
@@ -267,17 +266,14 @@ class Scalar_field_XZ(object):
         Returns:
             _type_: _description_
         """
-        
+
         self.x = mask_XY.x
         self.z = mask_XY.y
         self.X, self.Z = np.meshgrid(self.x, self.z)
         self.u = np.zeros_like(self.X, dtype=complex)
-        
-        
-        
-        self.n = mask_XY.u* refractive_index_max
-        self.n[self.n<1]=self.n_background
-        
+
+        self.n = mask_XY.u * refractive_index_max
+        self.n[self.n < 1] = self.n_background
 
     def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
         """Rotate all the image a certain angle
@@ -396,11 +392,11 @@ class Scalar_field_XZ(object):
                              (2 * pixels_filtering**2))
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.z)):
-                max_diff = np.abs(np.diff(self.n[i,:])).max()
+                max_diff = np.abs(np.diff(self.n[i, :])).max()
                 if max_diff > max_diff_filter:
                     lineas_filtradas[i] = 1
-                    self.n[i,:] = fftshift(
-                        ifft(fft(self.n[i,:]) * fft(filtro1)))
+                    self.n[i, :] = fftshift(
+                        ifft(fft(self.n[i, :]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
             percentage_filtered = 100 * num_filtrados / len(self.z)
         elif type_filter == 3:
@@ -412,11 +408,11 @@ class Scalar_field_XZ(object):
             filtro1[centerz - pixels_filtering:centerz + pixels_filtering] = 1
             filtro1 = filtro1 / sum(filtro1)
             for i in range(len(self.x)):
-                max_diff = np.abs(np.diff(self.n[:,i])).max()
+                max_diff = np.abs(np.diff(self.n[:, i])).max()
                 if max_diff > max_diff_filter:
                     lineas_filtradas[i] = 1
-                    self.n[:,i] = fftshift(
-                        ifft(fft(self.n[:,i]) * fft(filtro1)))
+                    self.n[:, i] = fftshift(
+                        ifft(fft(self.n[:, i]) * fft(filtro1)))
                     num_filtrados = num_filtrados + 1
             percentage_filtered = 100 * num_filtrados / len(self.x)
 
@@ -619,7 +615,6 @@ class Scalar_field_XZ(object):
         u_final.u = self.u[:, -1]
         return u_final
 
-
     def __BPM__(self,
                 has_edges=True,
                 pow_edge=80,
@@ -641,7 +636,7 @@ class Scalar_field_XZ(object):
         dz = self.z[1] - self.z[0]
 
         q1 = (0.25 * self.wavelength / 2 * dn / dz,
-                0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
+              0.25 * (self.x[-1] - self.x[0])**2 / self.wavelength / dz)
         self.quality = q1
 
         k0 = 2 * np.pi / self.wavelength
@@ -668,39 +663,35 @@ class Scalar_field_XZ(object):
 
         if has_edges is False:
             has_filter = np.zeros_like(self.z)
-            
+
         elif isinstance(has_edges, int):
             has_filter = np.ones_like(self.z)
         else:
             has_filter = has_edges
-        
-        
+
         width_edge = 0.9*(self.x[-1]-self.x[0])/2
-        x_center=(self.x[-1]+self.x[0])/2
-        
+        x_center = (self.x[-1]+self.x[0])/2
+
         filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
-        field[0,:] = field_z
+        field[0, :] = field_z
         for k in range(0, numz):
             if has_filter[k] == 0:
                 filter_edge = 1
             else:
                 filter_edge = filter_function
-                
-            
+
             if verbose is True:
                 print("BPM: {}/{}".format(k, numz), sep="\r", end="\r")
 
-            phase2 = np.exp(1j * self.n[k,:] * k0 * deltaz)
+            phase2 = np.exp(1j * self.n[k, :] * k0 * deltaz)
             field_z = ifft((fft(field_z) * phase1)) * phase2
-            self.u[k,:] = self.u[k,:] + field_z * filter_edge 
+            self.u[k, :] = self.u[k, :] + field_z * filter_edge
 
         if matrix is True:
             return self.u
 
-            
-            
-    def BPM(self,has_edges=True, pow_edge=80, division=False,  matrix=False,  verbose=False):
+    def BPM(self, has_edges=True, pow_edge=80, division=False, matrix=False, verbose=False):
         """Beam propagation method (BPM).
 
             Parameters:
@@ -729,20 +720,20 @@ class Scalar_field_XZ(object):
             for i in range(num_executions):
                 if verbose is True:
                     print("{}/{}".format(i, num_executions),
-                        sep="\r",
-                        end="\r")
+                          sep="\r",
+                          end="\r")
 
                 sl = slice(i * division, (i + 1) * division)
                 ui = Scalar_field_XZ(x=self.x,
-                                    z=self.z[sl],
-                                    wavelength=self.wavelength,
-                                    n_background=self.n_background)
-                ui.n = self.n[sl,:]
+                                     z=self.z[sl],
+                                     wavelength=self.wavelength,
+                                     n_background=self.n_background)
+                ui.n = self.n[sl, :]
                 ui.u0 = uf
 
                 ui = BPM(ui, has_edges, pow_edge, matrix, verbose)
                 uf = ui.final_field().u
-                self.u[sl,:] = ui.u
+                self.u[sl, :] = ui.u
 
             if matrix is True:
                 return self.u
@@ -750,7 +741,6 @@ class Scalar_field_XZ(object):
             t2 = time.time()
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
-                
 
     def BPM_inverse(self, verbose=False):
         """
@@ -768,7 +758,7 @@ class Scalar_field_XZ(object):
                                     wavelength=self.wavelength,
                                     n_background=self.n_background)
         c_inverse.n = np.fliplr(self.n)
-        c_inverse.u0.u = np.conjugate(self.u[-1,:])
+        c_inverse.u0.u = np.conjugate(self.u[-1, :])
         c_inverse.u = np.zeros_like(self.u)
         c_inverse.BPM(verbose)
 
@@ -861,7 +851,7 @@ class Scalar_field_XZ(object):
                 self.quality))
         else:
             if verbose is True:
-                print('Good result: factor {:2.2f}'.format(self.quality),sep="\r", end="\r")
+                print('Good result: factor {:2.2f}'.format(self.quality), sep="\r", end="\r")
 
         # matrix W para integracion simpson
         a = [2, 4]
@@ -913,11 +903,11 @@ class Scalar_field_XZ(object):
             pool.close()
             pool.join()
             for i in range(len(self.z)):
-                self.u[i,:] = t[i]
+                self.u[i, :] = t[i]
         time2 = time.time()
 
         if verbose is True:
-            print("time in RS= {}. num proc= {}".format(  time2 - time1, num_processors),  sep="\r", end="\r")
+            print("time in RS= {}. num proc= {}".format(time2 - time1, num_processors), sep="\r", end="\r")
 
         return self.u
 
@@ -954,16 +944,14 @@ class Scalar_field_XZ(object):
             result = self.u[:, i]
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
             self.u[:, i + 1] = result_next
-            if verbose: 
+            if verbose:
                 print("{}/{}".format(i, num_steps), sep='\r', end='\r')
-
 
         if matrix is True:
             return self.u
 
-
     def WPM(self,
-            kind = 'schmidt',
+            kind='schmidt',
             has_edges=True,
             pow_edge=80,
             matrix=False,
@@ -993,7 +981,7 @@ class Scalar_field_XZ(object):
         dx = x[1] - x[0]
         dz = z[1] - z[0]
 
-        self.u[0,:] = self.u0.u
+        self.u[0, :] = self.u0.u
         kx = get_k(x, flavour='+')
         k_perp2 = kx**2
         k_perp = kx
@@ -1006,31 +994,30 @@ class Scalar_field_XZ(object):
             has_filter = np.ones_like(self.z)
         else:
             has_filter = has_edges
-        
-        
+
         width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center=(self.x[-1]+self.x[0])/2
-        
+        x_center = (self.x[-1]+self.x[0])/2
+
         filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
 
         t1 = time.time()
 
         num_steps = len(self.z)
         for j in range(1, num_steps):
-   
+
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
                 filter_edge = filter_function
 
             if kind == 'schmidt':
-                self.u[ j,:] = self.u[j,:] + WPM_schmidt_kernel(
-                    self.u[j - 1,:], self.n[ j - 1,:], k0, k_perp2,
+                self.u[j, :] = self.u[j, :] + WPM_schmidt_kernel(
+                    self.u[j - 1, :], self.n[j - 1, :], k0, k_perp2,
                     dz) * filter_edge
             elif kind == 'scalar':
 
-                Nj, KP = np.meshgrid(self.n[j - 1,:], k_perp)
-                X, UJ = np.meshgrid(x, fftshift(fft(self.u[j - 1,:])))
+                Nj, KP = np.meshgrid(self.n[j - 1, :], k_perp)
+                X, UJ = np.meshgrid(x, fftshift(fft(self.u[j - 1, :])))
 
                 kz = csqrt((Nj * k0)**2 - KP**2)
                 Pj = np.exp(1j * kz * dz)
@@ -1038,11 +1025,10 @@ class Scalar_field_XZ(object):
                 WXj = UJ * np.exp(1j * KP * (X - x[0]))
 
                 uj = np.mean(WXj * Pj, 0)
-                self.u[j,:] =  self.u[j,:] + uj * filter_edge
+                self.u[j, :] = self.u[j, :] + uj * filter_edge
 
             if verbose is True:
                 print("{}".format(j), sep='\r', end='\r')
-
 
         t2 = time.time()
         if verbose is True:
@@ -1051,7 +1037,6 @@ class Scalar_field_XZ(object):
 
         if matrix is True:
             return self.u
-
 
     def RS_polychromatic(self,
                          initial_field,
@@ -1081,7 +1066,7 @@ class Scalar_field_XZ(object):
                                  self.n_background)
         for i, wavelength in enumerate(wavelengths):
             if verbose:
-                print("{}/{}".format(i,len(wavelengths)), end='\r')
+                print("{}/{}".format(i, len(wavelengths)), end='\r')
             u_temp.wavelength = wavelength
             self.u = np.zeros_like(self.X, dtype=complex)
             u_ini = initial_field(wavelength)
@@ -1371,14 +1356,14 @@ class Scalar_field_XZ(object):
             diff1 = diff(np.abs(n_new), axis=0)
             diff2 = diff(np.abs(n_new), axis=1)
             # print(diff1.shape, diff2.shape, len(self.z), len(self.x))
-            diff1 = np.append(diff1, np.zeros((1,len(x_new))), axis=0)
-            diff2 = np.append(diff2, np.zeros((len(z_new),1)), axis=1)
+            diff1 = np.append(diff1, np.zeros((1, len(x_new))), axis=0)
+            diff2 = np.append(diff2, np.zeros((len(z_new), 1)), axis=1)
             # print(diff1.shape, diff2.shape)
 
         # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
         t = np.abs(diff1) + np.abs(diff2)
 
-        iz , ix  = (t > min_incr).nonzero()
+        iz, ix = (t > min_incr).nonzero()
         # print(iz, ix, z_new.shape, x_new.shape)
         self.borders = z_new[iz], x_new[ix]
 
@@ -1470,7 +1455,7 @@ class Scalar_field_XZ(object):
             print("bad kind parameter")
             return
 
-        h1 = plt.imshow(I_drawing,
+        h1 = plt.imshow(I_drawing.transpose(),
                         interpolation=interpolation,
                         aspect='auto',
                         origin='lower',
@@ -1792,7 +1777,7 @@ class Scalar_field_XZ(object):
         """
         intensity = np.abs(self.u)**2
 
-        iz , ix= np.unravel_index(intensity.argmax(), intensity.shape)
+        iz, ix = np.unravel_index(intensity.argmax(), intensity.shape)
         if verbose is True:
             print(("x = {:2.3f} um, z = {:2.3f} um".format(
                 self.x[ix], self.z[iz])))
