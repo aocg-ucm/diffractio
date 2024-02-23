@@ -40,7 +40,7 @@ jobs:
         py.test --junitxml=test-reports/test-report.xml --cov-report=term-missing:skip-covered --cov=diffractio > pipe
 
     - name: Pytest coverage comment
-      uses: MishaKav/pytest-coverage-comment@v1
+      uses: MishaKav/pytest-coverage-comment@v1.1.51
       if: always()
       with:
         pytest-coverage-path: ./pytest-coverage.txt
