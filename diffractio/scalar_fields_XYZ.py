@@ -67,6 +67,7 @@ from .utils_drawing import normalize_draw
 from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
+from .utils_drawing3D import draw, video_isovalue
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
@@ -1309,6 +1310,28 @@ class Scalar_field_XYZ():
         h1.set_cmap(
             self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
+        
+    def draw_XYZ(self, kind:str='volume', drawing:str = 'intensity', has_grid:bool=False,  filename='', **kwargs):
+        """_summary_
+
+        Args:
+            kind (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
+            variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+            has_grid (bool, optional): add grid. Defaults to False.
+            filename (str, optional): saves images: html, png or svg. Defaults to ''.
+        """        
+        draw(self, kind, drawing, has_grid,  filename, **kwargs)
+
+
+    def video_isovalue(self,  filename:str, variable:str = 'refractive_index',   **kwargs):
+
+        """_summary_
+
+        Args:
+            filename (str): _description_. Defaults to ''.
+            variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+        """
+        video_isovalue(self,  filename, variable,  **kwargs)
 
     def draw_XYZ_deprecated(self,
                             kind: str = 'intensity',
