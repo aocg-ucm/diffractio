@@ -37,6 +37,7 @@ jobs:
 
     - name: Pytest coverage comment
       uses: MishaKav/pytest-coverage-comment@main
+      if: always()
       with:
         pytest-xml-coverage-path: ./coverage.xml
         junitxml-path: ./test-reports/test-report.xml
