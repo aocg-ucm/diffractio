@@ -1,0 +1,52 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Jupyter notebook build check
+
+env:
+  NOTEBOOK_DIR: 'docs'
+  EXECUTION_TIMEOUT: 10
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip' # caching pip dependencies
+        # https://github.com/actions/setup-python?tab=readme-ov-file#caching-packages-dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .
+        pip install jupyter papermill
+    - name: Execute notebooks
+      run: |
+        notebooks=$(find "$NOTEBOOK_DIR" -name "*.ipynb")
+        if [[ -n "$notebooks" ]]; then
+          echo "Running notebooks:"
+          find "$NOTEBOOK_DIR" -name "*.ipynb" -print0 | while read -r -d $'\0' notebook_path;
+          do
+            echo "[notebook_path] $notebook_path"
+            # Execute notebooks using papermill and silence output
+            python -m papermill "$notebook_path" /dev/null  \
+              --execution-timeout "$EXECUTION_TIMEOUT"  \
+              --no-request-save-on-cell-execute --autosave-cell-every 0
+            # --no-progress-bar
+          done
+        else
+          echo "No Jupyter notebooks found in the 'docs' directory."
+        fi
