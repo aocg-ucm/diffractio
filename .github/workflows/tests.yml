@@ -33,7 +33,15 @@ jobs:
     - name: Test with pytest
       run: |
         mkdir -p test-reports
-        py.test --junitxml=test-reports/test-report.xml
+        py.test --junitxml=test-reports/test-report.xml --cov-report=term-missing:skip-covered --cov=diffractio | tee pytest-coverage.txt
+
+    - name: Pytest coverage comment
+      uses: MishaKav/pytest-coverage-comment@main
+      with:
+        pytest-coverage-path: ./pytest-coverage.txt
+        junitxml-path: ./pytest.xml
+
+        
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
