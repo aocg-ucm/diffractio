@@ -1,0 +1,46 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Test Python package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip' # caching pip dependencies
+        # https://github.com/actions/setup-python?tab=readme-ov-file#caching-packages-dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .
+        pip install jupyter papermill
+    - name: Execute notebooks
+      run: |
+        notebooks=$(find ./docs/ -name "*.ipynb")
+        if [[ -n "$notebooks" ]]; then
+          # Execute notebooks using papermill and silence output
+          echo "Running notebooks:"
+          for notebook_path in ./docs/**/*.ipynb;
+          do
+            # python -m jupyter execute "$notebook_path" --NbClientApp.allow_errors=False
+            python -m papermill "$notebook_path" /dev/null
+          done
+        else
+          echo "No Jupyter notebooks found in the 'docs' directory."
+        fi
