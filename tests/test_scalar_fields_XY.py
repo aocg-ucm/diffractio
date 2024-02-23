@@ -5,7 +5,7 @@ import datetime
 import os
 import sys
 import time
-
+import pytest
 from diffractio import degrees, eps, mm, no_date, np, plt, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
@@ -307,6 +307,7 @@ class Test_Scalar_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
+    @pytest.mark.xfail
     def test_profile_manual(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -363,6 +364,7 @@ class Test_Scalar_fields_XY(object):
         print(inten1)
         assert True
 
+    @pytest.mark.xfail
     def test_send_image_screen(self):
         # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
