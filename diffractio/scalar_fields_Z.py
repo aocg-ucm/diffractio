@@ -203,7 +203,7 @@ class Scalar_field_Z(object):
         except:
             return False
 
-    def load_data(self, filename: str, verbose: bool = False\):
+    def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 

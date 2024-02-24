@@ -143,7 +143,7 @@ class Vector_field_Z(object):
         except:
             return False
 
-    def load_data(self, filename: str, verbose: bool = False\):
+    def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_Z.
             The methods included are: npz, matlab
 
