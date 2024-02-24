@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
@@ -32,6 +34,8 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
@@ -57,7 +61,8 @@ class Vector_field_X(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x, wavelength, info=''):
+    def __init__(self, x: NDArray | None = None, wavelength: float | None = None, 
+                info: str = ""):        
         self.x = x
         self.wavelength = wavelength  # la longitud de onda
 
@@ -98,7 +103,7 @@ class Vector_field_X(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_X. For example two light sources or two masks
 
         Parameters:
@@ -118,7 +123,8 @@ class Vector_field_X(object):
 
         return EM
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -139,7 +145,7 @@ class Vector_field_X(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
 
@@ -164,14 +170,14 @@ class Vector_field_X(object):
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def get(self, kind='fields', is_matrix=True):
+    def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_X.
 
         Parameters:
@@ -347,7 +353,7 @@ class Vector_field_X(object):
         self.Ez = self.Ez / max_amplitude
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=0,
              normalize=False,
              cut_value=None,

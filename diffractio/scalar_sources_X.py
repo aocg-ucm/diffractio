@@ -25,8 +25,12 @@ The magnitude is related to microns: `mifcron = 1.`
 *Also*
     * Polychromatic and extendes sources are defined in scalar_fields_X.py for multiprocessing purposes.
 """
+# flake8: noqa
+
 
 from numpy import cos, exp, pi, sign, sin, sqrt
+
+from . import npt, Any, NDArray, floating
 
 from . import degrees, np, um
 from .scalar_fields_X import Scalar_field_X
@@ -51,7 +55,8 @@ class Scalar_source_X(Scalar_field_X):
         self.date (str): date when performed
     """
 
-    def __init__(self, x, wavelength, n_background=1, info=""):
+    def __init__(self, x: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'
 

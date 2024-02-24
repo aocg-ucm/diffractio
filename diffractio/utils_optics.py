@@ -1,17 +1,20 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """ General purpose optics functions """
 
 import pandas as pd
+
+from . import npt, Any, NDArray, floating
+
 
 from . import degrees, np, plt
 from .utils_math import (
     fft_convolution1d,
     fft_convolution2d,
     find_extrema,
-    ndgrid_deprecated,
-    nearest,
-)
+    nearest)
 
 
 def roughness_1D(x, t, s, kind="normal"):

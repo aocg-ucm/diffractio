@@ -40,6 +40,16 @@ from matplotlib import cm, rcParams
 
 from .config import CONF_DRAWING
 
+# https://numpy.org/devdocs/reference/typing.html
+from typing import Any
+import numpy.typing as npt
+NDArray = npt.NDArray
+NDArrayInt = npt.NDArray[np.int_]
+NDArrayFloat = npt.NDArray[np.float_]
+floating = np.float_
+integer = np.integer
+
+
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
 __version__ = '0.3.1'

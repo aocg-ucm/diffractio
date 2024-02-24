@@ -62,12 +62,17 @@ import types
 from copy import deepcopy
 from multiprocessing import Pool
 
+
+
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
+
+from . import npt, Any, NDArray, floating
+
 
 from . import np, plt
 from . import num_max_processors, degrees, eps, mm, seconds, um
@@ -110,13 +115,8 @@ class Scalar_field_XZ(object):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self,
-                 x=None,
-                 z=None,
-                 wavelength=None,
-                 n_background=1,
-                 info=''):
-
+    def __init__(self, x: NDArray | None = None, z: NDArray | None = None, 
+                wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
         self.wavelength = wavelength
@@ -168,7 +168,7 @@ class Scalar_field_XZ(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Parameters:
@@ -242,7 +242,7 @@ class Scalar_field_XZ(object):
 
         self = reduce_to_1(self)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_XZ(self.x, self.z, self.wavelength,
         #                             self.n_background)
@@ -318,7 +318,7 @@ class Scalar_field_XZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -443,7 +443,8 @@ class Scalar_field_XZ(object):
 
         return percentage_filtered, lineas_filtradas
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -464,7 +465,7 @@ class Scalar_field_XZ(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Scalar_field_XZ.
             The methods included are: npz, matlab
 
@@ -1375,7 +1376,7 @@ class Scalar_field_XZ(object):
         return self.borders
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=0,
              normalize='',
              draw_borders=False,
@@ -1612,7 +1613,7 @@ class Scalar_field_XZ(object):
         return h1
 
     def draw_incident_field(self,
-                            kind='intensity',
+                            kind: str = 'intensity',
                             logarithm=False,
                             normalize=False,
                             filename=''):
@@ -1633,7 +1634,7 @@ class Scalar_field_XZ(object):
         u_inc.draw(kind, logarithm, normalize, None, filename)
 
     def profile_longitudinal(self,
-                             kind='intensity',
+                             kind: str = 'intensity',
                              x0=0 * um,
                              logarithm=False,
                              normalize=False,
@@ -1703,7 +1704,7 @@ class Scalar_field_XZ(object):
         return output
 
     def profile_transversal(self,
-                            kind='intensity',
+                            kind: str = 'intensity',
                             z0=0 * um,
                             logarithm=False,
                             normalize=False,
@@ -1839,7 +1840,7 @@ class Scalar_field_XZ(object):
         return widths, positions_center
 
     # def video_profiles(self,
-    #                    kind='intensity',
+    #                    kind: str = 'intensity',
     #                    kind_profile='transversal',
     #                    step=1,
     #                    wait=0.001,
@@ -1902,7 +1903,7 @@ class Scalar_field_XZ(object):
     #     plt.close('')
 
     def video(self,
-              kind='intensity',
+              kind: str = 'intensity',
               z_min=None,
               z_max=None,
               logarithm=False,
@@ -1967,7 +1968,7 @@ class Scalar_field_XZ(object):
         plt.close()
 
     def draw_profiles_interactive(self,
-                                  kind='intensity',
+                                  kind: str = 'intensity',
                                   logarithm=False,
                                   normalize=False):
         """Draws profiles interactivey. Only transversal

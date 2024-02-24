@@ -44,6 +44,9 @@ from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
 import matplotlib.path as mpath
 
+from . import npt, Any, NDArray, floating
+
+
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_sources_XY import Scalar_source_XY
@@ -69,7 +72,9 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x=None, y=None, wavelength=None, info=""):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                 wavelength: float | None = None, info: str = ""):
+        
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 

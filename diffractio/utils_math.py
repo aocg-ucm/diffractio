@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """ Common functions to classes """
 
+# flake8: noqa
+
+
 from copy import deepcopy
 from math import factorial
 import numpy as np
@@ -13,6 +16,7 @@ from scipy.signal import fftconvolve
 from numpy.fft import fft, ifft
 from scipy.ndimage import rank_filter
 
+from . import npt, Any, NDArray, floating
 from . import mm
 
 

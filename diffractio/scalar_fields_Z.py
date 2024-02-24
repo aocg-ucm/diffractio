@@ -38,6 +38,9 @@ import multiprocessing
 from numpy import (angle, exp, linspace, pi, shape, zeros)
 from scipy.interpolate import interp1d
 
+from . import npt, Any, NDArray, floating
+
+
 from . import degrees, mm, np, plt
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
@@ -68,7 +71,8 @@ class Scalar_field_Z(object):
         self.date (str): Date when performed.
     """
 
-    def __init__(self, z=None, wavelength=None, n_background=1, info=""):
+    def __init__(self, z: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):        
         self.z = z
         self.wavelength = wavelength
         self.n_background = n_background
@@ -104,7 +108,7 @@ class Scalar_field_Z(object):
             print(" - info:       {}".format(self.info))
         return ("")
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Parameters:
@@ -151,7 +155,7 @@ class Scalar_field_Z(object):
         u3.u = self.u - other.u
         return u3
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_X(self.z, self.wavelength)
         # if clear is False:
@@ -177,7 +181,8 @@ class Scalar_field_Z(object):
         """Removes the field so that self.u = 0. """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -198,7 +203,7 @@ class Scalar_field_Z(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 
@@ -281,7 +286,7 @@ class Scalar_field_Z(object):
             field.u = u_new
             return field
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -362,7 +367,7 @@ class Scalar_field_Z(object):
         return self.FWHM1D(percentage, remove_background, has_draw)
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=False,
              normalize=False,
              cut_value=None,

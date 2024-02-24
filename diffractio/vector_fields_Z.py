@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_field_Z class. It is required also for generating masks and fields.
 The main atributes are:
@@ -33,6 +35,8 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_Z import Scalar_field_Z
@@ -60,7 +64,8 @@ class Vector_field_Z(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, z, wavelength, info=''):
+    def __init__(self,z: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):        
         self.z = z
         self.wavelength = wavelength  # la longitud de onda
 
@@ -96,7 +101,7 @@ class Vector_field_Z(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_Z. For example two light sources or two masks
 
         Parameters:
@@ -116,7 +121,8 @@ class Vector_field_Z(object):
 
         return EM
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -137,7 +143,7 @@ class Vector_field_Z(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Vector_field_Z.
             The methods included are: npz, matlab
 
@@ -163,14 +169,14 @@ class Vector_field_Z(object):
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def get(self, kind='fields', is_matrix=True):
+    def get(self, kind: str = 'fields', is_matrix: bool = True):
         """Takes the vector field and divide in Scalar_field_Z.
 
         Parameters:
@@ -262,7 +268,7 @@ class Vector_field_Z(object):
 
         return intensity
 
-    def polarization_states(self, matrix=False):
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
         Parameters:
@@ -293,7 +299,7 @@ class Vector_field_Z(object):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state: None | list = None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
         Parameters:
@@ -335,7 +341,7 @@ class Vector_field_Z(object):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -346,7 +352,7 @@ class Vector_field_Z(object):
         return normalize_field(self, new_field)
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=0,
              normalize=False,
              cut_value=None,

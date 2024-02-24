@@ -33,11 +33,14 @@ The magnitude is related to microns: `micron = 1.`
     * fZernike
     * delta_kronecker
 """
+# flake8: noqa
 
 from math import factorial
 
 from numpy import arctan2, cos, exp, pi, sign, sin, sqrt, zeros
 from scipy.special import eval_hermite, j0, j1, jv
+
+from . import npt, Any, NDArray, floating
 
 from . import degrees, np, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -63,7 +66,9 @@ class Scalar_source_XY(Scalar_field_XY):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x=None, y=None, wavelength=None, info=""):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
 

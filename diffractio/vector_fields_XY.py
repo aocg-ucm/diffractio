@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_field_XY class. It is required also for generating masks and fields.
 The main atributes are:
@@ -44,6 +46,8 @@ from numpy import cos, linspace, shape, sin, sqrt, zeros
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
@@ -73,7 +77,8 @@ class Vector_field_XY(object):
         self.Ey (numpy.array): Electric_y field
     """
 
-    def __init__(self, x, y, wavelength, info=''):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                 wavelength: float | None = None,  info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
@@ -114,7 +119,7 @@ class Vector_field_XY(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
         Parameters:
@@ -151,7 +156,8 @@ class Vector_field_XY(object):
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -172,7 +178,7 @@ class Vector_field_XY(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Vector_field_XY.
             The methods included are: npz, matlab
 
@@ -197,14 +203,14 @@ class Vector_field_XY(object):
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def get(self, kind='fields', is_matrix=True):
+    def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XY
 
         Parameters:
@@ -1172,7 +1178,7 @@ class Vector_field_XY(object):
             return field
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=0,
              normalize=False,
              cut_value=None,

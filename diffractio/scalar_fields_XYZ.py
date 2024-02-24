@@ -41,6 +41,9 @@ The magnitude is related to microns: `micron = 1.`
     * video
 
 """
+
+# flake8: noqa
+
 import copy
 import copyreg
 import os
@@ -48,6 +51,9 @@ import sys
 import time
 import types
 from multiprocessing import Pool
+
+from . import npt, Any, NDArray, floating
+
 
 import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
@@ -86,15 +92,10 @@ class Scalar_field_XYZ(object):
         self.n_background (float): background refraction index.
         self.n (numpy.array): refraction index. Same dimensions than self.u.
     """
-
-    def __init__(self,
-                 x=None,
-                 y=None,
-                 z=None,
-                 wavelength=None,
-                 n_background=1.,
-                 info=''):
-
+    
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                z: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):
         self.x = x
         self.y = y
         self.z = z
@@ -177,7 +178,7 @@ class Scalar_field_XYZ(object):
             print(" - info:       {}".format(self.info))
         return ("")
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_XYZ. For example two light sources or two masks.
 
         Parameters:
@@ -293,7 +294,7 @@ class Scalar_field_XYZ(object):
         else:
             self.u = np.conj(self.u)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -303,7 +304,7 @@ class Scalar_field_XYZ(object):
         """
         return normalize_field(self, new_field)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
         #                              self.n_background)
@@ -331,7 +332,8 @@ class Scalar_field_XYZ(object):
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False):        
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -352,7 +354,7 @@ class Scalar_field_XYZ(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Scalar_field_XZ.
             The methods included are: npz, matlab
 
@@ -1079,7 +1081,7 @@ class Scalar_field_XYZ(object):
         return self.x[ix], self.x[iy], self.z[iz]
 
     def draw_proposal(self,
-                      kind='intensity',
+                      kind: str = 'intensity',
                       logarithm=0,
                       normalize='maximum',
                       draw_borders=False,
@@ -1176,7 +1178,7 @@ class Scalar_field_XYZ(object):
 
     def draw_XY(self,
                 z0=5 * mm,
-                kind='intensity',
+                kind: str = 'intensity',
                 logarithm=0,
                 normalize='maximum',
                 title='',
@@ -1212,7 +1214,7 @@ class Scalar_field_XYZ(object):
                     reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
-                kind='intensity',
+                kind: str = 'intensity',
                 y0=0 * mm,
                 logarithm=0,
                 normalize='',
@@ -1319,7 +1321,7 @@ class Scalar_field_XYZ(object):
         plt.colorbar()
 
     def draw_XYZ_deprecated(self,
-                 kind='intensity',
+                 kind: str = 'intensity',
                  logarithm=False,
                  normalize='',
                  pixel_size=(128, 128, 128)):
@@ -1447,7 +1449,7 @@ class Scalar_field_XYZ(object):
 
     def video(self,
               filename='',
-              kind='intensity',
+              kind: str = 'intensity',
               fps=15,
               frame=True,
               axis='auto',

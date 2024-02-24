@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
@@ -35,6 +37,8 @@ from matplotlib import rcParams
 import time
 from scipy.interpolate import RectBivariateSpline
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -69,7 +73,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x, z, wavelength, n_background=1, info=""):
+    def __init__(self, x: NDArray | None = None, z: NDArray | None = None, 
+                wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
         self.wavelength = wavelength  # la longitud de onda
@@ -148,7 +153,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return EM
 
-    def save_data(self, filename, add_name="", description="", verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -170,7 +176,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
 
@@ -196,7 +202,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
@@ -738,7 +744,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:

@@ -26,12 +26,17 @@ The magnitude is related to microns: `micron = 1.`
     * roughness
 """
 
+# flake8: noqa
+
+
 from copy import deepcopy
 
 import matplotlib.image as mpimg
 import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
+
+from . import npt, Any, NDArray, floating
 
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -61,7 +66,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x=None, z=None, wavelength=None, n_background=1, info=""):
+    def __init__(self, x: NDArray | None = None, 
+                z: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):        
         """inits a new experiment:
         x: numpy array with x locations
         z: numpy array with z locations

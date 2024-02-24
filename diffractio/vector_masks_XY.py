@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_mask_XY class for defining vector masks. Its parent is Vector_field_XY.
 The main atributes are:
@@ -27,6 +29,8 @@ import copy
 
 from py_pol.jones_matrix import Jones_matrix
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, np, number_types, plt
 from .config import CONF_DRAWING
 from .scalar_masks_XY import Scalar_mask_XY
@@ -37,7 +41,8 @@ from .vector_sources_XY import Vector_source_XY
 
 class Vector_mask_XY(Vector_field_XY):
 
-    def __init__(self, x, y, wavelength, info=''):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                wavelength: float | None = None, info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_mask_XY'
 
@@ -48,7 +53,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         del self.Ex, self.Ey, self.Ez
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_mask_XY. For example two  masks
 
         Parameters:
@@ -126,7 +131,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:

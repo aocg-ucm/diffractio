@@ -179,7 +179,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(u0=t1)
 
         uxyz.RS(verbose=True, num_processors=4)
-        uxyz.draw_XYZ(kind='intensity', logarithm=False, normalize='maximum')
+        uxyz.draw_XYZ(kind: str = 'intensity', logarithm=False, normalize='maximum')
         uxyz.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
@@ -254,7 +254,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.RS()
 
         uscalar_fields_XY = uxyz.to_Scalar_field_XY(z0=3 * mm)
-        uscalar_fields_XY.draw(kind='intensity', cut_value=None)
+        uscalar_fields_XY.draw(kind: str = 'intensity', cut_value=None)
 
         uxyz.draw_XY(z0=2 * mm, filename='{}a_{}'.format(newpath, func_name))
         uxyz.draw_XY(z0=4.5 * mm, filename='{}b_{}'.format(newpath, func_name))

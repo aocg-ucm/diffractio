@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_field_XYZ class. It is required also for generating masks and fields.
 The main atributes are:
@@ -42,6 +44,8 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
@@ -77,7 +81,9 @@ class Vector_field_XYZ(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x, y, z, wavelength, info=''):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                z: NDArray | None = None, wavelength: float | None = None, 
+                n_background: float = 1., info: str = ""):
         self.x = x
         self.y = y
         self.z = z
@@ -89,6 +95,7 @@ class Vector_field_XYZ(object):
         self.Ez = np.zeros_like(self.X, dtype=complex)
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
+        self.n_background = n_background
         self.type = 'Vector_field_XYZ'
         self.info = info
         self.date = get_date()
@@ -122,7 +129,7 @@ class Vector_field_XYZ(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
         Parameters:
@@ -142,7 +149,8 @@ class Vector_field_XYZ(object):
 
         return EM
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False): 
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -163,7 +171,7 @@ class Vector_field_XYZ(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Vector_field_XY.
             The methods included are: npz, matlab
 
@@ -189,14 +197,14 @@ class Vector_field_XYZ(object):
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
         self.Ez = np.zeros_like(self.Ex, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def get(self, kind='fields', is_matrix=True):
+    def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XYZ
 
         Parameters:
@@ -394,7 +402,7 @@ class Vector_field_XYZ(object):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -551,7 +559,7 @@ class Vector_field_XYZ(object):
 
     def draw_XY(self,
                 z0=5 * mm,
-                kind='intensity',
+                kind: str = 'intensity',
                 logarithm=0,
                 normalize='maximum',
                 title='',
@@ -587,7 +595,7 @@ class Vector_field_XYZ(object):
                     reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
-                kind='intensity',
+                kind: str = 'intensity',
                 y0=0 * mm,
                 logarithm=0,
                 normalize='',

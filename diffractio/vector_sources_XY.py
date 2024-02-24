@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
+
 """
 This module generates Vector_source_XY class for defining sources. Its parent is Vector_field_XY.
 The main atributes are:
@@ -26,6 +28,8 @@ The magnitude is related to microns: `micron = 1.`
 
 from py_pol.jones_vector import Jones_vector
 
+from . import npt, Any, NDArray, floating
+
 from . import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
@@ -51,7 +55,8 @@ class Vector_source_XY(Vector_field_XY):
 
     """
 
-    def __init__(self, x, y, wavelength, info=''):
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                wavelength: float | None = None, info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_source_XY'
 

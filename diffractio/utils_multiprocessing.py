@@ -1,5 +1,6 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
 
 import copyreg
 import multiprocessing
@@ -8,6 +9,10 @@ import types
 from multiprocessing import Pool
 
 import numpy as np
+
+
+
+from . import npt, Any, NDArray, floating
 
 
 def _pickle_method(method):

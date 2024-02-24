@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# flake8: noqa
 
 # ------------------------------------
 # Authors:    Luis Miguel Sanchez Brea
@@ -12,6 +13,8 @@ import datetime
 import multiprocessing
 import sys
 import time
+
+from . import npt, Any, NDArray, floating
 
 from . import mm, no_date, np, plt, um
 from .scalar_masks_XY import Scalar_mask_XY

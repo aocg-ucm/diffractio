@@ -55,6 +55,9 @@ import copy
 import datetime
 import time
 
+from . import npt, Any, NDArray, floating
+
+
 import matplotlib.animation as animation
 import scipy.ndimage
 from matplotlib import rcParams
@@ -108,7 +111,10 @@ class Scalar_field_XY(object):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x=None, y=None, wavelength=None, info=""):
+# flake8: noqa
+
+    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+                 wavelength: float | None = None,  info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
@@ -223,7 +229,7 @@ class Scalar_field_XY(object):
         else:
             self.u = np.conj(self.u)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         # new_field.u = self.u
@@ -240,7 +246,7 @@ class Scalar_field_XY(object):
 
         self = reduce_to_1(self)
 
-    def add(self, other, kind='standard'):
+    def add(self, other, kind: str = 'standard'):
         """adds two Scalar_field_x. For example two light sources or two masks
 
         Parameters:
@@ -317,7 +323,8 @@ class Scalar_field_XY(object):
         """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "", 
+                  description: str= "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -338,7 +345,7 @@ class Scalar_field_XY(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False\):
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 
@@ -1796,7 +1803,7 @@ class Scalar_field_XY(object):
                 point1='',
                 point2='',
                 npixels=None,
-                kind='intensity',
+                kind: str = 'intensity',
                 order=2):
         """Determine profile in image. If points are not given, then image is shown and points are obtained clicking.
 
@@ -1855,7 +1862,7 @@ class Scalar_field_XY(object):
                      point1='',
                      point2='',
                      npixels=None,
-                     kind='intensity',
+                     kind: str = 'intensity',
                      order=2):
         """Draws profile in image. If points are not given, then image is shown and points are obtained clicking.
 
@@ -2361,7 +2368,7 @@ class Scalar_field_XY(object):
         if matrix is True:
             return u_binarized
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Parameters:
@@ -2412,7 +2419,7 @@ class Scalar_field_XY(object):
         return z_min
 
     def draw(self,
-             kind='intensity',
+             kind: str = 'intensity',
              logarithm=False,
              normalize=False,
              title="",
