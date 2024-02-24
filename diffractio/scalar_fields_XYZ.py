@@ -1312,7 +1312,7 @@ class Scalar_field_XYZ():
         plt.colorbar()
         
     def draw_XYZ(self, kind:str='volume', drawing:str = 'intensity', has_grid:bool=False,  filename='', **kwargs):
-        """_summary_
+        """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:
             kind (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
