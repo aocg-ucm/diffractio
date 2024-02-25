@@ -7,7 +7,125 @@ import numpy as np
 
 import pyvista
 import pyvista as pv
+import collections
+from pyvista.core import _vtk_core as _vtk
+from pyvista.core.utilities.helpers import wrap
 
+def load_stl(filename, has_draw=True, verbose=True):
+
+    mesh = pv.read(filename)
+    
+    if has_draw:
+        mesh.plot()
+        
+    if verbose:
+        print(filename)
+        print("bounds")
+        print(mesh.bounds)
+        print("volume")
+        print(mesh.volume)
+        print("center")
+        print(mesh.center)
+    return mesh, filename, mesh.bounds
+
+def load_stl_from_folder(num_file, directory=r"parts/", has_draw=True, verbose=True):
+
+    files=['Pieza1.stl',
+        'Christmas_Ball_Cap.stl',
+        'Meissner_Tetrahedron.stl',
+        'pyramid4.stl',
+        'cone.stl',
+        'torus.stl',
+        'cylinder.stl',
+        'spherehalf.stl'
+    ]
+
+    filename = directory + files[num_file]
+
+    mesh = pv.read(filename)
+    
+    if has_draw:
+        mesh.plot()
+        
+    if verbose:
+        print(filename)
+        print(mesh)    
+        print("bounds")
+        print(mesh.bounds)
+        print("cells points arrays faces")
+        print(mesh.n_cells, mesh.n_points, mesh.n_arrays, mesh.n_faces_strict)
+        
+    return mesh, filename
+
+
+
+def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True):
+    """Voxelize mesh to create a RectilinearGrid voxel volume.
+
+    Creates a voxel volume that encloses the input mesh and discretizes the cells
+    within the volume that intersect or are contained within the input mesh.
+    ``InsideMesh``, an array in ``cell_data``, is ``1`` for cells inside and ``0`` outside.
+
+    Parameters
+    ----------
+    mesh : pyvista.DataSet
+        Mesh to voxelize.
+
+
+    check_surface : bool, default: True
+        Specify whether to check the surface for closure. If on, then the
+        algorithm first checks to see if the surface is closed and
+        manifold. If the surface is not closed and manifold, a runtime
+        error is raised.
+
+    Returns
+    -------
+    pyvista.RectilinearGrid
+        RectilinearGrid as voxelized volume with discretized cells.
+
+    See Also
+    --------
+    pyvista.voxelize
+    pyvista.DataSetFilters.select_enclosed_points
+
+    """
+    mesh = wrap(mesh)
+    
+    # check and pre-process input mesh
+    surface = mesh.extract_geometry()  # filter preserves topology
+    if not surface.faces.size:
+        # we have a point cloud or an empty mesh
+        raise ValueError('Input mesh must have faces for voxelization.')
+    if not surface.is_all_triangles:
+        # reduce chance for artifacts, see gh-1743
+        surface.triangulate(inplace=True)
+
+    x = self.x
+    y = self.y
+    z = self.z 
+        
+    # Create a RectilinearGrid
+    voi = pyvista.RectilinearGrid(x, y, z)
+
+    # get part of the mesh within the mesh's bounding surface.
+    selection = voi.select_enclosed_points(surface, tolerance=0.0, check_surface=check_surface)
+    mask_vol = selection.point_data['SelectedPoints'].view(np.bool_)
+    volume_n = refractive_index*mask_vol.reshape(len(x), len(y), len(z))
+
+    # Get voxels that fall within input mesh boundaries
+    cell_ids = np.unique(voi.extract_points(np.argwhere(mask_vol))["vtkOriginalCellIds"])
+    # Create new element of grid where all cells _within_ mesh boundary are
+    # given new name 'MeshCells' and a discrete value of 1
+    voi['InsideMesh'] = np.zeros(voi.n_cells)
+    voi['InsideMesh'][cell_ids] = refractive_index
+    
+    # print(voi.points.shape, len(cell_ids))
+    # print(2097152**(1/3), 128**3)
+    # n_grid = voi.points[:,2].reshape(len(x), len(y), len(z))
+    
+    self.n =  volume_n
+
+    return self, voi #, selection, mask_vol, cell_ids, volume_n
 
 def draw(
     self,
