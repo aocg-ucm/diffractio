@@ -15,8 +15,8 @@ with open('HISTORY.rst', encoding='utf8') as history_file:
 # ]
 
 requirements = [
-    'screeninfo', 'Pillow', 'numexpr', 'pandas','py_pol',
-    'ipywidgets', 'ipympl', 'opencv-python'
+    'screeninfo', 'Pillow', 'numexpr', 'pandas', 'py_pol',
+    'ipywidgets', 'ipympl', 'opencv-python', "psutil"
 ]
 
 setup_requirements = [
@@ -53,7 +53,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-         'BPM', 'WPM', 'CZT',  'RS', 'VRS'
+        'BPM', 'WPM', 'CZT', 'RS', 'VRS'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),

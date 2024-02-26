@@ -10,5 +10,6 @@ numexpr
 pandas
 ipywidgets
 ipympl
+psutil
 
 # opencv-python
