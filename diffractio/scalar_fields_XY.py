@@ -113,14 +113,14 @@ class Scalar_field_XY(object):
 
 # flake8: noqa
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                 wavelength: float | None = None,  info: str = ""):
+    def __init__(self, x: NDArray = None, y: NDArray | None = None,
+                 wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
         if x is not None and y is not None:
             self.X, self.Y = meshgrid(x, y)
-            self.u = zeros(shape(self.X), dtype=complex)
+            self.u = np.zeros(shape(self.X), dtype=complex)
         else:
             self.X = None
             self.Y = None
@@ -158,11 +158,11 @@ class Scalar_field_XY(object):
             print(" - info:       {}".format(self.info))
         return ("")
 
-    def __add__(self, other):
-        """Adds two Scalar_field_x. For example two light sources or two masks
+    def __add__(self, other: Scalar_field_XY):
+        """Adds two Scalar_field_xy. For example two light sources or two masks
 
         Parameters:
-            other (Scalar_field_X): 2 field to add
+            other (Scalar_field_XY): 2 field to add
 
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
@@ -171,7 +171,7 @@ class Scalar_field_XY(object):
         u3.u = self.u + other.u
         return u3
 
-    def __sub__(self, other):
+    def __sub__(self, other: Scalar_field_XY):
         """Substract two Scalar_field_XY. For example two light sources or two masks
 
         Parameters:
@@ -186,7 +186,7 @@ class Scalar_field_XY(object):
         u3.u = self.u - other.u
         return u3
 
-    def __mul__(self, other):
+    def __mul__(self, other: Scalar_field_XY):
         """Multiply two fields. For example  :math:`u_1(x)= u_0(x)*t(x)`
 
         Parameters:
@@ -200,7 +200,8 @@ class Scalar_field_XY(object):
 
         return new_field
 
-    def __rotate__(self, angle, position=None):
+    def __rotate__(self, angle: float,
+                   position: list(float, float) | None = None):
         """Rotation of X,Y with respect to position
 
         Parameters:
@@ -218,7 +219,7 @@ class Scalar_field_XY(object):
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
 
-    def conjugate(self, new_field=True):
+    def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
 
@@ -246,10 +247,10 @@ class Scalar_field_XY(object):
 
         self = reduce_to_1(self)
 
-    def add(self, other, kind: str = 'standard'):
-        """adds two Scalar_field_x. For example two light sources or two masks
+    def add(self, other: Scalar_field_XY, kind: str = 'standard'):
+        """adds two Scalar_field_xy. For example two light sources or two masks
 
-        Parameters:
+        Parameters:º
             other (Scalar_field_X): 2 field to add
             kind (str): instruction how to add the fields: - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1. - 'standard': add fields u3=u1+u2 and does nothing.
 
@@ -271,12 +272,14 @@ class Scalar_field_XY(object):
 
         return u3
 
-    def rotate(self, angle, position=None, new_field=False):
+    def rotate(self, angle: float, position: list(float, float) | None = None,
+               new_field: bool = False):
         """Rotation of X,Y with respect to position. If position is not given, rotation is with respect to the center of the image
 
         Parameters:
             angle (float): angle to rotate, in radians
             position (float, float): position of center of rotation
+            new_field (bool): creates a new field
         """
 
         if position is None:
@@ -300,7 +303,7 @@ class Scalar_field_XY(object):
         else:
             self.u = u_rotate
 
-    def apodization(self, power=10):
+    def apodization(self, power: power = 10):
         """Multiply field by an apodizer. The apodizer is a super_gauss function.
 
         Args:
@@ -323,8 +326,8 @@ class Scalar_field_XY(object):
         """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -358,10 +361,7 @@ class Scalar_field_XY(object):
         if verbose is True:
             print(dict0.keys())
 
-    def save_mask(self,
-                  filename="",
-                  kind='amplitude',
-                  binarize=False,
+    def save_mask(self, filename: str = "", kind: str = 'amplitude', binarize: bool = False,
                   cmap='gray',
                   info=""):
         """Create a mask in a file, for example, ablation or litography engraver
@@ -1144,30 +1144,26 @@ class Scalar_field_XY(object):
         k_perp2 = KX**2 + KY**2
         k_perp = np.sqrt(k_perp2)
 
-       
         if has_edges is False:
             if hasattr(self, 'z'):
                 has_filter = np.zeros_like(self.z)
             else:
-                has_filter=0
+                has_filter = 0
         elif isinstance(has_edges, int):
             if hasattr(self, 'z'):
                 has_filter = np.ones_like(self.z)
             else:
-                has_filter=1      
+                has_filter = 1
         else:
             has_filter = has_edges
-        
-        
-        width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center=(self.x[-1]+self.x[0])/2
-        y_center=(self.y[-1]+self.y[0])/2
 
- 
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center = (self.x[-1]+self.x[0])/2
+        y_center = (self.y[-1]+self.y[0])/2
+
         filter_x = np.exp(-(np.abs(self.X-x_center) / width_edge)**pow_edge)
         filter_y = np.exp(-(np.abs(self.Y-y_center) / width_edge)**pow_edge)
         filter_function = filter_x*filter_y
-
 
         u_iter = self.duplicate()
 
@@ -1252,7 +1248,7 @@ class Scalar_field_XY(object):
         iz_out_roi = 0
 
         for j in range(1, num_steps):
-            
+
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
@@ -1433,7 +1429,7 @@ class Scalar_field_XY(object):
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                #u_out.u = u0.transpose()[: ,0]
+                # u_out.u = u0.transpose()[: ,0]
                 u_out.u = u0[0, :]
                 return u_out
 
@@ -2622,7 +2618,7 @@ class Scalar_field_XY(object):
 
         xsize, ysize = rcParams['figure.figsize']
 
-        #plt.figure(figsize=(2 * xsize, 2 * ysize))
+        # plt.figure(figsize=(2 * xsize, 2 * ysize))
         plt.figure()
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]

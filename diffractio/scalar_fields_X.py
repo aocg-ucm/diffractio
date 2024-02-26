@@ -71,14 +71,15 @@ from . import degrees, mm, np, plt
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
-                         Bluestein_dft_x, get_k,    nearest2)
-from .utils_multiprocessing import (_pickle_method,    _unpickle_method,
+                         Bluestein_dft_x, get_k, nearest2)
+from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 num_max_processors = multiprocessing.cpu_count()
+
 
 class Scalar_field_X(object):
     """Class for unidimensional scalar fields.
@@ -101,7 +102,8 @@ class Scalar_field_X(object):
         self.date (str): Date when performed.
     """
 
-    def __init__(self, x: NDArray | None = None, wavelength: float | None = None, 
+    def __init__(self, x: NDArray[float] | None = None,
+                 wavelength: float | None = None,
                  n_background: float = 1, info: str = ""):
         self.x = x
         self.wavelength = wavelength
@@ -236,8 +238,8 @@ class Scalar_field_X(object):
         """Removes the field so that self.u = 0."""
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -278,9 +280,8 @@ class Scalar_field_X(object):
         if verbose is True:
             print(dict0.keys())
 
-    def cut_resample(
-        self, x_limits: NDArray | str = "", num_points: int = [],
-        new_field: bool = False, interp_kind: str = "linear"):
+    def cut_resample(self, x_limits: NDArray | str = "", num_points: int = [],
+                     new_field: bool = False, interp_kind: str = "linear"):
         """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it does nothing.
         It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
@@ -310,7 +311,7 @@ class Scalar_field_X(object):
         i_x1, _, _ = nearest(self.x, x1)
 
         if num_points not in ([], "", 0, None):
-            x_new = linspace(x0, x1, num_points)
+            x_new = np.linspace(x0, x1, num_points)
             f_interp_abs = interp1d(
                 self.x,
                 np.abs(self.u),
@@ -408,8 +409,8 @@ class Scalar_field_X(object):
         slit.slit(x0=0, size=size)
         self.u = fft_filter(self.u, slit.u)
 
-    def insert_mask(self, t1: Scalar_field_x, x0_mask1: float, 
-                    clean: bool = True, kind_position: bool = "left"):
+    def insert_mask(self, t1: Scalar_field_x, x0_mask1: float,
+                    clean: bool = True, kind_position: str = "left"):
         """Insert mask t1 in mask self. It is performed using interpolation.
 
         Parameters:
@@ -446,7 +447,7 @@ class Scalar_field_X(object):
             i_pos = (self.x > t1.x[0]) * (self.x < t1.x[-1])
             self.u[i_pos] = u_new[i_pos]
 
-    def pupil(self, x0, radius):
+    def pupil(self, x0: float, radius: float):
         """Place a pupil in the field.
 
 
@@ -464,7 +465,8 @@ class Scalar_field_X(object):
 
         self.u = self.u * pupil
 
-    def insert_array_masks(self, t1, x_pos, clean=True, kind_position="left"):
+    def insert_array_masks(self, t1, x_pos: float, clean: bool = True,
+                           kind_position: str = "left"):
         """Insert several identical masks t1 in self.u according to positions x_pos
 
         Parameters:
@@ -479,7 +481,8 @@ class Scalar_field_X(object):
         for xi in x_pos[1:]:
             self.insert_mask(t1, xi, clean=False, kind_position=kind_position)
 
-    def repeat_structure(self, num_repetitions, position="center", new_field=True):
+    def repeat_structure(self, num_repetitions: int, position: str = "center",
+                         new_field: bool = True):
         """Repeat the structure n times.
 
         Parameters:
@@ -519,8 +522,8 @@ class Scalar_field_X(object):
             self.u = u_new
             self.x = x_new
 
-    def fft(self, z: float | None = None,  shift: bool = True, 
-            remove0: bool = False, matrix: bool = False, 
+    def fft(self, z: float | None = None, shift: bool = True,
+            remove0: bool = False, matrix: bool = False,
             new_field: bool = False, verbose: bool = False):
         """Far field diffraction pattern using Fast Fourier Transform (FFT).
 
@@ -572,9 +575,9 @@ class Scalar_field_X(object):
             self.u = ttf1
             self.x = x_new
 
-    def ifft(self, z: float | None = None,  shift: bool = True, 
-            remove0: bool = False, matrix: bool = False, 
-            new_field: bool = False, verbose: bool = False):
+    def ifft(self, z: float | None = None, shift: bool = True,
+             remove0: bool = False, matrix: bool = False,
+             new_field: bool = False, verbose: bool = False):
         """Inverse Fast Fourier Transform (ifft) of the field.
 
         Parameters:
@@ -667,11 +670,11 @@ class Scalar_field_X(object):
         rmax = xout.max()
         dr_ideal = (
             sqrt(
-                (self.wavelength / n) ** 2
-                + rmax**2
-                + 2 * (self.wavelength / n) * sqrt(rmax**2 + z**2)
-            )
-            - rmax
+                (self.wavelength / n) ** 2 +
+                rmax**2 +
+                2 * (self.wavelength / n) * sqrt(rmax**2 + z**2)
+            ) -
+            rmax
         )
         self.quality = dr_ideal / dr_real / 2
 
@@ -693,7 +696,7 @@ class Scalar_field_X(object):
 
             if float(nx) / 2 == round(nx / 2):  # es par
                 i_central = num_rep + 1
-                W = concatenate((W[:i_central], W[i_central + 1 :]))
+                W = concatenate((W[:i_central], W[i_central + 1:]))
         else:
             W = 1
 
@@ -711,7 +714,7 @@ class Scalar_field_X(object):
 
         # calculo de la transformada de Fourier
         S = ifft(fft(U) * fft(H)) * dx
-        Usalida = S[nx - 1 :]
+        Usalida = S[nx - 1:]
 
         # los calculos se pueden dejar en la instancia o crear un new field
         if matrix is True:
@@ -727,8 +730,8 @@ class Scalar_field_X(object):
             # self.u = Usalida / sqrt(z)
             self.u = Usalida
 
-    def RS(self, z: float, amplification: int = 1, n: float = 1., 
-           new_field: bool = True, matrix: bool = False, xout: None | NDArray = None,       
+    def RS(self, z: float, amplification: int = 1, n: float = 1.,
+           new_field: bool = True, matrix: bool = False, xout: None | NDArray = None,
            fast: bool = False, kind: str = "z", verbose: bool = True):
         # # could be removed and use self.n
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
@@ -996,7 +999,7 @@ class Scalar_field_X(object):
 
         return u_out
 
-    def WPM(self, fn, zs: NDArray, num_sampling: list[int]| None = None,
+    def WPM(self, fn, zs: NDArray, num_sampling: list[int] | None = None,
             ROI: list[NDArray] | None = None, x_pos: float | None = None,
             z_pos: float | None = None, get_u_max: bool = False,
             has_edges: bool = True, pow_edge: int = 80, verbose: bool = False):
@@ -1131,8 +1134,8 @@ class Scalar_field_X(object):
                 self.wavelength,
             )
             u_iter.u = (
-                WPM_schmidt_kernel(u_iter.u, refractive_index, k0, k_perp2, dz)
-                * filter_edge
+                WPM_schmidt_kernel(u_iter.u, refractive_index, k0, k_perp2, dz) *
+                filter_edge
             )
 
             if x_pos is not None:
@@ -1253,7 +1256,7 @@ class Scalar_field_X(object):
 
         return average_intensity
 
-    def get_edges(self, kind_transition: str ="amplitude", min_step: int = 0,
+    def get_edges(self, kind_transition: str = "amplitude", min_step: int = 0,
                   verbose: bool = False, filename: str = ""):
         """Determine locations of edges for a binary mask.
 
@@ -1295,10 +1298,10 @@ class Scalar_field_X(object):
         rmax = range_x
 
         factor = (
-            ((quality * dr_real + rmax) ** 2 - (self.wavelength / n) ** 2 - rmax**2)
-            / 2
-            * n
-            / self.wavelength
+            ((quality * dr_real + rmax) ** 2 - (self.wavelength / n) ** 2 - rmax**2) /
+            2 *
+            n /
+            self.wavelength
         ) ** 2 - rmax**2
 
         if factor > 0:
@@ -1398,7 +1401,8 @@ class Scalar_field_X(object):
             plt.ylim(-pi, pi)
 
 
-def kernelRS(x, wavelength, z, n=1, kind="z", fast=False):
+def kernelRS(x: NDArray[float], wavelength: float, z: float,
+             n: float = 1, kind: str = "z", fast: bool = False):
     """Kernel for RS propagation. It uses the hankel tansform.
 
     There is a 'fast' version based on :math:`hk_1 = \sqrt{2/(\pi \, k \, R)}  e^{i  (k \, R - 3  \pi / 4)}` which approximates the result.
@@ -1434,7 +1438,8 @@ def kernelRS(x, wavelength, z, n=1, kind="z", fast=False):
         return (0.5j * k) * hk1
 
 
-def kernelRSinverse(x, wavelength, z, n=1, kind="z", fast=False):
+def kernelRSinverse(x: NDArray[float], wavelength: float, z: float,
+                    n: float = 1., kind: str = "z", fast: bool = False):
     """Kernel for inverse RS propagation. See also kernelRS
 
     Parameters:
@@ -1464,7 +1469,8 @@ def kernelRSinverse(x, wavelength, z, n=1, kind="z", fast=False):
         return (-0.5j * k) * hk1
 
 
-def PWD_kernel(u, n, k0, k_perp2, dz):
+def PWD_kernel(u: NDArray[Any], n: NDArray[complex], k0: float,
+               k_perp2: NDArray[Any], dz: float):
     """
     Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
 
@@ -1488,7 +1494,8 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
     return ifft(fftshift(H * Ek))
 
 
-def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
+def WPM_schmidt_kernel(u: NDArray[Any], n: NDArray[Any],
+                       k0: float, k_perp2: NDArray[Any], dz: float):
     """
     Kernel for fast propagation of WPM method
 
@@ -1518,12 +1525,11 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
 
 
 def polychromatic_multiprocessing(
-    function_process,
-    wavelengths,
-    spectrum,
-    num_processors=num_max_processors,
-    verbose=False,
-):
+        function_process,
+        wavelengths: NDArray[float],
+        spectrum: NDArray[float],
+        num_processors: int = num_max_processors,
+        verbose: bool = False):
     """
     It performs an analysis of polychromatic light. It needs a function with only one input parameter: wavelength.
     It determines the intensity for each wavelength and the final results is the summation of the intensities.
@@ -1564,8 +1570,9 @@ def polychromatic_multiprocessing(
 
 
 def extended_source_multiprocessing(
-    function_process, x0s, num_processors=num_max_processors, verbose=False
-):
+        function_process, x0s: NDArray[float],
+        num_processors: int = num_max_processors,
+        verbose: bool = False):
     """
     It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
@@ -1603,11 +1610,11 @@ def extended_source_multiprocessing(
 
 def extended_polychromatic_source(
     function_process,
-    x0s,
-    wavelengths,
-    spectrum,
-    num_processors=num_max_processors,
-    verbose=False,
+    x0s: NDArray[float],
+    wavelengths: NDArray[float],
+    spectrum: NDArray[float],
+    num_processors: int = num_max_processors,
+    verbose: bool = False,
 ):
     """It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
@@ -1640,11 +1647,14 @@ def extended_polychromatic_source(
     return intensity, u_s, time_proc
 
 
-def quality_factor(range_x, num_x, z, wavelength, n=1, verbose=False):
+def quality_factor(range_x: NDArray[float], num_x: int,
+                   z: float, wavelength: float,
+                   n: float = 1., verbose: bool = False):
     """Determine the quality factor for RS algorithm
 
     Args:
         x (np.array): x array with positions
+        num_x (int): num of x?
         z (float): observation distance
         wavelength (float): wavelength)
         n (float): refraction index
@@ -1659,11 +1669,11 @@ def quality_factor(range_x, num_x, z, wavelength, n=1, verbose=False):
 
     dr_ideal = (
         np.sqrt(
-            (wavelength / n) ** 2
-            + rmax**2
-            + 2 * (wavelength / n) * np.sqrt(rmax**2 + z**2)
-        )
-        - rmax
+            (wavelength / n) ** 2 +
+            rmax**2 +
+            2 * (wavelength / n) * np.sqrt(rmax**2 + z**2)
+        ) -
+        rmax
     )
     quality = dr_ideal / dr_real
 
@@ -1673,7 +1683,8 @@ def quality_factor(range_x, num_x, z, wavelength, n=1, verbose=False):
     return quality
 
 
-def get_RS_minimum_z(range_x, num_x, wavelength, n=1, quality=1, verbose=True):
+def get_RS_minimum_z(range_x: float, num_x: int, wavelength: float,
+                     n: float = 1., quality: int = 1, verbose: bool = True):
     """_summary_
 
     Args:
@@ -1693,13 +1704,13 @@ def get_RS_minimum_z(range_x, num_x, wavelength, n=1, quality=1, verbose=True):
 
     zmin = np.sqrt(
         (
-            ((quality * dr_real + rmax) ** 2 - (wavelength / n) ** 2 - rmax**2)
-            / 2
-            * n
-            / wavelength
-        )
-        ** 2
-        - rmax**2
+            ((quality * dr_real + rmax) ** 2 - (wavelength / n) ** 2 - rmax**2) /
+            2 *
+            n /
+            wavelength
+        ) **
+        2 -
+        rmax**2
     )
 
     if verbose:
