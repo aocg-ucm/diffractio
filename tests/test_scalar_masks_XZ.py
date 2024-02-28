@@ -30,7 +30,7 @@ class Test_Scalar_masks_XZ(object):
 
     def test_extrude_mask_z_n_var(self):
         """
-        Here the refraction index is a function of positions z
+        Here the refractive index is a function of positions z
         """
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -180,7 +180,7 @@ class Test_Scalar_masks_XZ(object):
 
     def test_variable_refractive_index_1(self):
         """
-        Here the refraction index is a function of positions x,z
+        Here the refractive index is a function of positions x,z
         """
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -219,7 +219,7 @@ class Test_Scalar_masks_XZ(object):
         assert True
 
     def test_variable_refractive_index_2(self):
-        """Here the refraction index is a function of positions z"""
+        """Here the refractive index is a function of positions z"""
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
@@ -326,7 +326,7 @@ class Test_Scalar_masks_XZ(object):
 
     def test_extrude_mask_simple(self):
         """
-        takes an refraction index and convert a mask without depth, at one with
+        takes an refractive index and convert a mask without depth, at one with
         depth
         """
         func_name = sys._getframe().f_code.co_name

@@ -34,7 +34,7 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -61,15 +61,15 @@ class Vector_field_X(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x: NDArray | None = None, wavelength: float | None = None, 
-                info: str = ""):        
+    def __init__(self, x: NDArray | None = None, wavelength: float | None = None,
+                 info: str = ""):
         self.x = x
         self.wavelength = wavelength  # la longitud de onda
 
         self.Ex = np.zeros_like(self.x, dtype=complex)
         self.Ey = np.zeros_like(self.x, dtype=complex)
         self.Ez = np.zeros_like(self.x, dtype=complex)
-        
+
         self.Hx = np.zeros_like(self.x, dtype=complex)
         self.Hy = np.zeros_like(self.x, dtype=complex)
         self.Hz = np.zeros_like(self.x, dtype=complex)
@@ -79,7 +79,6 @@ class Vector_field_X(object):
         self.info = info
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
-
 
     def __str__(self):
         """Represents data from class."""
@@ -123,8 +122,8 @@ class Vector_field_X(object):
 
         return EM
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False): 
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -269,7 +268,7 @@ class Vector_field_X(object):
 
         return intensity
 
-    def polarization_states(self, matrix=False):
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
         Parameters:
@@ -300,7 +299,7 @@ class Vector_field_X(object):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
         Parameters:
@@ -354,11 +353,11 @@ class Vector_field_X(object):
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm=0,
-             normalize=False,
-             cut_value=None,
-             filename='',
-             draw=True,
+             logarithm: bool | floating = 0,
+             normalize: bool = False,
+             cut_value: float | bool = None,
+             filename: str: = '',
+             draw: bool: = True,
              **kwargs):
         """Draws electromagnetic field
 
@@ -405,7 +404,7 @@ class Vector_field_X(object):
 
             return id_fig
 
-    def __draw_intensity__(self, logarithm, normalize, cut_value):
+    def __draw_intensity__(self, logarithm: bool, normalize: bool, cut_value: float):
         """Draws the intensity
 
         Parameters:
@@ -427,7 +426,7 @@ class Vector_field_X(object):
 
         return h1
 
-    def __draw_intensities__(self, logarithm, normalize, cut_value):
+    def __draw_intensities__(self, logarithm: bool, normalize: bool, cut_value: float):
         """internal funcion: draws phase
 
         Parameters:
@@ -601,9 +600,9 @@ class Vector_field_X(object):
             return h1, h2, h3
 
     def __draw_fields__(self,
-                        logarithm,
-                        normalize,
-                        cut_value,
+                        logarithm: bool | float,
+                        normalize: bool,
+                        cut_value: float,
                         color_intensity=CONF_DRAWING['color_intensity'],
                         color_phase=CONF_DRAWING['color_phase']):
         """__internal__: draws amplitude and phase in 2x2 drawing
@@ -661,7 +660,7 @@ class Vector_field_X(object):
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self, logarithm, normalize, cut_value):
+    def __draw_stokes__(self, logarithm: floating | bool, normalize: bool, cut_value: floating):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
         """
 
@@ -701,7 +700,7 @@ class Vector_field_X(object):
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, logarithm, normalize, cut_value):
+    def __draw_param_ellipse__(self, logarithm: bool | floating, normalize: bool, cut_value: floating):
         """__internal__: computes and draws polariations ellipses
         """
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
@@ -737,7 +736,7 @@ class Vector_field_X(object):
 
         return (h1, h2, h3, h4)
 
-    def __draw1__(self, data, ylabel='', title=''):
+    def __draw1__(self, data: NDArrayFloat, ylabel: Str = '', title: str: = ''):
         """Draws image
 
         Parameters:

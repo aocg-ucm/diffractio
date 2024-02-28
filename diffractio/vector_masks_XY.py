@@ -29,7 +29,7 @@ import copy
 
 from py_pol.jones_matrix import Jones_matrix
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, np, number_types, plt
 from .config import CONF_DRAWING
@@ -42,7 +42,7 @@ from .vector_sources_XY import Vector_source_XY
 class Vector_mask_XY(Vector_field_XY):
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                wavelength: float | None = None, info: str = ""):
+                 wavelength: float | None = None, info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_mask_XY'
 
@@ -537,7 +537,7 @@ class Vector_mask_XY(Vector_field_XY):
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
 
-            #intensity_max = np.real(self.M00.max())
+            # intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
             plt.suptitle("$\Re$ (Jones)", fontsize=15)
@@ -579,13 +579,12 @@ class Vector_mask_XY(Vector_field_XY):
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
 
-            #intensity_max = np.real(self.M00.max())
+            # intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
             plt.suptitle("$\Im$ (Jones)", fontsize=15)
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
-
 
 
 def rotation_matrix_Jones(angle):

@@ -30,7 +30,7 @@ The magnitude is related to microns: `mifcron = 1.`
 
 from numpy import cos, exp, pi, sign, sin, sqrt
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, np, um
 from .scalar_fields_X import Scalar_field_X
@@ -42,7 +42,7 @@ class Scalar_source_X(Scalar_field_X):
     Parameters:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of background
+        n_background (float): refractive index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -55,8 +55,8 @@ class Scalar_source_X(Scalar_field_X):
         self.date (str): date when performed
     """
 
-    def __init__(self, x: NDArray | None = None, wavelength: float | None = None, 
-                n_background: float = 1., info: str = ""):
+    def __init__(self, x: NDArray | None = None, wavelength: float = 0,
+                 n_background: float = 1., info: str = ""):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'
 
@@ -69,10 +69,10 @@ class Scalar_source_X(Scalar_field_X):
             z0 (float): constant value for phase shift
         """
         # Definicion del vector de onda
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
         self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
 
-    def gauss_beam(self, x0, w0, z0, A=1, theta=0. * degrees):
+    def gauss_beam(self, x0: float, w0: float, z0: float, A: float = 1, theta: float = 0. * degrees):
         """Gauss Beam.
 
         Parameters:
@@ -100,7 +100,7 @@ class Scalar_source_X(Scalar_field_X):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self, A, x0, z0, normalize=False):
+    def spherical_wave(self, A: float, x0: float, z0: float, normalize: bool = False):
         """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
 
         Parameters:
@@ -120,7 +120,7 @@ class Scalar_source_X(Scalar_field_X):
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
 
-    def plane_waves_dict(self, params):
+    def plane_waves_dict(self, params: dict):
         """Several plane waves with parameters defined in dictionary
 
         Parameters:
@@ -138,7 +138,7 @@ class Scalar_source_X(Scalar_field_X):
                 1.j * k *
                 (self.x * sin(p['theta']) + p['z0'] * cos(p['theta'])))
 
-    def plane_waves_several_inclined(self, A, num_beams, max_angle):
+    def plane_waves_several_inclined(self, A: float, num_beams: int, max_angle: float):
         """Several paralel plane waves.
 
         Parameters:
@@ -156,14 +156,8 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
-    def gauss_beams_several_parallel(self,
-                                     A,
-                                     num_beams,
-                                     w0,
-                                     z0,
-                                     x_central,
-                                     x_range,
-                                     theta=0 * degrees):
+    def gauss_beams_several_parallel(self, A: float, num_beams: int, w0: float, z0: float,
+                                     x_central: float, x_range: float, theta: float = 0 * degrees):
         """Several parallel gauss beams
 
         Parameters:
@@ -184,8 +178,8 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
-    def gauss_beams_several_inclined(self, A, num_beams, w0, x0, z0,
-                                     max_angle):
+    def gauss_beams_several_inclined(self, A: float, num_beams: int, w0: float, x0: float, z0: float,
+                                     max_angle: float):
         """Several inclined gauss beams
 
         Parameters:

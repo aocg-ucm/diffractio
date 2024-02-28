@@ -28,7 +28,7 @@ The magnitude is related to microns: `micron = 1.`
 
 from py_pol.jones_vector import Jones_vector
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -56,7 +56,7 @@ class Vector_source_XY(Vector_field_XY):
     """
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                wavelength: float | None = None, info: str = ""):
+                 wavelength: float | None = None, info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_source_XY'
 
@@ -285,7 +285,7 @@ class Vector_source_XY(Vector_field_XY):
                                            u=1,
                                            r0=(0 * um, 0 * um),
                                            m=1,
-                                           n=1,
+                                           n: float = 1.,
                                            fi0=0,
                                            radius=(0, 0)):
         """local hibrid polarized vector wave.

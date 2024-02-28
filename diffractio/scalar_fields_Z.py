@@ -38,7 +38,7 @@ import multiprocessing
 from numpy import (angle, exp, linspace, pi, shape, zeros)
 from scipy.interpolate import interp1d
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from . import degrees, mm, np, plt
@@ -57,7 +57,7 @@ class Scalar_field_Z(object):
     Parameters:
         z (numpy.array): linear array with equidistant positions.
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of background
+        n_background (float): refractive index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -71,8 +71,8 @@ class Scalar_field_Z(object):
         self.date (str): Date when performed.
     """
 
-    def __init__(self, z: NDArray | None = None, wavelength: float | None = None, 
-                n_background: float = 1., info: str = ""):        
+    def __init__(self, z: NDArray | None = None, wavelength: float | None = None,
+                 n_background: float = 1., info: str = ""):
         self.z = z
         self.wavelength = wavelength
         self.n_background = n_background
@@ -166,7 +166,7 @@ class Scalar_field_Z(object):
             new_field.clear_field()
         return new_field
 
-    def conjugate(self, new_field=True):
+    def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
 
@@ -181,8 +181,8 @@ class Scalar_field_Z(object):
         """Removes the field so that self.u = 0. """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False): 
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -225,7 +225,7 @@ class Scalar_field_Z(object):
     def cut_resample(self,
                      z_limits='',
                      num_points=[],
-                     new_field=False,
+                     new_field: bool = False,
                      interp_kind='linear'):
         """Cuts the field to the range (z0,z1). If one of this z0,z1 positions is out of the self.z range it does nothing.
         It is also valid for resampling the field, just write z0,z1 as the limits of self.z
@@ -306,7 +306,7 @@ class Scalar_field_Z(object):
         intensity = (np.abs(self.u)**2)
         return intensity
 
-    def average_intensity(self, verbose=False):
+    def average_intensity(self, verbose: bool = False):
         """Returns the average intensity as: (np.abs(self.u)**2).sum() / num_data
 
         Parameters:
@@ -321,7 +321,7 @@ class Scalar_field_Z(object):
 
         return average_intensity
 
-    def FWHM1D(self, percentage=0.5, remove_background=None, has_draw=False):
+    def FWHM1D(self, percentage=0.5, remove_background=None, has_draw: bool = False):
         """
         FWHM1D
 
@@ -332,7 +332,7 @@ class Scalar_field_Z(object):
 
         Returns:
             width (float): width, in this z case: DOF
-        
+
         """
 
         intensities = np.abs(self.u)**2
@@ -342,7 +342,7 @@ class Scalar_field_Z(object):
 
         return np.squeeze(width)
 
-    def DOF(self, percentage=0.5, remove_background=None, has_draw=False):
+    def DOF(self, percentage=0.5, remove_background=None, has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
         Parameters:
@@ -368,12 +368,12 @@ class Scalar_field_Z(object):
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm=False,
-             normalize=False,
-             cut_value=None,
+             logarithm: floating = 0.,
+             normalize: bool = False,
+             cut_value: floating | None = None,
              z_scale='um',
              unwrap=False,
-             filename=''):
+             filename: str = ''):
         """Draws z field. There are several data from the field that are extracted, depending of 'kind' parameter.
 
         Parameters:

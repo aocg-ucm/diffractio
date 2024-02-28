@@ -21,8 +21,7 @@ import numpy as np
 import psutil
 from scipy.io import loadmat, savemat
 
-from . import npt, Any, NDArray, floating
-
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 def computer_purcearameters(verbose: bool = False) -> list:
@@ -171,7 +170,7 @@ def load_data_common(cls, filename: str, verbose: bool = False):
 
         if verbose is True:
             print(dict0.keys())
-        
+
         if dict0 is not None:
             if isinstance(dict0, dict):
                 cls.__dict__ = dict0

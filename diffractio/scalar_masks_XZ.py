@@ -6,7 +6,7 @@ The main atributes are:
     * self.x - x positions of the field
     * self.z - z positions of the field
     * self.u - field XZ
-    * self.n - refraction index XZ
+    * self.n - refractive index XZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
 
 
@@ -36,7 +36,7 @@ import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, np, plt, sp, um
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -53,7 +53,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             The number of data is preferibly :math:`2^n` .
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of background
+        n_background (float): refractive index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -62,18 +62,18 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.wavelength (float): wavelength of the incident field.
         self.u0 (numpy.array): (x) size x - field at the last z position
         self.u (numpy.array): (x,z) complex field
-        self.n_background (numpy.array): (x,z) refraction index
+        self.n_background (numpy.array): (x,z) refractive index
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x: NDArray | None = None, 
-                z: NDArray | None = None, wavelength: float | None = None, 
-                n_background: float = 1., info: str = ""):        
+    def __init__(self, x: NDArray | None = None,
+                 z: NDArray | None = None, wavelength: float | None = None,
+                 n_background: float = 1., info: str = ""):
         """inits a new experiment:
         x: numpy array with x locations
         z: numpy array with z locations
         wavelength: wavelength of light
-        n_backgraound: refraction index of background
+        n_backgraound: refractive index of background
         info: text to describe the instance of the class"""
         super().__init__(x, z, wavelength, n_background, info)
         self.type = "Scalar_mask_XZ"
@@ -148,7 +148,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         angle=0 * degrees,
         v_globals={},
         interp_kind="quadratic",
-        has_draw=False,
+        has_draw: bool = False,
     ):
         """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
         For the definion of f1 and f2 from arrays is performed an interpolation
@@ -200,7 +200,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         for i, xi in enumerate(self.x):
             #     minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
             #     ipasa[i, minor:mayor] = True
-            ipasa[i, i_z1[i] : i_z2[i]] = True
+            ipasa[i, i_z1[i]: i_z2[i]] = True
 
         if x_sides is None:
             self.n[ipasa] = refractive_index
@@ -224,7 +224,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         angle=0 * degrees,
         v_globals={},
         interp_kind="quadratic",
-        has_draw=False,
+        has_draw: bool = False,
     ):
         """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
         For the definion of f1 and f2 from arrays is performed an interpolation
@@ -307,7 +307,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return ipasa * ipasa2 * ipasa3
 
     def object_by_surfaces(
-        self, rotation_point, refractive_index, Fs, angle, v_globals={}, verbose=False
+        self, rotation_point, refractive_index, Fs, angle, v_globals={}, verbose: bool = False
     ):
         """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
         h(x,z)=f1(x,z)*f2(x,z)*....*fn(x,z)
@@ -373,8 +373,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             u (Scalar_mask_XZ): topography
             fx (numpy.array, numpy.array):  [x1, fx1], [x2, fx2] array with topography to add
             x_sides (float, float): positions of edges
-            refractive_index (float, str): refraction index: number of string
-            min_incr (float): minimum variation of refraction index to detect edge.
+            refractive_index (float, str): refractive index: number of string
+            min_incr (float): minimum variation of refractive index to detect edge.
             angle (float (float, float)): angle and optative rotation angle.
         """
         z0 = self.z
@@ -430,18 +430,18 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return perfil_previo, perfil_nuevo
 
     def discretize_refractive_index(
-        self, num_layers=None, n_layers=None, new_field=False
+        self, num_layers=None, n_layers=None, new_field: bool = False
     ):
-        """Takes a refraction index an discretize it according refraction indexes.
+        """Takes a refractive index an discretize it according refractive indexes.
 
         Args:
             num_layers ((int,int), optional): number of layers (for real and imaginary parts), without counting background. Defaults to None.
                 By default, both parameters are None, but one of then must be filled. If both are present, num_layers is considered
-            n_layers (np.array, optional): array with refraction indexes to discretize. Defaults to None.
+            n_layers (np.array, optional): array with refractive indexes to discretize. Defaults to None.
             new_field (bool): If True, it generates a new field.
 
         Returns:
-            (np.array): refraction indexes selected.
+            (np.array): refractive indexes selected.
         """
 
         def _discretize_(refractive_index, n_layers):
@@ -502,14 +502,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             self.n = n_new + 1j * k_new
 
     def image(self, filename, n_max, n_min, angle=0, invert=False):
-        """Converts an image file in an xz-refraction index matrix.
-        If the image is gray-scale the refraction index is gradual betwee n_min and n_max.
+        """Converts an image file in an xz-refractive index matrix.
+        If the image is gray-scale the refractive index is gradual betwee n_min and n_max.
         If the image is color, we get the first Red frame
 
         Parameters:
             filename (str): filename of the image
-            n_max (float): maximum refraction index
-            n_min (float): minimum refraction index
+            n_max (float): maximum refractive index
+            n_min (float): minimum refractive index
             angle (float): angle to rotate the image in radians
             invert (bool): if True the image is inverted
 
@@ -550,7 +550,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             positions (float, float) or (np.array, np.array): (x,z) point or points where mask is 1
-            refractive_index (float): refraction index
+            refractive_index (float): refractive index
         """
         x0, z0 = positions
         n = np.zeros_like(self.X)
@@ -573,7 +573,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             r0=(x0,z0) (float,float): Location of the same plane.
-            refractive_index (float, str): refraction index.
+            refractive_index (float, str): refractive index.
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
         """
@@ -597,7 +597,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
         r0 (float, float): (x0,z0) Location of the same plane, for example (0 * um, 20 * um)
         depth (float): depth of the layer
-        refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+        refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
         angle (float): angle of rotation of the semi-plane, in radians
         rotation_point (float, float). Rotation point
         """
@@ -624,7 +624,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             size (float, float): x,z size of the rectangle
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
         """
@@ -680,8 +680,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             aperture (float): length of the opened part of the slit
             depth (float): depth of the slit
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
-            refractive_index_center (float, str?): refraction index of center
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
+            refractive_index_center (float, str?): refractive index of center
                 if refractive_index_center='', [], 0 then we copy what it was previously at aperture
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -720,7 +720,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             radius (float, float): radius x,y of the sphere (ellipsoid)
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
         """
@@ -751,7 +751,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             radius (float, float): radius x,y of the sphere (ellipsoid)
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
         """
@@ -797,7 +797,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float): radius of the curved surface
             thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             mask (array, str):  (mask_depth, refractive_index) or False.
                 It masks the field outer the lens using a slit with depth = mask_depth
@@ -867,7 +867,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float, float): (radius1,radius2) radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float): rotation point.
             mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
@@ -924,10 +924,10 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             )
 
         focus_1 = (refractive_index - 1) * (
-            (1 / radius1 - 1 / radius2)
-            - (refractive_index - 1)
-            * thickness
-            / (refractive_index * radius1 * radius2)
+            (1 / radius1 - 1 / radius2) -
+            (refractive_index - 1) *
+            thickness /
+            (refractive_index * radius1 * radius2)
         )
         return 1 / focus_1, ipasa
 
@@ -949,7 +949,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float): radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
 
@@ -1017,7 +1017,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             aperture (float): aperture of the lens. If it is 0, then it is not applied
             radius (float, float): (radius1, radius2) radius of curvature (with sign)
             thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float): rotation point
             mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
@@ -1080,10 +1080,10 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 rotation_point=rotation_point,
             )
         focus_1 = (refractive_index - 1) * (
-            (1 / radius1 - 1 / radius2)
-            - (refractive_index - 1)
-            * thickness
-            / (refractive_index * radius1 * radius2)
+            (1 / radius1 - 1 / radius2) -
+            (refractive_index - 1) *
+            thickness /
+            (refractive_index * radius1 * radius2)
         )
         return 1 / focus_1, ipasa
 
@@ -1092,7 +1092,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Parameters:
             r0 (float, float): (x0,z0) position of apex
-            refractive_index (float, str): refraction index
+            refractive_index (float, str): refractive index
             cx (float): curvature
             Qx (float): Conic constant
             side (str): 'left', 'right'
@@ -1239,7 +1239,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             length (float): length of the long part (z direction)
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle_wedge (float), angle of the wedge in radians
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -1267,7 +1267,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Parameters:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             length (float): length of the long part (z direction)
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle_prism (float), angle of the prism in radians
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -1297,7 +1297,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             length (float): length of the long part (z direction)
             height (float): height of biprism
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """
 
@@ -1354,9 +1354,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             length (float): length of the grating
             height (float): height of the grating
             Dx (float): displacement of grating with respect x=0
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             heigth_substrate (float): height of the substrate
-            refractive_index_substrate (float, str): refraction index of substrate,  1.5 + 1.0j
+            refractive_index_substrate (float, str): refractive index of substrate,  1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """
 
@@ -1409,7 +1409,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
             length (float): length of the grating
             Dx (float): displacement of grating with respect x=0
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """
 
@@ -1434,7 +1434,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             base (float): base of the probe
             length (float): length of the graprobeing
             Dx (float): displacement of grating with respect x=0
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
         """
 
@@ -1463,7 +1463,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             size (float, float): (sizex, sizez) size of the sheet
             s (float): std roughness
             t (float): correlation length of roughness
-            refractive_index (float, str): refraction index
+            refractive_index (float, str): refractive index
             angle (float): angle
             rotation_point (float, float): rotation point
 
@@ -1508,7 +1508,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         i_z, _, _ = nearest2(self.z, z0 + sizez - fx)
         i_final = len(self.z)
         for i in range(len(self.x)):
-            self.n[i, i_z[i] : i_final] = n_back[i, i_z[i] : i_final]
+            self.n[i, i_z[i]: i_final] = n_back[i, i_z[i]: i_final]
 
         if angle != 0:
             self.rotate_field(angle, rotation_point, n_background=self.n_background)

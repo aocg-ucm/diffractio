@@ -738,7 +738,7 @@ class Test_Scalar_fields_XY(object):
                              w0=10 * um,
                              z=50 * um,
                              z0=0,
-                             n=1,
+                             n=1.,
                              l=1)
 
         draw_several_fields(fields=(field1, field2, field3),

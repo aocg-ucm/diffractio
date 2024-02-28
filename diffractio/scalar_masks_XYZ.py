@@ -8,7 +8,7 @@ The main atributes are:
     * self.y - y positions of the field
     * self.z - z positions of the field
     * self.u - field XYZ
-    * self.n - refraction index XYZ
+    * self.n - refractive index XYZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
 
 The magnitude is related to microns: `micron = 1.`
@@ -25,7 +25,7 @@ The magnitude is related to microns: `micron = 1.`
 # flake8: noqa
 
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from . import degrees, np, um
@@ -35,8 +35,8 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 class Scalar_mask_XYZ(Scalar_field_XYZ):
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                z: NDArray | None = None, wavelength: float | None = None, 
-                n_background: float = 1., info: str = ""):
+                 z: NDArray | None = None, wavelength: float | None = None,
+                 n_background: float = 1., info: str = ""):
         super().__init__(x, y, z, wavelength, n_background, info)
         self.type = 'Scalar_mask_XYZ'
 
@@ -92,7 +92,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
             Parameters:
                 r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
                 radius: (rx, ry, rz) Radius of sphere. It can be a ellipsoid. If radius is a number, then it is a sphere
-                        refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+                        refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
         """
         if isinstance(radius, (float, int, complex)):
             radius = (radius, radius, radius)
@@ -117,7 +117,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         Parameters:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             size (float, float, float): x,y,z size of the rectangle
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float, float). Rotation point
         """
@@ -151,7 +151,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             axis (float float, float): axis direction
             angle (float): angle of rotation of the semi-plane, in radians
         """

@@ -18,7 +18,7 @@ The main atributes are:
     * self.x - x positions of the field
     * self.z - z positions of the field
     * self.u - field XZ
-    * self.n - refraction index XZ
+    * self.n - refractive index XZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
 
 The magnitude is related to microns: `micron = 1.`
@@ -63,7 +63,6 @@ from copy import deepcopy
 from multiprocessing import Pool
 
 
-
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
@@ -71,7 +70,7 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from . import np, plt
@@ -100,7 +99,7 @@ class Scalar_field_XZ(object):
             The number of data is preferibly :math:`2^n` .
         z (numpy.array): linear array wit equidistant positions for z values
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of background
+        n_background (float): refractive index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -110,20 +109,20 @@ class Scalar_field_XZ(object):
         self.wavelength (float): wavelength of the incident field.
         self.u0 (numpy.array): (x) size x - field at the last z position
         self.u (numpy.array): (x,z) complex field
-        self.n_background (numpy.array): (x,z) refraction index
+        self.n_background (numpy.array): (x,z) refractive index
         self.fast (bool): if True fast algoritm (approx. Hankle function)
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x: NDArray | None = None, z: NDArray | None = None, 
-                wavelength: float | None = None, n_background: float = 1., info: str = ""):
+    def __init__(self, x: NDArray | None = None, z: NDArray | None = None,
+                 wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
         self.wavelength = wavelength
         self.n_background = n_background
         self.fast = False
         self.quality = 0
-        self.borders = None  # borders at refraction index
+        self.borders = None  # borders at refractive index
         self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:
@@ -254,14 +253,14 @@ class Scalar_field_XZ(object):
             new_field.clear_field()
         return new_field
 
-    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max):
+    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max: floating):
         """Transforms XY mask into XZ mask.
             - Areas with value 0 pass to n_background.
             - When transmittance of mask_XY  is 1, pass to refractive_index_max.
 
         Args:
             mask_XY (diffractio.Scalar_mask_XY): mask
-            refractive_index_max (float): real and imaginary part of maximum refraction index.
+            refractive_index_max (float): real and imaginary part of maximum refractive index.
 
         Returns:
             _type_: _description_
@@ -275,14 +274,15 @@ class Scalar_field_XZ(object):
         self.n = mask_XY.u * refractive_index_max
         self.n[self.n < 1] = self.n_background
 
-    def rotate_field(self, angle, center_rotation, kind='all', n_background=1):
+    def rotate_field(self, angle: floating, center_rotation: list[floating], 
+                     kind: str = 'all', n_background: floating: = 1.):
         """Rotate all the image a certain angle
 
         Parameters:
             angle (float): angle to rotate, in radians
-            n_background (float): refraction index of zone incoming
-            kind (str): 'all', 'n', 'field'
             center_rotation (float, float): (z,x) position for rotation
+            kind (str): 'all', 'n', 'field'
+            n_background (float): refractive index of zone incoming
         """
         angle = -angle
 
@@ -314,7 +314,7 @@ class Scalar_field_XZ(object):
         self.u = np.zeros(np.shape(self.u), dtype=complex)
 
     def clear_refractive_index(self):
-        """clear refraction index n(x,z)=n_background"""
+        """clear refractive index n(x,z)=n_background"""
 
         self.n = self.n_background * np.ones_like(self.X, dtype=complex)
 
@@ -328,7 +328,7 @@ class Scalar_field_XZ(object):
         """
         return normalize_field(self, new_field)
 
-    def mask_field(self, size_edge=0):
+    def mask_field(self, size_edge: floating = 0):
         """
         mask the incident field at the edges, each edge is masked size_edge
 
@@ -343,10 +343,10 @@ class Scalar_field_XZ(object):
         self.u0.u = self.u0.u * mask.u
 
     def smooth_refractive_index(self,
-                                type_filter=2,
-                                pixels_filtering=10,
-                                max_diff_filter=0.1,
-                                draw_check=False):
+                                type_filter: int = 2,
+                                pixels_filtering: int = 10,
+                                max_diff_filter: floating = 0.1,
+                                draw_check: bool = False):
         """
         Technique to remove artifacts in BPM propagation.
 
@@ -443,8 +443,8 @@ class Scalar_field_XZ(object):
 
         return percentage_filtered, lineas_filtradas
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False): 
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -486,8 +486,8 @@ class Scalar_field_XZ(object):
                      x_limits='',
                      z_limits='',
                      num_points=[],
-                     new_field=False,
-                     interp_kind=(3, 1)):
+                     new_field: bool = False,
+                     interp_kind: list[int] = (3, 1)):
         """it cut the field to the range (x0,x1). if one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Parameters:
@@ -591,7 +591,7 @@ class Scalar_field_XZ(object):
             field.n = n_new
             return field
 
-    def incident_field(self, u0, z0=None):
+    def incident_field(self, u0, z0: floating | None = None):
         """Incident field for the experiment. It takes a Scalar_source_X field
 
         Parameters:
@@ -617,10 +617,10 @@ class Scalar_field_XZ(object):
         return u_final
 
     def __BPM__(self,
-                has_edges=True,
-                pow_edge=80,
-                matrix=False,
-                verbose=False):
+                has_edges: bool = True,
+                pow_edge: int = 80,
+                matrix: bool = False,
+                verbose: bool = False):
         """Beam propagation method (BPM).
 
         Parameters:
@@ -692,7 +692,8 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
-    def BPM(self, has_edges=True, pow_edge=80, division=False, matrix=False, verbose=False):
+    def BPM(self, has_edges: bool = True, pow_edge: int = 80, division: bool = False, matrix: bool = False, 
+            verbose: bool = False):
         """Beam propagation method (BPM).
 
             Parameters:
@@ -743,7 +744,7 @@ class Scalar_field_XZ(object):
             print("Time = {:2.2f} s, time/loop = {:2.4} ms".format(
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
 
-    def BPM_inverse(self, verbose=False):
+    def BPM_inverse(self, verbose: bool = False):
         """
         Beam propagation method (BPM) in inverse mode.
 
@@ -768,7 +769,7 @@ class Scalar_field_XZ(object):
         c_inverse.u = (np.fliplr(c_inverse.u))
         return c_inverse
 
-    def BPM_back_propagation(self, verbose=False):
+    def BPM_back_propagation(self, verbose: bool = False):
         """
         Beam propagation method (BPM). The field that generates the final field is obtained.
 
@@ -790,7 +791,7 @@ class Scalar_field_XZ(object):
         c_backpropagation.u = (np.fliplr(c_backpropagation.u))
         return c_backpropagation
 
-    def __RS_multiprocessing__(self, i):
+    def __RS_multiprocessing__(self, i: int):
         """Internal for multiprocessing
 
         """
@@ -815,7 +816,7 @@ class Scalar_field_XZ(object):
         nx = len(self.x)
         return S[nx - 1:]
 
-    def RS(self, xout=None, verbose=False, num_processors=num_max_processors):
+    def RS(self, xout=None, verbose: bool = False, num_processors: int = num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
@@ -912,12 +913,12 @@ class Scalar_field_XZ(object):
 
         return self.u
 
-    def PWD(self, n=None, matrix=False, verbose=False):
+    def PWD(self, n: floating | None = None, matrix: bool = False, verbose: bool = False):
         """
         Plane wave decomposition algorithm (PWD).
 
         Parameters:
-            n (np. array): refraction index, If None, it is n_background
+            n (np. array): refractive index, If None, it is n_background
             matrix (bool): if True returns a matrix else
             verbose (bool): If True prints state of algorithm
 
@@ -952,13 +953,13 @@ class Scalar_field_XZ(object):
             return self.u
 
     def WPM(self,
-            kind='schmidt',
-            has_edges=True,
-            pow_edge=80,
-            matrix=False,
-            verbose=False):
+            kind: str = 'schmidt',
+            has_edges: bool = True,
+            pow_edge: int = 80,
+            matrix: bool = False,
+            verbose: bool = False):
         """
-        WPM Method. 'schmidt method is very fast, only needs discrete number of refraction indexes'
+        WPM Method. 'schmidt method is very fast, only needs discrete number of refractive indexes'
 
 
         Parameters:
@@ -1041,9 +1042,9 @@ class Scalar_field_XZ(object):
 
     def RS_polychromatic(self,
                          initial_field,
-                         wavelengths,
-                         spectrum='',
-                         verbose=False,
+                         wavelengths: NDArrayFloat,
+                         spectrum: NDArrayFloat or None = None,
+                         verbose: bool = False,
                          num_processors=num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light.
 
@@ -1081,10 +1082,10 @@ class Scalar_field_XZ(object):
 
     def BPM_polychromatic(self,
                           initial_field,
-                          wavelengths,
-                          spectrum,
-                          verbose=False,
-                          num_processors=4):
+                          wavelengths: NDArrayFloat,
+                          spectrum: NDArrayFloat,
+                          verbose: bool = False,
+                          num_processors: int = 4):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light
 
         Parameters:
@@ -1111,7 +1112,7 @@ class Scalar_field_XZ(object):
         u_temp.u = np.sqrt(I_final)
         return u_temp
 
-    def fast_propagation(self, mask_xz, num_pixels_slice=1024, verbose=False):
+    def fast_propagation(self, mask_xz, num_pixels_slice: int = 1024, verbose: bool = False):
         """combines RS and BPM"" to generate the final field
 
         Parameters:
@@ -1146,7 +1147,7 @@ class Scalar_field_XZ(object):
                              n=refr_index_RS[i_zone],
                              kind='z',
                              fast=self.fast,
-                             new_field=False,
+                             new_field = False,
                              verbose=False)
                 # u_current.draw()
             else:  # genero experimento para BPM
@@ -1171,7 +1172,7 @@ class Scalar_field_XZ(object):
 
         return np.abs(self.u)**2
 
-    def average_intensity(self, has_draw=False):
+    def average_intensity(self, has_draw: bool = False):
         """Returns average intensity as: (np.abs(self.u)**2).mean()
 
         Parameters:
@@ -1188,12 +1189,12 @@ class Scalar_field_XZ(object):
 
         return intensity_mean
 
-    def check_intensity(self, draw=True, normalized=True):
+    def check_intensity(self, has_draw: bool = True, normalized: bool = True):
         """
         Checks that intensity distribution is not lost by edges. It can be executed after a RS or BPM propagation.
 
         Parameters:
-            draw (bool): Draws the intensity
+            has_draw (bool): Draws the intensity
             normalized (bool): Draws it normalized
 
         returns:
@@ -1204,7 +1205,7 @@ class Scalar_field_XZ(object):
         I_max = intensity_prof[0]
         if normalized is True:
             intensity_prof = intensity_prof / I_max
-        if draw is True:
+        if has_draw is True:
             plt.figure()
             plt.plot(self.z / mm, intensity_prof, 'k')
             plt.grid()
@@ -1214,12 +1215,12 @@ class Scalar_field_XZ(object):
 
         return intensity_prof
 
-    def detect_index_variations(self, n_edge, incr_n=0.1):
-        """In a XZ masks, detects refraction index variations.
+    def detect_index_variations(self, n_edge: floating, incr_n: floating = 0.1):
+        """In a XZ masks, detects refractive index variations.
 
         Parameteres:
             n_edge (float):
-            incr_n (float): refraction index variation to detect
+            incr_n (float): refractive index variation to detect
 
         Returns:
             x_lens_l (np.array): x for left edge.
@@ -1247,7 +1248,7 @@ class Scalar_field_XZ(object):
         h_lens_r = z_new[iz_r]
         return x_lens_l, h_lens_l, x_lens_r, h_lens_r
 
-    def _detect_transitions_(self, min_variation=1e-10):
+    def _detect_transitions_(self, min_variation: floating = 1e-10):
         """Detects transitions areas and algorithms between RS and BPM.
 
         Parameters:
@@ -1256,7 +1257,7 @@ class Scalar_field_XZ(object):
         Returns:
             (list floats) : z_transitions, positions z of transitions
             (list str) : algorithms, "RS" or "BPM"
-            (list floats) : refr_index_RS, refraction indexes for RS
+            (list floats) : refr_index_RS, refractive indexes for RS
         """
         # para estar seguros que cogemos bien BPM y no empezamos tarde
         dz_bpm = 25 * um
@@ -1309,11 +1310,11 @@ class Scalar_field_XZ(object):
         return z_transitions, algorithm, refr_index_RS
 
     def surface_detection(self,
-                          mode=1,
-                          min_incr=0.1,
-                          reduce_matrix='standard',
-                          has_draw=False):
-        """detect edges of variation in refraction index.
+                          mode: int = 1,
+                          min_incr: floating=0.1,
+                          reduce_matrix: str = 'standard',
+                          has_draw: bool = False):
+        """detect edges of variation in refractive index.
 
         Parameters:
             mode (int): 1 or 2, algorithms for surface detection: 1-gradient, 2-diff
@@ -1377,19 +1378,19 @@ class Scalar_field_XZ(object):
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm=0,
-             normalize='',
-             draw_borders=False,
-             filename='',
-             scale='',
-             min_incr=0.0005,
-             reduce_matrix='standard',
-             colorbar_kind=False,
-             colormap_kind="",
-             z_scale='um',
-             edge_matrix=None,
-             interpolation='spline36',
-             percentage_intensity=None,
+             logarithm: floating = 0,
+             normalize: bool = False,
+             draw_borders: bool = False,
+             filename: str = '',
+             scale: str = '',
+             min_incr: floating = 0.0005,
+             reduce_matrix: str = 'standard',
+             colorbar_kind: str | None = None,
+             colormap_kind: str = "",
+             z_scale: str ='um',
+             edge_matrix: NDArrayFloat | None = None,
+             interpolation: str = 'spline36',
+             percentage_intensity: floating | None = None,
              **kwargs):
         """Draws  XZ field.
 
@@ -1400,7 +1401,7 @@ class Scalar_field_XZ(object):
             draw_borders (bool): If True draw edges of objects
             filename (str): if not '' stores drawing in file,
             scale (str): '', 'scaled', 'equal', scales the XY drawing
-            min_incr: incrimum increment in refraction index for detecting edges
+            min_incr: incrimum increment in refractive index for detecting edges
             reduce_matrix (int, int), 'standard' or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             z_scale (str): 'mm', 'um'
             edge_matrix (numpy.array): positions of borders
@@ -1521,17 +1522,17 @@ class Scalar_field_XZ(object):
         return h1
 
     def draw_refractive_index(self,
-                              kind='all',
-                              draw_borders=True,
-                              title='',
-                              filename='',
-                              scale='',
-                              min_incr=0.01,
-                              reduce_matrix='standard',
-                              colorbar_kind=None,
+                              kind: str = 'all',
+                              draw_borders: bool = True,
+                              title: str = '',
+                              filename: str = '',
+                              scale: str = '',
+                              min_incr: floating = 0.01,
+                              reduce_matrix: str = 'standard',
+                              colorbar_kind: str | None = None,
                               colormap_kind=cm.Blues,
-                              edge_matrix=None):
-        """Draws refraction index.
+                              edge_matrix: NDArray | None = None):
+        """Draws refractive index.
 
         Parameters:
             kind (str): 'all', 'real', 'imag'
@@ -1539,7 +1540,7 @@ class Scalar_field_XZ(object):
             filename (str): if not '' stores drawing in file,
             title (str): title of drawing
             scale (str): '', 'scaled', 'equal', scales the XY drawing
-            min_incr: minimum increment in refraction index for detecting edges
+            min_incr: minimum increment in refractive index for detecting edges
             reduce_matrix (int, int), 'standard' or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             edge_matrix (numpy.array): positions of borders
         """
@@ -1614,9 +1615,9 @@ class Scalar_field_XZ(object):
 
     def draw_incident_field(self,
                             kind: str = 'intensity',
-                            logarithm=False,
-                            normalize=False,
-                            filename=''):
+                            logarithm: floating = 0.,
+                            normalize: bool = False,
+                            filename: str = ''):
         """Draws incident field self.u0
 
         Parameters:
@@ -1635,12 +1636,12 @@ class Scalar_field_XZ(object):
 
     def profile_longitudinal(self,
                              kind: str = 'intensity',
-                             x0=0 * um,
-                             logarithm=False,
-                             normalize=False,
-                             z_scale='um',
-                             draw=True,
-                             filename=''):
+                             x0: floating = 0 * um,
+                             logarithm: floating = 0.,
+                             normalize: bool = False,
+                             z_scale: str = 'um',
+                             has_draw: bool = True,
+                             filename: str = ''):
         """Determine and draws longitudinal profile
 
         Parameters:
@@ -1648,7 +1649,7 @@ class Scalar_field_XZ(object):
             x0 (float): profile that passes through x=x0
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
-            draw (bool): If True, draws, False only returns profile
+            has_draw (bool): If True, draws, False only returns profile
             filename (str): if not '' stores drawing in file
 
         Returns:
@@ -1673,7 +1674,7 @@ class Scalar_field_XZ(object):
             I_drawing = prepare_drawing(u, kind, logarithm, normalize)
             amplitude, intensity, phase = field_parameters(u)
 
-        if draw is True:
+        if has_draw is True:
             plt.figure(facecolor='w', edgecolor='k')
             plt.plot(self.z / factor, I_drawing, 'k', linewidth=2)  # 'k-o'
             plt.axis([
@@ -1705,11 +1706,11 @@ class Scalar_field_XZ(object):
 
     def profile_transversal(self,
                             kind: str = 'intensity',
-                            z0=0 * um,
-                            logarithm=False,
-                            normalize=False,
-                            draw=True,
-                            filename=''):
+                            z0: floating = 0 * um,
+                            logarithm: floating = 0.,
+                            normalize: bool = False,
+                            has_draw: bool = True,
+                            filename: str = ''):
         """Determine and draws transversal profile.
 
         Parameters:
@@ -1736,7 +1737,7 @@ class Scalar_field_XZ(object):
             I_drawing = prepare_drawing(u, kind, logarithm, normalize)
             amplitude, intensity, phase = field_parameters(u)
 
-        if draw is True:
+        if has_draw is True:
             plt.figure(facecolor='w', edgecolor='k')
             plt.plot(self.x, I_drawing, 'k', linewidth=2)  # 'k-o'
             plt.axis([self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()])
@@ -1786,11 +1787,11 @@ class Scalar_field_XZ(object):
 
     def beam_widths(self,
                     kind='FWHM1D',
-                    has_draw=[True, False],
-                    z_scale='um',
-                    percentage=0.5,
-                    remove_background=None,
-                    verbose=False):
+                    has_draw: list[bool] = [True, False],
+                    z_scale: str = 'um',
+                    percentage: floating = 0.5,
+                    remove_background: str | None = None,
+                    verbose: bool = False):
         """Computes the beam width for all the distances z.
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHM1D'
@@ -1844,10 +1845,10 @@ class Scalar_field_XZ(object):
     #                    kind_profile='transversal',
     #                    step=1,
     #                    wait=0.001,
-    #                    logarithm=False,
-    #                    normalize=False,
-    #                    filename='',
-    #                    verbose=False):
+    #                    logarithm: floating = 0.,
+    #                    normalize: bool = False,
+    #                    filename: str = '',
+    #                    verbose: bool = False):
     #     """Draws profiles in a video fashion
 
     #     Parameters:
@@ -1904,14 +1905,14 @@ class Scalar_field_XZ(object):
 
     def video(self,
               kind: str = 'intensity',
-              z_min=None,
-              z_max=None,
-              logarithm=False,
-              normalize=False,
-              time_video=10 * seconds,
-              frames_reduction=5,
-              filename='video.avi',
-              dpi=100):
+              z_min: floating | None = None,
+              z_max: floating | None = None,
+              logarithm: floating = 0.,
+              normalize: bool = False,
+              time_video: floating = 10 * seconds,
+              frames_reduction: int = 5,
+              filename: str = 'video.avi',
+              dpi: int = 100):
         """Generates a video in the z dimension.
 
         Parameters:
@@ -1969,8 +1970,8 @@ class Scalar_field_XZ(object):
 
     def draw_profiles_interactive(self,
                                   kind: str = 'intensity',
-                                  logarithm=False,
-                                  normalize=False):
+                                  logarithm: floating = 0.,
+                                  normalize: bool = False):
         """Draws profiles interactivey. Only transversal
 
         Parameters:

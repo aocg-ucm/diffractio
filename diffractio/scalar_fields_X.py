@@ -57,7 +57,7 @@ import multiprocessing
 import time
 import types
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from numpy import angle, array, concatenate, exp, linspace, pi, shape, sqrt, zeros
@@ -88,7 +88,7 @@ class Scalar_field_X(object):
         x (numpy.array): linear array with equidistant positions.
             The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
-        n_background (float): refraction index of background
+        n_background (float): refractive index of background
         info (str): String with info about the simulation
 
     Attributes:
@@ -102,8 +102,8 @@ class Scalar_field_X(object):
         self.date (str): Date when performed.
     """
 
-    def __init__(self, x: NDArray[float] | None = None,
-                 wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat | None = None,
+                 wavelength: float = 0,
                  n_background: float = 1, info: str = ""):
         self.x = x
         self.wavelength = wavelength
@@ -143,7 +143,7 @@ class Scalar_field_X(object):
             print(" - info:       {}".format(self.info))
         return ""
 
-    def __add__(self, other: Scalar_field_X, kind: str = "standard"):
+    def __add__(self, other, kind: str = "standard"):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Parameters:
@@ -166,15 +166,15 @@ class Scalar_field_X(object):
         elif kind == "maximum1":
             t1 = np.abs(self.u)
             t2 = np.abs(other.u)
-            f1 = angle(self.u)
-            f2 = angle(other.u)
+            f1 = np.angle(self.u)
+            f2 = np.angle(other.u)
             t3 = t1 + t2
             t3[t3 > 0] = 1.0
             u3.u = t3 * exp(1j * (f1 + f2))
 
         return u3
 
-    def __sub__(self, other: Scalar_field_X):
+    def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
         Parameters:
@@ -190,7 +190,7 @@ class Scalar_field_X(object):
         u3.u = self.u - other.u
         return u3
 
-    def __mul__(self, other: Scalar_field_X):
+    def __mul__(self, other):
         """Multiply two fields. For example  :math: `u_1(x)= u_0(x)*t(x)`
 
         Parameters:
@@ -345,7 +345,7 @@ class Scalar_field_X(object):
             field.u = u_new
             return field
 
-    def incident_field(self, u0: Scalar_source_X):
+    def incident_field(self, u0):
         """Incident field for the experiment. It takes a Scalar_source_X field.
 
         Parameters:
@@ -353,7 +353,7 @@ class Scalar_field_X(object):
         """
         self.u = u0.u
 
-    def inverse_amplitude(self, new_field=False):
+    def inverse_amplitude(self, new_field: bool = False):
         """Inverts the amplitude of the mask, phase is equal as initial
 
         Parameters:
@@ -377,7 +377,7 @@ class Scalar_field_X(object):
             new.u = new_amplitude
             return new
 
-    def inverse_phase(self, new_field=False):
+    def inverse_phase(self, new_field: bool = False):
         """Inverts the phase of the mask, amplitude is equal as initial
 
         Parameters:
@@ -409,7 +409,7 @@ class Scalar_field_X(object):
         slit.slit(x0=0, size=size)
         self.u = fft_filter(self.u, slit.u)
 
-    def insert_mask(self, t1: Scalar_field_x, x0_mask1: float,
+    def insert_mask(self, t1, x0_mask1: float,
                     clean: bool = True, kind_position: str = "left"):
         """Insert mask t1 in mask self. It is performed using interpolation.
 
@@ -643,7 +643,7 @@ class Scalar_field_X(object):
 
         Parameters:
             z (float): distance to observation plane. I z<0 inverse propagation is executed
-            n (float): refraction index
+            n (float): refractive index
             matrix (bool): if True returns a matrix with result. It is much faster than new_field=True
             new_field (bool): if False the computation goes to self.u. If True a new instance is produced
             fast (bool): Instead of using Hankle function for RS kernel uses exponential
@@ -738,7 +738,7 @@ class Scalar_field_X(object):
 
         Parameters:
             z (float): Distance to observation plane. if z<0 inverse propagation is executed
-            n (float): Refraction index
+            n (float): refractive index
             new_field (bool): if False the computation goes to self.u, if True a new instance is produced
             matrix (bool): If True, the result of the function is a numpy.array
             fast (bool): Instead of using Hankle function for RS kernel uses expotential
@@ -806,9 +806,9 @@ class Scalar_field_X(object):
     # def RS(self,
     #        z=10 * mm,
     #        amplification=1,
-    #        n=1,
-    #        new_field=True,
-    #        matrix=False,
+    #        n: float = 1.,
+    #        new_field: bool = True,
+    #        matrix: bool = False,
     #        xout=None,None
     #        yout=None
     #        fast=False,
@@ -818,7 +818,7 @@ class Scalar_field_X(object):
 
     #     Parameters:
     #         z (float): Distance to observation plane. if z<0 inverse propagation is executed
-    #         n (float): Refraction index
+    #         n (float): refractive index
     #         new_field (bool): if False the computation goes to self.u, if True a new instance is produced
     #         matrix (bool): If True, the result of the function is a numpy.array
     #         fast (bool): Instead of using Hankle function for RS kernel uses expotential
@@ -1010,7 +1010,7 @@ class Scalar_field_X(object):
             - Region of interest given by ROI.
 
         Parameters:
-            fn (function): Function that returns the refraction index at a plane in a numpy.array
+            fn (function): Function that returns the refractive index at a plane in a numpy.array
             zs (np.array): linspace with positions z where to evaluate the field.
             num_sampling (int, int) or None: If None, it does not storage intermediate data. Otherwise, it stores a small XZ matrix which size in num_sampling.
             ROI (np.array, np.array) or None: x and z arrays with positions and sampling to store. It is used when we need to store with a high density a small area of the total field.
@@ -1282,7 +1282,7 @@ class Scalar_field_X(object):
 
 
         Args:
-            n (float): refraction index of the surrounding medium.
+            n (float): refractive index of the surrounding medium.
             quality (int, optional): quality. Defaults to 1.
             verbose (bool, optional): prints info. Defaults to True.
 
@@ -1320,9 +1320,9 @@ class Scalar_field_X(object):
     def draw(
         self,
         kind="intensity",
-        logarithm=False,
-        normalize=False,
-        cut_value=None,
+        logarithm: floating = 0.,
+        normalize: bool = False,
+        cut_value: floating | None = None,
         filename="",
         scale="",
     ):
@@ -1401,7 +1401,7 @@ class Scalar_field_X(object):
             plt.ylim(-pi, pi)
 
 
-def kernelRS(x: NDArray[float], wavelength: float, z: float,
+def kernelRS(x: NDArrayFloat, wavelength: float, z: float,
              n: float = 1, kind: str = "z", fast: bool = False):
     """Kernel for RS propagation. It uses the hankel tansform.
 
@@ -1411,7 +1411,7 @@ def kernelRS(x: NDArray[float], wavelength: float, z: float,
         x (numpy.array): positions x
         wavelength (float): wavelength of incident fields
         z (float): distance for propagation
-        n (float): refraction index of background
+        n (float): refractive index of background
         kind (str): 'z', 'x', '0': for simplifying vector propagation
         fast (bool): If True  The approximation is much faster. According to https://dlmf.nist.gov/10.2#E5
 
@@ -1438,7 +1438,7 @@ def kernelRS(x: NDArray[float], wavelength: float, z: float,
         return (0.5j * k) * hk1
 
 
-def kernelRSinverse(x: NDArray[float], wavelength: float, z: float,
+def kernelRSinverse(x: NDArrayFloat, wavelength: float, z: float,
                     n: float = 1., kind: str = "z", fast: bool = False):
     """Kernel for inverse RS propagation. See also kernelRS
 
@@ -1446,7 +1446,7 @@ def kernelRSinverse(x: NDArray[float], wavelength: float, z: float,
         x (numpy.array): positions x
         wavelength (float): wavelength of incident fields
         z (float): distance for propagation
-        n (float): refraction index of background
+        n (float): refractive index of background
         kind (str): 'z', 'x', '0': for simplifying vector propagation
         fast (bool): If True  The approximation is much faster. According to https://dlmf.nist.gov/10.2#E5
 
@@ -1469,14 +1469,14 @@ def kernelRSinverse(x: NDArray[float], wavelength: float, z: float,
         return (-0.5j * k) * hk1
 
 
-def PWD_kernel(u: NDArray[Any], n: NDArray[complex], k0: float,
+def PWD_kernel(u: NDArrayComplex, n: NDArrayComplex, k0: float,
                k_perp2: NDArray[Any], dz: float):
     """
     Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
 
     Parameters:
         u (np.array): fields
-        n (np.array): refraction index
+        n (np.array): refractive index
         k0 (float): wavenumber
         k_perp2 (np.array): transversal k**2
         dz (float): increment in distances
@@ -1501,7 +1501,7 @@ def WPM_schmidt_kernel(u: NDArray[Any], n: NDArray[Any],
 
     Parameters:
         u (np.array): fields
-        n (np.array): refraction index
+        n (np.array): refractive index
         k0 (float): wavenumber
         k_perp2 (np.array): transversal k**2
         dz (float): increment in distances
@@ -1526,8 +1526,8 @@ def WPM_schmidt_kernel(u: NDArray[Any], n: NDArray[Any],
 
 def polychromatic_multiprocessing(
         function_process,
-        wavelengths: NDArray[float],
-        spectrum: NDArray[float],
+        wavelengths: NDArrayFloat,
+        spectrum: NDArrayFloat,
         num_processors: int = num_max_processors,
         verbose: bool = False):
     """
@@ -1570,7 +1570,7 @@ def polychromatic_multiprocessing(
 
 
 def extended_source_multiprocessing(
-        function_process, x0s: NDArray[float],
+        function_process, x0s: NDArrayFloat,
         num_processors: int = num_max_processors,
         verbose: bool = False):
     """
@@ -1610,9 +1610,9 @@ def extended_source_multiprocessing(
 
 def extended_polychromatic_source(
     function_process,
-    x0s: NDArray[float],
-    wavelengths: NDArray[float],
-    spectrum: NDArray[float],
+    x0s: NDArrayFloat,
+    wavelengths: NDArrayFloat,
+    spectrum: NDArrayFloat,
     num_processors: int = num_max_processors,
     verbose: bool = False,
 ):
@@ -1647,7 +1647,7 @@ def extended_polychromatic_source(
     return intensity, u_s, time_proc
 
 
-def quality_factor(range_x: NDArray[float], num_x: int,
+def quality_factor(range_x: NDArrayFloat, num_x: int,
                    z: float, wavelength: float,
                    n: float = 1., verbose: bool = False):
     """Determine the quality factor for RS algorithm
@@ -1657,7 +1657,7 @@ def quality_factor(range_x: NDArray[float], num_x: int,
         num_x (int): num of x?
         z (float): observation distance
         wavelength (float): wavelength)
-        n (float): refraction index
+        n (float): refractive index
 
     Returns:
         _type_: _description_

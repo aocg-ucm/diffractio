@@ -6,7 +6,7 @@
 
 import pandas as pd
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from . import degrees, np, plt
@@ -17,7 +17,7 @@ from .utils_math import (
     nearest)
 
 
-def roughness_1D(x, t, s, kind="normal"):
+def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind="normal"):
     """Rough surface, 1D
 
     Parameters:
@@ -54,13 +54,13 @@ def roughness_1D(x, t, s, kind="normal"):
     if kind == "normal":
         h_no_corr = s * np.random.randn(2 * N_ancho + 1)
         h_corr = fft_convolution1d(h_no_corr, pesos)
-        h_corr = h_corr[0 : len(x)]
+        h_corr = h_corr[0: len(x)]
     elif kind == "uniform":
         h_corr = s * (np.random.rand(len(x)) - 0.5)
     return h_corr
 
 
-def roughness_2D(x, y, t, s):
+def roughness_2D(x: NDArrayFloat, y: list[floating, floating], t: floating, s: floating):
     """Rough surface, 2D
 
     Parameters:
@@ -105,11 +105,11 @@ def roughness_2D(x, y, t, s):
 
     h_no_corr = s * np.random.randn(2 * N_ancho + 1, 2 * N_largo + 1)
     h_corr = fft_convolution2d(h_no_corr, pesos)
-    h_corr = h_corr[0 : len(x), 0 : len(y)]
+    h_corr = h_corr[0: len(x), 0: len(y)]
     return h_corr
 
 
-def beam_width_1D(u, x, remove_background=None):
+def beam_width_1D(u: NDArrayComplex, x: NDArrayFloat, remove_background: bool = False):
     """One dimensional beam width, according to D4σ or second moment width.
 
     Parameters:
@@ -136,7 +136,7 @@ def beam_width_1D(u, x, remove_background=None):
     return width_x, x_mean
 
 
-def width_percentage(x, y, percentage=0.5, verbose=False):
+def width_percentage(x: NDArrayFloat, y: NDArrayFloat, percentage: floating = 0.5, verbose: bool = False):
     """beam width (2*sigma) given at a certain height from maximum
 
     Parameters:
@@ -184,7 +184,8 @@ def width_percentage(x, y, percentage=0.5, verbose=False):
     return width, x_list, i_list
 
 
-def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
+def beam_width_2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat,
+                  remove_background: bool = False, has_draw: bool = False):
     """2D beam width, ISO11146 width
 
 
@@ -252,7 +253,8 @@ def beam_width_2D(x, y, intensity, remove_background=False, has_draw=False):
     return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
 
 
-def refractive_index(filename, wavelength, raw=False, has_draw=True):
+def refractive_index(filename: str, wavelength: floating, raw: bool = False,
+                     has_draw: bool = bool):
     """gets refraction index from https://refractiveindex.info .
 
     * Files has to be converted to xlsx format.
@@ -302,8 +304,9 @@ def refractive_index(filename, wavelength, raw=False, has_draw=True):
         return f_n(wavelength), f_kappa(wavelength)
 
 
-def FWHM1D(x, intensity, percentage=0.5, remove_background=None, has_draw=False):
-    """FWHM1D
+def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
+           remove_background=None, has_draw: bool = False):
+    """FWHM1D #TODO
 
     remove_background = 'min', 'mean', None"""
 
@@ -365,9 +368,8 @@ def FWHM1D(x, intensity, percentage=0.5, remove_background=None, has_draw=False)
     return np.squeeze(FWHM_x)
 
 
-def FWHM2D(
-    x, y, intensity, percentage=0.5, remove_background="None", has_draw=False, xlim=None
-):
+def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
+           remove_background: bool = False, has_draw: bool = False, xlim: list[floating] | None = None):
     """TODO: perform profiles at several angles and fit to a ellipse.
     Get dx, dy, angle, x_center, y_center"""
     # Ix = intensity.mean(axis=0)
@@ -393,7 +395,8 @@ def FWHM2D(
     return FWHM_x, FWHM_y
 
 
-def DOF(z, widths, w_factor=np.sqrt(2), w_fixed=0, has_draw=False, verbose=False):
+def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: floating = np.sqrt(2), w_fixed: floating = 0,
+        has_draw: bool = False, verbose: bool = False):
     """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
     Parameters:
@@ -428,9 +431,9 @@ def DOF(z, widths, w_factor=np.sqrt(2), w_fixed=0, has_draw=False, verbose=False
     left = widths[0:i_w0]
     right = widths[i_w0::]
 
-    i_left, _, distance_left = nearest(left, w_factor * beam_waist)
+    i_left, _, _ = nearest(left, w_factor * beam_waist)
 
-    i_right, _, distance_right = nearest(right, w_factor * beam_waist)
+    i_right, _, _ = nearest(right, w_factor * beam_waist)
 
     z_rayleigh = z[i_right + i_w0] - z[i_left]
 
@@ -468,8 +471,7 @@ def DOF(z, widths, w_factor=np.sqrt(2), w_fixed=0, has_draw=False, verbose=False
 
 
 def detect_intensity_range(
-    x, intensity, percentage=0.95, has_draw=True, logarithm=True
-):
+        x, intensity, percentage=0.95, has_draw: bool = True, logarithm=True):
     """Determines positions x_min, x_max where intensity of the beam is percentage
 
     Parameters:
@@ -525,7 +527,7 @@ def detect_intensity_range(
 
 
 def MTF_ideal(
-    frequencies, wavelength, diameter, focal, kind, verbose=False, has_draw=False
+    frequencies, wavelength, diameter, focal, kind: str, verbose: bool = False, has_draw: bool = False
 ):
     """Determines the ideal MTF of a lens.
 
@@ -590,7 +592,7 @@ def lines_mm_2_cycles_degree(lines_mm, focal):
     return frec_cycles_deg
 
 
-def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose=False):
+def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose: bool = False):
     """MTF parameters: strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
 
     References:
@@ -709,7 +711,7 @@ def uniform_spectrum(wavelengths, normalize=True):
     return weights
 
 
-def normalize_field(self, new_field=False):
+def normalize_field(self, new_field: bool = False):
     """Normalize the field to maximum intensity.
 
     Parameters:
@@ -855,7 +857,7 @@ def fresnel_equations_kx(
     n1,
     n2,
     outputs=[True, True, True, True],
-    has_draw=True,
+    has_draw: bool = True,
     kind="amplitude_phase",
 ):
     """Fresnel_equations where input are kx part of wavevector.
@@ -975,7 +977,7 @@ def fresnel_equations_kx(
 
 
 def transmitances_reflectances_kx(
-    kx, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False
+    kx, wavelength, n1, n2, outputs=[True, True, True, True], has_draw: bool = False
 ):
     """Transmitances and reflectances, where input are kx part of wavevector.
 
@@ -1046,7 +1048,7 @@ def fresnel_equations(
     n1,
     n2,
     outputs=[True, True, True, True],
-    has_draw=False,
+    has_draw: bool = False,
     kind="amplitude_phase",
 ):
     """Fresnel equations and reflectances, where input are angles of incidence.
@@ -1187,7 +1189,7 @@ def fresnel_equations(
 
 
 def transmitances_reflectances(
-    theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw=False
+    theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw: bool = False
 ):
     """Transmitances and reflectances, where input are angles of incidence.
 
@@ -1226,6 +1228,5 @@ def transmitances_reflectances(
         plt.xlabel(r"$\theta (^o)$")
         plt.legend()
         plt.grid()
-
 
     return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular

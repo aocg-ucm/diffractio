@@ -44,7 +44,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -82,8 +82,8 @@ class Vector_field_XYZ(object):
     """
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                z: NDArray | None = None, wavelength: float | None = None, 
-                n_background: float = 1., info: str = ""):
+                 z: NDArray | None = None, wavelength: float | None = None,
+                 n_background: float = 1., info: str = ""):
         self.x = x
         self.y = y
         self.z = z
@@ -100,7 +100,6 @@ class Vector_field_XYZ(object):
         self.info = info
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
-
 
     def __str__(self):
         """Represents data from class."""
@@ -149,8 +148,8 @@ class Vector_field_XYZ(object):
 
         return EM
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False): 
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -305,7 +304,7 @@ class Vector_field_XYZ(object):
 
         return intensity
 
-    def polarization_states(self, matrix=False):
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
         Parameters:
@@ -348,7 +347,7 @@ class Vector_field_XYZ(object):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
         Parameters:
@@ -416,7 +415,7 @@ class Vector_field_XYZ(object):
                            iz0=None,
                            z0=None,
                            is_class=True,
-                           matrix=False):
+                           matrix: bool = False):
         """pass results to Scalar_field_XY. Only one of the first two variables (iz0,z0) should be used
 
         Parameters:
@@ -449,7 +448,7 @@ class Vector_field_XYZ(object):
                            iy0=None,
                            y0=None,
                            is_class=True,
-                           matrix=False):
+                           matrix: bool = False):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
         Parameters:
@@ -483,7 +482,7 @@ class Vector_field_XYZ(object):
                            ix0=None,
                            x0=None,
                            is_class=True,
-                           matrix=False):
+                           matrix: bool = False):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
         Parameters:
@@ -503,7 +502,7 @@ class Vector_field_XYZ(object):
                 iy = ix0
             field_output.Ex = np.squeeze(self.Ex[ix, :, :])
             field_output.Ey = np.squeeze(self.Ey[ix, :, :])
-            field_output.Ez = np.squeeze(self.Ez[ix, :, :])            
+            field_output.Ez = np.squeeze(self.Ez[ix, :, :])
             return field_output
 
         if matrix is True:
@@ -514,10 +513,10 @@ class Vector_field_XYZ(object):
             return np.squeeze(self.Ex[ix, :, :]), np.squeeze(self.Ey[ix, :, :]), np.squeeze(self.Ez[ix, :, :])
 
     def to_Z(self,
-             kind='amplitude',
+             kind: str = 'amplitude',
              x0=None,
              y0=None,
-             has_draw=True,
+             has_draw: bool = True,
              z_scale='mm'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
 
@@ -560,10 +559,10 @@ class Vector_field_XYZ(object):
     def draw_XY(self,
                 z0=5 * mm,
                 kind: str = 'intensity',
-                logarithm=0,
+                logarithm: floating = 0,
                 normalize='maximum',
                 title='',
-                filename='',
+                filename: str = '',
                 cut_value='',
                 has_colorbar='False',
                 reduce_matrix=''):
@@ -597,10 +596,10 @@ class Vector_field_XYZ(object):
     def draw_XZ(self,
                 kind: str = 'intensity',
                 y0=0 * mm,
-                logarithm=0,
+                logarithm: floating = 0,
                 normalize='',
                 draw_borders=False,
-                filename='',
+                filename: str = '',
                 **kwargs):
         """Longitudinal profile XZ at a given x0 value.
 
@@ -657,10 +656,10 @@ class Vector_field_XYZ(object):
 
     def draw_YZ(self,
                 x0=0 * mm,
-                logarithm=0,
+                logarithm: floating = 0,
                 normalize='',
                 draw_borders=False,
-                filename=''):
+                filename: str = ''):
         """Longitudinal profile YZ at a given x0 value.
 
         Parameters:

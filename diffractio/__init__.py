@@ -30,26 +30,15 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
+
+from matplotlib import rcParams
 import datetime
 import multiprocessing
-
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from matplotlib import cm, rcParams
-
 from .config import CONF_DRAWING
-
-# https://numpy.org/devdocs/reference/typing.html
-from typing import Any
-import numpy.typing as npt
-NDArray = npt.NDArray
-NDArrayInt = npt.NDArray[np.int_]
-NDArrayFloat = npt.NDArray[np.float_]
-floating = np.float_
-integer = np.integer
-
-
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
 __version__ = '0.3.1'
@@ -74,7 +63,5 @@ date_test = now.strftime("%Y-%m-%d_%H")
 number_types = (int, float, complex, np.int32, np.float64)
 
 num_max_processors = multiprocessing.cpu_count()
-
-from matplotlib import rcParams
 
 rcParams['figure.dpi'] = 75

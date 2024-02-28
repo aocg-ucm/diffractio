@@ -16,7 +16,7 @@ from scipy.signal import fftconvolve
 from numpy.fft import fft, ifft
 from scipy.ndimage import rank_filter
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 from . import mm
 
 
@@ -179,7 +179,7 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
     return b
 
 
-def find_local_extrema(kind,
+def find_local_extrema(kind: str,
                        y,
                        x,
                        pixels_interpolation=0,
@@ -237,8 +237,6 @@ def find_local_extrema(kind,
             y_minima_frac[i_j] = y_minima_interp(x_minima_frac[i_j])
 
     return x_minima_frac, y_minima_frac, i_pos_integer
-
-
 
 
 def reduce_to_1(class_diffractio):
@@ -305,7 +303,7 @@ def nearest2(vector, numbers):
     return indexes, values, distances
 
 
-def find_extrema(array2D, x, y, kind='max', verbose=False):
+def find_extrema(array2D, x, y, kind='max', verbose: bool = False):
     """In a 2D-array, formed by vectors x, and y, the maxima or minima are found
 
     Parameters:
@@ -429,7 +427,7 @@ def ndgrid_deprecated(*args, **kwargs):
         return result  # keeps separate dtype for each output
 
 
-def get_amplitude(u, sign=False):
+def get_amplitude(u, sign: bool = False):
     """Gets the amplitude of the field.
 
     Parameters:
@@ -531,12 +529,12 @@ def binarize(vector, min_value=0, max_value=1):
 
 
 def discretize(u,
-               kind='amplitude',
-               num_levels=2,
+               kind: str = 'amplitude',
+               num_levels: int = 2,
                factor=1,
                phase0=0,
-               new_field=True,
-               matrix=False):
+               new_field: bool = True,
+               matrix: bool = False):
     """Discretize in a number of levels equal to num_levels.
 
     Parameters:
@@ -693,8 +691,8 @@ def get_edges(x,
               f,
               kind_transition='amplitude',
               min_step=0,
-              verbose=False,
-              filename=''):
+              verbose: bool = False,
+              filename: str = ''):
     """We have a binary mask and we obtain locations of edges.
     valid for litography engraving of gratings
 
@@ -804,7 +802,7 @@ def fft_convolution1d(x, y):
     return fftconvolve(x, y, mode='same')
 
 
-def fft_filter(x, y, normalize=False):
+def fft_filter(x, y, normalize: bool = False):
     """ 1D convolution, using FFT
 
     Parameters:
@@ -1008,7 +1006,6 @@ def laguerre_polynomial_nk(x, n=4, k=5):
     return summation
 
 
-
 def get_k(x, flavour='-'):
     """provides k vector from x vector. With flavour set to "-", the axis will be inverse-fftshifted,
         thus its DC part being the first index. 
@@ -1024,11 +1021,11 @@ def get_k(x, flavour='-'):
 
     """
     num_x = x.size
-    integerFrom = int( np.floor((1-num_x) / 2 ) )
-    integerTo = int( np.floor((num_x-1) / 2) )
-    intRange = np.linspace(integerFrom, integerTo, num_x) # ordered k axis, DC is at int(np.floor(num_x/2))
+    integerFrom = int(np.floor((1-num_x) / 2))
+    integerTo = int(np.floor((num_x-1) / 2))
+    intRange = np.linspace(integerFrom, integerTo, num_x)  # ordered k axis, DC is at int(np.floor(num_x/2))
     if flavour == '-':
-        intRange = np.fft.ifftshift(intRange) # leading zero (DC) frequency
+        intRange = np.fft.ifftshift(intRange)  # leading zero (DC) frequency
     dx = x[1] - x[0]
     dk = 2 * np.pi / (num_x * dx)
     return dk * intRange

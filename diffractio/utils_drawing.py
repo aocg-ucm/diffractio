@@ -7,7 +7,7 @@
 
 import os
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 import matplotlib.animation as manimation
 import matplotlib.image as mpimg
@@ -48,7 +48,7 @@ def concatenate_drawings(
 
     files_text = ""
     for file in sorted(files_list):
-        if file[-3:] == kind1 and file[0 : len(raiz)] == raiz:
+        if file[-3:] == kind1 and file[0: len(raiz)] == raiz:
             print(file)
             files_text = files_text + " " + directory + file
 
@@ -343,7 +343,7 @@ def normalize_draw(
 
 
 def prepare_drawing(u, kind: str = "intensity",
-                    logarithm: np.float_ | bool = False, 
+                    logarithm: np.float_ | bool = False,
                     normalize: bool = False):
     """It is necessary that figure is previously defined: plt.figure()
 
@@ -375,7 +375,7 @@ def prepare_drawing(u, kind: str = "intensity",
     return I_drawing
 
 
-def prepare_video(fps: int = 15, title: str = "", 
+def prepare_video(fps: int = 15, title: str = "",
                   artist: str = "", comment: str = ""):
     FFMpegWriter = manimation.writers["ffmpeg"]  # ffmpeg mencoder
     metadata = dict(title=title, artist=artist, comment=comment)
@@ -394,8 +394,8 @@ def make_video_from_file(self, files: list, filename: str = ""):
     if not (filename) == "":
         print("Making movie animation.mpg - this make take a while")
         texto = (
-            "mencoder 'mf://_tmp*.png' -mf kind=png:fps=10 -ovc lavc -lavcopts vcodec=wmv2 -oac copy -o "
-            + filename
+            "mencoder 'mf://_tmp*.png' -mf kind=png:fps=10 -ovc lavc -lavcopts vcodec=wmv2 -oac copy -o " +
+            filename
         )
         # texto = "mencoder 'mf://home/_tmp*.png' -mf kind=png:fps=10 -ovc lavc -lavcopts vcodec=wmv2 -oac copy -o " + filename
         os.system(texto)
@@ -408,7 +408,7 @@ def make_video_from_file(self, files: list, filename: str = ""):
     print("exit", files)
 
 
-def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArray, 
+def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArray,
                        y: NDArray, image: NDArray,
                        verbose: bool = False):
     """Reduces the size of matrix for drawing purposes. If the matrix is very big, the drawing process is slow.

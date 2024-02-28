@@ -7,7 +7,7 @@ The main atributes are:
     * self.x - x positions of the field
     * self.z - z positions of the field
     * self.u - field XZ
-    * self.n - refraction index XZ
+    * self.n - refractive index XZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
 
 The magnitude is related to microns: `micron = 1.`
@@ -44,7 +44,7 @@ from scipy.signal import fftconvolve
 from scipy.special import eval_hermite
 import matplotlib.path as mpath
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 from . import degrees, np, plt, sp, um
@@ -74,7 +74,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
                  wavelength: float | None = None, info: str = ""):
-        
+
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_mask_XY'
 
@@ -141,13 +141,13 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         return (num_pixels_1 / num_pixels) * (delta_x * delta_y)
 
-    def inverse_amplitude(self, new_field=False):
+    def inverse_amplitude(self, new_field: bool = False):
         """Inverts the amplitude of the mask, phase is equal as initial
-        
+
         Parameters:
             new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
-            
-            
+
+
         Returns:
             Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
         """
@@ -164,13 +164,13 @@ class Scalar_mask_XY(Scalar_field_XY):
             new.u = new_amplitude
             return new
 
-    def inverse_phase(self, new_field=False):
+    def inverse_phase(self, new_field: bool = False):
         """Inverts the phase of the mask, amplitude is equal as initial
-        
+
         Parameters:
             new_field (bool): If True it returns a Scalar_mask_XY object, else, it modifies the existing object
-            
-            
+
+
         Returns:
             Scalar_mask_XY:  If new_field is True, it returns a Scalar_mask_XY object.
         """
@@ -187,7 +187,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             new.u = new_amplitude
             return new
 
-    def filter(self, mask, new_field=True, binarize=False, normalize=False):
+    def filter(self, mask, new_field: bool = True, binarize=False, normalize: bool = False):
         """Widens a field using a mask
 
         Parameters:
@@ -214,7 +214,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             self.u = covolved_image
 
-    def widen(self, radius, new_field=True, binarize=True):
+    def widen(self, radius, new_field: bool = True, binarize=True):
         """Widens a mask using a convolution of a certain radius
 
         Parameters:
@@ -287,7 +287,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): center of cross
-            index (float): refraction index
+            index (float): refractive index
             f1 (str): function for first surface
             f2 (str): function for second surface
             radius (float, float) or (float): size of mask
@@ -315,7 +315,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u[t == 0] = 0
 
     def image(self,
-              filename='',
+              filename: str = '',
               canal=0,
               normalize=True,
               lengthImage=False,
@@ -378,7 +378,7 @@ class Scalar_mask_XY(Scalar_field_XY):
     def repeat_structure(self,
                          num_repetitions,
                          position='center',
-                         new_field=True):
+                         new_field: bool = True):
         """Repeat the structure (n x m) times.
 
         Parameters:
@@ -438,9 +438,9 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def masks_to_positions(self,
                            pos,
-                           new_field=True,
+                           new_field: bool = True,
                            binarize=False,
-                           normalize=False):
+                           normalize: bool = False):
         """
         Place a certain mask on several positions.
 
@@ -519,7 +519,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             num_vertices (int): num_vertices
             radius (float): external radius
             angle (float): angle of rotation
-        
+
         Returns:
             vertices (np.array): position of vertices
 
@@ -544,7 +544,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             num_peaks (int): number of peaks.
             radii (float, float): external radius
             angle (float): angle of rotation
-        
+
         Returns:
             vertices (np.array): position of vertices
 
@@ -657,7 +657,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             phase = np.angle(u)
             A[A > 1] = 1
             u = A * np.exp(1j * phase)
-            #u[u > 1] = 1
+            # u[u > 1] = 1
         self.u = u
         return num_points
 
@@ -735,7 +735,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = u
         return self
 
-    def dots_regular(self, xlim, ylim, num_data, verbose=False):
+    def dots_regular(self, xlim, ylim, num_data, verbose: bool = False):
         """Generates n x m or several point masks.
 
         Parameters:
@@ -1264,18 +1264,18 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             t = 1
 
-        self.u = t * exp(-1.j * ( k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
-                                     (2 * f2)) +  np.pi))
+        self.u = t * exp(-1.j * (k * ((Xrot**2 / (2 * f1)) + Yrot**2 /
+                                      (2 * f2)) + np.pi))
 
     def lens_spherical(self, r0, focal, refractive_index=1.5, radius=0):
-        """Spherical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition.
-        When the refraction index decreases, the radius of curvature decrases and less paraxial.
+        """Spherical lens, without paraxial approximation. The focal distance and the refractive index are used for the definition.
+        When the refractive index decreases, the radius of curvature decrases and less paraxial.
         Now, only one focal.
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
             focal (float): focal length of lens
-            refractive_index (float): refraction index
+            refractive_index (float): refractive index
             radius (float): radius of lens mask
 
         lens_spherical:
@@ -1319,8 +1319,8 @@ class Scalar_mask_XY(Scalar_field_XY):
             c (float): base curvature at vertex, inverse of radius
             k (float): conic constant
             a (list): order aspheric coefficients: A4, A6, A8, ...
-            n0 (float): refraction index of first medium
-            n1 (float): refraction index of second medium
+            n0 (float): refractive index of first medium
+            n1 (float): refractive index of second medium
             radius (float): radius of aspheric surface
 
             Conic Constant    Surface Type
@@ -1362,12 +1362,12 @@ class Scalar_mask_XY(Scalar_field_XY):
                          refractive_index=1.5,
                          radius=0,
                          angle=0 * degrees):
-        """Cylindrical lens, without paraxial approximation. The focal distance and the refraction index are used for the definition. When the refraction index decreases, the radius of curvature decrases and less paraxial. When refractive_index is None or 0, then the paraxial approximation is used
+        """Cylindrical lens, without paraxial approximation. The focal distance and the refractive index are used for the definition. When the refractive index decreases, the radius of curvature decrases and less paraxial. When refractive_index is None or 0, then the paraxial approximation is used
 
         Parameters:
             x0 (float): center of lens
             focal (float): focal length of lens
-            refractive_index (float): refraction index
+            refractive_index (float): refractive index
             radius (float): radius of lens mask
 
         lens_spherical:
@@ -1401,7 +1401,7 @@ class Scalar_mask_XY(Scalar_field_XY):
                      r0,
                      focal,
                      levels=(1, 0),
-                     kind='amplitude',
+                     kind: str = 'amplitude',
                      phase=0,
                      radius=0,
                      angle=0):
@@ -1417,7 +1417,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             angle (float): angle of axis in radians
 
         Example:
-            fresnel_lens( r0=(0 * um, 0 * um), focal=(5 * mm, 10 * mm), radius=200*um, angle=0 * degrees, kind='amplitude',phase=pi)
+            fresnel_lens( r0=(0 * um, 0 * um), focal=(5 * mm, 10 * mm), radius=200*um, angle=0 * degrees, kind: str = 'amplitude',phase=pi)
         """
 
         if isinstance(radius, (float, int, complex)):
@@ -1439,7 +1439,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             t1 = 1
 
         t2 = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        #t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
+        # t2.u = cos(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
         t2.u = sin(k * ((Xrot**2 / (2 * f1)) + Yrot**2 / (2 * f2)))
 
         if kind == 'amplitude':
@@ -1464,7 +1464,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Parameters:
             r0 (float, float): (x0,y0) - center of lens
-            refractive_index (float): refraction index
+            refractive_index (float): refractive index
             angle (float): angle of the axicon
             radius (float): radius of lens mask
             off_axis_angle (float) angle when it works off-axis
@@ -1533,7 +1533,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             r0 (float, float): (x0,y0) - center of lens
             width (float): width
             height (float): height of axicon
-            n (float): refraction index
+            n (float): refractive index
 
         Example:
             biprism_fresnel(r0=(0 * um, 0 * um), width=100 * \
@@ -1756,7 +1756,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u * t
 
-    def laguerre_gauss_spiral(self, r0, kind, n, l, w0, z):
+    def laguerre_gauss_spiral(self, r0, kind: str, n, l, w0, z):
         """laguerre_gauss spiral
 
         Parameters:
@@ -1799,7 +1799,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = t1.u * mask
 
-    def forked_grating(self, r0, period, l, alpha, kind, angle=0 * degrees):
+    def forked_grating(self, r0, period, l, alpha, kind: str, angle=0 * degrees):
         """Forked grating: exp(1.j * alpha * cos(l * THETA - 2 * pi / period * (Xrot - r0[0])))
 
         Parameters:
@@ -2085,7 +2085,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         Parameters:
             t (float, float): (tx, ty), correlation length of roughness
             s (float): std of heights
-            refractive_index (float): refraction index, if -1 it is reflexion
+            refractive_index (float): refractive index, if -1 it is reflexion
 
         Example:
             roughness(t=(50 * um, 25 * um), s=1 * um)
@@ -2184,7 +2184,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         References:
             https://en.wikipedia.org/wiki/Superellipse
-            
+
 
         Example:
             super_ellipse(r0=(0 * um, 0 * um), radius=(250 * \

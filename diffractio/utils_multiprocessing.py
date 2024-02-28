@@ -11,8 +11,7 @@ from multiprocessing import Pool
 import numpy as np
 
 
-
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 def _pickle_method(method):
@@ -109,7 +108,7 @@ class auxiliar_multiprocessing(object):
 def execute_multiprocessing(__function_process__,
                             dict_Parameters,
                             num_processors,
-                            verbose=False):
+                            verbose: bool = False):
     """Executes multiprocessing reading a dictionary.
 
     Parameters:

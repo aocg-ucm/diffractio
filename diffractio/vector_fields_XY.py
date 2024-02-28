@@ -46,7 +46,7 @@ from numpy import cos, linspace, shape, sin, sqrt, zeros
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import npt, Any, NDArray, floating
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -78,7 +78,7 @@ class Vector_field_XY(object):
     """
 
     def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                 wavelength: float | None = None,  info: str = ""):
+                 wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
@@ -93,7 +93,6 @@ class Vector_field_XY(object):
         self.info = info
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
-
 
     def __str__(self):
         """Represents data from class."""
@@ -156,8 +155,8 @@ class Vector_field_XY(object):
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False): 
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -396,17 +395,17 @@ class Vector_field_XY(object):
 
     def RS(self,
            z=10 * mm,
-           n=1,
-           new_field=True,
+           n: float = 1.,
+           new_field: bool = True,
            amplification=(1, 1),
-           verbose=False):
+           verbose: bool = False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
 
         Parameters:
             z (float): distance to observation plane.
                 if z<0 inverse propagation is executed
-            n (float): refraction index
+            n (float): refractive index
             new_field (bool): if False the computation goes to self.u
                               if True a new instance is produced
             amplification (int, int): number of frames in x and y direction
@@ -459,12 +458,12 @@ class Vector_field_XY(object):
     def VFFT(self,
              radius,
              focal,
-             n=1,
-             new_field=False,
+             n: float = 1.,
+             new_field: bool = False,
              shift=True,
              remove0=True,
-             matrix=False,
-             has_draw=False):
+             matrix: bool = False,
+             has_draw: bool = False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -477,7 +476,7 @@ class Vector_field_XY(object):
         Parameters:
             radius (float): radius of lens
             focal (float): focal
-            n (float): refraction index
+            n (float): refractive index
             matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X.
             new_field (bool): if True returns Vector_field_XY, else it puts in self.
             shift (bool):  if True, fftshift is performed.
@@ -580,7 +579,7 @@ class Vector_field_XY(object):
             field_output.y = ky
 
             field_output.X, field_output.Y = np.meshgrid(field_output.x,
-                                                    field_output.y)
+                                                         field_output.y)
             field_output.Ex = Esx
             field_output.Ey = Esy
             field_output.Ez = Esz
@@ -604,10 +603,10 @@ class Vector_field_XY(object):
     def IVFFT(self,
               radius,
               focal,
-              n=1,
-              new_field=False,
-              matrix=False,
-              has_draw=False):
+              n: float = 1.,
+              new_field: bool = False,
+              matrix: bool = False,
+              has_draw: bool = False):
         """Inverse Vector Fast Fourier Transform (FFT) of the field.
 
         The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
@@ -620,7 +619,7 @@ class Vector_field_XY(object):
         Parameters:
             radius (float): radius of lens
             focal (float): focal
-            n (float): refraction index
+            n (float): refractive index
             matrix (bool):  if True only matrix is returned. if False, returns Scalar_field_X.
             new_field (bool): if True returns Vector_field_XY, else it puts in self.
             has_draw (bool): if True draw the field.
@@ -724,7 +723,7 @@ class Vector_field_XY(object):
             field_output.x = kx
             field_output.y = ky
 
-            field_output.X, field_output.Y = np.meshgrid(field_output.x,field_output.y)
+            field_output.X, field_output.Y = np.meshgrid(field_output.x, field_output.y)
             field_output.Ex = Esx
             field_output.Ey = Esy
             field_output.Ez = Esz
@@ -745,14 +744,14 @@ class Vector_field_XY(object):
             if has_draw:
                 self.draw(kind='intensities')
 
-    def VRS(self, z, n=1, new_field=True, verbose=False, amplification=(1, 1)):
+    def VRS(self, z, n: float = 1., new_field: bool = True, verbose: bool = False, amplification=(1, 1)):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
 
 
         Parameters:
             z (float): distance to observation plane.
                 if z<0 inverse propagation is executed
-            n (float): refraction index
+            n (float): refractive index
             new_field (bool): if False the computation goes to self.u. If True a new instance is produced
 
             verbose (bool): if True it writes to shell. Not implemented yet
@@ -807,7 +806,7 @@ class Vector_field_XY(object):
             self.Ey = Ey.u
             self.Ez = Ez.u
 
-    def CZT(self, z, xout=None, yout=None, verbose=False):
+    def CZT(self, z, xout=None, yout=None, verbose: bool = False):
         """Vector Z Chirped Transform algorithm (VCZT)
 
         Parameters:
@@ -947,7 +946,7 @@ class Vector_field_XY(object):
                 E_out.Ez = e0z_zs.u
                 return E_out
 
-    def polarization_states(self, matrix=False):
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
         Parameters:
@@ -986,7 +985,7 @@ class Vector_field_XY(object):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
         Parameters:
@@ -1050,7 +1049,7 @@ class Vector_field_XY(object):
                      x_limits='',
                      y_limits='',
                      num_points=[],
-                     new_field=False,
+                     new_field: bool = False,
                      interp_kind=(3, 1)):
         """Cuts the field to the range (x0,x1). (y0,y1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
@@ -1179,12 +1178,12 @@ class Vector_field_XY(object):
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm=0,
-             normalize=False,
-             cut_value=None,
+             logarithm: floating = 0,
+             normalize: bool = False,
+             cut_value: floating | None = None,
              num_ellipses=(11, 11),
              amplification=0.5,
-             filename='',
+             filename: str = '',
              draw=True,
              only_image=False,
              **kwargs):
@@ -1707,8 +1706,8 @@ class Vector_field_XY(object):
         return (h1, h2, h3, h4)
 
     def __draw_ellipses__(self,
-                          logarithm=False,
-                          normalize=False,
+                          logarithm: floating = 0.,
+                          normalize: bool = False,
                           cut_value='',
                           num_ellipses=(21, 21),
                           amplification=0.75,
