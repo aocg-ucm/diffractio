@@ -87,5 +87,3 @@ target/
 tests_results*/
 
 htmlcov/
-test-reports
-coverage.*
