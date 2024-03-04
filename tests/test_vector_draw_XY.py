@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -42,7 +42,7 @@ Ex, Ey, _ = EM.get()
 EM.reduce_matrix = ''
 
 
-class Test_Vector_fields_XY(object):
+class Test_Vector_fields_XY():
 
     def test_draw_intensity(self):
 

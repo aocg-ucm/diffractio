@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Generates Scalar_mask_XZ class for definingn masks. Its parent is Scalar_field_XZ.
 
 The main atributes are:
@@ -66,8 +66,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x: NDArray | None = None,
-                 z: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat | None = None,
+                 z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         """inits a new experiment:
         x: numpy array with x locations

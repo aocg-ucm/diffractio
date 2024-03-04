@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 """
@@ -48,7 +48,7 @@ from .utils_optics import normalize_field
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
 
-class Vector_field_Z(object):
+class Vector_field_Z():
     """Class for vectorial fields.
 
     Parameters:
@@ -64,7 +64,7 @@ class Vector_field_Z(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, z: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         self.z = z
         self.wavelength = wavelength  # la longitud de onda

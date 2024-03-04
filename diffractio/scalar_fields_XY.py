@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_XY class.
 
@@ -55,9 +55,6 @@ import copy
 import datetime
 import time
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
-
-
 import matplotlib.animation as animation
 import scipy.ndimage
 from matplotlib import rcParams
@@ -71,6 +68,7 @@ from . import np, plt
 from . import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
@@ -94,7 +92,7 @@ except:
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
-class Scalar_field_XY(object):
+class Scalar_field_XY():
     """Class for working with XY scalar fields.
 
     Parameters:
@@ -113,8 +111,8 @@ class Scalar_field_XY(object):
 
 # flake8: noqa
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                 wavelength: float | None = None,  info: str = ""):
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
@@ -201,7 +199,7 @@ class Scalar_field_XY(object):
         return new_field
 
     def __rotate__(self, angle: float,
-                   position: list(float, float) | None = None):
+                   position: list[float, float] | None = None):
         """Rotation of X,Y with respect to position
 
         Parameters:ing
@@ -219,7 +217,7 @@ class Scalar_field_XY(object):
         Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
         return Xrot, Yrot
 
-    def conjugate(self, new_field=True):
+    def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
 
@@ -247,7 +245,7 @@ class Scalar_field_XY(object):
 
         self = reduce_to_1(self)
 
-    def add(self, other: Scalar_field_XY, kind: str = 'standard'):
+    def add(self, other, kind: str = 'standard'):
         """adds two Scalar_field_xy. For example two light sources or two masks
 
         Parameters:
@@ -272,7 +270,7 @@ class Scalar_field_XY(object):
 
         return u3
 
-    def rotate(self, angle: float, position: list(float, float) | None = None,
+    def rotate(self, angle: float, position: list[float, float] | None = None,
                new_field: bool = False):
         """Rotation of X,Y with respect to position. If position is not given, rotation is with respect to the center of the image
 
@@ -302,7 +300,7 @@ class Scalar_field_XY(object):
         else:
             self.u = u_rotate
 
-    def apodization(self, power: power = 10):
+    def apodization(self, power: int = 10):
         """Multiply field by an apodizer. The apodizer is a super_gauss function.
 
         Args:
@@ -325,8 +323,8 @@ class Scalar_field_XY(object):
         """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename: str, add_name: str = "", 
-                  description: str= "", verbose: bool = False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
@@ -361,11 +359,11 @@ class Scalar_field_XY(object):
             print(dict0.keys())
 
     def save_mask(self,
-                  filename="",
-                  kind='amplitude',
-                  binarize=False,
-                  cmap='gray',
-                  info=""):
+                  filename: str = "",
+                  kind: str = 'amplitude',
+                  binarize: bool = False,
+                  cmap: str = 'gray',  # or cm
+                  info: str = ""):
         """Create a mask in a file, for example, ablation or litography engraver
 
         Parameters:
@@ -1074,8 +1072,8 @@ class Scalar_field_XY(object):
             zs: NDArrayFloat,
             num_sampling: list = (512, 512),
             ROI: list[NDArrayFloat] | None = (None, None),
-            r_pos=None,
-            z_pos=None,
+            r_pos: float | None = None,
+            z_pos: float | None = None,
             get_u_max: bool = False,
             has_edges: bool = True,
             pow_edge: int = 80,
@@ -1124,30 +1122,26 @@ class Scalar_field_XY(object):
         k_perp2 = KX**2 + KY**2
         k_perp = np.sqrt(k_perp2)
 
-       
         if has_edges is False:
             if hasattr(self, 'z'):
                 has_filter = np.zeros_like(self.z)
             else:
-                has_filter=0
+                has_filter = 0
         elif isinstance(has_edges, int):
             if hasattr(self, 'z'):
                 has_filter = np.ones_like(self.z)
             else:
-                has_filter=1      
+                has_filter = 1
         else:
             has_filter = has_edges
-        
-        
-        width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center=(self.x[-1]+self.x[0])/2
-        y_center=(self.y[-1]+self.y[0])/2
 
- 
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center = (self.x[-1]+self.x[0])/2
+        y_center = (self.y[-1]+self.y[0])/2
+
         filter_x = np.exp(-(np.abs(self.X-x_center) / width_edge)**pow_edge)
         filter_y = np.exp(-(np.abs(self.Y-y_center) / width_edge)**pow_edge)
         filter_function = filter_x*filter_y
-
 
         u_iter = self.duplicate()
 
@@ -1232,7 +1226,7 @@ class Scalar_field_XY(object):
         iz_out_roi = 0
 
         for j in range(1, num_steps):
-            
+
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
@@ -1360,10 +1354,6 @@ class Scalar_field_XY(object):
                 num_x, num_y, num_z))
 
         if num_z == 1:
-            # calculating scalar diffraction below
-            # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-            #     1j * k / 2 / z * (Xout**2 + Yout**2))
-            # F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
 
             R = np.sqrt(Xout**2 + Yout**2 + z**2)
             F0 = 1 / (2 * np.pi) * np.exp(
@@ -1414,7 +1404,7 @@ class Scalar_field_XY(object):
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                #u_out.u = u0.transpose()[: ,0]
+                # u_out.u = u0.transpose()[: ,0]
                 u_out.u = u0[0, :]
                 return u_out
 
@@ -1782,8 +1772,8 @@ class Scalar_field_XY(object):
         return 1j*u_out
 
     def profile(self,
-                point1='',
-                point2='',
+                point1: list[float, float] | str = '',
+                point2: list[float, float] | str = '',
                 npixels: int | None = None,
                 kind: str = 'intensity',
                 order: int = 2):
@@ -1841,11 +1831,11 @@ class Scalar_field_XY(object):
         return h, z_profile, point1, point2
 
     def draw_profile(self,
-                     point1='',
-                     point2='',
-                     npixels=None,
+                     point1: list[float, float] | str = '',
+                     point2: list[float, float] | str = '',
+                     npixels: int | None = None,
                      kind: str = 'intensity',
-                     order=2):
+                     order: int = 2):
         """Draws profile in image. If points are not given, then image is shown and points are obtained clicking.
 
         Parameters:
@@ -1876,8 +1866,8 @@ class Scalar_field_XY(object):
         return h, z_profile, point1, point2
 
     def get_edges(self,
-                  kind_transition='amplitude',
-                  min_step: floating = 0,
+                  kind_transition: str = 'amplitude',
+                  min_step: float = 0,
                   verbose: bool = False,
                   filename: str = ''):
         """
@@ -2201,9 +2191,9 @@ class Scalar_field_XY(object):
 
     def binarize(self,
                  kind: str = "amplitude",
-                 bin_level: floating | None = None,
-                 level0=None,
-                 level1=None,
+                 bin_level: float | None = None,
+                 level0: float | None = None,
+                 level1: float | None = None,
                  new_field: bool = False,
                  matrix: bool = False):
         """Changes the number of points in field, mantaining the area.
@@ -2537,7 +2527,7 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def __draw_phase__(self,
-                       title=r'phase/pi',
+                       title: str = r'phase/pi',
                        colormap_kind: str = '',
                        percentage_intensity: floating | None = None,
                        **kwargs):
@@ -2574,7 +2564,7 @@ class Scalar_field_XY(object):
 
     def __draw_field__(self,
                        logarithm: floating = 0.,
-                       normalize='maximum',
+                       normalize: str = 'maximum',
                        title: str = "",
                        cut_value: floating | None = None,
                        colormap_kind: str = '',
@@ -2604,7 +2594,7 @@ class Scalar_field_XY(object):
 
         xsize, ysize = rcParams['figure.figsize']
 
-        #plt.figure(figsize=(2 * xsize, 2 * ysize))
+        # plt.figure(figsize=(2 * xsize, 2 * ysize))
         plt.figure()
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
@@ -2652,7 +2642,7 @@ class Scalar_field_XY(object):
 
     def __draw_real_field__(self,
                             logarithm: floating = 0.,
-                            normalize='maximum',
+                            normalize: str = 'maximum',
                             cut_value: floating | None = 1,
                             title: str = "",
                             colormap_kind: str = '',
@@ -2693,10 +2683,10 @@ class Scalar_field_XY(object):
               zs: NDArrayFloat,
               logarithm: floating = 0.,
               normalize: bool = False,
-              time_video=10 * seconds,
-              frames_reduction=1,
-              filename='video.avi',
-              dpi=100):
+              time_video: floating = 10 * seconds,
+              frames_reduction: int = 1,
+              filename: str = 'video.avi',
+              dpi: int = 100):
         """Makes a video TODO
 
         Parameters:

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 """
@@ -45,7 +45,7 @@ from .utils_drawing import normalize_draw
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
 
-class Vector_field_X(object):
+class Vector_field_X():
     """Class for vectorial fields.
 
     Parameters:
@@ -61,7 +61,7 @@ class Vector_field_X(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat = None, wavelength: float | None = None,
                  info: str = ""):
         self.x = x
         self.wavelength = wavelength  # la longitud de onda
@@ -356,8 +356,8 @@ class Vector_field_X(object):
              logarithm: bool | floating = 0,
              normalize: bool = False,
              cut_value: float | bool = None,
-             filename: str: = '',
-             draw: bool: = True,
+             filename: str = '',
+             draw: bool = True,
              **kwargs):
         """Draws electromagnetic field
 
@@ -736,7 +736,7 @@ class Vector_field_X(object):
 
         return (h1, h2, h3, h4)
 
-    def __draw1__(self, data: NDArrayFloat, ylabel: Str = '', title: str: = ''):
+    def __draw1__(self, data: NDArrayFloat, ylabel: str = '', title: str = ''):
         """Draws image
 
         Parameters:

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 """
@@ -75,7 +75,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x: NDArray | None = None, z: NDArray | None = None,
+    def __init__(self, x: NDArrayFloatloat | None = None, z: NDArrayFloatloat | None = None,
                  wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z

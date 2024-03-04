@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -33,7 +33,7 @@ polarization_45 = [1, 1] / np.sqrt(2)
 polarization_m45 = [1, -1] / np.sqrt(2)
 
 
-class Test_vector_masks_XY(object):
+class Test_vector_masks_XY():
 
     def test_equal_mask(self):
         func_name = sys._getframe().f_code.co_name
@@ -53,9 +53,8 @@ class Test_vector_masks_XY(object):
                   angle=0 * degrees)
 
         # mask vectorial
-        state = np.array([[1,0],[1,1j]])
-        
-        
+        state = np.array([[1, 0], [1, 1j]])
+
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.scalar_to_vector_mask(mask=mask, state=state)
 

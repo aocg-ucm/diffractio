@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_XZ class.
 
@@ -91,7 +91,7 @@ copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
-class Scalar_field_XZ(object):
+class Scalar_field_XZ():
     """Class for working with XZ scalar fields.
 
     Parameters:
@@ -114,7 +114,7 @@ class Scalar_field_XZ(object):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x: NDArray | None = None, z: NDArray | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, z: NDArrayFloat | None = None,
                  wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
@@ -274,8 +274,8 @@ class Scalar_field_XZ(object):
         self.n = mask_XY.u * refractive_index_max
         self.n[self.n < 1] = self.n_background
 
-    def rotate_field(self, angle: floating, center_rotation: list[floating], 
-                     kind: str = 'all', n_background: floating: = 1.):
+    def rotate_field(self, angle: floating, center_rotation: list[floating],
+                     kind: str = 'all', n_background: floating = 1.):
         """Rotate all the image a certain angle
 
         Parameters:
@@ -692,7 +692,7 @@ class Scalar_field_XZ(object):
         if matrix is True:
             return self.u
 
-    def BPM(self, has_edges: bool = True, pow_edge: int = 80, division: bool = False, matrix: bool = False, 
+    def BPM(self, has_edges: bool = True, pow_edge: int = 80, division: bool = False, matrix: bool = False,
             verbose: bool = False):
         """Beam propagation method (BPM).
 
@@ -1147,7 +1147,7 @@ class Scalar_field_XZ(object):
                              n=refr_index_RS[i_zone],
                              kind='z',
                              fast=self.fast,
-                             new_field = False,
+                             new_field=False,
                              verbose=False)
                 # u_current.draw()
             else:  # genero experimento para BPM
@@ -1311,7 +1311,7 @@ class Scalar_field_XZ(object):
 
     def surface_detection(self,
                           mode: int = 1,
-                          min_incr: floating=0.1,
+                          min_incr: floating = 0.1,
                           reduce_matrix: str = 'standard',
                           has_draw: bool = False):
         """detect edges of variation in refractive index.
@@ -1387,7 +1387,7 @@ class Scalar_field_XZ(object):
              reduce_matrix: str = 'standard',
              colorbar_kind: str | None = None,
              colormap_kind: str = "",
-             z_scale: str ='um',
+             z_scale: str = 'um',
              edge_matrix: NDArrayFloat | None = None,
              interpolation: str = 'spline36',
              percentage_intensity: floating | None = None,
@@ -1531,7 +1531,7 @@ class Scalar_field_XZ(object):
                               reduce_matrix: str = 'standard',
                               colorbar_kind: str | None = None,
                               colormap_kind=cm.Blues,
-                              edge_matrix: NDArray | None = None):
+                              edge_matrix: NDArrayFloat | None = None):
         """Draws refractive index.
 
         Parameters:

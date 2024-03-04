@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 """
@@ -55,7 +55,7 @@ class Vector_source_XY(Vector_field_XY):
 
     """
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
                  wavelength: float | None = None, info: str = ""):
         super().__init__(x, y, wavelength, info)
         self.type = 'Vector_source_XY'

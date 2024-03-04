@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_X class for defining sources.
 Its parent is Scalar_field_X.
@@ -55,7 +55,7 @@ class Scalar_source_X(Scalar_field_X):
         self.date (str): date when performed
     """
 
-    def __init__(self, x: NDArray | None = None, wavelength: float = 0,
+    def __init__(self, x: NDArrayFloat | None = None, wavelength: float = 0,
                  n_background: float = 1., info: str = ""):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Tests for Scalar_mask_XZ"""
 import datetime
 import os
@@ -26,7 +26,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_XZ(object):
+class Test_Scalar_masks_XZ():
 
     def test_extrude_mask_z_n_var(self):
         """

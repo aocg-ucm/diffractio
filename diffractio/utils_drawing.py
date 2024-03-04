@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """ Functions for drawing """
 
 # flake8: noqa
@@ -408,8 +408,8 @@ def make_video_from_file(self, files: list, filename: str = ""):
     print("exit", files)
 
 
-def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArray,
-                       y: NDArray, image: NDArray,
+def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArrayFloat,
+                       y: NDArrayFloat, image: NDArrayFloat,
                        verbose: bool = False):
     """Reduces the size of matrix for drawing purposes. If the matrix is very big, the drawing process is slow.
 

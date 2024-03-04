@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 import copyreg
@@ -66,7 +66,7 @@ def separate_from_iterable(iterable, shape=0):
     return variables
 
 
-class auxiliar_multiprocessing(object):
+class auxiliar_multiprocessing():
 
     def __init__(self):
         pass

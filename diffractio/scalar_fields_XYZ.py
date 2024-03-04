@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_XYZ class and several functions for multiprocessing.
 It is required also for generating masks and fields.
@@ -52,9 +52,6 @@ import time
 import types
 from multiprocessing import Pool
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
-
-
 import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
@@ -62,6 +59,7 @@ from scipy.interpolate import RegularGridInterpolator
 
 from . import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -73,7 +71,7 @@ from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_fie
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 
-class Scalar_field_XYZ(object):
+class Scalar_field_XYZ():
     """Class for 3D scalar fields.
 
     Parameters:
@@ -93,8 +91,8 @@ class Scalar_field_XYZ(object):
         self.n (numpy.array): refractive index. Same dimensions than self.u.
     """
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                 z: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         self.x = x
         self.y = y
@@ -123,7 +121,7 @@ class Scalar_field_XYZ(object):
         self.type = 'Scalar_field_XYZ'
         self.date = get_date()
 
-    def xy_2_xyz(self, u0_XY, z):
+    def xy_2_xyz(self, u0_XY, z: NDArrayFloat):
         """Similar to Init. send a Scalarfield_XY and passes to XYZ.
 
         Parameters:
@@ -225,7 +223,7 @@ class Scalar_field_XYZ(object):
         u3.u = self.u - other.u
         return u3
 
-    def __rotate__(self, psi, phi, sigma):
+    def __rotate__(self, psi: float, phi: float, sigma: float):
         """Function to rotate around any of the 3 axis of rigid solid.
 
         Parameters:
@@ -255,7 +253,7 @@ class Scalar_field_XYZ(object):
         Zrot = self.X * (ss * sf) + self.Y * (-ss * cf) + self.Z * (cs)
         return Xrot, Yrot, Zrot
 
-    def __rotate_axis__(self, axis, angle):
+    def __rotate_axis__(self, axis: float, angle: float):
         """rotate around an axis.
 
         Parameters:
@@ -381,10 +379,10 @@ class Scalar_field_XYZ(object):
         return intensity
 
     def cut_resample(self,
-                     x_limits='',
-                     y_limits='',
-                     z_limits='',
-                     num_points=[],
+                     x_limits: list[float, float] | str = '',
+                     y_limits: list[float, float] | str = '',
+                     z_limits: list[float, float] | str = '',
+                     num_points: int | None = None,
                      new_field: bool = False,
                      interp_kind=(3, 1)):
         """it cut the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
@@ -501,7 +499,7 @@ class Scalar_field_XYZ(object):
             field_n.n = n_new
             return field_n
 
-    def incident_field(self, u0, z0=None):
+    def incident_field(self, u0, z0: float | None = None):
         """Incident field for the experiment. It takes a Scalar_source_XYZ field.
 
         Parameters:
@@ -531,7 +529,7 @@ class Scalar_field_XYZ(object):
         u_final.u = self.u[:, :, -1]
         return u_final
 
-    def __RS_multiprocessing__(self, i):
+    def __RS_multiprocessing__(self, i: int):
         """Internal for multiprocessing.
 
         Parameters:
@@ -543,7 +541,7 @@ class Scalar_field_XYZ(object):
                                      new_field=False,
                                      matrix=True,
                                      kind='z',
-                                     verbose: bool = False)
+                                     bool=False)
         return self.u[:, :, i]
 
     def RS(self, verbose: bool = False, num_processors=num_max_processors - 2):
@@ -581,7 +579,7 @@ class Scalar_field_XYZ(object):
                                                      num_processors)))
         return time2 - time1
 
-    def RS_amplification(self, amplification=(1, 1)):
+    def RS_amplification(self, amplification: list[int, int] = (1, 1)):
         """Rayleigh Sommerfeld propagation algorithm. it performs amplification
 
         Parameters:
@@ -698,7 +696,7 @@ class Scalar_field_XYZ(object):
             field[:, :, k] = field[:, :, k] + modo * filter_edge
             self.u = field
 
-    def PWD(self, n=None, matrix: bool = False, verbose: bool = False):
+    def PWD(self, n: float | None = None, matrix: bool = False, verbose: bool = False):
         """
         Plane wave decompostion algorithm.
 
@@ -819,9 +817,9 @@ class Scalar_field_XYZ(object):
                 t2 - t1, (t2 - t1) / len(self.z) * 1000))
 
     def to_Scalar_field_XY(self,
-                           iz0=None,
-                           z0=None,
-                           is_class=True,
+                           iz0: int | None = None,
+                           z0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Scalar_field_XY. Only one of the first two variables (iz0,z0) should be used
 
@@ -851,9 +849,9 @@ class Scalar_field_XYZ(object):
             return np.squeeze(self.u[:, :, iz])
 
     def to_Scalar_field_XZ(self,
-                           iy0=None,
-                           y0=None,
-                           is_class=True,
+                           iy0: int | None = None,
+                           y0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Scalar_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
@@ -883,9 +881,9 @@ class Scalar_field_XYZ(object):
             return np.squeeze(self.u[iy, :, :])
 
     def to_Scalar_field_YZ(self,
-                           ix0=None,
-                           x0=None,
-                           is_class=True,
+                           ix0: int | None = None,
+                           x0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Scalar_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
@@ -916,8 +914,8 @@ class Scalar_field_XYZ(object):
 
     def to_Z(self,
              kind: str = 'amplitude',
-             x0=None,
-             y0=None,
+             x0: float | None = None,
+             y0: float | None = None,
              has_draw: bool = True,
              z_scale='mm'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
@@ -978,16 +976,18 @@ class Scalar_field_XYZ(object):
         return intensity_mean
 
     def beam_widths(self,
-                    kind='FWHM2D',
+                    kind: str = 'FWHM2D',
                     has_draw: list[bool] = [True, False],
-                    percentage=0.5,
-                    remove_background=None,
+                    percentage: float = 0.5,
+                    remove_background: bool = None,
                     verbose: bool = False):
         """Determines the widths of the beam
 
         Parameters:
             kind (str): kind of algorithm: 'sigma4', 'FWHM2D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
+            percentage: TODO
+            remove_background: TODO
             verbose (bool): prints info
         Returns:
             beam_width_x (np.array)
@@ -1038,12 +1038,14 @@ class Scalar_field_XYZ(object):
 
         return beam_width_x, beam_width_y, principal_axis_z
 
-    def surface_detection(self, mode=1, min_incr=0.01, has_draw: bool = False):
+    def surface_detection(self, mode: int = 1, min_incr: float = 0.01, has_draw: bool = False):
         """detect edges of variation in refractive index
 
         Parameters:
+            mode (int): TODO
             min_incr (float): minimum incremental variation to detect.
-            has_draw (bool): if True, it draws the surface.        """
+            has_draw (bool): if True, it draws the surface.        
+        """
 
         if mode == 0:
             diff1 = gradient(np.abs(self.n), axis=0)
@@ -1072,13 +1074,13 @@ class Scalar_field_XYZ(object):
                       kind: str = 'intensity',
                       logarithm: floating = 0,
                       normalize='maximum',
-                      draw_borders=False,
+                      draw_borders: bool = False,
                       filename: str = '',
-                      scale='',
-                      min_incr=0.0005,
+                      scale: str = '',
+                      min_incr: float = 0.0005,
                       reduce_matrix: str = 'standard',
-                      colorbar_kind=False,
-                      colormap_kind="gist_heat"):
+                      colorbar_kind: bool | str = False,
+                      colormap_kind: str = "gist_heat"):
         """Draws  XYZ field.
 
         Parameters:
@@ -1165,13 +1167,13 @@ class Scalar_field_XYZ(object):
         return h1
 
     def draw_XY(self,
-                z0=5 * mm,
+                z0: float = 5 * mm,
                 kind: str = 'intensity',
                 logarithm: floating = 0,
-                normalize='maximum',
-                title='',
+                normalize: str = 'maximum',
+                title: str = '',
                 filename: str = '',
-                cut_value='',
+                cut_value: float or None = None,
                 has_colorbar='False',
                 reduce_matrix=''):
         """ longitudinal profile XY at a given z value
@@ -1203,10 +1205,10 @@ class Scalar_field_XYZ(object):
 
     def draw_XZ(self,
                 kind: str = 'intensity',
-                y0=0 * mm,
+                y0: float = 0 * mm,
                 logarithm: floating = 0,
-                normalize='',
-                draw_borders=False,
+                normalize: str = '',
+                draw_borders: bool = False,
                 filename: str = '',
                 **kwargs):
         """Longitudinal profile XZ at a given x0 value.
@@ -1263,10 +1265,10 @@ class Scalar_field_XYZ(object):
         return h1
 
     def draw_YZ(self,
-                x0=0 * mm,
+                x0: float = 0 * mm,
                 logarithm: floating = 0,
-                normalize='',
-                draw_borders=False,
+                normalize: str = '',
+                draw_borders: bool = False,
                 filename: str = ''):
         """Longitudinal profile YZ at a given x0 value.
 
@@ -1311,8 +1313,8 @@ class Scalar_field_XYZ(object):
     def draw_XYZ_deprecated(self,
                             kind: str = 'intensity',
                             logarithm: floating = 0.,
-                            normalize='',
-                            pixel_size=(128, 128, 128)):
+                            normalize: str = '',
+                            pixel_size: list[int, int, int] = (128, 128, 128)):
         """Draws  XZ field.
 
         Parameters:
@@ -1350,7 +1352,8 @@ class Scalar_field_XYZ(object):
         else:
             return
 
-    def draw_volume_deprecated(self, logarithm: floating = 0, normalize='', maxintensity=None):
+    def draw_volume_deprecated(self, logarithm: floating = 0, normalize: str = '',
+                               maxintensity: float | None = None):
         """Draws  XYZ field with mlab
 
         Parameters:
@@ -1403,7 +1406,7 @@ class Scalar_field_XYZ(object):
         else:
             return
 
-    def draw_refractive_index_deprecated(self, kind='real'):
+    def draw_refractive_index_deprecated(self, kind: str = 'real'):
         """Draws XYZ refractive index with slicer
 
         Parameters:
@@ -1438,11 +1441,11 @@ class Scalar_field_XYZ(object):
     def video(self,
               filename: str = '',
               kind: str = 'intensity',
-              fps=15,
-              frame=True,
-              axis='auto',
+              fps: int = 15,
+              frame: bool = True,
+              axis: str = 'auto',
               verbose: bool = False,
-              directory_name='new_video'):
+              directory_name: str = 'new_video'):
         """Makes a video in the range given by self.z.
 
         Parameters:

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """tests for scalar_masks_X"""
 
 import datetime
@@ -26,7 +26,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_X(object):
+class Test_Scalar_masks_X():
 
     def test_slit(self):
         func_name = sys._getframe().f_code.co_name

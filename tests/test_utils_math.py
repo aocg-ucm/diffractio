@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # -------------------------------------------------------------------------------
 # Name:       scalar_fields_XZ.py
@@ -36,7 +36,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_utils_math(object):
+class Test_utils_math():
     def test_distance(self):
         func_name = sys._getframe().f_code.co_name
 
@@ -79,7 +79,7 @@ class Test_utils_math(object):
     def test_meshgrid(self):
         func_name = sys._getframe().f_code.co_name
 
-        solution = np.array([[0, 1], [0, 1],[0, 1]])
+        solution = np.array([[0, 1], [0, 1], [0, 1]])
         x, y = [0, 1], [2, 3, 4]
         X, Y = np.meshgrid(x, y)
         print(X)

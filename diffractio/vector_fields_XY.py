@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 # flake8: noqa
 
 """
@@ -60,7 +60,7 @@ from .utils_math import get_edges, get_k, nearest, rotate_image, Bluestein_dft_x
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
 
-class Vector_field_XY(object):
+class Vector_field_XY():
     """Class for vectorial fields.
 
     Parameters:
@@ -77,7 +77,7 @@ class Vector_field_XY(object):
         self.Ey (numpy.array): Electric_y field
     """
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloatloat | None = None,
                  wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Tests form Scalar_masks_XY"""
 
 import datetime
@@ -25,7 +25,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_XY(object):
+class Test_Scalar_masks_XY():
 
     def test_add(self):
         func_name = sys._getframe().f_code.co_name

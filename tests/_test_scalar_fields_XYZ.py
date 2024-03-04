@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Test for scalar_fields_XYZ
 """
@@ -30,7 +30,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_fields_XYZ(object):
+class Test_Scalar_fields_XYZ():
 
     def test_save_load(self):
         func_name = sys._getframe().f_code.co_name

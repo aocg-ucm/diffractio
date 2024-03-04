@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_Z class
 
@@ -51,7 +51,7 @@ from .utils_optics import field_parameters, normalize_field, FWHM1D
 num_max_processors = multiprocessing.cpu_count()
 
 
-class Scalar_field_Z(object):
+class Scalar_field_Z():
     """Class for unidimensional scalar fields in z axis.
 
     Parameters:
@@ -71,7 +71,7 @@ class Scalar_field_Z(object):
         self.date (str): Date when performed.
     """
 
-    def __init__(self, z: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         self.z = z
         self.wavelength = wavelength

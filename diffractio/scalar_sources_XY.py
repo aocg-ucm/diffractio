@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_source_XY class for defining sources.
 Its parent is Scalar_field_XY.
@@ -66,7 +66,7 @@ class Scalar_source_XY(Scalar_field_XY):
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
                  wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         super().__init__(x, y, wavelength, info)

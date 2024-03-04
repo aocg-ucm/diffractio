@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_mask_XYZ class for definingn masks. Its parent is scalar_fields_XYZ.
 
@@ -34,8 +34,8 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):
 
-    def __init__(self, x: NDArray | None = None, y: NDArray | None = None,
-                 z: NDArray | None = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         super().__init__(x, y, z, wavelength, n_background, info)
         self.type = 'Scalar_mask_XYZ'

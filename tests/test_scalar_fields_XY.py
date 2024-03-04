@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -90,7 +90,7 @@ square = square_test()
 plane_wave = plane_wave_test()
 
 
-class Test_Scalar_fields_XY(object):
+class Test_Scalar_fields_XY():
 
     def test_add(self):
         func_name = sys._getframe().f_code.co_name

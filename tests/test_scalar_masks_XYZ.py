@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Test for scalar_sources_XYZ"""
 
@@ -27,7 +27,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_XYZ(object):
+class Test_Scalar_masks_XYZ():
 
     def test_sphere(self):
         func_name = sys._getframe().f_code.co_name

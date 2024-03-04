@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Top-level package for Python Scalar and vector diffraction and interference."""
 """
 Diffractio: A scientific computing package for Optical Interference and Diffraction in Python

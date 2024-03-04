@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # -------------------------------------------------------------------------------
 # Name:        scalar_sources_X.py
@@ -38,7 +38,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_sources_X(object):
+class Test_Scalar_sources_X():
     # def saving_data(f):
     #     @wraps(f)
     #     def wrapped(inst, *args, **kwargs):

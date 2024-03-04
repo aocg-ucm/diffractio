@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Tests for Scalar_mask_XZ"""
 import datetime
 import os
@@ -103,7 +103,7 @@ u_focus = generate_BPM_field()
 u_gauss = generate_BPM_gauss()
 
 
-class Test_Scalar_fields_XZ(object):
+class Test_Scalar_fields_XZ():
 
     def test_rotate_field(self):
         func_name = sys._getframe().f_code.co_name

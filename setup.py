@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """The setup script."""
 
 from setuptools import find_packages, setup
@@ -15,7 +15,7 @@ with open('HISTORY.rst', encoding='utf8') as history_file:
 # ]
 
 requirements = [
-    'screeninfo', 'Pillow', 'numexpr', 'pandas','py_pol',
+    'screeninfo', 'Pillow', 'numexpr', 'pandas', 'py_pol',
     'ipywidgets', 'ipympl', 'opencv-python'
 ]
 
@@ -53,7 +53,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-         'BPM', 'WPM', 'CZT',  'RS', 'VRS'
+        'BPM', 'WPM', 'CZT', 'RS', 'VRS'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
