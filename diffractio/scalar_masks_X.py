@@ -665,8 +665,8 @@ class Scalar_mask_X(Scalar_field_X):
         num_periods = (self.x[-1] - self.x[0]) / period
 
         # Height computation
-        phase = (self.x - x0) * phase_max * num_periods / (self.x[-1] -
-                                                           self.x[0])
+        phase = (self.x - x0) * phase_max * \
+            num_periods / (self.x[-1] - self.x[0])
 
         # normalization between 0 and 2pi
         phase = np.remainder(phase, phase_max)
@@ -730,7 +730,7 @@ class Scalar_mask_X(Scalar_field_X):
         px = 2. * np.pi * np.log(p0 + pa * (self.x - x0)) / pa
         t = amp_min + (amp_max - amp_min) * (1 + np.cos(px)) / 2
 
-        if kind == 'amplitude_binary' or kind == 'phase_binary':
+        if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
             bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
@@ -817,7 +817,7 @@ class Scalar_mask_X(Scalar_field_X):
         t = amp_min + (amp_max - amp_min) * (1 + np.cos(qx *
                                                         (self.x - x0))) / 2
 
-        if kind == 'amplitude_binary' or kind == 'phase_binary':
+        if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
             bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')
@@ -868,10 +868,8 @@ class Scalar_mask_X(Scalar_field_X):
         q_x = 2 * np.pi / period
         t = amp_min + (amp_max -
                        amp_min) * (1 + np.cos(q_x * (self.x - delta_x))) / 2
-        # plt.figure()
-        # plt.plot(t)
 
-        if kind == 'amplitude_binary' or kind == 'phase_binary':
+        if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
             bin_level = 0.5
             t_binaria = np.zeros_like(t, dtype='float')

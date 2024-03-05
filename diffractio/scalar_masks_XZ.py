@@ -78,7 +78,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         super().__init__(x, z, wavelength, n_background, info)
         self.type = "Scalar_mask_XZ"
 
-    def extrude_mask(self, t, z0, z1, refractive_index, v_globals={}, angle=0):
+    def extrude_mask(self, t, z0: floating, z1: floating, refractive_index: floating,
+                     angle: floating = 0., v_globals: dict = {}):
         """
         Converts a Scalar_mask_X in volumetric between z0 and z1 by growing between these two planes
         Parameters:
@@ -104,15 +105,16 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 v_locals["z"] = self.z[index]
                 v_locals["x"] = self.x
 
-                refractive_index = eval(tmp_refractive_index, v_globals, v_locals)
+                refractive_index = eval(
+                    tmp_refractive_index, v_globals, v_locals)
             self.n = self.n.astype(complex)
             self.n[index, :] = refractive_index * (1 - t.u)
             self.n[index, :] = self.n[index, :] + self.n_background * t.u
             # self.n = refractive_index
 
     def mask_from_function(
-        self, r0, refractive_index, f1, f2, z_sides, angle, v_globals={}
-    ):
+            self, r0: list[floating], refractive_index: floating | str, f1, f2, z_sides: list[floating],
+            angle: floating, v_globals: dict = {}):
         """
         Phase mask defined between two surfaces f1 and f1: h(x,z)=f2(x,z)-f1(x,z)
 
@@ -134,7 +136,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Xrot, Zrot = self.__rotate__(angle, r0)
 
         # Transmitancia de los points interiores
-        ipasa = (Xrot > z_sides[0]) & (Xrot < z_sides[1]) & (Zrot < F2) & (Zrot > F1)
+        ipasa = (Xrot > z_sides[0]) & (
+            Xrot < z_sides[1]) & (Zrot < F2) & (Zrot > F1)
         self.n[ipasa] = refractive_index
         return ipasa
 
@@ -142,12 +145,12 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self,
         r0=(0 * um, 0 * um),
         refractive_index=1.5,
-        array1=None,
-        array2=None,
-        x_sides=None,
-        angle=0 * degrees,
-        v_globals={},
-        interp_kind="quadratic",
+        array1: NDArrayFloat | None = None,
+        array2: NDArrayFloat | None = None,
+        x_sides: list[float, float] | None = None,
+        angle: floating = 0 * degrees,
+        v_globals: dict = {},
+        interp_kind: str = "quadratic",
         has_draw: bool = False,
     ):
         """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
@@ -215,15 +218,15 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def mask_from_array_proposal(
         self,
-        r0=(0 * um, 0 * um),
-        refractive_index_substrate=1.5,
-        refractive_index_mask=None,
-        array1=None,
-        array2=None,
-        x_sides=None,
-        angle=0 * degrees,
-        v_globals={},
-        interp_kind="quadratic",
+        r0: list[float, float] = (0 * um, 0 * um),
+        refractive_index_substrate: float | floating = 1.5,
+        refractive_index_mask: float | floating = None,
+        array1: NDArrayFloat | float = None,
+        array2: NDArrayFloat | float = None,
+        x_sides: list[float, float] = None,
+        angle: floating = 0.,
+        v_globals: dict = {},
+        interp_kind: str = "quadratic",
         has_draw: bool = False,
     ):
         """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
@@ -307,7 +310,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return ipasa * ipasa2 * ipasa3
 
     def object_by_surfaces(
-        self, rotation_point, refractive_index, Fs, angle, v_globals={}, verbose: bool = False
+        self, rotation_point: list[float, float], refractive_index: float | str,
+        Fs: list, angle: floating, v_globals: dict = {}, verbose: bool = False
     ):
         """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
         h(x,z)=f1(x,z)*f2(x,z)*....*fn(x,z)
@@ -317,7 +321,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point (float, float): location of the mask
             refractive_index (float, str): can be a number or a function n(x,z)
             Fs (list): condtions as str that will be computed using eval
-            array1 (numpy.array): array (x,z) that delimits the second surface
             angle (float): angle of rotation (radians)
             v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
             verbose (bool): shows data if true
@@ -326,7 +329,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         # Rotacion del square/rectangle
         Xrot, Zrot = self.__rotate__(angle, rotation_point)
 
-        v_locals = {"self": self, "sp": sp, "degrees": degrees, "um": um, "np": np}
+        v_locals = {"self": self, "sp": sp,
+                    "degrees": degrees, "um": um, "np": np}
 
         v_locals["Xrot"] = Xrot
         v_locals["Zrot"] = Zrot
@@ -364,10 +368,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return ipasa
 
     def add_surfaces(
-        self, fx, x_sides, refractive_index, min_incr=0.1, angle=0 * degrees
-    ):
+            self, fx, x_sides, refractive_index, min_incr=0.1, angle=0.):
         """A topography fx is added to one of the faces of object u (self.n).
-
 
         Parameters:
             u (Scalar_mask_XZ): topography
@@ -466,7 +468,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             if num_layers[0] > 1:
                 repeated_values = np.unique(n_real)
                 repeated_values = np.delete(
-                    repeated_values, np.where(repeated_values == self.n_background)
+                    repeated_values, np.where(
+                        repeated_values == self.n_background)
                 )
 
                 n_min, n_max = repeated_values.min(), repeated_values.max()
@@ -522,20 +525,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             image = image3D[:, :, 0]
         else:
             image = image3D
-        """
-        lengthImage = True
-        if lengthImage is False:
-            length = (len(xsampling), len(ysampling))
-            image = np.resize(image,length)
 
-        if lengthImage is True:
-            # length = im.size
-            length = image.shape
-            self.x = linspace(self.x[0], self.x[-1], length[0])
-            self.y = linspace(self.y[0], self.y[-1], length[1])
-            # self.X, self.Y = meshgrid(self.x, self.y)
-            X, Y = meshgrid(self.x, self.y)
-        """
         # angle is in degrees
         image = ndimage.rotate(image, angle * 180 / np.pi, reshape=False)
         image = np.array(image)
@@ -980,7 +970,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             x0, z_center_lens, radius
         )
         cond_right = "Zrot<{}".format(z_center_lens)
-        Fs = [cond_aperture1, cond_aperture2, cond_plane, cond_radius, cond_right]
+        Fs = [cond_aperture1, cond_aperture2,
+              cond_plane, cond_radius, cond_right]
 
         ipasa = self.object_by_surfaces(
             rotation_point, refractive_index, Fs, angle, v_globals={}
@@ -1115,7 +1106,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         else:
             print("possible error in aspheric")
 
-        params = dict(x0=x0, z0=z0, cx=cx, Qx=Qx, a2=a2, a3=a3, a4=a4, sign=sign)
+        params = dict(x0=x0, z0=z0, cx=cx, Qx=Qx,
+                      a2=a2, a3=a3, a4=a4, sign=sign)
 
         cond = "Zrot{sign}{z0}+{cx}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx})*{cx}**2*(Xrot-{x0})**2+{a2}*(Xrot-{x0})**4+{a3}*(Xrot-{x0})**6)+{a4}*(Xrot-{x0})**8)".format(
             **params
@@ -1278,7 +1270,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point = r0
 
         cond1 = "Xrot>{}".format(x0)
-        cond2 = "Zrot-({})>{}*(Xrot-{})".format(z0, np.tan(angle_prism / 2), x0)
+        cond2 = "Zrot-({})>{}*(Xrot-{})".format(z0,
+                                                np.tan(angle_prism / 2), x0)
         cond3 = "Zrot-({})<{}*(Xrot-{})".format(
             z0 + length, np.tan(np.pi - angle_prism / 2), x0
         )
@@ -1444,7 +1437,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         else:
             angle, rotation_point = angle
 
-        cond1 = "Zrot<{}+{}/2*np.cos(2*np.pi*Xrot/{})".format(length - z0, length, base)
+        cond1 = "Zrot<{}+{}/2*np.cos(2*np.pi*Xrot/{})".format(
+            length - z0, length, base)
         cond2 = "Xrot<{}".format(x0 + base / 2)
         cond3 = "Xrot>{}".format(x0 - base / 2)
         cond4 = "Zrot>{}".format(z0)
@@ -1511,5 +1505,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             self.n[i, i_z[i]: i_final] = n_back[i, i_z[i]: i_final]
 
         if angle != 0:
-            self.rotate_field(angle, rotation_point, n_background=self.n_background)
+            self.rotate_field(angle, rotation_point,
+                              n_background=self.n_background)
         return ipasa

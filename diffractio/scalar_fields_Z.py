@@ -223,10 +223,10 @@ class Scalar_field_Z():
             print(dict0.keys())
 
     def cut_resample(self,
-                     z_limits='',
-                     num_points=[],
+                     z_limits: NDArrayFloat | None = None,
+                     num_points: int | None = None,
                      new_field: bool = False,
-                     interp_kind='linear'):
+                     interp_kind: str = 'linear'):
         """Cuts the field to the range (z0,z1). If one of this z0,z1 positions is out of the self.z range it does nothing.
         It is also valid for resampling the field, just write z0,z1 as the limits of self.z
 
@@ -240,7 +240,7 @@ class Scalar_field_Z():
             (Scalar_field_Z): if new_field is True
         """
 
-        if z_limits == '':
+        if z_limits is None:
             # used only for resampling
             z0 = self.z[0]
             z1 = self.z[-1]
@@ -321,7 +321,8 @@ class Scalar_field_Z():
 
         return average_intensity
 
-    def FWHM1D(self, percentage=0.5, remove_background=None, has_draw: bool = False):
+    def FWHM1D(self, percentage: floating = 0.5, remove_background: bool = None,
+               has_draw: bool = False):
         """
         FWHM1D
 
@@ -342,7 +343,8 @@ class Scalar_field_Z():
 
         return np.squeeze(width)
 
-    def DOF(self, percentage=0.5, remove_background=None, has_draw: bool = False):
+    def DOF(self, percentage: floating = 0.5, remove_background: str | None = None,
+            has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
         Parameters:
@@ -371,8 +373,8 @@ class Scalar_field_Z():
              logarithm: floating = 0.,
              normalize: bool = False,
              cut_value: floating | None = None,
-             z_scale='um',
-             unwrap=False,
+             z_scale: str = 'um',
+             unwrap: bool = False,
              filename: str = ''):
         """Draws z field. There are several data from the field that are extracted, depending of 'kind' parameter.
 

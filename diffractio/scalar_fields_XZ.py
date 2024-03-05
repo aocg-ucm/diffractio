@@ -214,7 +214,7 @@ class Scalar_field_XZ():
         u3.u = self.u - other.u
         return u3
 
-    def __rotate__(self, angle, position=None):
+    def __rotate__(self, angle: float, position=None):
         """Rotation of X,Z with respect to position
 
         Parameters:
@@ -483,9 +483,9 @@ class Scalar_field_XZ():
                 raise Exception('no dictionary in load_data')
 
     def cut_resample(self,
-                     x_limits='',
-                     z_limits='',
-                     num_points=[],
+                     x_limits: list[float, float] = '',
+                     z_limits: list[float, float] = '',
+                     num_points: int | None = None,
                      new_field: bool = False,
                      interp_kind: list[int] = (3, 1)):
         """it cut the field to the range (x0,x1). if one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
@@ -673,7 +673,8 @@ class Scalar_field_XZ():
         width_edge = 0.9*(self.x[-1]-self.x[0])/2
         x_center = (self.x[-1]+self.x[0])/2
 
-        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
+        filter_function = np.exp(-(np.abs(self.x -
+                                 x_center) / width_edge)**pow_edge)
 
         field[0, :] = field_z
         for k in range(0, numz):
@@ -816,7 +817,8 @@ class Scalar_field_XZ():
         nx = len(self.x)
         return S[nx - 1:]
 
-    def RS(self, xout=None, verbose: bool = False, num_processors: int = num_max_processors):
+    def RS(self, xout: float | None = None, verbose: bool = False,
+           num_processors: int = num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm
 
         Parameters:
@@ -825,7 +827,7 @@ class Scalar_field_XZ():
             num_processors (int): number of processors for multiprocessing
 
         Returns:
-           time in the processing
+            Processing time
         """
 
         time1 = time.time()
@@ -853,7 +855,8 @@ class Scalar_field_XZ():
                 self.quality))
         else:
             if verbose is True:
-                print('Good result: factor {:2.2f}'.format(self.quality), sep="\r", end="\r")
+                print('Good result: factor {:2.2f}'.format(
+                    self.quality), sep="\r", end="\r")
 
         # matrix W para integracion simpson
         a = [2, 4]
@@ -909,7 +912,8 @@ class Scalar_field_XZ():
         time2 = time.time()
 
         if verbose is True:
-            print("time in RS= {}. num proc= {}".format(time2 - time1, num_processors), sep="\r", end="\r")
+            print("time in RS= {}. num proc= {}".format(
+                time2 - time1, num_processors), sep="\r", end="\r")
 
         return self.u
 
@@ -1000,7 +1004,8 @@ class Scalar_field_XZ():
         width_edge = 0.95*(self.x[-1]-self.x[0])/2
         x_center = (self.x[-1]+self.x[0])/2
 
-        filter_function = np.exp(-(np.abs(self.x-x_center) / width_edge)**pow_edge)
+        filter_function = np.exp(-(np.abs(self.x -
+                                 x_center) / width_edge)**pow_edge)
 
         t1 = time.time()
 
@@ -1045,7 +1050,7 @@ class Scalar_field_XZ():
                          wavelengths: NDArrayFloat,
                          spectrum: NDArrayFloat or None = None,
                          verbose: bool = False,
-                         num_processors=num_max_processors):
+                         num_processors: int = num_max_processors):
         """Rayleigh Sommerfeld propagation algorithm for polychromatic light.
 
         Parameters:
@@ -1372,7 +1377,8 @@ class Scalar_field_XZ():
         if has_draw:
             plt.figure()
             extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
-            plt.imshow(t.transpose(), extent=extension, aspect='auto', alpha=0.5, cmap='gray')
+            plt.imshow(t.transpose(), extent=extension,
+                       aspect='auto', alpha=0.5, cmap='gray')
 
         return self.borders
 
@@ -1530,7 +1536,7 @@ class Scalar_field_XZ():
                               min_incr: floating = 0.01,
                               reduce_matrix: str = 'standard',
                               colorbar_kind: str | None = None,
-                              colormap_kind=cm.Blues,
+                              colormap_kind: str | str = cm.Blues,
                               edge_matrix: NDArrayFloat | None = None):
         """Draws refractive index.
 
@@ -2015,7 +2021,7 @@ class Scalar_field_XZ():
         zZ.on_changed(__update__)
 
 
-def __update__(val):
+def __update__(val: floating):
     """for making videos.
     """
     zz = zZ.val
