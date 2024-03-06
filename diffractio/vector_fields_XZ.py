@@ -62,7 +62,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     """Class for vectorial fields.
 
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
@@ -75,7 +75,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x: NDArrayFloatloat | None = None, z: NDArrayFloatloat | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, z: NDArrayFloat | None = None,
                  wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
@@ -135,7 +135,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def __add__(self, other, kind="standard"):
         """adds two Vector_field_X. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Vector_field_X): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -158,7 +158,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -179,7 +179,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -211,7 +211,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def incident_field(self, E0, z0=None):
         """Incident field for the experiment. It takes a Scalar_source_X field
 
-        Parameters:
+        Args:
             E0 (Vector_source_X): field produced by Scalar_source_X (or a X field)
             z0 (float): position of the incident field. if None, '', [], is at the beginning
         """
@@ -247,7 +247,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def get(self, kind="fields", is_matrix=True):
         """Takes the vector field and divide in Scalar_field_X.
 
-        Parameters:
+        Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
@@ -323,7 +323,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
-        Parameters:
+        Args:
            u (Scalar_mask_X): mask
         """
         self.Ex = self.Ex * u.u
@@ -337,7 +337,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         WPM Method. 'schmidt methodTrue is very fast, only needs discrete number of refractive indexes'
 
 
-        Parameters:
+        Args:
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns a matrix else
@@ -654,7 +654,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
-        Parameters:
+        Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
         Returns:
@@ -685,7 +685,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
+        Args:
             pol_state (None or (I, Q, U, V) ): Polarization state previously computed
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
@@ -727,7 +727,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -746,7 +746,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """Draws electromagnetic field
 
-        Parameters:
+        Args:
             kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -783,7 +783,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 print("not good kind parameter in vector_fields_X.draw()")
                 id_fig = None
 
-            if not filename == "":
+            if filename != "":
                 plt.savefig(filename, dpi=100, bbox_inches="tight", pad_inches=0.1)
 
             return id_fig
@@ -798,7 +798,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """Draws the intensity
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -827,7 +827,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -893,7 +893,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -977,7 +977,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -1114,7 +1114,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """__internal__: draw ellipses
 
-        Parameters:
+        Args:
             num_ellipses (int): number of ellipses for parameters_ellipse
         """
 
@@ -1191,7 +1191,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def __draw1__(self, image, colormap, title: str = "", has_max=False, only_image=False):
         """Draws image
 
-        Parameters:
+        Args:
             image (numpy.array): array with drawing
             colormap (str): colormap
             title (str): title of drawing
@@ -1245,7 +1245,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 def polarization_ellipse(self, pol_state=None, matrix: bool = False):
     """returns A, B, theta, h polarization parameter of elipses
 
-    Parameters:
+    Args:
         pol_state (None or (I, Q, U, V) ): Polarization state previously computed
         Matrix (bool): if True returns Matrix, else Scalar_field_X
 

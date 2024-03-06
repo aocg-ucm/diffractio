@@ -56,7 +56,7 @@ class Vector_mask_XY(Vector_field_XY):
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_mask_XY. For example two  masks
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -78,7 +78,7 @@ class Vector_mask_XY(Vector_field_XY):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd object to multiply.
 
         Returns:
@@ -110,7 +110,7 @@ class Vector_mask_XY(Vector_field_XY):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd object to multiply.
 
         Returns:
@@ -138,10 +138,11 @@ class Vector_mask_XY(Vector_field_XY):
             new_field.clear_field()
         return new_field
 
-    def apply_circle(self, r0=None, radius=None):
+    def apply_circle(self, r0: list[float, float] | None = None,
+                     radius: list[float, float] | None = None):
         """The same circular mask is applied to all the Jones Matrix.
 
-        Parameters:
+        Args:
             r0 (float, float): center, if None it is generated
             radius (float, float): radius, if None it is generated
         """
@@ -165,10 +166,11 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * u_pupil.u
         self.M11 = self.M11 * u_pupil.u
 
-    def pupil(self, r0=None, radius=None, angle=0 * degrees):
+    def pupil(self, r0: list[float, float] | None = None,
+              radius: list[float, float] | None = None, angle: float = 0.):
         """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.
 
-        Parameters:
+        Args:
             r0 (float, float): center of circle/ellipse
             radius (float, float) or (float): radius of circle/ellipse
             angle (float): angle of rotation in radians
@@ -208,27 +210,27 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def scalar_to_vector_mask(self, mask, state, is_intensity=True):
+    def scalar_to_vector_mask(self, mask: Scalar_mask_XY, pol_state: Jones_matrix, is_intensity: bool = True):
         """The same mask (binary) is applied to all the Jones Matrix.
 
-        Parameters:
+        Args:
             mask (scalar_mask_XY): mask to apply.
-            state (Jones Matrix or Jones_matrix): Polarization state to apply
+            pol_state (Jones Matrix or Jones_matrix): Polarization state to apply
             is intensity (bool): If True, abs(mask)**2 is applied.
         """
 
-        if isinstance(state, Jones_matrix):
-            state = state.M.squeeze()
+        if isinstance(pol_state, Jones_matrix):
+            pol_state = pol_state.M.squeeze()
 
         # if is_intensity:
         #     t = np.abs(mask.u)**2
         # else:
         t = mask.u
 
-        self.M00 = state[0, 0] * t
-        self.M01 = state[0, 1] * t
-        self.M10 = state[1, 0] * t
-        self.M11 = state[1, 1] * t
+        self.M00 = pol_state[0, 0] * t
+        self.M01 = pol_state[0, 1] * t
+        self.M10 = pol_state[1, 0] * t
+        self.M11 = pol_state[1, 1] * t
 
         # Change elements = -0 to 0, to represent correctly phases.
         self.M01.real = np.where(np.real(self.M01) == -0, 0, np.real(self.M01))
@@ -240,7 +242,7 @@ class Vector_mask_XY(Vector_field_XY):
         """Creates a vector mask from a scalar mask. It assign an state_0 to 0 values and a state_1 to 1 values..
         For generality, ik mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
-        Parameters:
+        Args:
             mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
             state_0 (2x2 numpy.array or Jones_matrix): Jones matrix for 0s.
             state_1 (2x2 numpy.array or Jones_matrix): Jones matrix for 1s.
@@ -270,7 +272,7 @@ class Vector_mask_XY(Vector_field_XY):
             If it is not like this, discretize generates N levels.
             Usually masks are 0-1. Then normalize generates levels 0-N.
 
-            Parameters:
+            Args:
                 mask (scalar_mask_XY): 0-N discrete scalar mask.
                 states (np.array or Jones_matrix): Jones matrices to assign to each level
                 discretize (bool): If True, a continuous mask is converted to N levels.
@@ -291,19 +293,19 @@ class Vector_mask_XY(Vector_field_XY):
         mask_new.u = np.real(mask_new.u)
         mask_new.u = mask_new.u.astype(int)
 
-        for i, state in enumerate(states):
+        for i, pol_state in enumerate(states):
             i_level = (mask_new.u == i)
 
-            self.M00[i_level] = state.M[0, 0, 0]
-            self.M01[i_level] = state.M[0, 1, 0]
-            self.M11[i_level] = state.M[1, 1, 0]
-            self.M10[i_level] = state.M[1, 0, 0]
+            self.M00[i_level] = pol_state.M[0, 0, 0]
+            self.M01[i_level] = pol_state.M[0, 1, 0]
+            self.M11[i_level] = pol_state.M[1, 1, 0]
+            self.M10[i_level] = pol_state.M[1, 0, 0]
 
     def from_py_pol(self, polarizer):
         """Generates a constant polarization mask from py_pol Jones_matrix.
         This is the most general function to obtain a polarizer.
 
-        Parameters:
+        Args:
             polarizer (2x2 numpy.matrix): Jones_matrix
         """
 
@@ -323,7 +325,7 @@ class Vector_mask_XY(Vector_field_XY):
     def polarizer_linear(self, azimuth=0 * degrees):
         """Generates an XY linear polarizer.
 
-        Parameters:
+        Args:
             angle (float): linear polarizer angle
         """
         PL = Jones_matrix('m0')
@@ -333,7 +335,7 @@ class Vector_mask_XY(Vector_field_XY):
     def quarter_waveplate(self, azimuth=0 * degrees):
         """Generates an XY quarter wave plate.
 
-        Parameters:
+        Args:
             azimuth (float): polarizer angle
         """
         PL = Jones_matrix('m0')
@@ -343,7 +345,7 @@ class Vector_mask_XY(Vector_field_XY):
     def half_waveplate(self, azimuth=0 * degrees):
         """Generates an XY half wave plate.
 
-        Parameters:
+        Args:
             azimuth (float): polarizer angle
         """
         PL = Jones_matrix('m0')
@@ -357,7 +359,7 @@ class Vector_mask_XY(Vector_field_XY):
                            azimuth=0 * degrees):
         """Generates an XY retarder.
 
-        Parameters:
+        Args:
             R (float): retardance between Ex and Ey components.
             p1 (float): transmittance of fast axis.
             p2 (float): transmittance of slow axis.
@@ -384,7 +386,7 @@ class Vector_mask_XY(Vector_field_XY):
     def draw(self, kind='amplitudes', range_scale='um'):
         """Draws the mask. It must be different to sources.
 
-        Parameters:
+        Args:
             kind (str): 'amplitudes', 'phases', 'jones', 'jones_ap'.
 
             'jones' is for real and imaginary parts.
@@ -590,7 +592,7 @@ class Vector_mask_XY(Vector_field_XY):
 def rotation_matrix_Jones(angle):
     """Creates an array of Jones 2x2 rotation matrices.
 
-    Parameters:
+    Args:
         angle (np.array): array of angle of rotation, in radians.
 
     Returns:

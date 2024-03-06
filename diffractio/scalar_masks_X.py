@@ -36,7 +36,7 @@ from .utils_optics import roughness_1D
 class Scalar_mask_X(Scalar_field_X):
     """Class for unidimensional scalar masks.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions.
             The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
@@ -64,7 +64,7 @@ class Scalar_mask_X(Scalar_field_X):
                binarize: bool = False, normalize: bool = False):
         """Widens a field using a mask.
 
-        Parameters:
+        Args:
             mask (diffractio.Scalar_mask_X): filter
             new_field (bool): If True, develope new Field
             binarize (bool, float): If False nothing, else binarize in level
@@ -97,7 +97,7 @@ class Scalar_mask_X(Scalar_field_X):
                            radius: float = 0 * um):
         """Phase mask defined between two surfaces :math:`f_1` and :math:`f_2`: :math:`h(x,y)=f_2(x,y)-f_1(x,y)`, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
-        Parameters:
+        Args:
             index (float): refractive index of the mask
             f1 (str): first surface
             f2 (str): second surface
@@ -131,7 +131,7 @@ class Scalar_mask_X(Scalar_field_X):
                         x0: float = 0 * um):
         """Phase mask defined between two surfaces defined by arrays: array1 and array2, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
 
-        Parameters:
+        Args:
             index (float): refractive index of the mask
             array1 (numpy.array): array of data (x,z) for the first surface
             array2 (numpy.array): array of data (x,z) for the second surface
@@ -170,7 +170,7 @@ class Scalar_mask_X(Scalar_field_X):
     def dots(self, x0: float | NDArrayFloat):
         """Generates 1 or several point masks at positions x0
 
-        Parameters:
+        Args:
             x0 float or np.array: x point or points where mask is 1.
         """
         u = np.zeros_like(self.x)
@@ -188,7 +188,7 @@ class Scalar_mask_X(Scalar_field_X):
     def slit(self, x0: float, size: float):
         """Slit: 1 inside, 0 outside
 
-        Parameters:
+        Args:
             x0 (float): center of slit
             size (float): size of slit
         """
@@ -205,7 +205,7 @@ class Scalar_mask_X(Scalar_field_X):
     def double_slit(self, x0: float, size: float, separation: float):
         """double slit: 1 inside, 0 outside
 
-        Parameters:
+        Args:
             x0 (float): center of slit
             size (float): size of slit
             separation (float): separation between slit centers
@@ -225,7 +225,7 @@ class Scalar_mask_X(Scalar_field_X):
                    x_edge: float = 0.):
         """Divides the image in two levels.
 
-        Parameters:
+        Args:
             level1 (float): value of level1
             level2 (float): value of level2
             x_edge (float): position of separation of levels
@@ -233,18 +233,18 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = level1 * np.ones(self.x.shape)
         self.u[self.x > x_edge] = level2
 
-    def gray_scale(self, num_levels: int, levelMin: float = 0, levelMax: float = 1):
+    def gray_scale(self, num_levels: int, level_min: float = 0, level_max: float = 1):
         """Divides the mask in n, vertical levels.
 
-        Parameters:
+        Args:
             num_levels (int): number of levels
-            levelMin (float): minimum value of levels
-            levelMax (float): maximum value of levels
+            level_min (float): minimum value of levels
+            level_max (float): maximum value of levels
         """
         t = np.zeros(self.x.shape, dtype=float)
 
         xpos = np.linspace(self.x[0], self.x[-1], num_levels + 1)
-        height_levels = np.linspace(levelMin, levelMax, num_levels)
+        height_levels = np.linspace(level_min, level_max, num_levels)
         ipos, _, _ = nearest2(self.x, xpos)
         ipos[-1] = len(self.x)
 
@@ -256,7 +256,7 @@ class Scalar_mask_X(Scalar_field_X):
     def prism(self, x0: float, n: float, angle: float):
         """Prism.
 
-        Parameters:
+        Args:
             x0 (float): vertex of prism
             n (float): refractive_index
             angle (float): angle of prism
@@ -274,7 +274,7 @@ class Scalar_mask_X(Scalar_field_X):
     def biprism_fresnel(self, angle: float, x0: float, radius: float = 0):
         """Fresnel biprism.
 
-        Parameters:
+        Args:
             angle (float): angle of the fresnel biprism
             x0 (float): central position of fresnel biprism
             radius (float): radius of the fresnel biprism, if mask is True
@@ -309,7 +309,7 @@ class Scalar_mask_X(Scalar_field_X):
     def biprism_fresnel_nh(self, x0: float, width: float, height: float, n: float):
         """Fresnel biprism, uses height and refractive index.
 
-        Parameters:
+        Args:
             x0 (float): vertex of biprism
             width (float): size of biprism
             height (float): height of biprism
@@ -341,7 +341,7 @@ class Scalar_mask_X(Scalar_field_X):
     def lens(self, x0: float, focal: float, radius: float = 0):
         """Paraxial lens.
 
-        Parameters:
+        Args:
             x0 (float): center of lens
             focal (float): focal length of lens
         """
@@ -368,7 +368,7 @@ class Scalar_mask_X(Scalar_field_X):
         """Spherical lens, without paraxial approximation. The focal distance and the refractive index are used for the definition.
         When the refractive index decreases, the radius of curvature decrases and less paraxial.
 
-        Parameters:
+        Args:
             r0 (float, float): (x0,y0) - center of lens
             radius (float, float) or (float): radius of lens mask
             focal (float, float) or (float): focal length of lens
@@ -398,7 +398,7 @@ class Scalar_mask_X(Scalar_field_X):
     def aspheric(self, x0: float, c: float, k: float, a: list, n0: float, n1: float, radius: float):
         """Asferic surface. $z = \frac{c r^2}{1+\sqrt{1-(1+k) c^2 r^2 }}+\sum{a_i r^{2i}}$
 
-        Parameters:
+        Args:
             x0 (float): position of center
             c (float): base curvature at vertex, inverse of radius
             k (float): conic constant
@@ -443,7 +443,7 @@ class Scalar_mask_X(Scalar_field_X):
                      phase: float = np.pi, radius: float = 0 * um):
         """Fresnel lens. Amplitude phase, continuous or binary.
 
-        Parameters:
+        Args:
             x0 (float): center of lens
             focal (float): focal length of lens
             kind (str): 'amplitude' or phase
@@ -499,7 +499,7 @@ class Scalar_mask_X(Scalar_field_X):
         According to movile average (Ogilvy p.224).
         very good in time for long arrays
 
-        Parameters:
+        Args:
             t (float): correlation lens
             s (float): std of roughness
 
@@ -518,7 +518,7 @@ class Scalar_mask_X(Scalar_field_X):
     def dust_different_sizes(self, percentage: float, size: float, std: float = 0.):
         """Mask with dust particles of different sizes.
 
-        Parameters:
+        Args:
             percentage (float): percentage of area afected by noise
             size (float): mean size of dust
             std (float): std for size of dust
@@ -558,7 +558,7 @@ class Scalar_mask_X(Scalar_field_X):
     def dust(self, percentage: float, size: float = 0):
         """ Mask with dust particles of equal sizes.
 
-        Parameters:
+        Args:
             percentage (float): percentage of area afected by noise
             size (float): size of dust
             value (float): value included when there is noise
@@ -598,7 +598,7 @@ class Scalar_mask_X(Scalar_field_X):
     def sine_grating(self, x0: float, period: float, amp_min: float = 0, amp_max: float = 1):
         """Sinusoidal grating
 
-        Parameters:
+        Args:
             x0 (float): shift of grating
             period (float): period of the grating
             amp_min (float): minimum amplitude
@@ -614,7 +614,7 @@ class Scalar_mask_X(Scalar_field_X):
     def ronchi_grating(self, x0: float, period: float, fill_factor: float = 0.5):
         """Amplitude binary grating, fill-factor can be defined. It is obtained as a sine_grating that after is binarized. Fill factor is determined as  y0=cos(pi*fill_factor)
 
-        Parameters:
+        Args:
             x0 (float): shift of the grating
             period (float): period of the grating
             fill_factor (float): (0,1) - fill factor of grating
@@ -628,29 +628,29 @@ class Scalar_mask_X(Scalar_field_X):
         self.u = t.u
         return t.u
 
-    def binary_grating(self, x0: float, period: float, fill_factor: float, amin: float,
-                       amax: float, phase: float):
+    def binary_grating(self, x0: float, period: float, fill_factor: float, a_min: float,
+                       a_max: float, phase: float):
         """binary grating amplitude and/or phase
 
-        Parameters:
+        Args:
             x0 (float): shift of the grating
             period (float): period of the grating
             fill_factor (float): (0,1) - fill factor of grating
-            amin (float): minimum amplitude
-            amax (float): maximum amplitude
+            a_min (float): minimum amplitude
+            a_max (float): maximum amplitude
             phase (float): phase shift (radians)
         """
 
         t = Scalar_mask_X(self.x, self.wavelength)
         t.ronchi_grating(period=period, x0=x0, fill_factor=fill_factor)
-        self.u = amin + (amax - amin) * t.u
+        self.u = a_min + (a_max - a_min) * t.u
         self.u = self.u * np.exp(1j * phase * t.u)
         return t.u
 
     def blazed_grating(self, x0: float, period: float, phase_max: float):
         """Phase, blazed grating. The phase shift is determined by heigth and refractive index.
 
-        Parameters:
+        Args:
             x0 (float): shift of the grating
             period (float): period of the grating
             phase_max (float): maximum_phase_differences
@@ -678,7 +678,7 @@ class Scalar_mask_X(Scalar_field_X):
                           x_center: float = 0):
         """Chirped grating with linear p(x) variation.
 
-        Parameters:
+        Args:
             kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p0 (float): initial period of the grating
             p1 (float): final period of the grating
@@ -761,7 +761,7 @@ class Scalar_mask_X(Scalar_field_X):
                           phase_max: float, delta_x: float = 0, length: float = 0, x_center: float = 0):
         """Chirped grating with linear q(x) variation. The transmitance is: t = np.cos(np.pi*q*(x-x0) + np.pi*q0*(x-x0))
 
-        Parameters:
+        Args:
             kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p0 (float): initial period of the grating
             p1 (float): final period of the grating
@@ -848,7 +848,7 @@ class Scalar_mask_X(Scalar_field_X):
                         phase_max: float, delta_x: float, length: float = 0):
         """General chirped grating with variation given by function p(x).
 
-        Parameters:
+        Args:
             kind (str): 'amplitude', 'phase', 'amplitude_binary', 'phase_binary'
             p_x (str): function with variation of periods
             amp_min (float): minimum  transmittance
@@ -894,7 +894,7 @@ class Scalar_mask_X(Scalar_field_X):
         """
         Genenerates a binary code, using the positions given in x_transitions
 
-        Parameters:
+        Args:
             x_transitions (numpy.array): positions where transitions are placed
             start (str): How the binary code starts:'down' (starts in 0) or 'up' (starts in 1)
             has_draw (bool): If True, draws the code
@@ -933,7 +933,7 @@ class Scalar_mask_X(Scalar_field_X):
                     code: list[int] = [1, 1, 0, 0, 1, 0, 1], bit_width: float = 20 * um):
         """Binary code in form of 1's and 0's.
 
-        Parameters:
+        Args:
             kind (str): there are serveral types of codes
                 'standard' - normal
                 'abs_fag' -  used in some abs encoders

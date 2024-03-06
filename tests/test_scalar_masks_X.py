@@ -87,7 +87,7 @@ class Test_Scalar_masks_X():
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.gray_scale(num_levels=16, levelMin=2, levelMax=3)
+        t1.gray_scale(num_levels=16, level_min=2, level_max=3)
         t1.draw(kind='amplitude')
 
         t1.save_data(filename=filename + '.npz')
@@ -277,8 +277,8 @@ class Test_Scalar_masks_X():
         wavelength = 0.6238 * um
         red = Scalar_mask_X(x, wavelength)
         red.binary_grating(period=50 * um,
-                           amin=0.25,
-                           amax=0.5,
+                           a_min=0.25,
+                           a_max=0.5,
                            phase=np.pi,
                            x0=25 * um,
                            fill_factor=0.25)
@@ -297,8 +297,8 @@ class Test_Scalar_masks_X():
         period = 40 * um
         red = Scalar_mask_X(x, wavelength)
         red.binary_grating(period=period,
-                           amin=1,
-                           amax=1,
+                           a_min=1,
+                           a_max=1,
                            phase=np.pi / 2,
                            x0=0,
                            fill_factor=0.5)

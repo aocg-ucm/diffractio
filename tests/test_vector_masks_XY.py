@@ -53,10 +53,10 @@ class Test_vector_masks_XY():
                   angle=0 * degrees)
 
         # mask vectorial
-        state = np.array([[1, 0], [1, 1j]])
+        pol_state = np.array([[1, 0], [1, 1j]])
 
         EM = Vector_mask_XY(x0, y0, wavelength)
-        EM.scalar_to_vector_mask(mask=mask, state=state)
+        EM.scalar_to_vector_mask(mask=mask, pol_state=pol_state)
 
         EM.draw(kind='jones_ap')
         save_figure_test(newpath, func_name, add_name='')
@@ -82,8 +82,8 @@ class Test_vector_masks_XY():
 
         EM = Vector_mask_XY(x0, y0, wavelength)
         EM.complementary_masks(mask=mask,
-                               state_0=np.array([[1, 0], [0, 0]]),
-                               state_1=np.array([[0, 0], [0, 1]]))
+                               pol_state_0=np.array([[1, 0], [0, 0]]),
+                               pol_state_1=np.array([[0, 0], [0, 1]]))
 
         EM.draw(kind='amplitudes')
         save_figure_test(newpath, func_name, add_name='_amplitude')

@@ -28,8 +28,6 @@ The magnitude is related to microns: `mifcron = 1.`
 # flake8: noqa
 
 
-from numpy import cos, exp, pi, sign, sin, sqrt
-
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import degrees, np, um
@@ -39,7 +37,7 @@ from .scalar_fields_X import Scalar_field_X
 class Scalar_source_X(Scalar_field_X):
     """Class for unidimensional scalar sources.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
         n_background (float): refractive index of background
@@ -60,22 +58,22 @@ class Scalar_source_X(Scalar_field_X):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'
 
-    def plane_wave(self, A=1, theta=0 * degrees, z0=0 * um):
+    def plane_wave(self, A: float = 1., theta: float = 0., z0: float = 0.):
         """Plane wave. 
 
-        Parameters:
+        Args:
             A (float): maximum amplitude
             theta (float): angle in radians
             z0 (float): constant value for phase shift
         """
         # Definicion del vector de onda
         k = 2 * np.pi / self.wavelength
-        self.u = A * exp(1.j * k * (self.x * sin(theta) + z0 * cos(theta)))
+        self.u = A * np.exp(1.j * k * (self.x * np.sin(theta) + z0 * np.cos(theta)))
 
-    def gauss_beam(self, x0: float, w0: float, z0: float, A: float = 1, theta: float = 0. * degrees):
+    def gauss_beam(self, x0: float, w0: float, z0: float, A: float = 1, theta: float = 0.):
         """Gauss Beam.
 
-        Parameters:
+        Args:
             x0 (float): x position of center
             w0 (float): minimum beam width
             z0 (float): position of beam width
@@ -93,29 +91,29 @@ class Scalar_source_X(Scalar_field_X):
             R = 1e10
         else:
             R = -z0 * (1 + (z_rayleigh / z0)**2)
-        amplitude = A * w0 / w * exp(-(self.x - x0)**2 / (w**2))
-        phase1 = exp(1j * k * ((self.x - x0) * np.sin(theta)))  # rotation
-        phase2 = exp(1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 /
-                           (2 * R)))
+        amplitude = A * w0 / w * np.exp(-(self.x - x0)**2 / (w**2))
+        phase1 = np.exp(1j * k * ((self.x - x0) * np.sin(theta)))  # rotation
+        phase2 = np.exp(1j * (-k * z0 - phaseGouy + k * (self.x - x0)**2 /
+                              (2 * R)))
 
         self.u = amplitude * phase1 * phase2
 
     def spherical_wave(self, A: float, x0: float, z0: float, normalize: bool = False):
-        """Spherical wave. self.u = amplitude * A * exp(-1.j * sign(z0) * k * Rz) / Rz
+        """Spherical wave. self.u = amplitude * A * np.exp(-1.j * np.sign(z0) * k * Rz) / Rz
 
-        Parameters:
+        Args:
             A (float): maximum amplitude
             x0 (float): x position of source
             z0 (float): z position of source
             mask (bool): If true, masks the spherical wave with radius
             normalize (bool): If True, maximum of field is 1
         """
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
 
-        Rz = sqrt((self.x - x0)**2 + z0**2)
+        Rz = np.sqrt((self.x - x0)**2 + z0**2)
 
         # Onda esferica
-        self.u = A * exp(-1.j * sign(z0) * k * Rz) / Rz
+        self.u = A * np.exp(-1.j * np.sign(z0) * k * Rz) / Rz
 
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
@@ -123,25 +121,25 @@ class Scalar_source_X(Scalar_field_X):
     def plane_waves_dict(self, params: dict):
         """Several plane waves with parameters defined in dictionary
 
-        Parameters:
+        Args:
             params: list with a dictionary:
                 A (float): maximum amplitude
                 theta (float): angle in radians
                 z0 (float): constant value for phase shift
         """
         # Definicion del vector de onda
-        k = 2 * pi / self.wavelength
+        k = 2 * np.pi / self.wavelength
 
         self.u = np.zeros_like(self.u, dtype=complex)
         for p in params:
-            self.u = self.u + p['A'] * exp(
+            self.u = self.u + p['A'] * np.exp(
                 1.j * k *
-                (self.x * sin(p['theta']) + p['z0'] * cos(p['theta'])))
+                (self.x * np.sin(p['theta']) + p['z0'] * np.cos(p['theta'])))
 
     def plane_waves_several_inclined(self, A: float, num_beams: int, max_angle: float):
         """Several paralel plane waves.
 
-        Parameters:
+        Args:
             A (float): maximum amplitude
             num_beams (int): number of ints
             max_angle (float): maximum angle for beams
@@ -157,10 +155,10 @@ class Scalar_source_X(Scalar_field_X):
         self.u = t
 
     def gauss_beams_several_parallel(self, A: float, num_beams: int, w0: float, z0: float,
-                                     x_central: float, x_range: float, theta: float = 0 * degrees):
+                                     x_central: float, x_range: float, theta: float = 0.):
         """Several parallel gauss beams
 
-        Parameters:
+        Args:
             A (float): maximum amplitude
             num_beams (int): number of gaussian beams (equidistintan)
             w0 (float): beam width of the bemas
@@ -182,7 +180,7 @@ class Scalar_source_X(Scalar_field_X):
                                      max_angle: float):
         """Several inclined gauss beams
 
-        Parameters:
+        Args:
             A (float): maximum amplitude
             num_beams (int): number of gaussian beams (equidistintan)
             w0 (float): beam width of the bemas

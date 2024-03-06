@@ -26,7 +26,7 @@ There are also some secondary atributes:
 *Drawing functions*
     * draw
 
-*Parameters:*
+*Args:*
     * intensity, average intensity
     * get_edges_transitions (mainly for pylithography)
 
@@ -54,7 +54,7 @@ num_max_processors = multiprocessing.cpu_count()
 class Scalar_field_Z():
     """Class for unidimensional scalar fields in z axis.
 
-    Parameters:
+    Args:
         z (numpy.array): linear array with equidistant positions.
         wavelength (float): wavelength of the incident field
         n_background (float): refractive index of background
@@ -111,7 +111,7 @@ class Scalar_field_Z():
     def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_X): 2nd field to add
             kind (str): instruction how to add the fields:
                 - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
@@ -142,7 +142,7 @@ class Scalar_field_Z():
     def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_X): field to substract
 
         Returns:
@@ -187,7 +187,7 @@ class Scalar_field_Z():
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -207,7 +207,7 @@ class Scalar_field_Z():
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -230,7 +230,7 @@ class Scalar_field_Z():
         """Cuts the field to the range (z0,z1). If one of this z0,z1 positions is out of the self.z range it does nothing.
         It is also valid for resampling the field, just write z0,z1 as the limits of self.z
 
-        Parameters:
+        Args:
             z_limits (numpy.array): (z0,z1) - starting and final points to cut, if '' - takes the current limit z[0] and z[-1]
             num_points (int): it resamples z, and u [],'',0,None -> it leave the points as it is
             new_field (bool): if True it returns a new Scalar_field_z
@@ -289,7 +289,7 @@ class Scalar_field_Z():
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -309,7 +309,7 @@ class Scalar_field_Z():
     def average_intensity(self, verbose: bool = False):
         """Returns the average intensity as: (np.abs(self.u)**2).sum() / num_data
 
-        Parameters:
+        Args:
             verbose (bool): If True it prints the value of the average intensity.
 
         Returns:
@@ -326,7 +326,7 @@ class Scalar_field_Z():
         """
         FWHM1D
 
-        Parameters:
+        Args:
             percentage (float): value between 0 and 1. 0.5 means that the width is computed at half maximum.
             remove_background (str): 'min', 'mean', None
             has_draw (bool): If true it draws
@@ -347,7 +347,7 @@ class Scalar_field_Z():
             has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
-        Parameters:
+        Args:
             percentage (float): value between 0 and 1. 0.5 means that the width is computed at half maximum.
             remove_background (str): 'min', 'mean', None
             has_draw (bool): If true it draws
@@ -378,7 +378,7 @@ class Scalar_field_Z():
              filename: str = ''):
         """Draws z field. There are several data from the field that are extracted, depending of 'kind' parameter.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'field', 'phase'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -435,7 +435,7 @@ class Scalar_field_Z():
             plt.ylabel(kind)
             plt.xlim(left=z_drawing[0], right=z_drawing[-1])
 
-        if not filename == '':
+        if filename != '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         if kind == 'intensity':

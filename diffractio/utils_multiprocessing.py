@@ -111,9 +111,9 @@ def execute_multiprocessing(__function_process__,
                             verbose: bool = False):
     """Executes multiprocessing reading a dictionary.
 
-    Parameters:
+    Args:
         __function_process__ function tu process, it only accepts a dictionary
-        dict_Parameters, dictionary / array with Parameters:
+        dict_Parameters, dictionary / array with Args:
         num_processors, if 1 no multiprocessing is used
         verbose, prints processing time
 
@@ -130,7 +130,7 @@ def execute_multiprocessing(__function_process__,
             return dict(sumas=suma, ij=xd['ij'])
 
         def creation_dictionary_multiprocessing():
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             t1 = time.time()
             X = np.linspace(1, 2, 10)
             Y = np.linspace(1, 2, 1000)

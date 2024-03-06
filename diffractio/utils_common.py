@@ -25,13 +25,13 @@ from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComp
 
 
 def computer_purcearameters(verbose: bool = False) -> list:
-    """Determine several computer parameters:
+    """Determine several computer Args:
         - number of processors
         - available memory
         - total memory
         - max frequency
 
-    Parameters:
+    Args:
         verbose (bool): If True prints data
 
     Returns:
@@ -67,7 +67,7 @@ def clear_all():
 def several_propagations(source, masks, distances: list[float]):
     '''performs RS propagation through several masks
 
-    Parameters:
+    Args:
         source (Scalar_source_XY): illumination
         masks (list): list with several (Scalar_masks_XY)
         distances (list): list with seera distances
@@ -106,7 +106,7 @@ def save_data_common(cls,
     """Common save data function to be used in all the modules.
     The methods included are: npz, matlab
 
-    Parameters:
+    Args:
         filename(str): filename
         add_name = (str): sufix to the name, if 'date' includes a date
         description(str): text to be stored in the dictionary to save.
@@ -144,13 +144,13 @@ def load_data_common(cls, filename: str, verbose: bool = False):
     """Common load data function to be used in all the modules.
         The methods included are: npz, matlab
 
-    Parameters:
+    Args:
         cls(class): class X, XY, XZ, XYZ, etc..
         filename(str): filename
         verbose(bool): If True prints data
     """
 
-    def print_data_dict(dict0):
+    def print_data_dict(dict0: dict):
         for k, v in dict0.items():
             print("{:12} = {}".format(k, v))
         print("\nnumber of data = {}".format(len(dict0['x'])))
@@ -188,10 +188,10 @@ def load_data_common(cls, filename: str, verbose: bool = False):
     #     y_read = f['dict']['Y'][:]
 
 
-def print_axis_info(cls, axis):
+def print_axis_info(cls, axis: str):
     """Prints info about axis
 
-    Parameters:
+    Args:
         cls(class): class of the modulus.
         axis(): axis x, y, z... etc.
     """
@@ -208,7 +208,7 @@ def print_axis_info(cls, axis):
 def date_in_name(filename: str) -> str:
     """introduces a date in the filename.
 
-    Parameters:
+    Args:
         filename(str): filename
 
     Returns:

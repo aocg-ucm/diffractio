@@ -35,7 +35,7 @@ There are also some secondary atributes:
 *Drawing functions*
     * draw
 
-*Parameters:*
+*Args:*
     * intensity, average intensity
     * get_edges_transitions (mainly for pylithography)
 
@@ -84,7 +84,7 @@ num_max_processors = multiprocessing.cpu_count()
 class Scalar_field_X():
     """Class for unidimensional scalar fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions.
             The number of data is preferibly :math:`2^n` .
         wavelength (float): wavelength of the incident field
@@ -145,7 +145,7 @@ class Scalar_field_X():
     def __add__(self, other, kind: str = "standard"):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_X): 2nd field to add
             kind (str): instruction how to add the fields:
                 - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
@@ -176,7 +176,7 @@ class Scalar_field_X():
     def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_X): field to substract
 
         Returns:
@@ -192,7 +192,7 @@ class Scalar_field_X():
     def __mul__(self, other):
         """Multiply two fields. For example  :math: `u_1(x)= u_0(x)*t(x)`
 
-        Parameters:
+        Args:
             other (Scalar_field_X): field to multiply
 
         Returns:
@@ -216,7 +216,7 @@ class Scalar_field_X():
     def duplicate(self, clear: bool = False):
         """Duplicates the instance
 
-        Parameters:
+        Args:
             clear (bool): If True, clears the self.u argument, else it keeps the same than in self.
 
         Returns
@@ -243,7 +243,7 @@ class Scalar_field_X():
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -264,7 +264,7 @@ class Scalar_field_X():
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -285,7 +285,7 @@ class Scalar_field_X():
         """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it does nothing.
         It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
-        Parameters:
+        Args:
             x_limits (numpy.array): (x0,x1) - starting and final points to cut, if '' - takes the current limit x[0] and x[-1]
             num_points (int): it resamples x, and u [],'',0,None -> it leave the points as it is
             new_field (bool): if True it returns a new Scalar_field_X
@@ -348,7 +348,7 @@ class Scalar_field_X():
     def incident_field(self, u0):
         """Incident field for the experiment. It takes a Scalar_source_X field.
 
-        Parameters:
+        Args:
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
         """
         self.u = u0.u
@@ -356,7 +356,7 @@ class Scalar_field_X():
     def inverse_amplitude(self, new_field: bool = False):
         """Inverts the amplitude of the mask, phase is equal as initial
 
-        Parameters:
+        Args:
             new_field (bool): If True it returns a Scalar_mask_X object, else, it modifies the existing object.
 
 
@@ -380,7 +380,7 @@ class Scalar_field_X():
     def inverse_phase(self, new_field: bool = False):
         """Inverts the phase of the mask, amplitude is equal as initial
 
-        Parameters:
+        Args:
             new_field (bool): If True it returns a Scalar_mask_X object, else, it modifies the existing object.
 
 
@@ -400,8 +400,12 @@ class Scalar_field_X():
             new.u = new_amplitude
             return new
 
-    def filter(self, size: int = 0):
-        """ """
+    def filter(self, size: float):
+        """ Filters the field with a slit of a certain size.
+
+        Args:
+            size (float): size of mask for filtering
+        """
 
         from .scalar_masks_X import Scalar_mask_X  # Do not write up
 
@@ -409,11 +413,10 @@ class Scalar_field_X():
         slit.slit(x0=0, size=size)
         self.u = fft_filter(self.u, slit.u)
 
-    def insert_mask(self, t1, x0_mask1: float,
-                    clean: bool = True, kind_position: str = "left"):
+    def insert_mask(self, t1, x0_mask1: float, clean: bool = True, kind_position: str = "left"):
         """Insert mask t1 in mask self. It is performed using interpolation.
 
-        Parameters:
+        Args:
             t1 (Scalar_field_X): field X (shorter)
             x0_mask1 (float): location of starting point at t0 of init point of t1.
             clean (bool): if True remove previous fields, else substitute
@@ -451,7 +454,7 @@ class Scalar_field_X():
         """Place a pupil in the field.
 
 
-        Parameters:
+        Args:
             x0 (float): center of pupil.
             radius (float): radius of pupil.
 
@@ -468,7 +471,7 @@ class Scalar_field_X():
     def insert_array_masks(self, t1, x_pos, clean=True, kind_position="left"):
         """Insert several identical masks t1 in self.u according to positions x_pos
 
-        Parameters:
+        Args:
             t1 (Scalar_field_X): mask to insert.
             x_pos (numpy.array): array with locations.
             clean (bool): elliminate preview fields in self.
@@ -483,7 +486,7 @@ class Scalar_field_X():
     def repeat_structure(self, num_repetitions, position="center", new_field=True):
         """Repeat the structure n times.
 
-        Parameters:
+        Args:
             num_repetitions (int): Number of repetitions of the mask
             position (string or number): 'center', 'previous' or initial position. Initial x
             new_field (bool): If True, a new mask is produced, else, the mask is modified.
@@ -525,7 +528,7 @@ class Scalar_field_X():
             new_field: bool = False, verbose: bool = False):
         """Far field diffraction pattern using Fast Fourier Transform (FFT).
 
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens. If None the exit is in radians
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
@@ -578,7 +581,7 @@ class Scalar_field_X():
              new_field: bool = False, verbose: bool = False):
         """Inverse Fast Fourier Transform (ifft) of the field.
 
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
@@ -639,7 +642,7 @@ class Scalar_field_X():
 
         One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
-        Parameters:
+        Args:
             z (float): distance to observation plane. I z<0 inverse propagation is executed
             n (float): refractive index
             matrix (bool): if True returns a matrix with result. It is much faster than new_field=True
@@ -734,7 +737,7 @@ class Scalar_field_X():
         # # could be removed and use self.n
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        Parameters:
+        Args:
             z (float): Distance to observation plane. if z<0 inverse propagation is executed
             n (float): refractive index
             new_field (bool): if False the computation goes to self.u, if True a new instance is produced
@@ -805,7 +808,7 @@ class Scalar_field_X():
             verbose: float = False):
         """Chirped z-transform.
 
-        Parameters:
+        Args:
             z (float or np.array): diffraction distance
             xout (float or np.array): x array with positions of the output plane
             verbose (bool): If True it prints information.
@@ -937,7 +940,7 @@ class Scalar_field_X():
             - Intensity at plane with maximum intensity (focus of a lens, for example)
             - Region of interest given by ROI.
 
-        Parameters:
+        Args:
             fn (function): Function that returns the refractive index at a plane in a numpy.array
             zs (np.array): linspace with positions z where to evaluate the field.
             num_sampling (int, int) or None: If None, it does not storage intermediate data. Otherwise, it stores a small XZ matrix which size in num_sampling.
@@ -1106,7 +1109,7 @@ class Scalar_field_X():
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced.
         Returns
             u (numpy.array): normalized optical field
@@ -1116,7 +1119,7 @@ class Scalar_field_X():
     def MTF(self, kind: str = "mm", has_draw: bool = True):
         """Computes the MTF of a field,.
 
-        Parameters:
+        Args:
             kind (str): 'mm', 'degrees'
             has_draw (bool): If True draws the MTF
 
@@ -1172,7 +1175,7 @@ class Scalar_field_X():
     def average_intensity(self, verbose: bool = False):
         """Returns the average intensity as: (np.abs(self.u)**2).sum() / num_data
 
-        Parameters:
+        Args:
             verbose (bool): If True it prints the value of the average intensity.
 
         Returns:
@@ -1188,7 +1191,7 @@ class Scalar_field_X():
                   verbose: bool = False, filename: str = ""):
         """Determine locations of edges for a binary mask.
 
-        Parameters:
+        Args:
             kind_transition:'amplitude' 'phase'
                 if we see the amplitude or phase of the field
             min_step: minimum step for consider a transition
@@ -1256,7 +1259,7 @@ class Scalar_field_X():
     ):
         """Draws X field. There are several data from the field that are extracted, depending of 'kind' parameter.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'field', 'phase', 'fill', 'fft'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -1320,7 +1323,7 @@ class Scalar_field_X():
         if scale != "":
             plt.axis(scale)
 
-        if not filename == "":
+        if filename != "":
             plt.savefig(filename, dpi=100, bbox_inches="tight", pad_inches=0.1)
 
         if kind == "intensity":
@@ -1335,7 +1338,7 @@ def kernelRS(x: NDArrayFloat, wavelength: float, z: float,
 
     There is a 'fast' version based on :math:`hk_1 = \sqrt{2/(\pi \, k \, R)}  e^{i  (k \, R - 3  \pi / 4)}` which approximates the result.
 
-    Parameters:
+    Args:
         x (numpy.array): positions x
         wavelength (float): wavelength of incident fields
         z (float): distance for propagation
@@ -1370,7 +1373,7 @@ def kernelRSinverse(x: NDArrayFloat, wavelength: float, z: float,
                     n: float = 1., kind: str = "z", fast: bool = False):
     """Kernel for inverse RS propagation. See also kernelRS
 
-    Parameters:
+    Args:
         x (numpy.array): positions x
         wavelength (float): wavelength of incident fields
         z (float): distance for propagation
@@ -1402,7 +1405,7 @@ def PWD_kernel(u: NDArrayComplex, n: NDArrayComplex, k0: float,
     """
     Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
 
-    Parameters:
+    Args:
         u (np.array): fields
         n (np.array): refractive index
         k0 (float): wavenumber
@@ -1426,7 +1429,7 @@ def WPM_schmidt_kernel(u, n: NDArrayComplex, k0: float, k_perp2: NDArrayComplex,
     """
     Kernel for fast propagation of WPM method
 
-    Parameters:
+    Args:
         u (np.array): fields
         n (np.array): refractive index
         k0 (float): wavenumber
@@ -1461,8 +1464,8 @@ def polychromatic_multiprocessing(
     It performs an analysis of polychromatic light. It needs a function with only one input parameter: wavelength.
     It determines the intensity for each wavelength and the final results is the summation of the intensities.
 
-    Parameters:
-        function_process (function): function with accepts params as input parameters:
+    Args:
+        function_process (function): function with accepts params as input Args:
         wavelengths (array): wavelengths in the spectrum
         spectrum (array): weights for the spectrum. if None: uniform spectrum, else array with the same dimension as wavelengths
         num_processors (int): number of processors for the computation
@@ -1503,8 +1506,8 @@ def extended_source_multiprocessing(
     """
     It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
-    Parameters:
-        function_process (function): function with accepts params as input Parameters:
+    Args:
+        function_process (function): function with accepts params as input Args:
         x0s (array): positions of sources
         num_processors (int): number of processors for the computation
         verbose (bool): if True send information to shell
@@ -1545,8 +1548,8 @@ def extended_polychromatic_source(
 ):
     """It performs an analysis of extendes source light. It needs a function with only an input parameter, that is x0s positions of sources. It determines the intensity for each wavelength and it is added.
 
-    Parameters:
-        function_process (function): function with accepts params as input Parameters:
+    Args:
+        function_process (function): function with accepts params as input Args:
         x0s (array): positions of sources
         wavelengths (array): wavelengths in the spectrum
         spectrum (array): weights for the spectrum. If None: uniform spectrum, else array with the same dimension as wavelengths

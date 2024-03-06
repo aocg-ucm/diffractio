@@ -40,7 +40,7 @@ from .vector_fields_XY import Vector_field_XY
 class Vector_source_XY(Vector_field_XY):
     """Class for vectorial fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
@@ -67,7 +67,7 @@ class Vector_source_XY(Vector_field_XY):
                               radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             v (float, float): polarization vector
             normalize (bool): If True, normalize polarization vector
@@ -93,7 +93,7 @@ class Vector_source_XY(Vector_field_XY):
     def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -119,7 +119,7 @@ class Vector_source_XY(Vector_field_XY):
     def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -145,7 +145,7 @@ class Vector_source_XY(Vector_field_XY):
     def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -171,7 +171,7 @@ class Vector_source_XY(Vector_field_XY):
     def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -203,7 +203,7 @@ class Vector_source_XY(Vector_field_XY):
         """"local radial polarized vector wave.
 
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): r0 of beam
             m (integer): integer with order
@@ -242,7 +242,7 @@ class Vector_source_XY(Vector_field_XY):
         """local radial polarized vector wave.
 
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
@@ -291,7 +291,7 @@ class Vector_source_XY(Vector_field_XY):
         """local hibrid polarized vector wave.
             Qwien Zhan 'Vectorial Optial Fields' page 36
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
@@ -336,7 +336,7 @@ class Vector_source_XY(Vector_field_XY):
                               radius=(0, 0)):
         """Define spiral polarized beams:
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of radiality
             radius (float): mask for circle if radius >0.
@@ -379,7 +379,7 @@ class Vector_source_XY(Vector_field_XY):
 def define_initial_field(EM, u=None):
     """Defines the initial field EM = (Ex, Ey) in terms of u.
 
-        Parameters:
+        Args:
             EM (vector_source_XY):
             u (scalar_source_XY, or None, or 1): if scalar_source it is written in Ex and Ey, is 1 Ex=1, Ey=1, if None, does nothing,
     """

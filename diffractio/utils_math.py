@@ -9,8 +9,6 @@ from copy import deepcopy
 from math import factorial
 import numpy as np
 
-from numpy import (array, exp, ones_like, pi, linspace, tile, angle, zeros)
-
 import scipy.ndimage as ndimage
 from scipy.signal import fftconvolve
 from numpy.fft import fft, ifft
@@ -20,11 +18,11 @@ from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComp
 from . import mm
 
 
-def nextpow2(x):
+def nextpow2(x: float):
     """Exponent of next higher power of 2. It returns the exponents for the smallest powers of two that satisfy $2^p≥A$ for each element in A. 
     By convention, nextpow2(0) returns zero.
 
-    Parameters:
+    Args:
         x (float): value
 
     Returns:
@@ -40,48 +38,10 @@ def nextpow2(x):
         return int(y)
 
 
-# def Bluestein_dft_x(x, f1, f2, fs, mout):
-#     """Bluestein dft
-
-#     Parameters:
-#         x (_type_): _description_
-#         f1 (_type_): _description_
-#         f2 (_type_): _description_
-#         fs (_type_): _description_
-#         mout (_type_): _description_
-
-#     Reference:
-#         - Hu, Y., Wang, Z., Wang, X., Ji, S., Zhang, C., Li, J., Zhu, W., Wu, D.,  Chu, J. (2020). "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method". Light: Science and Applications, 9(1). https://doi.org/10.1038/s41377-020-00362-z
-#     """
-
-#     m = len(x)
-#     f11 = f1 + (mout * fs + f2 - f1) / (2 * mout)
-#     f22 = f2 + (mout * fs + f2 - f1) / (2 * mout)
-#     a = exp(1j * 2 * pi * f11 / fs)
-#     w = exp(-1j * 2 * pi * (f22 - f11) / (mout * fs))
-#     h = np.arange(-m + 1, max(mout, m))
-#     mp = m + mout - 1
-#     h = w**((h**2) / 2)
-#     ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
-#     b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
-#     tmp = b.T
-#     b = fft(x * tmp, 2**nextpow2(mp), axis=0)
-
-#     b = ifft(b * ft.T, axis=0)
-#     b = b[m:mp + 1].T * h[m - 1:mp]
-#     l = linspace(0, mout - 1, mout)
-#     l = l / mout * (f22 - f11) + f11
-#     Mshift = -m / 2
-#     Mshift = exp(-1j * 2 * pi * l * (Mshift + 1 / 2) / fs)
-#     b = b * Mshift
-
-#     return b
-
-
 def Bluestein_dft_x(x, f1, f2, fs, mout):
     """Bluestein dft
 
-    Parameters:
+    Args:
         x (_type_): _description_
         f1 (_type_): _description_
         f2 (_type_): _description_
@@ -133,7 +93,7 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
 def Bluestein_dft_xy(x, f1, f2, fs, mout):
     """Bluestein dft
 
-    Parameters:
+    Args:
         x (_type_): _description_
         f1 (_type_): _description_
         f2 (_type_): _description_
@@ -172,35 +132,29 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
         print("l = {}".format(l))
 
     Mshift = -m / 2
-    Mshift = np.tile(np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs),
-                     (n, 1))
+    Mshift = np.tile(np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs), (n, 1))
     b = b * Mshift
 
     return b
 
 
 def find_local_extrema(kind: str,
-                       y,
-                       x,
-                       pixels_interpolation=0,
-                       pixels_filter=0):
-    """Determine local minima in a numpy array.
+                       y: NDArrayFloat,
+                       x: NDArrayFloat,
+                       pixels_interpolation: floating = 0.):
+    """Determine local minima in a numpy np.array.
 
     Args:
         kind (str): 'maxima', 'minima'
         y (numpy.ndarray): variable with local minima.
         x (numpy.ndarray): x position
+        pixels_interpolation (float):
     Returns:
         (numpy.ndarray): i positions of local minima.
 
     Todo:
         Add a filter to remove noise.
     """
-
-    if pixels_filter == 0:
-        pass
-    else:
-        pass
 
     if kind == 'minima':
         y_erode = rank_filter(y, -0, size=3)
@@ -216,24 +170,19 @@ def find_local_extrema(kind: str,
     x_minima = x[i_pos_integer]
     y_minima = y[i_pos_integer]
 
-    if pixels_interpolation == 0 or pixels_interpolation == None:
+    if pixels_interpolation == 0:
         x_minima_frac = x_minima
         y_minima_frac = y_minima
     else:
         x_minima_frac = np.zeros_like(x_minima, dtype=float)
         y_minima_frac = np.zeros_like(x_minima, dtype=float)
         for i_j, j in enumerate(i_pos_integer):
-            # print(j, i_j)
             js = np.array(
                 np.arange(j - pixels_interpolation,
                           j + pixels_interpolation + 1))
-            # print(js)
             p_j = np.polyfit(x[js], y[js], 2)
             y_minima_interp = np.poly1d(p_j)
-            # print(p_j)
             x_minima_frac[i_j] = -p_j[1] / (2 * p_j[0])
-            # print(y_minima_frac[i_j])
-
             y_minima_frac[i_j] = y_minima_interp(x_minima_frac[i_j])
 
     return x_minima_frac, y_minima_frac, i_pos_integer
@@ -241,7 +190,7 @@ def find_local_extrema(kind: str,
 
 def reduce_to_1(class_diffractio):
     """All the values greater than 1 pass to 1. This is used for Scalar_masks when we add two masks.
-    Parameters:
+    Args:
         class (class): Scalar_field_X, XY ,....
 
     """
@@ -250,12 +199,12 @@ def reduce_to_1(class_diffractio):
     return class_diffractio
 
 
-def distance(x1, x2):
+def distance(x1: NDArrayFloat, x2: NDArrayFloat):
     """Compute distance between two vectors.
 
-    Parameters:
-        x1 (numpy.array): vector 1
-        x2 (numpy.array): vector 2
+    Args:
+        x1 (numpy.np.array): vector 1
+        x2 (numpy.np.array): vector 2
 
     Returns:
         (float): distance between vectors.
@@ -266,11 +215,11 @@ def distance(x1, x2):
         return np.linalg.norm(x2 - x1)
 
 
-def nearest(vector, number):
+def nearest(vector: NDArrayFloat, number: float):
     """Computes the nearest element in vector to number.
 
-    Parameters:
-        vector (numpy.array): array with numbers
+    Args:
+        vector (numpy.np.array): np.array with numbers
         number (float):  number to determine position
 
     Returns:
@@ -278,38 +227,42 @@ def nearest(vector, number):
         (float): value  - value of vector[index].
         (float): distance - difference between number and chosen element.
     """
+
     indexes = np.abs(vector - number).argmin()
     values = vector.flat[indexes]
     distances = values - number
+
     return indexes, values, distances
 
 
-def nearest2(vector, numbers):
+def nearest2(vector: NDArrayFloat, numbers: NDArrayFloat):
     """Computes the nearest element in vector to numbers.
 
-    Parameters:
-        vector (numpy.array): array with numbers
-        number (numpy.array):  numbers to determine position
+    Args:
+        vector (numpy.np.array): np.array with numbers
+        number (numpy.np.array):  numbers to determine position
 
     Returns:
-        (numpy.array): index - indexes of vector which is closest to number.
-        (numpy.array): value  - values of vector[indexes].
-        (numpy.array): distance - difference between numbers and chosen elements.
+        (numpy.np.array): index - indexes of vector which is closest to number.
+        (numpy.np.array): value  - values of vector[indexes].
+        (numpy.np.array): distance - difference between numbers and chosen elements.
     """
 
     indexes = np.abs(np.subtract.outer(vector, numbers)).argmin(0)
     values = vector[indexes]
     distances = values - numbers
+
     return indexes, values, distances
 
 
-def find_extrema(array2D, x, y, kind='max', verbose: bool = False):
-    """In a 2D-array, formed by vectors x, and y, the maxima or minima are found
+def find_extrema(array2D: NDArrayFloat, x: NDArrayFloat, y: NDArrayFloat, kind: float = 'max',
+                 verbose: bool = False):
+    """In a 2D-np.array, formed by vectors x, and y, the maxima or minima are found
 
-    Parameters:
-        array2D (np. array 2D): 2D array with variable
-        x (np.array 1D): 1D array with x axis
-        y (np.array 1D): 1D array with y axis
+    Args:
+        array2D (np.array 2D): 2D np.array with variable
+        x (np.array 1D): 1D np.array with x axis
+        y (np.array 1D): 1D np.array with y axis
         kind (str): 'min' or 'max': detects minima or maxima
         verbose (bool): If True prints data.
 
@@ -320,7 +273,7 @@ def find_extrema(array2D, x, y, kind='max', verbose: bool = False):
     """
 
     if kind == 'max':
-        result = np.where(array2D == np.amax(array2D))
+        result = np.where(array2D == np.a_max(array2D))
     elif kind == 'min':
         result = np.where(array2D == np.min(array2D))
 
@@ -345,97 +298,15 @@ def find_extrema(array2D, x, y, kind='max', verbose: bool = False):
     return indexes, xy_ext, extrema
 
 
-def ndgrid_deprecated(*args, **kwargs):
-    """n-dimensional gridding like Matlab's NDGRID.
-
-    Parameters:
-        The input *args are an arbitrary number of numerical sequences, e.g. lists, arrays, or tuples.
-        The i-th dimension of the i-th output argument
-        has copies of the i-th input argument.
-
-    Example:
-
-        >>> x, y, z = [0, 1], [2, 3, 4], [5, 6, 7, 8]
-
-        >>> X, Y, Z = ndgrid(x, y, z)
-            # unpacking the returned ndarray into X, Y, Z
-
-        Each of X, Y, Z has shape [len(v) for v in x, y, z].
-
-        >>> X.shape == Y.shape == Z.shape == (2, 3, 4)
-            True
-
-        >>> X
-            array([[[0, 0, 0, 0],
-                            [0, 0, 0, 0],
-                            [0, 0, 0, 0]],
-                    [[1, 1, 1, 1],
-                            [1, 1, 1, 1],
-                            [1, 1, 1, 1]]])
-        >>> Y
-            array([[[2, 2, 2, 2],
-                            [3, 3, 3, 3],
-                            [4, 4, 4, 4]],
-                    [[2, 2, 2, 2],
-                            [3, 3, 3, 3],
-                            [4, 4, 4, 4]]])
-        >>> Z
-            array([[[5, 6, 7, 8],
-                            [5, 6, 7, 8],
-                            [5, 6, 7, 8]],
-                    [[5, 6, 7, 8],
-                            [5, 6, 7, 8],
-                            [5, 6, 7, 8]]])
-
-        With an unpacked argument list:
-
-        >>> V = [[0, 1], [2, 3, 4]]
-
-        >>> ndgrid_deprecated(*V) # an array of two arrays with shape (2, 3)
-            array([[[0, 0, 0],
-                [1, 1, 1]],
-                [[2, 3, 4],
-                [2, 3, 4]]])
-
-        For input vectors of different data kinds,
-        same_dtype=False makes ndgrid_deprecated()
-        return a list of arrays with the respective dtype.
-        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2], same_dtype=False)
-        [array([[0, 0, 0], [1, 1, 1]]),
-        array([[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]])]
-
-        Default is to return a single array.
-
-        >>> ndgrid_deprecated([0, 1], [1.0, 1.1, 1.2])
-            array([[[ 0. ,  0. ,  0. ], [ 1. ,  1. ,  1. ]],
-                [[ 1. ,  1.1,  1.2], [ 1. ,  1.1,  1.2]]])
-    """
-    same_dtype = kwargs.get("same_dtype", True)
-    V = [array(v) for v in args]  # ensure all input vectors are arrays
-    shape = [len(v) for v in args]  # common shape of the outputs
-    result = []
-    for i, v in enumerate(V):
-        # reshape v so it can broadcast to the common shape
-        # http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
-        zero = zeros(shape, dtype=v.dtype)
-        thisshape = ones_like(shape)
-        thisshape[i] = shape[i]
-        result.append(zero + v.reshape(thisshape))
-    if same_dtype:
-        return array(result)  # converts to a common dtype
-    else:
-        return result  # keeps separate dtype for each output
-
-
-def get_amplitude(u, sign: bool = False):
+def get_amplitude(u: NDArrayComplex, sign: bool = False):
     """Gets the amplitude of the field.
 
-    Parameters:
-        u (numpy.array): Field.
+    Args:
+        u (numpy.np.array): Field.
         sign (bool): If True, sign is kept, else, it is removed
 
     Returns:
-        (numpy.array): numpy.array
+        (numpy.np.array): numpy.np.array
     """
 
     amplitude = np.abs(u)
@@ -447,27 +318,29 @@ def get_amplitude(u, sign: bool = False):
     return amplitude
 
 
-def get_phase(u):
+def get_phase(u: NDArrayComplex):
     """Gets the phase of the field.
 
-    Parameters:
-        u (numpy.array): Field.
+    Args:
+        u (numpy.np.array): Field.
 
     Returns:
-        (numpy.array): numpy.array
+        (numpy.np.array): numpy.np.array
     """
+
     phase = np.exp(1j * np.angle(u))
+
     return phase
 
 
-def amplitude2phase(u):
+def amplitude2phase(u: NDArrayComplex):
     """Passes the amplitude of a complex field to phase. Previous phase is removed. :math:`u = A e^{i \phi}  -> e^(i abs(A))`
 
-    Parameters:
-        u (numpy.array, dtype=complex): complex field
+    Args:
+        u (numpy.np.array, dtype=complex): complex field
 
     Returns:
-        (numpy.array): only-phase complex vector.
+        (numpy.np.array): only-phase complex vector.
     """
 
     amplitude = np.abs(u)
@@ -476,48 +349,51 @@ def amplitude2phase(u):
     return u_phase
 
 
-def phase2amplitude(u):
+def phase2amplitude(u: NDArrayComplex):
     """Passes the phase of a complex field to amplitude.
 
-    Parameters:
-        u (numpy.array, dtype=complex): complex field
+    Args:
+        u (numpy.np.array, dtype=complex): complex field
 
     Returns:
-        (numpy.array): amplitude without phase complex vector.
+        (numpy.np.array): amplitude without phase complex vector.
     """
+
     phase = np.angle(u)
     u_amplitud = phase
 
     return u_amplitud
 
 
-def normalize(v, order=2):
+def normalize(v: NDArray, order=2):
     """Normalize vectors with different L norm (standard is 2).
 
-    Parameters:
-        v (numpy.array): vector to normalize
+    Args:
+        v (numpy.np.array): vector to normalize
         order (int): order for norm
 
     Returns:
-        (numpy.array): normalized vector.
+        (numpy.np.array): normalized vector.
     """
 
     norm = np.linalg.norm(v, ord=order)
+
     if norm == 0:
         raise ValueError('normalize: norm = 0.')
+
     return v / norm
 
 
-def binarize(vector, min_value=0, max_value=1):
+def binarize(vector: NDArrayFloat, min_value: floating = 0., max_value: floating = 1.):
     """Binarizes vector between two levels, min and max. The central value is (min_value+max_value)/2
 
-    Parameters:
-        vector: (numpy.array) array with values to binarize
+    Args:
+        vector: (numpy.np.array) np.array with values to binarize
         min_value (float): minimum value for binarization
         max_value (float): maximum value for binarization
 
     Returns:
-        (numpy.array): binarized vector.
+        (numpy.np.array): binarized vector.
     """
 
     central_value = (min_value + max_value) / 2
@@ -525,19 +401,21 @@ def binarize(vector, min_value=0, max_value=1):
     vector2 = deepcopy(vector)
     vector2[vector2 <= central_value] = min_value
     vector2[vector2 > central_value] = max_value
+
     return vector2
 
 
-def discretize(u,
+def discretize(u: NDArrayComplex,
                kind: str = 'amplitude',
                num_levels: int = 2,
-               factor=1,
-               phase0=0,
+               factor: floating = 1.,
+               phase0: floating = 0.,
                new_field: bool = True,
                matrix: bool = False):
     """Discretize in a number of levels equal to num_levels.
 
-    Parameters:
+    Args:
+        u (np.array, dtype = comples): field
         kind (str): "amplitude" o "phase"
         num_levels (int): number of levels for the discretization
         factor (float): from the level, how area is binarized. if 1 everything is binarized,
@@ -569,42 +447,42 @@ def discretize(u,
         fieldDiscretizado = discretized_image * phase
 
     if kind == 'phase':
-        ang = angle(get_phase(u)) + phase0 + pi
-        ang = ang % (2 * pi)
+        ang = np.angle(get_phase(u)) + phase0 + np.pi
+        ang = ang % (2 * np.pi)
         amplitude = get_amplitude(u)
 
-        heights = linspace(0, 2 * pi, num_levels + 1)
+        heights = np.linspace(0, 2 * np.pi, num_levels + 1)
 
         dist = factor * (heights[1] - heights[0])
 
-        discretized_image = exp(1j * (ang))
+        discretized_image = np.exp(1j * (ang))
 
         for i in range(num_levels + 1):
             centro = heights[i]
             abajo = (ang) > (centro - dist / 2)
             arriba = (ang) <= (centro + dist / 2)
             Trues = abajo * arriba
-            discretized_image[Trues] = exp(1j * centro)  # - pi
+            discretized_image[Trues] = np.exp(1j * centro)  # - np.pi
 
         Trues = (ang) > (centro + dist / 2)
-        discretized_image[Trues] = exp(1j * heights[0])  # - pi
+        discretized_image[Trues] = np.exp(1j * heights[0])  # - np.pi
 
         # esto no haría falta, pero es para tener tantos levels
-        # como decimos, no n+1 (-pi,pi)
-        phase = angle(discretized_image) / pi
+        # como decimos, no n+1 (-np.pi,np.pi)
+        phase = np.angle(discretized_image) / np.pi
         phase[phase == 1] = -1
         phase = phase - phase.min()  # esto lo he puesto a última hora
-        discretized_image = exp(1j * pi * phase)
+        discretized_image = np.exp(1j * np.pi * phase)
 
-        fieldDiscretizado = amplitude * discretized_image
+        discretized_field = amplitude * discretized_image
 
-        return fieldDiscretizado
+        return discretized_field
 
 
-def delta_kronecker(a, b):
+def delta_kronecker(a: floating, b: floating):
     """Delta kronecker
 
-    Parameters:
+    Args:
         a (np.float): number
         b (np.float): number
 
@@ -618,15 +496,15 @@ def delta_kronecker(a, b):
         return 0
 
 
-def vector_product(A, B):
+def vector_product(A: NDArrayFloat, B: NDArrayFloat):
     """Returns the vector product between two vectors.
 
-    Parameters:
-        A (numpy.array): 3x1 vector array.
-        B (numpy.array): 3x1 vector array.
+    Args:
+        A (numpy.np.array): 3x1 vector np.array.
+        B (numpy.np.array): 3x1 vector np.array.
 
     Returns:
-        (numpy.array): 3x1 vector product array
+        (numpy.np.array): 3x1 vector product np.array
     """
 
     Cx = A[1] * B[2] - A[2] * B[1]
@@ -636,12 +514,12 @@ def vector_product(A, B):
     return np.array((Cx, Cy, Cz))
 
 
-def dot_product(A, B):
+def dot_product(A: NDArrayFloat, B: NDArrayFloat):
     """Returns the dot product between two vectors.
 
-    Parameters:
-        A (numpy.array): 3x1 vector array.
-        B (numpy.array): 3x1 vector array.
+    Args:
+        A (numpy.np.array): 3x1 vector np.array.
+        B (numpy.np.array): 3x1 vector np.array.
 
     Returns:
         (complex): 3x1 dot product
@@ -650,12 +528,12 @@ def dot_product(A, B):
     return A[0] * B[0] + A[1] * B[1] + A[2] * B[2]
 
 
-def divergence(E, r):
+def divergence(E: NDArrayFloat, r: NDArrayFloat):
     """Returns the divergence of a field a given point (x0,y0,z0).
 
-    Parameters:
-        E (numpy.array): complex field
-        r (numpy.array): 3x1 array with position r=(x,y,z).
+    Args:
+        E (numpy.np.array): complex field
+        r (numpy.np.array): 3x1 np.array with position r=(x,y,z).
 
     Returns:
         (float): Divergence of the field at (x0,y0,z0)
@@ -664,51 +542,48 @@ def divergence(E, r):
     x0, y0, z0 = r
 
     dEx, dEy, dEz = np.gradient(E, x0[1] - x0[0], y0[1] - y0[0], z0[1] - z0[0])
+
     return dEx + dEy + dEz
 
 
-def curl(E, r):
+def curl(E: NDArrayFloat, r: NDArrayFloat):
     """Returns the Curl of a field a given point (x0,y0,z0)
 
-    Parameters:
-        E (numpy.array): complex field
-        r (numpy.array): 3x1 array with position r=(x,y,z).
+    Args:
+        E (numpy.np.array): complex field
+        r (numpy.np.array): 3x1 np.array with position r=(x,y,z).
 
     Returns:
-        (numpy.array): Curl of the field at (x0,y0,z0)
+        (numpy.np.array): Curl of the field at (x0,y0,z0)
     """
 
     x0, y0, z0 = r
 
     dEx, dEy, dEz = np.gradient(E, x0[1] - x0[0], y0[1] - y0[0], z0[1] - z0[0])
-    componenteX = E[2] * dEy - E[1] * dEz
-    componenteY = E[0] * dEz - E[2] * dEx
-    componenteZ = E[1] * dEx - E[0] * dEy
-    return [componenteX, componenteY, componenteZ]
+    curl_X = E[2] * dEy - E[1] * dEz
+    curl_Y = E[0] * dEz - E[2] * dEx
+    curl_Z = E[1] * dEx - E[0] * dEy
+
+    return curl_X, curl_Y, curl_Z
 
 
-def get_edges(x,
-              f,
-              kind_transition='amplitude',
-              min_step=0,
-              verbose: bool = False,
-              filename: str = ''):
-    """We have a binary mask and we obtain locations of edges.
-    valid for litography engraving of gratings
+def get_edges(x: floating, f: NDArrayFloat, kind_transition: str = 'amplitude',
+              min_step: floating = 0., verbose: bool = False, filename: str = ''):
+    """We have a binary mask and we obtain locations of edges. Valid for litography engraving of gratings
 
-    Parameters:
+    Args:
         x (float): position x
-        f (numpy.array): Field. If real function, use 'amplitude' in kind_transition.
+        f (numpy.np.array): Field. If real function, use 'amplitude' in kind_transition.
         kind_transition (str):'amplitude' 'phase' of the field where to get the transitions.
         min_step (float): minimum step for consider a transition
         verbose (bool): If True prints information about the process.
         filename (str): If not '', saves the data on files. filename is the file name.
 
     Returns:
-        type_transition (numpy.array): array with +1, -1 with rasing or falling edges
-        pos_transition (numpy.array): positions x of transitions
-        raising (numpy.array): positions of raising
-        falling (numpy.array): positions of falling
+        type_transition (numpy.np.array): np.array with +1, -1 with rasing or falling edges
+        pos_transition (numpy.np.array): positions x of transitions
+        raising (numpy.np.array): positions of raising
+        falling (numpy.np.array): positions of falling
     """
 
     incr_x = x[1] - x[0]
@@ -741,7 +616,7 @@ def get_edges(x,
         print("_______________________")
         print(np.array([raising, falling]).T)
 
-    if not filename == '':
+    if filename != '':
         np.savetxt("{}_pos_transitions.txt".format(filename),
                    pos_transitions,
                    fmt='%10.6f')
@@ -754,10 +629,20 @@ def get_edges(x,
     return pos_transitions, type_transitions, raising, falling
 
 
-def cut_function(x, y, length, x_center=''):
-    """ takes values of function inside (x_center+length/2: x_center+length/2)
+def cut_function(x: NDArrayFloat, y: NDArrayFloat, length: float, x_center: floating | None = None):
+    """Takes values of function inside (x_center+length/2: x_center+length/2)
 
-        """
+
+    Args:
+        x (np.array): x of function
+        y (np.array): y of function
+        length (float): range of data to keep
+        x_center (float or None, optional): position of center of Range. If None, the center is x_center.
+
+    Returns:
+        y cutted (np.array): values in range.
+    """
+
     if x_center in ('', None, []):
         x_center = (x[0] + x[-1]) / 2
 
@@ -775,12 +660,12 @@ def cut_function(x, y, length, x_center=''):
     return y
 
 
-def fft_convolution2d(x, y):
+def fft_convolution2d(x: NDArrayFloat, y: NDArrayFloat):
     """ 2D convolution, using FFT
 
-    Parameters:
-        x (numpy.array): array 1 to convolve
-        y (numpy.array): array 2 to convolve
+    Args:
+        x (numpy.np.array): np.array 1 to convolve
+        y (numpy.np.array): np.array 2 to convolve
 
     Returns:
         convolved function
@@ -788,12 +673,12 @@ def fft_convolution2d(x, y):
     return fftconvolve(x, y, mode='same')
 
 
-def fft_convolution1d(x, y):
+def fft_convolution1d(x: NDArrayFloat, y: NDArrayFloat):
     """ 1D convolution, using FFT
 
-    Parameters:
-        x (numpy.array): array 1 to convolve
-        y (numpy.array): array 2 to convolve
+    Args:
+        x (numpy.np.array): np.array 1 to convolve
+        y (numpy.np.array): np.array 2 to convolve
 
     Returns:
         convolved function
@@ -802,12 +687,12 @@ def fft_convolution1d(x, y):
     return fftconvolve(x, y, mode='same')
 
 
-def fft_filter(x, y, normalize: bool = False):
+def fft_filter(x: NDArrayFloat, y: NDArrayFloat, normalize: bool = False):
     """ 1D convolution, using FFT
 
-    Parameters:
-        x (numpy.array): array 1 to convolve
-        y (numpy.array): array 2 to convolve
+    Args:
+        x (numpy.np.array): np.array 1 to convolve
+        y (numpy.np.array): np.array 2 to convolve
 
     Returns:
         convolved function
@@ -819,37 +704,40 @@ def fft_filter(x, y, normalize: bool = False):
         x, np.ones_like(y) / sum(y), mode='same')
 
 
-def fft_correlation1d(x, y):
+def fft_correlation1d(x: NDArrayFloat, y: NDArrayFloat):
     """ 1D correlation, using FFT (fftconvolve)
 
-    Parameters:
-        x (numpy.array): array 1 to convolve
-        y (numpy.array): array 2 to convolve
+    Args:
+        x (numpy.np.array): np.array 1 to convolve
+        y (numpy.np.array): np.array 2 to convolve
 
     Returns:
-        numpy.array: correlation function
+        numpy.np.array: correlation function
     """
     return fftconvolve(x, y[::-1], mode='same')
 
 
-def fft_correlation2d(x, y):
-    """Parameters:
-        x (numpy.array): array 1 to convolve
-        y (numpy.array): array 2 to convolve
+def fft_correlation2d(x: NDArrayFloat, y: NDArrayFloat):
+    """Args:
+        x (numpy.np.array): np.array 1 to convolve
+        y (numpy.np.array): np.array 2 to convolve
 
     Returns:
-        numpy.array: 2d correlation function
+        numpy.np.array: 2d correlation function
     """
 
     return fftconvolve(x, y[::-1, ::-1], mode='same')
 
 
-def rotate_image(x, z, img, angle, pivot_point):
+def rotate_image(x: NDArrayFloat, z: NDArrayFloat, img: NDArrayFloat, angle: float,
+                 pivot_point: list[float, float]):
     """similar to rotate image, but not from the center but from the given
 
-    Parameters:
+    Args:
+        x (np.array): x of image
+        z (np.array): z of image
         img (np.array): image to rotate
-        angle (float): angle to rotate
+        angle (float): np.angle to rotate
         pivot_point (float, float): (z,x) position for rotation
 
     Returns:
@@ -870,47 +758,59 @@ def rotate_image(x, z, img, angle, pivot_point):
     padX = [img.shape[1] - ipivot[0], ipivot[0]]
     padZ = [img.shape[0] - ipivot[1], ipivot[1]]
     imgP = np.pad(img, [padZ, padX], 'constant')
-    imgR = ndimage.rotate(imgP, angle, reshape=False)
+    imgR = ndimage.rotate(imgP, np.angle, reshape=False)
 
     return imgR[padZ[0]:-padZ[1], padX[0]:-padX[1]]
 
 
-def cart2pol(x, y):
+def cart2pol(x: NDArrayFloat, y: NDArrayFloat):
     """ cartesian to polar coordinate transformation.
 
-    Parameters:
+    Args:
         x (np.array): x coordinate
         y (np.aray): y coordinate
 
     Returns:
-        numpy.array: rho
-        numpy.array: phi
+        numpy.np.array: rho
+        numpy.np.array: phi
     """
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
+
     return rho, phi
 
 
-def pol2cart(rho, phi):
+def pol2cart(rho: NDArrayFloat, phi: NDArrayFloat):
     """
     polar to cartesian coordinate transformation
 
-    Parameters:
+    Args:
         rho (np.array): rho coordinate
         rho (np.aray): rho coordinate
 
     Returns:
-        numpy.array: x
-        numpy.array: y
+        numpy.np.array: x
+        numpy.np.array: y
     """
 
     x = rho * np.cos(phi)
     y = rho * np.sin(phi)
+
     return (x, y)
 
 
-def fZernike(X, Y, n, m, radius=5 * mm):
+def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: floating):
     """Zernike function for aberration computation.
+
+    Args:
+        X (np.array): X
+        Y (np.array): Y
+        n (int): _description_
+        m (int): _description_
+        radius (_type_, optional): _description_. Defaults to 5*mm.
+
+    Returns:
+        zernike polinomial: _description_
 
     Note:
         k>=l
@@ -918,8 +818,7 @@ def fZernike(X, Y, n, m, radius=5 * mm):
         if k is even then l is even.
         if k is  odd then l is  odd.
 
-        The first polinomial is the real part ant the second de imaginary part.
-
+        The first polinomial is the real part and the second de imaginary part.
 
         * n     m        aberración
         * 0     0        piston
@@ -949,12 +848,12 @@ def fZernike(X, Y, n, m, radius=5 * mm):
 
     N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
 
-    Z = zeros(R.shape, dtype=float)
-    s_max = int(((n - abs(m)) / 2 + 1))
+    Z = np.zeros(R.shape, dtype=float)
+    s_max = int(((n - np.abs(m)) / 2 + 1))
     for s in np.arange(0, s_max):
-        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(abs(n - s)) / (
-            factorial(abs(s)) * factorial(abs(round(0.5 * (n + abs(m)) - s))) *
-            factorial(abs(round(0.5 * (n - abs(m)) - s))))
+        Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
+            factorial(np.abs(s)) * factorial(np.abs(round(0.5 * (n + np.abs(m)) - s))) *
+            factorial(np.abs(round(0.5 * (n - np.abs(m)) - s))))
 
     if m >= 0:
         fz1 = N * Z * np.cos(m * THETA)
@@ -962,32 +861,31 @@ def fZernike(X, Y, n, m, radius=5 * mm):
         fz1 = N * Z * np.sin(np.abs(m) * THETA)
 
     fz1[R >= 1] = 0
+
     return fz1
 
 
-def laguerre_polynomial_nk(x, n=4, k=5):
-    """Auxiliar laguerre polinomial of orders n and k
-        function y = LaguerreGen(varargin)
-        LaguerreGen calculates the utilsized Laguerre polynomial L{n, alpha}
+def laguerre_polynomial_nk(x: NDArrayFloat, n: int, k: int):
+    """Auxiliar laguerre polinomial of orders n and k. 
+        Calculates the utilsized Laguerre polynomial L{n, alpha}
         This function computes the utilsized Laguerre polynomial L{n,alpha}.
         If no alpha is supplied, alpha is set to zero and this function
         calculates the "normal" Laguerre polynomial.
 
+        Calculation is done recursively using matrix operations for very fast execution time.
 
-        Parameters:
-        - n = nonnegative integer as degree level
-        - alpha >= -1 real number (input is optional)
+        Args:
+            - x (nd.array): position
+            - n (int): nonnegative integer as degree level
+            - alpha (float): >= -1 real number (input is optional)
 
         The output is formated as a polynomial vector of degree (n+1)
         corresponding to MatLab norms (that is the highest coefficient
         is the first element).
 
         Example:
-        - polyval(LaguerreGen(n, alpha), x) evaluates L{n, alpha}(x)
-        - roots(LaguerreGen(n, alpha)) calculates roots of L{n, alpha}
-
-        Calculation is done recursively using matrix operations for very fast
-        execution time.
+            - polyval(LaguerreGen(n, alpha), x) evaluates L{n, alpha}(x)
+            - roots(LaguerreGen(n, alpha)) calculates roots of L{n, alpha}
 
         Author: Matthias.Trampisch@rub.de
         Date: 16.08.2007
@@ -1006,20 +904,20 @@ def laguerre_polynomial_nk(x, n=4, k=5):
     return summation
 
 
-def get_k(x, flavour='-'):
-    """provides k vector from x vector. With flavour set to "-", the axis will be inverse-fftshifted,
+def get_k(x: NDArrayComplex, flavour: str = '-'):
+    """Provides k vector from x vector. With flavour set to "-", the axis will be inverse-fftshifted,
         thus its DC part being the first index. 
 
-    Parameters:
-        x (np.array): x array
+    Args:
+        x (np.array): x np.array
         flavour (str): '-' (for ifftshifted axis)
 
     Returns:
         kx (np.array): k vector
 
     Fixed by Bob-Swinkels
-
     """
+
     num_x = x.size
     integerFrom = int(np.floor((1-num_x) / 2))
     integerTo = int(np.floor((num_x-1) / 2))
@@ -1031,40 +929,10 @@ def get_k(x, flavour='-'):
     return dk * intRange
 
 
-def get_k_deprecated(x, flavour='-'):
-    """provides k vector from x vector. Two flavours are provided (ordered + or disordered - )
-
-    Parameters:
-        x (np.array): x array
-        flavour (str): '+' or '-'
-
-    Returns:
-        kx (np.array): k vector
-
-    Todo:
-        Check
-    """
-
-    num_x = x.size
-    if flavour == '-':
-        size_x = x[-1] - x[0]
-
-        kx1 = np.linspace(0, num_x / 2 + 1, int(num_x / 2))
-        kx2 = np.linspace(-num_x / 2, -1, int(num_x / 2))
-        kx = (2 * np.pi / size_x) * np.concatenate((kx1, kx2))
-
-    elif flavour == '+':
-        dx = x[1] - x[0]
-        kx = 2 * np.pi / (num_x * dx) * (range(-int(num_x / 2), int(
-            num_x / 2)))
-
-    return kx
-
-
-def filter_edge_1D(x, size=1.1, exponent=32):
+def filter_edge_1D(x: NDArrayFloat, size: floating = 1.1, exponent: floating = 32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
-    Parameters:
+    Args:
         x (np.array): position
         size (float): related to relative position of x
         exponent (integer): related to shape of edges
@@ -1078,10 +946,10 @@ def filter_edge_1D(x, size=1.1, exponent=32):
     return np.exp(-(2 * (x - x_center) / (Dx))**np.abs(exponent))
 
 
-def filter_edge_2D(x, y, size=1.1, exponent=32):
+def filter_edge_2D(x: NDArrayFloat, y: NDArrayFloat, size: floating = 1.1, exponent: floating = 32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
-    Parameters:
+    Args:
         x (np.array): x position
         y (np.array): y position
         size (float): related to relative position of x and y
@@ -1090,7 +958,6 @@ def filter_edge_2D(x, y, size=1.1, exponent=32):
         np.array: function for filtering
     """
 
-    # num_x = len(x)
     x_center = (x[-1] + x[0]) / 2
     y_center = (y[-1] + y[0]) / 2
     Dx = size * (x[-1] - x[0])

@@ -203,7 +203,7 @@ class Test_Scalar_fields_X():
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(deltas_x, period, t1, t2):
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             dict_Parameters = []
             for i, delta_x in enumerate(deltas_x):
                 dict_Parameters.append(
@@ -342,7 +342,7 @@ class Test_Scalar_fields_X_multiprocessing():
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(wavelengths, x0, z, slit_size, separation):
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             dict_Parameters = []
             for i, wavelength in enumerate(wavelengths):
                 dict_Parameters.append(

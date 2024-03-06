@@ -55,7 +55,7 @@ from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
 from .vector_fields_XZ import Vector_field_XZ
 from .utils_common import load_data_common, save_data_common, get_date
-from .utils_math import ndgrid_deprecated, nearest
+from .utils_math import nearest
 from .utils_optics import normalize_field
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
@@ -64,7 +64,7 @@ percentage_intensity = CONF_DRAWING['percentage_intensity']
 class Vector_field_XYZ():
     """Class for vectorial fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         z (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
@@ -131,7 +131,7 @@ class Vector_field_XYZ():
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Vector_field_XY): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -154,7 +154,7 @@ class Vector_field_XYZ():
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -174,7 +174,7 @@ class Vector_field_XYZ():
         """Load data from a file to a Vector_field_XY.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -206,7 +206,7 @@ class Vector_field_XYZ():
     def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XYZ
 
-        Parameters:
+        Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
@@ -307,7 +307,7 @@ class Vector_field_XYZ():
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
-        Parameters:
+        Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_XYZ
 
         Returns:
@@ -350,7 +350,7 @@ class Vector_field_XYZ():
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
+        Args:
             pol_state (None or (I, Q, U, V) ): Polarization state previously computed
             Matrix (bool): if True returns Matrix, else Scalar_field_XYZ
 
@@ -404,7 +404,7 @@ class Vector_field_XYZ():
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -412,13 +412,13 @@ class Vector_field_XYZ():
         return normalize_field(self, new_field)
 
     def to_Vector_field_XY(self,
-                           iz0=None,
-                           z0=None,
-                           is_class=True,
+                           iz0: int | None = None,
+                           z0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Scalar_field_XY. Only one of the first two variables (iz0,z0) should be used
 
-        Parameters:
+        Args:
             iz0 (int): position i of z data in array
             z0 (float): position z to extract
             class (bool): If True it returns a class
@@ -445,13 +445,13 @@ class Vector_field_XYZ():
             return np.squeeze(self.u[:, :, iz])
 
     def to_Vector_field_XZ(self,
-                           iy0=None,
-                           y0=None,
-                           is_class=True,
+                           iy0: int | None = None,
+                           y0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
-        Parameters:
+        Args:
             iy0 (int): position i of y data in array
             y0 (float): position y to extract
             class (bool): If True it returns a class
@@ -479,13 +479,13 @@ class Vector_field_XYZ():
             return np.squeeze(self.Ex[:, iy, :]), np.squeeze(self.Ey[:, iy, :]), np.squeeze(self.Ez[:, iy, :])
 
     def to_Vector_field_YZ(self,
-                           ix0=None,
-                           x0=None,
-                           is_class=True,
+                           ix0: int | None = None,
+                           x0: float | None = None,
+                           is_class: bool = True,
                            matrix: bool = False):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
-        Parameters:
+        Args:
             ix0 (int): position i of x data in array
             x0 (float): position x to extract
             class (bool): If True it returns a class
@@ -514,13 +514,13 @@ class Vector_field_XYZ():
 
     def to_Z(self,
              kind: str = 'amplitude',
-             x0=None,
-             y0=None,
+             x0: int | None = None,
+             y0: int | None = None,
              has_draw: bool = True,
-             z_scale='mm'):
+             z_scale: str = 'mm'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
 
-        Parameters:
+        Args:
             kind (str): 'amplitude', 'intensity', 'phase'
             x0 (float): position x to extract
             y0 (float): position y to extract
@@ -557,18 +557,18 @@ class Vector_field_XYZ():
             plt.ylabel(kind)
 
     def draw_XY(self,
-                z0=5 * mm,
+                z0: float,
                 kind: str = 'intensity',
                 logarithm: floating = 0,
-                normalize='maximum',
-                title='',
+                normalize: str = 'maximum',
+                title: str = '',
                 filename: str = '',
-                cut_value='',
-                has_colorbar='False',
+                cut_value: float | None = None,
+                has_colorbar: bool = 'False',
                 reduce_matrix=''):
         """ longitudinal profile XY at a given z value
 
-        Parameters:
+        Args:
             z0 (float): value of z for interpolation
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
             logarithm (bool): If True, intensity is scaled in logarithm
@@ -595,15 +595,15 @@ class Vector_field_XYZ():
 
     def draw_XZ(self,
                 kind: str = 'intensity',
-                y0=0 * mm,
+                y0: float = 0 * mm,
                 logarithm: floating = 0,
-                normalize='',
-                draw_borders=False,
+                normalize: bool = False,
+                draw_borders: bool = False,
                 filename: str = '',
                 **kwargs):
         """Longitudinal profile XZ at a given x0 value.
 
-        Parameters:
+        Args:
             y0 (float): value of y for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -615,54 +615,18 @@ class Vector_field_XYZ():
         ufield = self.to_Vector_field_XZ(y0=y0)
         h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename,
                          **kwargs)
-        # intensity = np.abs(ufield.u)**2
-
-        # if logarithm == 1:
-        #     intensity = np.log(intensity + 1)
-
-        # if normalize == 'maximum':
-        #     intensity = intensity / intensity.max()
-        # if normalize == 'area':
-        #     area = (self.x[-1] - self.x[0]) * (self.z[-1] - self.z[0])
-        #     intensity = intensity / area
-        # if normalize == 'intensity':
-        #     intensity = intensity / (intensity.sum() / len(intensity))
-
-        # h1 = plt.imshow(intensity,
-        #                 interpolation='bilinear',
-        #                 aspect='auto',
-        #                 origin='lower',
-        #                 extent=[
-        #                     self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
-        #                     self.y[-1]
-        #                 ])
-        # plt.xlabel('z (mm)', fontsize=16)
-        # plt.ylabel('x $(um)$', fontsize=16)
-        # plt.title('intensity XZ', fontsize=20)
-        # h1.set_cmap(
-        #     self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
-        # plt.colorbar()
-
-        # # -----------------     no functiona de momento -----------------
-        # if draw_borders is True:
-        #     x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
-        #     )
-        #     plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
-
-        # if not filename == '':
-        #     plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
     def draw_YZ(self,
-                x0=0 * mm,
+                x0: float = 0.,
                 logarithm: floating = 0,
-                normalize='',
-                draw_borders=False,
+                normalize: bool = '',
+                draw_borders: bool = False,
                 filename: str = ''):
         """Longitudinal profile YZ at a given x0 value.
 
-        Parameters:
+        Args:
             x0 (float): value of x for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -700,22 +664,23 @@ class Vector_field_XYZ():
             self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
 
-        # -----------------     no functiona de momento -----------------
+        # -----------------     TODO: not working -----------------
         if draw_borders is True:
             x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
             )
             plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
-        if not filename == '':
+        if filename != '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
 
-def _compute1Elipse__(x0, y0, A, B, theta, h=0, amplification=1):
+def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,
+                      h: float = 0, amplification: float = 1):
     """computes polarization ellipse for drawing
 
-    Parameters:
+    Args:
         x0 (float): position x of ellipse
         y0 (float): position y of ellipse
         A (float): axis 1 of ellipse

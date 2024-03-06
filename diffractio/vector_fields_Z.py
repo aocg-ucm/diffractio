@@ -51,7 +51,7 @@ percentage_intensity = CONF_DRAWING['percentage_intensity']
 class Vector_field_Z():
     """Class for vectorial fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
@@ -104,7 +104,7 @@ class Vector_field_Z():
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_Z. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Vector_field_Z): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -127,7 +127,7 @@ class Vector_field_Z():
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -147,7 +147,7 @@ class Vector_field_Z():
         """Load data from a file to a Vector_field_Z.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -179,7 +179,7 @@ class Vector_field_Z():
     def get(self, kind: str = 'fields', is_matrix: bool = True):
         """Takes the vector field and divide in Scalar_field_Z.
 
-        Parameters:
+        Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
@@ -253,7 +253,7 @@ class Vector_field_Z():
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
-        Parameters:
+        Args:
            u (Scalar_mask_X): mask
          """
         self.Ex = self.Ex * u.u
@@ -271,7 +271,7 @@ class Vector_field_Z():
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
-        Parameters:
+        Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_Z
 
         Returns:
@@ -302,7 +302,7 @@ class Vector_field_Z():
     def polarization_ellipse(self, pol_state: None | list = None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
+        Args:
             pol_state (None or (I, Q, U, V) ): Polarization state previously computed
             Matrix (bool): if True returns Matrix, else Scalar_field_Z
 
@@ -344,7 +344,7 @@ class Vector_field_Z():
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -353,7 +353,7 @@ class Vector_field_Z():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: bool | floating = 0,
+             logarithm: floating = 0,
              normalize: bool = False,
              cut_value: floating = None,
              filename: str = '',
@@ -361,7 +361,7 @@ class Vector_field_Z():
              **kwargs):
         """Draws electromagnetic field
 
-        Parameters:
+        Args:
             kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -397,7 +397,7 @@ class Vector_field_Z():
                 print("not good kind parameter in vector_fields_X.draw()")
                 id_fig = None
 
-            if not filename == '':
+            if filename != '':
                 plt.savefig(filename,
                             dpi=100,
                             bbox_inches='tight',
@@ -405,10 +405,10 @@ class Vector_field_Z():
 
             return id_fig
 
-    def __draw_intensity__(self, logarithm: bool | floating, normalize: bool, cut_value: floating):
+    def __draw_intensity__(self, logarithm: floating, normalize: bool, cut_value: floating):
         """Draws the intensity
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -430,7 +430,7 @@ class Vector_field_Z():
     def __draw_intensities__(self, logarithm, normalize, cut_value):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -504,7 +504,7 @@ class Vector_field_Z():
     def __draw_phases__(self):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -601,14 +601,14 @@ class Vector_field_Z():
             return h1, h2, h3
 
     def __draw_fields__(self,
-                        logarithm: bool | floating,
+                        logarithm: floating,
                         normalize: bool,
                         cut_value: floating,
                         color_intensity=CONF_DRAWING['color_intensity'],
                         color_phase=CONF_DRAWING['color_phase']):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -661,7 +661,7 @@ class Vector_field_Z():
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self, logarithm: bool | floating, normalize: bool, cut_value: floating):
+    def __draw_stokes__(self, logarithm: floating, normalize: bool, cut_value: floating):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
         """
 
@@ -701,7 +701,7 @@ class Vector_field_Z():
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, logarithm: bool | floating, normalize: bool, cut_value: floating):
+    def __draw_param_ellipse__(self, logarithm: floating, normalize: bool, cut_value: floating):
         """__internal__: computes and draws polariations ellipses
         """
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
@@ -740,7 +740,7 @@ class Vector_field_Z():
     def __draw1__(self, data: NDArrayFloat, ylabel: str = '', title: str = ''):
         """Draws image
 
-        Parameters:
+        Args:
             image (numpy.array): array with drawing
             title (str): title of drawing
         """

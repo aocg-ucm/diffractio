@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 
-"""Top-level package for Python Scalar and vector diffraction and interference."""
-"""
+"""Top-level package for Python Scalar and vector diffraction and interference.
+
 Diffractio: A scientific computing package for Optical Interference and Diffraction in Python
 ======================================================================================================
 
@@ -31,14 +31,14 @@ scalar bidimensional XY fields propagated in Z direction
 """
 
 
-from matplotlib import rcParams
 import datetime
 import multiprocessing
+from matplotlib import cm, rcParams
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-from matplotlib import cm, rcParams
 from .config import CONF_DRAWING
+
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
 __version__ = '0.3.1'

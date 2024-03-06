@@ -24,10 +24,10 @@ percentage_intensity = CONF_DRAWING["percentage_intensity"]
 def view_image(filename: str):
     """reproduces image
 
-    Parameters:
+    Args:
         filename (str): filename
     """
-    if not filename == "" and filename is not None:
+    if filename != "" and filename is not None:
         mpimg.imread(filename)
         plt.show()
 
@@ -69,9 +69,9 @@ def concatenate_drawings(
 
 
 def draw2D(
-    image,
-    x,
-    y,
+    image: NDArrayFloat,
+    x: NDArrayFloat,
+    y: NDArrayFloat,
     xlabel: str = "$x  (\mu m)$",
     ylabel: str = "$y  (\mu m)$",
     title: str = "",
@@ -84,7 +84,7 @@ def draw2D(
 ) -> tuple:
     """makes a drawing of XY
 
-    Parameters:
+    Args:
         image (numpy.array): image to draw
         x (numpy.array): positions x
         y (numpy.array): positions y
@@ -150,27 +150,17 @@ def draw2D(
     return id_fig, IDax, IDimage
 
 
-# def draw3D(image, x, y, xlabel="", ylabel="", color="YlGnBu"):
-#     X, Y = np.meshgrid(x, y)
-#     mlab.figure(fgcolor=(0, 0, 0), bgcolor=(1, 1, 1))
-#     mlab.mesh(X, Y, image, colormap=color)
-#     mlab.xlabel(xlabel)
-#     mlab.ylabel(ylabel)
-#     # mlab.view(.0, -5.0, 4)
-
-
 def draw_several_fields(
-    fields,
-    titles: str = "",
-    title: str = "",
-    figsize: tuple[float, float] | None = None,
-    kinds: str = "",
-    logarithm: list | float | bool = False,
-    normalize: bool = False,
-):
+        fields: list,
+        titles: list[str] = "",
+        title: str = "",
+        figsize: tuple[float, float] | None = None,
+        kinds: list[str] = "",
+        logarithm: list[float] | float = False,
+        normalize: bool = False):
     """Draws several fields in subplots
 
-    Parameters:
+    Args:
         fields (list): list with several scalar_fields_XY
         titles (list): list with titles
         title (str): suptitle
@@ -257,14 +247,13 @@ def draw_several_fields(
 
 
 def change_image_size(
-    image_name: str,
-    length: str = "800x600",
-    final_filename: str = "prueba.png",
-    dpi: int = 100,
-):
+        image_name: str,
+        length: str = "800x600",
+        final_filename: str = "prueba.png",
+        dpi: int = 100):
     """change the size with imageMagick
 
-    Parameters:
+    Args:
         image_name (str): name of file
         length (str): size of image
         final_filename (str): final filename
@@ -290,11 +279,8 @@ def change_image_size(
     os.system(texto)
 
 
-def extract_image_from_video(
-    nombre_video: str | None = None,
-    num_frame: str = "[0, ]",
-    final_filename: str = "prueba.png",
-):
+def extract_image_from_video(nombre_video: str | None = None, num_frame: str = "[0, ]",
+                             final_filename: str = "prueba.png"):
     """Extract images form a video using imageMagick.
 
     convert 'animacion.avi[15,]' animacion_frame.png. Extracts frame 15 (ony 15)
@@ -307,23 +293,19 @@ def extract_image_from_video(
     os.system(texto)
 
 
-def normalize_draw(
-    u, logarithm: np.float_ | bool = False, normalize: bool = False, cut_value: int | None = None
-):
+def normalize_draw(u, logarithm: np.float_ | bool = False, normalize: bool = False, cut_value: int | None = None):
     """
     Gets a field and changes its caracteristics for drawing
 
-    Parameters:
+    Args:
         u (field): field
         logarithm (float): logarithm to image: np.log(logarithm*u + 1)
         normalize (str or bool): False, 'mean', 'intensity'
     """
 
     u = np.real(u)
-    # u[u < 0] = 0
 
     if logarithm > 0:
-        # Hacemos el valor absoluto de los valores negativos para la representación logarítmica.
         u_sign = u
         u = np.log(logarithm * np.abs(u) + 1)
         if np.any(u_sign < 0):
@@ -342,12 +324,11 @@ def normalize_draw(
     return u
 
 
-def prepare_drawing(u, kind: str = "intensity",
-                    logarithm: np.float_ | bool = False,
+def prepare_drawing(u, kind: str = "intensity", logarithm: np.float_ | bool = False,
                     normalize: bool = False):
     """It is necessary that figure is previously defined: plt.figure()
 
-    Parameters:
+    Args:
         u - field
         kind - 'intensity', 'amplitude', 'phase'
         logarithm - True or False
@@ -375,8 +356,18 @@ def prepare_drawing(u, kind: str = "intensity",
     return I_drawing
 
 
-def prepare_video(fps: int = 15, title: str = "",
-                  artist: str = "", comment: str = ""):
+def prepare_video(fps: int = 15, title: str = "", artist: str = "", comment: str = ""):
+    """_summary_
+
+    Args:
+        fps (int, optional): FPS. Defaults to 15.
+        title (str, optional): Titles. Defaults to "".
+        artist (str, optional): ?. Defaults to "".
+        comment (str, optional): comment. Defaults to "".
+
+    Returns:
+        _type_: _description_
+    """
     FFMpegWriter = manimation.writers["ffmpeg"]  # ffmpeg mencoder
     metadata = dict(title=title, artist=artist, comment=comment)
     writer = FFMpegWriter(fps=fps, metadata=metadata)
@@ -413,7 +404,7 @@ def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArrayFloat,
                        verbose: bool = False):
     """Reduces the size of matrix for drawing purposes. If the matrix is very big, the drawing process is slow.
 
-    Parameters:
+    Args:
         reduce_matrix (str or (int, int)): if str: 'standard', if (int, int) reduction_factor.
         x (np.array): array with x.
         y (np.array): array with y or z
@@ -434,7 +425,6 @@ def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArrayFloat,
 
         if reduction_x > 2 and reduction_y > 2:
             image = image[::reduction_x, ::reduction_y]
-            # print("reduction = {}, {}".format(reduction_x, reduction_y))
         else:
             pass
     else:

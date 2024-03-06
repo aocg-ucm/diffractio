@@ -10,17 +10,13 @@ from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComp
 
 
 from . import degrees, np, plt
-from .utils_math import (
-    fft_convolution1d,
-    fft_convolution2d,
-    find_extrema,
-    nearest)
+from .utils_math import fft_convolution1d, fft_convolution2d, find_extrema, nearest
 
 
-def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind="normal"):
-    """Rough surface, 1D
+def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind: str = "normal"):
+    """Rough surface, 1D.
 
-    Parameters:
+    Args:
         x (numpy.array): array with x positions
         t (float): correlation lens
         s (float): std of roughness
@@ -39,31 +35,32 @@ def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind="normal"):
 
     # Surface parameters
 
-    L_ancho = width / (2 * dx)
+    L_width = width / (2 * dx)
     M = round(4 * t / (np.sqrt(2) * dx))
 
-    N_ancho = int(np.floor(L_ancho + M))
+    N_width = int(np.floor(L_width + M))
 
-    desp_ancho = np.arange(-M, M + 1)
+    desp_width = np.arange(-M, M + 1)
 
-    desp_ancho = desp_ancho * dx
-    pesos = np.exp(-2 * (desp_ancho**2 / t**2))
+    desp_width = desp_width * dx
+    weigths = np.exp(-2 * (desp_width**2 / t**2))
 
-    pesos = np.abs(pesos / np.sqrt((pesos**2).sum()))
+    weigths = np.abs(weigths / np.sqrt((weigths**2).sum()))
 
     if kind == "normal":
-        h_no_corr = s * np.random.randn(2 * N_ancho + 1)
-        h_corr = fft_convolution1d(h_no_corr, pesos)
+        h_no_corr = s * np.random.randn(2 * N_width + 1)
+        h_corr = fft_convolution1d(h_no_corr, weigths)
         h_corr = h_corr[0: len(x)]
     elif kind == "uniform":
         h_corr = s * (np.random.rand(len(x)) - 0.5)
+
     return h_corr
 
 
 def roughness_2D(x: NDArrayFloat, y: list[floating, floating], t: floating, s: floating):
     """Rough surface, 2D
 
-    Parameters:
+    Args:
         x (numpy.array): x positions
         y (numpy.array): y positions
         t (float, float): (tx, ty), correlation length of roughness
@@ -85,34 +82,36 @@ def roughness_2D(x: NDArrayFloat, y: list[floating, floating], t: floating, s: f
     tx, ty = t
 
     width = x[-1] - x[0]
-    largo = y[-1] - y[0]
+    length = y[-1] - y[0]
     dx = x[1] - x[0]
     dy = y[1] - y[0]
-    L_ancho = width / (2 * dx)
-    L_largo = largo / (2 * dy)
+
+    L_width = width / (2 * dx)
+    L_length = length / (2 * dy)
     Mx = round(4 * tx / (np.sqrt(2) * dx))
     My = round(4 * ty / (np.sqrt(2) * dy))
 
-    N_ancho = int(np.floor(L_ancho + Mx))
-    N_largo = int(np.floor(L_largo + My))
+    N_width = int(np.floor(L_width + Mx))
+    N_length = int(np.floor(L_length + My))
 
-    desp_ancho, desp_largo = np.meshgrid(np.arange(-Mx, Mx + 1), np.arange(-My, My + 1))
-    desp_ancho = desp_ancho * dx
-    desp_largo = desp_largo * dy
+    desp_width, desp_length = np.meshgrid(np.arange(-Mx, Mx + 1), np.arange(-My, My + 1))
+    desp_width = desp_width * dx
+    desp_length = desp_length * dy
 
-    pesos = np.exp(-2 * (desp_ancho**2 / tx**2 + desp_largo**2 / ty**2))
-    pesos = np.abs(pesos / np.sqrt((pesos**2).sum()))
+    weigths = np.exp(-2 * (desp_width**2 / tx**2 + desp_length**2 / ty**2))
+    weigths = np.abs(weigths / np.sqrt((weigths**2).sum()))
 
-    h_no_corr = s * np.random.randn(2 * N_ancho + 1, 2 * N_largo + 1)
-    h_corr = fft_convolution2d(h_no_corr, pesos)
+    h_no_corr = s * np.random.randn(2 * N_width + 1, 2 * N_length + 1)
+    h_corr = fft_convolution2d(h_no_corr, weigths)
     h_corr = h_corr[0: len(x), 0: len(y)]
+
     return h_corr
 
 
 def beam_width_1D(u: NDArrayComplex, x: NDArrayFloat, remove_background: bool = False):
     """One dimensional beam width, according to D4σ or second moment width.
 
-    Parameters:
+    Args:
         u (np.array): field (not intensity).
         x (np.array): x
 
@@ -124,7 +123,7 @@ def beam_width_1D(u: NDArrayComplex, x: NDArrayFloat, remove_background: bool = 
         https://en.wikipedia.org/wiki/Beam_diameter
     """
 
-    intensity = np.abs(u) ** 4
+    intensity = np.abs(u)**2
 
     if remove_background is True:
         intensity = intensity - intensity - min()
@@ -139,7 +138,7 @@ def beam_width_1D(u: NDArrayComplex, x: NDArrayFloat, remove_background: bool = 
 def width_percentage(x: NDArrayFloat, y: NDArrayFloat, percentage: floating = 0.5, verbose: bool = False):
     """beam width (2*sigma) given at a certain height from maximum
 
-    Parameters:
+    Args:
         x (np.array): x
         y (np.array): y
         percentage (float): percentage of height. For example: 0.5
@@ -188,8 +187,7 @@ def beam_width_2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat,
                   remove_background: bool = False, has_draw: bool = False):
     """2D beam width, ISO11146 width
 
-
-    Parameters:
+    Args:
         x (np.array): 1d x
         y (np.array): 1d y
         intensity (np.array):  intensity
@@ -260,7 +258,7 @@ def refractive_index(filename: str, wavelength: floating, raw: bool = False,
     * Files has to be converted to xlsx format.
     * n and k checks has to be activated.
 
-    Parameters:
+    Args:
         filename (str): xlsx file
         wavelength (float): wavelength in microns, example, 0.6328.
         raw (bool): if True returns all the data in file.
@@ -305,10 +303,21 @@ def refractive_index(filename: str, wavelength: floating, raw: bool = False,
 
 
 def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
-           remove_background=None, has_draw: bool = False):
-    """FWHM1D #TODO
+           remove_background: str | None = None, has_draw: bool = False):
+    """ FWHM
 
-    remove_background = 'min', 'mean', None"""
+    remove_background = 
+
+    Args:
+        x (NDArrayFloat): x array
+        intensity (NDArrayFloat): intensity array
+        percentage (floating, optional): heigth of peak to measure. Defaults to 0.5.
+        remove_background (str | None, optional): 'min', 'mean', None. Defaults to None.
+        has_draw (bool, optional): It draws. Defaults to False.
+
+    Returns:
+        float: value of FWHM
+    """
 
     if remove_background == "mean":
         I_background = intensity.mean()
@@ -370,10 +379,24 @@ def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
 
 def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
            remove_background: bool = False, has_draw: bool = False, xlim: list[floating] | None = None):
-    """TODO: perform profiles at several angles and fit to a ellipse.
-    Get dx, dy, angle, x_center, y_center"""
-    # Ix = intensity.mean(axis=0)
-    # Iy = intensity.mean(axis=1)
+    """ Get FWHM2D  in x and i direction
+
+
+    Args:
+        x (NDArrayFloat): x array
+        y (NDArrayFloat): y array
+        intensity (NDArrayFloat): intensity
+        percentage (floating, optional): heigth of peak to measure. Defaults to 0.5.
+        remove_background (bool, optional): 'min', 'mean', None. Defaults to False.
+        has_draw (bool, optional): if True it draws. Defaults to False.
+        xlim (list[floating] | None, optional): xlim in drawing. Defaults to None.
+
+    Returns:
+        FWHM_x (float): width in x direction
+        FWHM_y (float): width in y direction
+    TODO: 
+        perform profiles at several angles and fit to a ellipse.
+    """
 
     i_pos, _, I_max = find_extrema(intensity.transpose(), x, y, kind="max")
 
@@ -399,7 +422,7 @@ def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: floating = np.sqrt(2), 
         has_draw: bool = False, verbose: bool = False):
     """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
-    Parameters:
+    Args:
 
         z (np.array): z positions
         widths (np.array): width at positions z
@@ -470,11 +493,11 @@ def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: floating = np.sqrt(2), 
     return z_rayleigh, beam_waist, np.array([z[i_left], z[i_w0], z[i_right + i_w0]])
 
 
-def detect_intensity_range(
-        x, intensity, percentage=0.95, has_draw: bool = True, logarithm=True):
+def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.95,
+                           has_draw: bool = True, logarithm=True):
     """Determines positions x_min, x_max where intensity of the beam is percentage
 
-    Parameters:
+    Args:
         x (np.array): x positions
         intensity (np.array): Intensity of the 1D beam
         percentage (float): value 0-1 representing the percentage of intensity between area
@@ -483,7 +506,6 @@ def detect_intensity_range(
 
     Returns:
         (float, float): positions (x_min, right) where intensity beam is enclosed at %.
-
     """
 
     I_cum = intensity.cumsum()
@@ -526,9 +548,8 @@ def detect_intensity_range(
     return x_min, x_max
 
 
-def MTF_ideal(
-    frequencies, wavelength, diameter, focal, kind: str, verbose: bool = False, has_draw: bool = False
-):
+def MTF_ideal(frequencies: NDArrayFloat, wavelength: floating, diameter: floating, focal: floating,
+              kind: str, verbose: bool = False, has_draw: bool = False):
     """Determines the ideal MTF of a lens.
 
     References:
@@ -536,7 +557,7 @@ def MTF_ideal(
 
         https://www.optikos.com/wp-content/uploads/2015/10/How-to-Measure-MTF-and-other-Properties-of-Lenses.pdf
 
-    Parameters:
+    Args:
         frequencies (numpy.array): array with frequencies in *lines/mm*
         wavelength (float): wavelength of incoming light beam
         diameter (float): diameter of lens
@@ -561,14 +582,14 @@ def MTF_ideal(
         fx2 = np.arccos(fx_norm)
         MTF = np.real(2 / np.pi * (fx2 - np.cos(fx2) * np.sin(fx2)))
 
-        # otra definición: https://www.optikos.com/wp-content/uploads/2015/10/How-to-Measure-MTF-and-other-Properties-of-Lenses.pdf
+        # Another definition: https://www.optikos.com/wp-content/uploads/2015/10/How-to-Measure-MTF-and-other-Properties-of-Lenses.pdf
         # MTF = np.real(2/np.pi*(np.arccos(fx_norm)-fx_norm*np.sqrt(1-fx_norm**2)))
 
         # isH1 = MTF > 1
         # MTF[isH1] = 2 - MTF[isH1]
 
     if verbose is True:
-        print("frecuencia de bin_level = {:4.2f} lineas/mm".format(frequency_max))
+        print("frquency = {:4.2f} lines/mm".format(frequency_max))
 
     if has_draw is True:
         plt.figure()
@@ -579,10 +600,9 @@ def MTF_ideal(
     return MTF, frequency_max
 
 
-def lines_mm_2_cycles_degree(lines_mm, focal):
-    """Pasa líneas por mm a cyclos/grado, más tipico de ojo
-    Infor saca estos cálculos 181022
-    Parameters:
+def lines_mm_2_cycles_degree(lines_mm: NDArrayFloat, focal: float):
+    """ Converts lines/mm to cycles/degree. JA Gomez-Pedrero 
+    Args:
         lines_mm (numpy.array or float): lines_per_mm
         focal (float): focal of lens
     """
@@ -592,17 +612,15 @@ def lines_mm_2_cycles_degree(lines_mm, focal):
     return frec_cycles_deg
 
 
-def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose: bool = False):
-    """MTF parameters: strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
+def MTF_parameters(MTF: NDArrayFloat, MTF_ideal: NDArrayFloat, lines_mm: float = 50, verbose: bool = False):
+    """MTF Args: strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
 
     References:
         https://www.edmundoptics.com/resources/application-notes/optics/introduction-to-modulation-transfer-function/strehl_ratio
 
-    frequencies of mtf ar given since both MTF can have different steps
-    MTF:
+    frequencies of mtf are given since both MTF can have different steps
 
-
-    Parameters:
+    Args:
         MTF (N,2 numpy.array): (freq, MTF) of system in lines/mm
         MTF_ideal (M,2 numpy.array): (freq, MTF) of ideal system in lines/mm
         lines_mm (float): (0-1) Height of MTF for ratios
@@ -642,7 +660,7 @@ def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose: bool = False):
     mtf_50_ratio = freq_50_real / freq_50_ideal
 
     if verbose is True:
-        print(" MTF Parameters:")
+        print(" MTF Args:")
         print("- Strehl_ratio      = {:2.2f}".format(strehl_ratio))
         print("- MTF_ratio @ {:2.2f}  = {:2.2f}".format(lines_mm, mtf_50_ratio))
         print(
@@ -657,14 +675,18 @@ def MTF_parameters(MTF, MTF_ideal, lines_mm=50, verbose: bool = False):
     return strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
 
 
-def gauss_spectrum(wavelengths, w_central, Dw, normalize=True):
-    """
-    returns weigths for a gaussian spectrum
-    Parameters:
-        wavelengths: array with wavelengths
-        w_central: central wavelength
-        Dw: width of the spectrum
-        normalize: if True sum of weights is 1
+def gauss_spectrum(wavelengths: NDArrayFloat, w_central: floating, Dw: floating, normalize: bool = True):
+    """ 
+    Returns weigths for a gaussian spectrum
+
+    Args:
+        wavelengths (NDArrayFloat): array with wavelengths
+        w_central (floating): central wavelength
+        Dw (floating): width of the spectrum
+        normalize (bool, optional): if True sum of weights is 1. Defaults to True.
+
+    Returns:
+        weights (float): gaussian spectrum
     """
 
     weigths = np.exp(-((wavelengths - w_central) ** 2) / (2 * Dw**2))
@@ -675,14 +697,18 @@ def gauss_spectrum(wavelengths, w_central, Dw, normalize=True):
     return weights
 
 
-def lorentz_spectrum(wavelengths, w_central, Dw, normalize=True):
-    """
-    returns weigths for a gaussian spectrum
-    Parameters:
-        wavelengths: array with wavelengths
-        w_central: central wavelength
-        Dw: width of the spectrum
-        normalize: if True sum of weights is 1
+def lorentz_spectrum(wavelengths: NDArrayFloat, w_central: floating, Dw: floating, normalize: bool = True):
+    """ 
+    Returns weigths for a Lorentz spectrum
+
+    Args:
+        wavelengths (NDArrayFloat): array with wavelengths
+        w_central (floating): central wavelength
+        Dw (floating): width of the spectrum
+        normalize (bool, optional): if True sum of weights is 1. Defaults to True.
+
+    Returns:
+        weights (float): Lorentz spectrum
     """
 
     weigths = 1 / (1 + ((wavelengths - w_central) / (Dw / 2)) ** 2)
@@ -693,10 +719,10 @@ def lorentz_spectrum(wavelengths, w_central, Dw, normalize=True):
     return weights
 
 
-def uniform_spectrum(wavelengths, normalize=True):
-    """
-    returns weigths for a gaussian spectrum
-    Parameters:
+def uniform_spectrum(wavelengths: NDArrayFloat, normalize: bool = True):
+    """returns weigths for a gaussian spectrum
+
+    Args:
         wavelengths: array with wavelengths
         w_central: central wavelength
         Dw: width of the spectrum
@@ -714,7 +740,7 @@ def uniform_spectrum(wavelengths, normalize=True):
 def normalize_field(self, new_field: bool = False):
     """Normalize the field to maximum intensity.
 
-    Parameters:
+    Args:
         (Scalar_field): field_*
         new_field (bool): If True returns a field, else returns a matrix
     Returns:
@@ -748,42 +774,10 @@ def normalize_field(self, new_field: bool = False):
             return field_new
 
 
-# def normalize(u, kind='intensity'):
-#     """Normalizes a field to have intensity or amplitude, etc. 1
-
-#     Parameters:
-#         u (numpy.array): optical field (comes usually form field.u)
-#         kind (str): 'intensity, 'amplitude', 'logarithm'... other.. Normalization technique
-
-#     Returns
-#         u (numpy.array): normalized optical field
-#     """
-
-#     if kind == 'intensity':
-#         intensity_max = (np.abs(u)).max()
-#         u = u / intensity_max
-#     elif kind == 'amplitude':
-#         amplitude_max = np.sqrt(np.abs(u)).max()
-#         u = u / amplitude_max
-
-#     return u
-
-# def normalize_vector_deprecated(u):
-#     """Normalizes a vector to have intensity or amplitude, etc. 1
-
-#     Parameters:
-#         u (numpy.array): vector (last dimension should have size 2 or 3)
-
-#     Returns
-#         u (numpy.array): normalized optical field
-#     """
-#     return u / np.linalg.norm(u)
-
-
-def field_parameters(u, has_amplitude_sign=False):
+def field_parameters(u: NDArrayComplex, has_amplitude_sign: bool = False):
     """Determines main parameters of field: amplitude intensity phase. All this parameters have the same dimension as u.
 
-    Parameters:
+    Args:
         u (numpy.array): optical field (comes usually form field.u)
         has_amplitude_sign (bool): If True - amplitude = np.sign(u) * np.abs(u), Else: amplitude =  np.abs(u)
 
@@ -809,12 +803,12 @@ def field_parameters(u, has_amplitude_sign=False):
     return amplitude, intensity, phase
 
 
-def convert_phase2heigths(phase, wavelength, n, n_background):
-    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
+def convert_phase2heigths(phase: NDArrayFloat, wavelength: floating, n: floating, n_background: floating):
+    """Phase is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
 
     phase(x,z)= k (n-n_0) h(x,z).
 
-    Parameters:
+    Args:
         phase (np.array): Phases
         wavelength (float): wavelength
         n (float or complex): refraction index of material
@@ -829,10 +823,11 @@ def convert_phase2heigths(phase, wavelength, n, n_background):
     return phase / (k * (n - n_background))
 
 
-def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
-    """We have a phase and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ.
+def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: floating,
+                              kappa: floating, n_background: floating):
+    """Amplitude and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ.
 
-    Parameters:
+    Args:
         phase (np.array): Phases
         wavelength (float): wavelength
         kappa (float): refraction index of material.
@@ -851,15 +846,9 @@ def convert_amplitude2heigths(amplitude, wavelength, kappa, n_background):
     return depth
 
 
-def fresnel_equations_kx(
-    kx,
-    wavelength,
-    n1,
-    n2,
-    outputs=[True, True, True, True],
-    has_draw: bool = True,
-    kind="amplitude_phase",
-):
+def fresnel_equations_kx(kx: NDArrayComplex, wavelength: floating, n1: floating, n2: floating,
+                         outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
+                         kind: str = "amplitude_phase"):
     """Fresnel_equations where input are kx part of wavevector.
 
     Args:
@@ -892,13 +881,13 @@ def fresnel_equations_kx(
     t_TM, t_TE, r_TM, r_TE = None, None, None, None
 
     if outputs[0]:
-        t_TM = 2 * n1 * n2 * kz_1 / (n2**2 * kz_1 + n1**2 * kz_2)  # paralelo
+        t_TM = 2 * n1 * n2 * kz_1 / (n2**2 * kz_1 + n1**2 * kz_2)  # parallel
     if outputs[1]:
         t_TE = 2 * kz_1 / (kz_1 + kz_2)  # perpendicular
     if outputs[2]:
         r_TM = (n2**2 * kz_1 - n1**2 * kz_2) / (
             n2**2 * kz_1 + n1**2 * kz_2
-        )  # paralelo
+        )  # parallel
     if outputs[3]:
         r_TE = (kz_1 - kz_2) / (kz_1 + kz_2)  # perpendicular
 
@@ -971,14 +960,11 @@ def fresnel_equations_kx(
             axs[1].set_xlabel(r"$k_x$")
             axs[1].set_title(r"imag")
 
-    # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
-
-    return t_TM, t_TE, r_TM, r_TE  # paralelo, perpendicular
+    return t_TM, t_TE, r_TM, r_TE  # parallel, perpendicular
 
 
-def transmitances_reflectances_kx(
-    kx, wavelength, n1, n2, outputs=[True, True, True, True], has_draw: bool = False
-):
+def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: floating, n1: floating, n2: floating,
+                                  outputs: list[bool] = [True, True, True, True], has_draw: bool = True):
     """Transmitances and reflectances, where input are kx part of wavevector.
 
     Args:
@@ -1039,22 +1025,16 @@ def transmitances_reflectances_kx(
 
         # plt.xlim(theta[0]/degrees, theta[-1]/degrees)
 
-    return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular
+    return T_TM, T_TE, R_TM, R_TE  # parallel, perpendicular
 
 
-def fresnel_equations(
-    theta,
-    wavelength,
-    n1,
-    n2,
-    outputs=[True, True, True, True],
-    has_draw: bool = False,
-    kind="amplitude_phase",
-):
+def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n2: floating,
+                      outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
+                      kind="amplitude_phase"):
     """Fresnel equations and reflectances, where input are angles of incidence.
 
     Args:
-        kx (np.array): kx
+        theta (np.array): kx
         wavelength (float): wavelength
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
@@ -1071,9 +1051,7 @@ def fresnel_equations(
     k0 = 2 * np.pi / wavelength
     kx = n1 * k0 * np.sin(theta)
 
-    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(
-        kx, wavelength, n1, n2, outputs, has_draw=False
-    )
+    t_TM, t_TE, r_TM, r_TE = fresnel_equations_kx(kx, wavelength, n1, n2, outputs, has_draw=False)
 
     if has_draw and outputs.sum() > 0:
         fig, axs = plt.subplots(1, 2, figsize=(12, 4))
@@ -1085,9 +1063,7 @@ def fresnel_equations(
             if outputs[2]:
                 axs[0].plot(theta / degrees, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[0].plot(
-                    theta / degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$"
-                )
+                axs[0].plot(theta / degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$")
 
             axs[0].legend()
             axs[0].grid()
@@ -1185,16 +1161,15 @@ def fresnel_equations(
             axs[1].set_xlabel(r"$\theta (^o)$")
             axs[1].set_title(r"imag")
 
-    return t_TM, t_TE, r_TM, r_TE  # paralelo, perpendicular
+    return t_TM, t_TE, r_TM, r_TE  # parallel, perpendicular
 
 
-def transmitances_reflectances(
-    theta, wavelength, n1, n2, outputs=[True, True, True, True], has_draw: bool = False
-):
+def transmitances_reflectances(theta: NDArrayFloat, wavelength: floating, n1: floating, n2: floating,
+                               outputs: list[bool] = [True, True, True, True], has_draw: bool = False):
     """Transmitances and reflectances, where input are angles of incidence.
 
     Args:
-        kx (np.array): kx
+        theta (np.array): angles
         wavelength (float): wavelength
         n1 (float): refraction index of first materia
         n2 (float): refraction index of second materia
@@ -1229,4 +1204,4 @@ def transmitances_reflectances(
         plt.legend()
         plt.grid()
 
-    return T_TM, T_TE, R_TM, R_TE  # paralelo, perpendicular
+    return T_TM, T_TE, R_TM, R_TE  # parallel, perpendicular

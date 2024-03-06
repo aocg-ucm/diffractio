@@ -59,10 +59,10 @@ class Test_Vector_fields_XY():
                           focal=(2 * mm, 2 * mm),
                           kind='amplitudes')
 
-        state = np.array([[1, 0], [0, 1j]])
+        pol_state = np.array([[1, 0], [0, 1j]])
 
         vc = Vector_mask_XY(x0, y0, wavelength)
-        vc.scalar_to_vector_mask(mask=mask, state=state)
+        vc.scalar_to_vector_mask(mask=mask, pol_state=pol_state)
 
         vp = Vector_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(azimuth=0 * degrees)

@@ -50,7 +50,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
 
 
-        Parameters:
+        Args:
             rotation_point (float, float, float): location of the mask
             refractive_index (float, str): can be a number or a function n(x, y,z)
             Fs (list): condtions as str that will be computed using eval
@@ -90,7 +90,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
     def sphere(self, r0: list[floating], radius: list[floating], refractive_index: floating, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
-            Parameters:
+            Args:
                 r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
                 radius: (rx, ry, rz) Radius of sphere. It can be a ellipsoid. If radius is a number, then it is a sphere
                 refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
@@ -115,7 +115,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                rotation_point: list[floating] = None):
         """ Insert a rectangle in background. If something previous, is removed.
 
-        Parameters:
+        Args:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             size (float, float, float): x,y,z size of the rectangle
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
@@ -149,7 +149,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                  refractive_index: float, axis: list[floating], angle: floating):
         """ Insert a cylinder in background. If something previous, is removed.
 
-        Parameters:
+        Args:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner

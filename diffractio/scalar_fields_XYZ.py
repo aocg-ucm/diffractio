@@ -64,7 +64,7 @@ from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import get_k, ndgrid_deprecated, nearest, reduce_to_1
+from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 
@@ -74,7 +74,7 @@ copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 class Scalar_field_XYZ():
     """Class for 3D scalar fields.
 
-    Parameters:
+    Args:
         u0 (Scalar_field_XY): Initial scalar field. wavelength, and x, y arrays are obtained from this field.
         z (numpy.array): linear array with equidistant positions.
         n_background (float): refractive index of background
@@ -124,7 +124,7 @@ class Scalar_field_XYZ():
     def xy_2_xyz(self, u0_XY, z: NDArrayFloat):
         """Similar to Init. send a Scalarfield_XY and passes to XYZ.
 
-        Parameters:
+        Args:
             u0_XY (Scalar_field_XY): init field
             z (numpy.array): array with z positions
         """
@@ -179,7 +179,7 @@ class Scalar_field_XYZ():
     def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_XYZ. For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_XYZ): 2nd field to add
             kind (str): instruction how to add the fields: - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1. - 'standard': add fields u3=u1+u2 and does nothing.
 
@@ -208,7 +208,7 @@ class Scalar_field_XYZ():
     def __sub__(self, other):
         """Substract two Scalar_field_XYZ For example two light sources or two masks.
 
-        Parameters:
+        Args:
             other (Scalar_field_XYZ): field to substract
 
         Returns:
@@ -226,7 +226,7 @@ class Scalar_field_XYZ():
     def __rotate__(self, psi: float, phi: float, sigma: float):
         """Function to rotate around any of the 3 axis of rigid solid.
 
-        Parameters:
+        Args:
             psi (float): Euler angle in radians
             phi (float): Euler angle in radians
             sigma (float): Euler angle in radians
@@ -256,7 +256,7 @@ class Scalar_field_XYZ():
     def __rotate_axis__(self, axis: float, angle: float):
         """rotate around an axis.
 
-        Parameters:
+        Args:
             axis (float, float, float): direction of the axis
             angle (float): angle of rotation in radians
             sigma (float): Euler angle in radians
@@ -295,7 +295,7 @@ class Scalar_field_XYZ():
     def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -336,7 +336,7 @@ class Scalar_field_XYZ():
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -357,7 +357,7 @@ class Scalar_field_XYZ():
             The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -387,7 +387,7 @@ class Scalar_field_XYZ():
                      interp_kind=(3, 1)):
         """it cut the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
-        Parameters:
+        Args:
             x_limits (float,float): (x0,x1) starting and final points to cut, if '' - takes the current limit x[0] and x[-1]
             y_limits (float,float): (y0,y1) - starting and final points to cut, if '' - takes the current limit y[0] and z[-1]
             num_points (int): it resamples x, y and u, where [],'',0,None -> it leave the points as it is new_field (bool): it returns a new Scalar_field_XY
@@ -502,7 +502,7 @@ class Scalar_field_XYZ():
     def incident_field(self, u0, z0: float | None = None):
         """Incident field for the experiment. It takes a Scalar_source_XYZ field.
 
-        Parameters:
+        Args:
             u0 (Scalar_source_X): field produced by Scalar_source_XYZ (or a XYZ field)
             z0 (float): position of the incident field. if None, '', [], is at the beginning
         """
@@ -532,7 +532,7 @@ class Scalar_field_XYZ():
     def __RS_multiprocessing__(self, i: int):
         """Internal for multiprocessing.
 
-        Parameters:
+        Args:
             i (int): Number for for loop.
         """
         self.u[:, :, i] = self.u0.RS(amplification=(1, 1),
@@ -547,7 +547,7 @@ class Scalar_field_XYZ():
     def RS(self, verbose: bool = False, num_processors=num_max_processors - 2):
         """Rayleigh Sommerfeld propagation algorithm
 
-        Parameters:
+        Args:
             verbose (bool): shows the quality of algorithm (>1 good)
             num_processors (int): number of processors for multiprocessing
 
@@ -582,7 +582,7 @@ class Scalar_field_XYZ():
     def RS_amplification(self, amplification: list[int, int] = (1, 1)):
         """Rayleigh Sommerfeld propagation algorithm. it performs amplification
 
-        Parameters:
+        Args:
             amplification (int,int): number of fields
 
         Returns:
@@ -629,7 +629,7 @@ class Scalar_field_XYZ():
     def BPM(self, has_edges: bool = True, pow_edge: int = 80, verbose: bool = False):
         """3D Beam propagation method (BPM).
 
-        Parameters:
+        Args:
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian
             verbose (bool): shows data process by screen
@@ -700,7 +700,7 @@ class Scalar_field_XYZ():
         """
         Plane wave decompostion algorithm.
 
-        Parameters:
+        Args:
             n (np. array): refractive index, If None, it is n_background
             verbose (bool): If True prints state of algorithm
 
@@ -748,7 +748,7 @@ class Scalar_field_XYZ():
         'schmidt method is very fast, only needs discrete number of refractive indexes'
 
 
-        Parameters:
+        Args:
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian
             verbose (bool): If True prints information
@@ -823,7 +823,7 @@ class Scalar_field_XYZ():
                            matrix: bool = False):
         """pass results to Scalar_field_XY. Only one of the first two variables (iz0,z0) should be used
 
-        Parameters:
+        Args:
             iz0 (int): position i of z data in array
             z0 (float): position z to extract
             is_class (bool): If True it returns a class
@@ -855,7 +855,7 @@ class Scalar_field_XYZ():
                            matrix: bool = False):
         """pass results to Scalar_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
-        Parameters:
+        Args:
             iy0 (int): position i of y data in array
             y0 (float): position y to extract
             class (bool): If True it returns a class
@@ -887,7 +887,7 @@ class Scalar_field_XYZ():
                            matrix: bool = False):
         """pass results to Scalar_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
-        Parameters:
+        Args:
             ix0 (int): position i of x data in array
             x0 (float): position x to extract
             class (bool): If True it returns a class
@@ -920,7 +920,7 @@ class Scalar_field_XYZ():
              z_scale='mm'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
 
-        Parameters:
+        Args:
             kind (str): 'amplitude', 'intensity', 'phase'
             x0 (float): position x to extract
             y0 (float): position y to extract
@@ -961,7 +961,7 @@ class Scalar_field_XYZ():
     def average_intensity(self, has_draw: bool = False):
         """Returns average intensity as: (np.abs(self.u)**2).mean()
 
-        Parameters:
+        Args:
             verbose(bool): If True prints data.
 
         Returns:
@@ -983,7 +983,7 @@ class Scalar_field_XYZ():
                     verbose: bool = False):
         """Determines the widths of the beam
 
-        Parameters:
+        Args:
             kind (str): kind of algorithm: 'sigma4', 'FWHM2D'
             has_draw (bool, bool): First for complete analysis, second for all FWHM2D computations
             percentage: TODO
@@ -1041,7 +1041,7 @@ class Scalar_field_XYZ():
     def surface_detection(self, mode: int = 1, min_incr: float = 0.01, has_draw: bool = False):
         """detect edges of variation in refractive index
 
-        Parameters:
+        Args:
             mode (int): TODO
             min_incr (float): minimum incremental variation to detect.
             has_draw (bool): if True, it draws the surface.        
@@ -1083,7 +1083,7 @@ class Scalar_field_XYZ():
                       colormap_kind: str = "gist_heat"):
         """Draws  XYZ field.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase', 'real'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -1161,7 +1161,7 @@ class Scalar_field_XYZ():
                 self.surface_detection(1, min_incr, reduce_matrix)
             plt.plot(self.borders[0], self.borders[1], 'w.', ms=1)
 
-        if not filename == '':
+        if filename != '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
@@ -1178,7 +1178,7 @@ class Scalar_field_XYZ():
                 reduce_matrix=''):
         """ longitudinal profile XY at a given z value
 
-        Parameters:
+        Args:
             z0 (float): value of z for interpolation
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
             logarithm (bool): If True, intensity is scaled in logarithm
@@ -1213,7 +1213,7 @@ class Scalar_field_XYZ():
                 **kwargs):
         """Longitudinal profile XZ at a given x0 value.
 
-        Parameters:
+        Args:
             y0 (float): value of y for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1259,7 +1259,7 @@ class Scalar_field_XYZ():
         #     )
         #     plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
 
-        # if not filename == '':
+        # if filename != '':
         #     plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
@@ -1272,7 +1272,7 @@ class Scalar_field_XYZ():
                 filename: str = ''):
         """Longitudinal profile YZ at a given x0 value.
 
-        Parameters:
+        Args:
             x0 (float): value of x for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
@@ -1317,7 +1317,7 @@ class Scalar_field_XYZ():
                             pixel_size: list[int, int, int] = (128, 128, 128)):
         """Draws  XZ field.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'intensity', 'phase', 'real_field'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -1356,7 +1356,7 @@ class Scalar_field_XYZ():
                                maxintensity: float | None = None):
         """Draws  XYZ field with mlab
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             maxintensity (float): maximum value of intensity
@@ -1409,7 +1409,7 @@ class Scalar_field_XYZ():
     def draw_refractive_index_deprecated(self, kind: str = 'real'):
         """Draws XYZ refractive index with slicer
 
-        Parameters:
+        Args:
             kind (str): 'real', 'imag', 'abs'
         """
         try:
@@ -1448,7 +1448,7 @@ class Scalar_field_XYZ():
               directory_name: str = 'new_video'):
         """Makes a video in the range given by self.z.
 
-        Parameters:
+        Args:
             filename (str): filename (.avi, .mp4)
             kind (str): type of drawing:  'intensity', 'phase'.
             fps (int): frames per second
