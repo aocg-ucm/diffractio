@@ -28,35 +28,6 @@ def load_stl(filename, has_draw=True, verbose=True):
         print(mesh.center)
     return mesh, filename, mesh.bounds
 
-def load_stl_from_folder(num_file, directory=r"parts/", has_draw=True, verbose=True):
-
-    files=['Pieza1.stl',
-        'Christmas_Ball_Cap.stl',
-        'Meissner_Tetrahedron.stl',
-        'pyramid4.stl',
-        'cone.stl',
-        'torus.stl',
-        'cylinder.stl',
-        'spherehalf.stl'
-    ]
-
-    filename = directory + files[num_file]
-
-    mesh = pv.read(filename)
-    
-    if has_draw:
-        mesh.plot()
-        
-    if verbose:
-        print(filename)
-        print(mesh)    
-        print("bounds")
-        print(mesh.bounds)
-        print("cells points arrays faces")
-        print(mesh.n_cells, mesh.n_points, mesh.n_arrays, mesh.n_faces_strict)
-        
-    return mesh, filename
-
 
 
 def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True):
@@ -100,17 +71,13 @@ def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True
         # reduce chance for artifacts, see gh-1743
         surface.triangulate(inplace=True)
 
-    x = self.x
-    y = self.y
-    z = self.z 
-        
+ 
     # Create a RectilinearGrid
-    voi = pyvista.RectilinearGrid(x, y, z)
+    voi = pyvista.RectilinearGrid(self.x, self.y, self.z)
 
     # get part of the mesh within the mesh's bounding surface.
     selection = voi.select_enclosed_points(surface, tolerance=0.0, check_surface=check_surface)
     mask_vol = selection.point_data['SelectedPoints'].view(np.bool_)
-    volume_n = refractive_index*mask_vol.reshape(len(x), len(y), len(z))
 
     # Get voxels that fall within input mesh boundaries
     cell_ids = np.unique(voi.extract_points(np.argwhere(mask_vol))["vtkOriginalCellIds"])
@@ -119,11 +86,12 @@ def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True
     voi['InsideMesh'] = np.zeros(voi.n_cells)
     voi['InsideMesh'][cell_ids] = refractive_index
     
-    # print(voi.points.shape, len(cell_ids))
-    # print(2097152**(1/3), 128**3)
-    # n_grid = voi.points[:,2].reshape(len(x), len(y), len(z))
+    print(type(mask_vol))
+    # mask_vol = mask_vol.reshape(self.x, self.y, self.z)
+    volume_n = self.n_background + (refractive_index-self.n_background)*mask_vol
+    self.n = volume_n.reshape(len(self.y), len(self.x), len(self.z))
     
-    self.n =  volume_n
+    print(self.n.shape)
 
     return self, voi #, selection, mask_vol, cell_ids, volume_n
 
@@ -160,7 +128,7 @@ def draw(
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
     intensity = self.intensity()
-    intensity /= intensity.max()
+    intensity = intensity/intensity.max()
 
     n = self.n
 
@@ -168,9 +136,12 @@ def draw(
         data = intensity
     elif variable == "refractive_index":
         data = n
+    
+        
+    data = data.reshape((len(self.y),len(self.x),len(self.z)))
+    grid["scalars"] =  np.transpose(data,axes=(2,1,0)).flatten()
 
     if kind == "volume":
-        grid["scalars"] = data.flatten()
         pl = pyvista.Plotter()
         
         if cpos != None:
@@ -178,8 +149,8 @@ def draw(
             reset_camera = False
 
         pl.set_scale(
-            xscale=scale[0],
-            yscale=scale[1],
+            xscale=scale[1],
+            yscale=scale[0],
             zscale=scale[2],
             reset_camera=reset_camera,
             render=True,
@@ -189,29 +160,24 @@ def draw(
 
     elif kind == "clip":
         pl = pyvista.Plotter()
-        grid["scalars"] = data.flatten()
-
         pl.add_volume_clip_plane(grid, normal="x", opacity=opacity, cmap=cmap)
         pl.add_volume_clip_plane(grid, normal="y", opacity=opacity, cmap=cmap)
         pl.add_volume_clip_plane(grid, normal="-z", opacity=opacity, cmap=cmap)
         pl.set_scale(
-            xscale=scale[0],
-            yscale=scale[1],
+            xscale=scale[1],
+            yscale=scale[0],
             zscale=scale[2],
             reset_camera=True,
-            render=True,
-        )
+            render=True)
 
     elif kind == "slices":
         pl = pyvista.Plotter()
-        grid["scalars"] = data.flatten()
-
         slice = grid.slice_orthogonal()
         dargs = dict(cmap=cmap)
         pl.add_mesh(slice, **dargs)
         pl.set_scale(
-            xscale=scale[0],
-            yscale=scale[1],
+            xscale=scale[1],
+            yscale=scale[0],
             zscale=scale[2],
             reset_camera=True,
             render=True,
@@ -220,8 +186,6 @@ def draw(
     elif kind == "projections":
         pl = pv.Plotter(shape=(2, 2))
         dargs = dict(cmap=cmap)
-        grid["scalars"] = data.flatten()
-
         slice1 = grid.slice_orthogonal(x=0, z=0)
         slice2 = grid.slice_orthogonal(x=0, y=0)
         slice3 = grid.slice_orthogonal(y=0, z=0)
@@ -300,8 +264,8 @@ def video_isovalue(self, filename: str, variable: str = "refractive_index", **kw
 
     pl = pv.Plotter()
     pl.set_scale(
-        xscale=scale[0],
-        yscale=scale[1],
+        xscale=scale[1],
+        yscale=scale[0],
         zscale=scale[2],
         reset_camera=True,
         render=True,
