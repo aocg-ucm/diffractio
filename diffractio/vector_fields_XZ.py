@@ -54,9 +54,6 @@ from scipy.fftpack import fft, fftshift, ifft, ifftshift
 
 percentage_intensity = CONF_DRAWING["percentage_intensity"]
 
-# From Scalar_mask_XZ to have refractive index.
-# TODO: anistropic masks.
-
 
 class Vector_field_XZ(Scalar_mask_XZ):
     """Class for vectorial fields.
@@ -1391,7 +1388,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
 def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     """
     Kernel for fast propagation of WPM method
-
 
     Args:
         Ex (np.array): field Ex

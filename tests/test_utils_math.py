@@ -17,7 +17,7 @@ import sys
 
 import numpy as np
 from diffractio import eps, no_date
-from diffractio.utils_math import (amplitude2phase, binarize, distance, ndgrid_deprecated,
+from diffractio.utils_math import (amplitude2phase, binarize, distance,
                                    nearest, nearest2, normalize)
 from diffractio.utils_tests import comparison
 

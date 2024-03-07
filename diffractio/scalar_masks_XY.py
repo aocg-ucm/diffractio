@@ -1857,8 +1857,16 @@ class Scalar_mask_XY(Scalar_field_XY):
 
     def sine_edge_grating(self, r0: list[floating], period: floating, lp: floating, ap: floating,
                           phase: floating, radius: floating, is_binary: bool):
-        """
-        TODO: function info
+        """Generate sin grating
+
+        Args:
+            r0 (list[floating]): _description_
+            period (floating): _description_
+            lp (floating): _description_
+            ap (floating): _description_
+            phase (floating): _description_
+            radius (floating): _description_
+            is_binary (bool): _description_
         """
         # si solamente un numero, posiciones y radius son los mismos para ambos
         # lp longitud del period del edge,

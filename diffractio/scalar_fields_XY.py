@@ -285,7 +285,7 @@ class Scalar_field_XY():
 
         center_rotation = y0, x0
 
-        u_real_rotate = rotate_image(self.x, self.y, np.np.real(self.u),
+        u_real_rotate = rotate_image(self.x, self.y, np.real(self.u),
                                      -angle * 180 / np.pi, center_rotation)
         u_imag_rotate = rotate_image(self.x, self.y, np.imag(self.u),
                                      -angle * 180 / np.pi, center_rotation)

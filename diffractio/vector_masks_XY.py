@@ -238,23 +238,23 @@ class Vector_mask_XY(Vector_field_XY):
         self.M00.real = np.where(np.real(self.M00) == -0, 0, np.real(self.M00))
         self.M11.real = np.where(np.real(self.M11) == -0, 0, np.real(self.M11))
 
-    def complementary_masks(self, mask, state_0, state_1, is_binarized=True):
-        """Creates a vector mask from a scalar mask. It assign an state_0 to 0 values and a state_1 to 1 values..
+    def complementary_masks(self, mask, pol_state_0, pol_state_1, is_binarized=True):
+        """Creates a vector mask from a scalar mask. It assign an pol_state_0 to 0 values and a pol_state_1 to 1 values..
         For generality, ik mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
         Args:
             mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
-            state_0 (2x2 numpy.array or Jones_matrix): Jones matrix for 0s.
-            state_1 (2x2 numpy.array or Jones_matrix): Jones matrix for 1s.
+            pol_state_0 (2x2 numpy.array or Jones_matrix): Jones matrix for 0s.
+            pol_state_1 (2x2 numpy.array or Jones_matrix): Jones matrix for 1s.
 
         Warning:
             TODO: Mask should be binary. Else the function should binarize it.
         """
 
-        if isinstance(state_0, Jones_matrix):
-            state_0 = state_0.M.squeeze()
-        if isinstance(state_1, Jones_matrix):
-            state_1 = state_1.M.squeeze()
+        if isinstance(pol_state_0, Jones_matrix):
+            pol_state_0 = pol_state_0.M.squeeze()
+        if isinstance(pol_state_1, Jones_matrix):
+            pol_state_1 = pol_state_1.M.squeeze()
 
         t = np.abs(mask.u)**2
         if is_binarized:
@@ -262,10 +262,10 @@ class Vector_mask_XY(Vector_field_XY):
             t[t < 0.5] = 0
             t[t >= 0.5] = 1
 
-        self.M00 = t * state_1[0, 0] + (1 - t) * state_0[0, 0]
-        self.M01 = t * state_1[0, 1] + (1 - t) * state_0[0, 1]
-        self.M10 = t * state_1[1, 0] + (1 - t) * state_0[1, 0]
-        self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
+        self.M00 = t * pol_state_1[0, 0] + (1 - t) * pol_state_0[0, 0]
+        self.M01 = t * pol_state_1[0, 1] + (1 - t) * pol_state_0[0, 1]
+        self.M10 = t * pol_state_1[1, 0] + (1 - t) * pol_state_0[1, 0]
+        self.M11 = t * pol_state_1[1, 1] + (1 - t) * pol_state_0[1, 1]
 
     def multilevel_mask(self, mask, states, discretize=True, normalize=True):
         """Generates a multilevel vector mask, based in a scalar_mask_XY. The levels should be integers in amplitude (0,1,..., N).

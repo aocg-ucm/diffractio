@@ -479,7 +479,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
                 repeated_values = np.unique(n_real)
                 repeated_values = np.delete(
                     repeated_values, np.where(
-                        repeat_description_ed_values == self.n_background)
+                        repeated_values == self.n_background)
                 )
 
                 n_min, n_max = repeated_values.min(), repeated_values.max()
