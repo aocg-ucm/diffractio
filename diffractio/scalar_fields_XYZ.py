@@ -122,6 +122,7 @@ class Scalar_field_XYZ(object):
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Scalar_field_XYZ'
         self.date = get_date()
+        print(self.X.shape, self.X[:,:,1].shape)
 
     def xy_2_xyz(self, u0_XY, z):
         """Similar to Init. send a Scalarfield_XY and passes to XYZ.
@@ -798,9 +799,9 @@ class Scalar_field_XYZ(object):
         x_center=(self.x[-1]+self.x[0])/2
         y_center=(self.y[-1]+self.y[0])/2
         
-        filter_x = np.exp(-(np.abs(self.X[:,:,0]-x_center) / width_edge)**pow_edge)
-        filter_y = np.exp(-(np.abs(self.Y[:,:,0]-y_center) / width_edge)**pow_edge)
-        filter_function = filter_x*filter_y
+        px = (np.abs(self.X[:,:,0]-x_center) / width_edge)**pow_edge
+        py = (np.abs(self.Y[:,:,0]-y_center) / width_edge)**pow_edge
+        filter_function = np.exp(-px-py)
 
 
 
@@ -1127,7 +1128,7 @@ class Scalar_field_XYZ(object):
             amplitude, intensity, phase = field_parameters(u_new)
 
         extension = [
-            self.z[0], self.z[-1], self.x[0], self.x[-1], self.y[0], self.y[-1]
+            self.y[0], self.y[-1], self.x[0], self.x[-1], self.z[0], self.z[-1]
         ]
 
         plt.figure()
@@ -1151,9 +1152,9 @@ class Scalar_field_XYZ(object):
                         aspect='auto',
                         origin='lower',
                         extent=extension)
-        plt.xlabel('z ($\mu m$)')
+        plt.xlabel('y ($\mu m$)')
         plt.ylabel('x ($\mu m$)')
-        plt.zlabel('y ($\mu m$)')
+        plt.zlabel('z ($\mu m$)')
 
         plt.axis(extension)
         if colorbar_kind not in (False, '', None):
@@ -1234,46 +1235,11 @@ class Scalar_field_XYZ(object):
         ufield = self.to_Scalar_field_XZ(y0=y0)
         h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename,
                          **kwargs)
-        # intensity = np.abs(ufield.u)**2
-
-        # if logarithm == 1:
-        #     intensity = np.log(intensity + 1)
-
-        # if normalize == 'maximum':
-        #     intensity = intensity / intensity.max()
-        # if normalize == 'area':
-        #     area = (self.x[-1] - self.x[0]) * (self.z[-1] - self.z[0])
-        #     intensity = intensity / area
-        # if normalize == 'intensity':
-        #     intensity = intensity / (intensity.sum() / len(intensity))
-
-        # h1 = plt.imshow(intensity,
-        #                 interpolation='bilinear',
-        #                 aspect='auto',
-        #                 origin='lower',
-        #                 extent=[
-        #                     self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
-        #                     self.y[-1]
-        #                 ])
-        # plt.xlabel('z (mm)', fontsize=16)
-        # plt.ylabel('x $(um)$', fontsize=16)
-        # plt.title('intensity XZ', fontsize=20)
-        # h1.set_cmap(
-        #     self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
-        # plt.colorbar()
-
-        # # -----------------     no functiona de momento -----------------
-        # if draw_borders is True:
-        #     x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
-        #     )
-        #     plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
-
-        # if not filename == '':
-        #     plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
     def draw_YZ(self,
+                kind='intensity',
                 x0=0 * mm,
                 logarithm=0,
                 normalize='',
@@ -1291,20 +1257,42 @@ class Scalar_field_XYZ(object):
 
         plt.figure()
         ufield = self.to_Scalar_field_YZ(x0=x0)
-        intensity = np.abs(ufield.u)**2
+        
+        amplitude, I_drawing, phase = field_parameters(ufield.u, True)
+
+        I_drawing = np.abs(ufield.u)**2
+
+
+        if kind == 'intensity':
+            I_drawing = I_drawing
+            I_drawing = normalize_draw(I_drawing, logarithm, normalize)
+        elif kind == 'amplitude':
+            I_drawing = amplitude
+            I_drawing = normalize_draw(I_drawing, logarithm, normalize)
+        elif kind == 'phase':
+            phase = phase / degrees
+            phase[I_drawing < percentage_intensity * (I_drawing.max())] = 0
+
+            I_drawing = phase
+        elif kind == 'real':
+            I_drawing = np.real(self.u)
+        else:
+            print("bad kind parameter")
+            return
+
 
         if logarithm == 1:
-            intensity = np.log(intensity + 1)
+            I_drawing = np.log(I_drawing + 1)
 
         if normalize == 'maximum':
-            intensity = intensity / intensity.max()
+            I_drawing = I_drawing / I_drawing.max()
         if normalize == 'area':
             area = (self.y[-1] - self.y[0]) * (self.z[-1] - self.z[0])
-            intensity = intensity / area
+            I_drawing = I_drawing / area
         if normalize == 'intensity':
-            intensity = intensity / (intensity.sum() / len(intensity))
+            I_drawing = I_drawing / (I_drawing.sum() / len(I_drawing))
 
-        h1 = plt.imshow(intensity,
+        h1 = plt.imshow(I_drawing,
                         interpolation='bilinear',
                         aspect='auto',
                         origin='lower',
@@ -1319,8 +1307,8 @@ class Scalar_field_XYZ(object):
             self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
-    def draw_XYZ(self, kind:str='volume', drawing:str = 'intensity', has_grid:bool=False,  filename='', **kwargs):
-        """_summary_
+    def draw_XYZ(self, kind: str = 'volume', drawing: str = 'intensity', has_grid: bool=False,  filename='', **kwargs):
+        """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:
             kind (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
@@ -1331,7 +1319,7 @@ class Scalar_field_XYZ(object):
         draw(self, kind, drawing, has_grid,  filename, **kwargs)
 
 
-    def video_isovalue(self,  filename:str, variable:str = 'refractive_index',   **kwargs):
+    def video_isovalue(self,  filename: str, variable: str = 'refractive_index',   **kwargs):
 
         """_summary_
 
@@ -1341,132 +1329,16 @@ class Scalar_field_XYZ(object):
         """
         video_isovalue(self,  filename, variable,  **kwargs)
 
-    def draw_XYZ_deprecated(self,
-                 kind='intensity',
-                 logarithm=False,
-                 normalize='',
-                 pixel_size=(128, 128, 128)):
-        """Draws  XZ field.
 
-        Parameters:
-            kind (str): type of drawing: 'intensity', 'phase', 'real_field'
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            pixel_size (float, float, float): pixels for drawing
-            """
-        try:
-            from .utils_slicer_deprecated import slicerLM
-            is_slicer = True
-        except ImportError:
-            print("slicerLM is not loaded.")
-            is_slicer = False
+ 
+    # def draw_volume(self, logarithm=0, normalize='', maxintensity=None):
+    #     pass
 
-        if is_slicer:
-            u_xyz_r = self.cut_resample(num_points=(128, 128, 128),
-                                        new_field=True)
 
-            if kind == 'intensity' or kind == '':
-                drawing = np.abs(u_xyz_r.u)**2
-            if kind == 'phase':
-                drawing = np.angle(u_xyz_r.u)
-            if kind == 'real_field':
-                drawing = np.real(u_xyz_r.u)
+    # def draw_refractive(self, kind='real'):
+    #     pass
 
-            if logarithm == 1:
-                drawing = np.log(drawing**0.5 + 1)
 
-            if normalize == 'maximum':
-                factor = max(0, drawing.max())
-                drawing = drawing / factor
-
-            slicerLM(drawing)
-        else:
-            return
-
-    def draw_volume_deprecated(self, logarithm=0, normalize='', maxintensity=None):
-        """Draws  XYZ field with mlab
-
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            maxintensity (float): maximum value of intensity
-
-        TODO: Simplify, drawing
-            include kind and other parameters of draw
-        """
-
-        try:
-            from mayavi import mlab
-            is_mayavi = True
-        except ImportError:
-            print("mayavi.mlab is not imported.")
-            is_mayavi = False
-
-        if is_mayavi:
-
-            intensity = np.abs(self.u)**2
-
-            if logarithm == 1:
-                intensity = np.log(intensity + 1)
-
-            if normalize == 'maximum':
-                intensity = intensity / intensity.max()
-            if normalize == 'area':
-                area = (self.y[-1] - self.y[0]) * (self.z[-1] - self.z[0])
-                intensity = intensity / area
-            if normalize == 'intensity':
-                intensity = intensity / (intensity.sum() / len(intensity))
-
-            if maxintensity is None:
-                intMin = intensity.min()
-                intMax = intensity.max()
-            else:
-                intMin = maxintensity[0]
-                intMax = maxintensity[1]
-
-            mlab.figure(fgcolor=(0, 0, 0), bgcolor=(1, 1, 1))
-            mlab.clf()
-            source = mlab.pipeline.scalar_field(intensity)
-            mlab.pipeline.volume(source,
-                                 vmin=intMin + 0.1 * (intMax - intMin),
-                                 vmax=intMin + 0.9 * (intMax - intMin))
-            # mlab.view(azimuth=185, elevation=0, distance='auto')
-            print("Close the window to continue.")
-            mlab.show()
-        else:
-            return
-
-    def draw_refractive_index_deprecated(self, kind='real'):
-        """Draws XYZ refraction index with slicer
-
-        Parameters:
-            kind (str): 'real', 'imag', 'abs'
-        """
-        try:
-            from .utils_slicer_deprecated import slicerLM
-            is_slicer = True
-        except ImportError:
-            print("slicerLM is not loaded.")
-            is_slicer = False
-
-        try:
-            from mayavi import mlab
-            is_mayavi = True
-        except ImportError:
-            print("mayavi.mlab is not imported.")
-            is_mayavi = False
-
-        if is_slicer:
-
-            print("close the window to continue")
-            if kind == 'real':
-                slicerLM(np.real(self.n))
-            elif kind == 'imag':
-                slicerLM(np.imag(self.n))
-            elif kind == 'abs':
-                slicerLM(np.abs(self.n))
-        else:
-            return
 
     def video(self,
               filename='',

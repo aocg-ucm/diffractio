@@ -1455,7 +1455,7 @@ class Scalar_field_XZ(object):
             print("bad kind parameter")
             return
 
-        h1 = plt.imshow(I_drawing.transpose(),
+        h1 = plt.imshow(I_drawing,
                         interpolation=interpolation,
                         aspect='auto',
                         origin='lower',
