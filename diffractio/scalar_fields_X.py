@@ -111,6 +111,7 @@ class Scalar_field_X():
             self.u = np.zeros(shape(self.x), dtype=complex)
         else:
             self.u = None
+            
         self.quality = 0
         self.info = info
         self.type = "Scalar_field_X"

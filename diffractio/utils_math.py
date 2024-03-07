@@ -758,7 +758,7 @@ def rotate_image(x: NDArrayFloat, z: NDArrayFloat, img: NDArrayFloat, angle: flo
     padX = [img.shape[1] - ipivot[0], ipivot[0]]
     padZ = [img.shape[0] - ipivot[1], ipivot[1]]
     imgP = np.pad(img, [padZ, padX], 'constant')
-    imgR = ndimage.rotate(imgP, np.angle, reshape=False)
+    imgR = ndimage.rotate(imgP, angle, reshape=False)
 
     return imgR[padZ[0]:-padZ[1], padX[0]:-padX[1]]
 

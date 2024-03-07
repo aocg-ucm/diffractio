@@ -1957,7 +1957,7 @@ class Scalar_field_XZ():
 
         def animate(i):
 
-            hdl_line.set_data(self.x, I_drawing[:, i])
+            hdl_line.set_data(self.x, I_drawing[i,:])
             ax.set_title("$z = {:2.0f} \mu m$".format(self.z[i]))
             return i
 
@@ -2004,7 +2004,7 @@ class Scalar_field_XZ():
         extension = [self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()]
 
         imenor, value, distance = nearest(vector=self.z, number=z_actual)
-        I_drawing_actual = np.squeeze(I_drawing[:, imenor])
+        I_drawing_actual = np.squeeze(I_drawing[imenor,:])
 
         z = self.z
 

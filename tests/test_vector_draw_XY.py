@@ -1,9 +1,8 @@
 # !/usr/bin/env python3
 
-
 import datetime
 import os
-import sys
+import sys  
 
 from diffractio import mm, no_date, np, um
 from diffractio.utils_tests import save_figure_test
