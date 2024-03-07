@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_mask_XYZ class for definingn masks. Its parent is scalar_fields_XYZ.
 
@@ -8,7 +8,7 @@ The main atributes are:
     * self.y - y positions of the field
     * self.z - z positions of the field
     * self.u - field XYZ
-    * self.n - refraction index XYZ
+    * self.n - refractive index XYZ
     * self.wavelength - wavelength of the incident field. The field is monochromatic
 
 The magnitude is related to microns: `micron = 1.`
@@ -22,26 +22,35 @@ The magnitude is related to microns: `micron = 1.`
     * cylinder
 """
 
+# flake8: noqa
+
+
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+
+
 from . import degrees, np, um
 from .scalar_fields_XYZ import Scalar_field_XYZ
 
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):
 
-    def __init__(self, x, y, z, wavelength, n_background=1., info=''):
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 z: NDArrayFloat | None = None, wavelength: float | None = None,
+                 n_background: float = 1., info: str = ""):
         super().__init__(x, y, z, wavelength, n_background, info)
         self.type = 'Scalar_mask_XYZ'
 
     def object_by_surfaces(self,
-                           r0,
-                           refractive_index,
+                           r0: list[floating],
+                           refractive_index: floating,
                            Fs,
                            angles,
                            v_globals={}):
-        """Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
+        """ TODO
+        Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
 
 
-        Parameters:
+        Args:
             rotation_point (float, float, float): location of the mask
             refractive_index (float, str): can be a number or a function n(x, y,z)
             Fs (list): condtions as str that will be computed using eval
@@ -78,13 +87,13 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.n[ipasa] = refractive_index
         return ipasa
 
-    def sphere(self, r0, radius, refractive_index, angles):
+    def sphere(self, r0: list[floating], radius: list[floating], refractive_index: floating, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
-            Parameters:
+            Args:
                 r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
                 radius: (rx, ry, rz) Radius of sphere. It can be a ellipsoid. If radius is a number, then it is a sphere
-                        refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+                refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
         """
         if isinstance(radius, (float, int, complex)):
             radius = (radius, radius, radius)
@@ -99,17 +108,17 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
     def square(self,
-               r0,
-               length,
-               refractive_index,
+               r0: list[floating],
+               length: list[floating],
+               refractive_index: floating,
                angles=None,
-               rotation_point=None):
+               rotation_point: list[floating] = None):
         """ Insert a rectangle in background. If something previous, is removed.
 
-        Parameters:
+        Args:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             size (float, float, float): x,y,z size of the rectangle
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float, float). Rotation point
         """
@@ -136,14 +145,15 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         return ipasa
 
-    def cylinder(self, r0, radius, length, refractive_index, axis, angle):
+    def cylinder(self, r0: list[floating], radius: list[floating], length: float,
+                 refractive_index: float, axis: list[floating], angle: floating):
         """ Insert a cylinder in background. If something previous, is removed.
 
-        Parameters:
+        Args:
             r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner
-            refractive_index (float, str): refraction index , for example: 1.5 + 1.0j
+            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             axis (float float, float): axis direction
             angle (float): angle of rotation of the semi-plane, in radians
         """

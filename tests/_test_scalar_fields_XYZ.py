@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Test for scalar_fields_XYZ
 """
@@ -30,7 +30,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_fields_XYZ(object):
+class Test_Scalar_fields_XYZ():
 
     def test_save_load(self):
         func_name = sys._getframe().f_code.co_name
@@ -102,7 +102,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz = Scalar_field_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
         uxyz.incident_field(t3)
         uxyz.RS()
-        uxyz.draw_XYZ(logarithm=False, normalize='maximum')
+        uxyz.draw_XYZ(logarithm=0., normalize='maximum')
 
         uxyz.info = """info:
             test_other(self):
@@ -113,7 +113,7 @@ class Test_Scalar_fields_XYZ(object):
         # u2 = scalar_fields_XYZ(None, None, None)
         # u2.load_data(
         #     filename=filename+'.npz', verbose=True)
-        # u2.draw_XYZ(logarithm=False, normalize='maximum')
+        # u2.draw_XYZ(logarithm=0., normalize='maximum')
         # u2.save_data(filename=filename+'.npz')
         # save_figure_test(newpath, func_name)
         assert True
@@ -179,7 +179,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.incident_field(u0=t1)
 
         uxyz.RS(verbose=True, num_processors=4)
-        uxyz.draw_XYZ(kind='intensity', logarithm=False, normalize='maximum')
+        uxyz.draw_XYZ(kind: str = 'intensity', logarithm=0., normalize='maximum')
         uxyz.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
         assert True
@@ -222,7 +222,7 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.draw_XZ(y0=0 * mm,
                      logarithm=True,
                      filename='{}_c{}'.format(newpath, func_name))
-        # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
+        # uxyz.draw_XYZ(logarithm=0., normalize='maximum')
         # uxyz.draw_volume(logarithm=1, normalize='maximum', maxintensity=None)
 
         return uxyz
@@ -254,14 +254,14 @@ class Test_Scalar_fields_XYZ(object):
         uxyz.RS()
 
         uscalar_fields_XY = uxyz.to_Scalar_field_XY(z0=3 * mm)
-        uscalar_fields_XY.draw(kind='intensity', cut_value=None)
+        uscalar_fields_XY.draw(kind: str = 'intensity', cut_value=None)
 
         uxyz.draw_XY(z0=2 * mm, filename='{}a_{}'.format(newpath, func_name))
         uxyz.draw_XY(z0=4.5 * mm, filename='{}b_{}'.format(newpath, func_name))
         uxyz.draw_XZ(y0=0 * mm,
                      logarithm=True,
                      filename='{}_c{}'.format(newpath, func_name))
-        # uxyz.draw_XYZ(logarithm=False, normalize='maximum')
+        # uxyz.draw_XYZ(logarithm=0., normalize='maximum')
         # uxyz.draw_volume(logarithm=1, normalize='maximum', maxintensity=None)
         uxyz.save_data(filename=filename + '.npz', add_name='')
 

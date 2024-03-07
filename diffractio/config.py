@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Configuration file. Standard diffractio units are um: um = 1.
 """

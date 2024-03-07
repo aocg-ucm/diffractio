@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 This module generates Scalar_field_XY class.
 
@@ -16,9 +16,9 @@ The main atributes are:
     * self.x - x positions of the field
     * self.y - y positions of the field
     * self.wavelength - wavdelength of the incident field. The field is monochromatic
-    * self.u (numpy.array): equal size to x * y. complex field
-    * self.X (numpy.array): equal size to x * y. complex field
-    * self.Y (numpy.array): equal size to x * y. complex field
+    * self.u (numpy.np.array): equal size to x * y. complex field
+    * self.X (numpy.np.array): equal size to x * y. complex field
+    * self.Y (numpy.np.array): equal size to x * y. complex field
     * self.quality (float): quality of RS algorithm
     * self.info (str): description of data
     * self.type (str): Class of the field
@@ -58,8 +58,6 @@ import time
 import matplotlib.animation as animation
 import scipy.ndimage
 from matplotlib import rcParams
-from numpy import (angle, array, concatenate, cos, exp, flipud, linspace,
-                   meshgrid, pi, real, shape, sin, sqrt, zeros)
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
@@ -68,6 +66,7 @@ from . import np, plt
 from . import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
@@ -91,30 +90,33 @@ except:
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
-class Scalar_field_XY(object):
+class Scalar_field_XY():
     """Class for working with XY scalar fields.
 
-    Parameters:
-        x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
-        y (numpy.array): linear array wit equidistant positions for y values
+    Args:
+        x (numpy.np.array): linear np.array with equidistant positions. The number of data is preferibly :math:`2^n` .
+        y (numpy.np.array): linear np.array wit equidistant positions for y values
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
 
     Attributes:
-        self.x (numpy.array): linear array with equidistant positions. The number of data is preferibly :math:`2^n` .
-        self.y (numpy.array): linear array wit equidistant positions for y values
+        self.x (numpy.np.array): linear np.array with equidistant positions. The number of data is preferibly :math:`2^n` .
+        self.y (numpy.np.array): linear np.array wit equidistant positions for y values
         self.wavelength (float): wavelength of the incident field.
-        self.u (numpy.array): (x,z) complex field
+        self.u (numpy.np.array): (x,z) complex field
         self.info (str): String with info about the simulation
     """
 
-    def __init__(self, x=None, y=None, wavelength=None, info=""):
+# flake8: noqa
+
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength  # la longitud de onda
         if x is not None and y is not None:
-            self.X, self.Y = meshgrid(x, y)
-            self.u = zeros(shape(self.X), dtype=complex)
+            self.X, self.Y = np.meshgrid(x, y)
+            self.u = np.zeros(np.shape(self.X), dtype=complex)
         else:
             self.X = None
             self.Y = None
@@ -147,15 +149,15 @@ class Scalar_field_XY(object):
             phase_min, phase_max))
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
-        print(" - date:       {}".format(self.date))
+        print(" - date:    other   {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
         return ("")
 
     def __add__(self, other):
-        """Adds two Scalar_field_x. For example two light sources or two masks
+        """Adds two Scalar_field_X. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Scalar_field_X): 2 field to add
 
         Returns:
@@ -168,7 +170,7 @@ class Scalar_field_XY(object):
     def __sub__(self, other):
         """Substract two Scalar_field_XY. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Scalar_field_X): field to substract
 
         Returns:
@@ -183,7 +185,7 @@ class Scalar_field_XY(object):
     def __mul__(self, other):
         """Multiply two fields. For example  :math:`u_1(x)= u_0(x)*t(x)`
 
-        Parameters:
+        Args:
             other (Scalar_field_X): field to multiply
 
         Returns:
@@ -194,10 +196,11 @@ class Scalar_field_XY(object):
 
         return new_field
 
-    def __rotate__(self, angle, position=None):
+    def __rotate__(self, angle: float,
+                   position: list[float, float] | None = None):
         """Rotation of X,Y with respect to position
 
-        Parameters:
+        Args:ing
             angle (float): angle to rotate, in radians
             position (float, float): position of center of rotation
         """
@@ -208,11 +211,11 @@ class Scalar_field_XY(object):
         else:
             x0, y0 = position
 
-        Xrot = (self.X - x0) * cos(angle) + (self.Y - y0) * sin(angle)
-        Yrot = -(self.X - x0) * sin(angle) + (self.Y - y0) * cos(angle)
+        Xrot = (self.X - x0) * np.cos(angle) + (self.Y - y0) * np.sin(angle)
+        Yrot = -(self.X - x0) * np.sin(angle) + (self.Y - y0) * np.cos(angle)
         return Xrot, Yrot
 
-    def conjugate(self, new_field=True):
+    def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
 
@@ -223,7 +226,7 @@ class Scalar_field_XY(object):
         else:
             self.u = np.conj(self.u)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_XY(self.x, self.y, self.wavelength)
         # new_field.u = self.u
@@ -240,10 +243,10 @@ class Scalar_field_XY(object):
 
         self = reduce_to_1(self)
 
-    def add(self, other, kind='standard'):
-        """adds two Scalar_field_x. For example two light sources or two masks
+    def add(self, other, kind: str = 'standard'):
+        """adds two Scalar_field_xy. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Scalar_field_X): 2 field to add
             kind (str): instruction how to add the fields: - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1. - 'standard': add fields u3=u1+u2 and does nothing.
 
@@ -257,18 +260,19 @@ class Scalar_field_XY(object):
             u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
             t1 = np.abs(self.u)
             t2 = np.abs(other.u)
-            f1 = angle(self.u)
-            f2 = angle(other.u)
+            f1 = np.angle(self.u)
+            f2 = np.angle(other.u)
             t3 = t1 + t2
             t3[t3 > 0] = 1.
-            u3.u = t3 * exp(1j * (f1 + f2))
+            u3.u = t3 * np.exp(1j * (f1 + f2))
 
         return u3
 
-    def rotate(self, angle, position=None, new_field=False):
+    def rotate(self, angle: float, position: list[float, float] | None = None,
+               new_field: bool = False):
         """Rotation of X,Y with respect to position. If position is not given, rotation is with respect to the center of the image
 
-        Parameters:
+        Args:
             angle (float): angle to rotate, in radians
             position (float, float): position of center of rotation
         """
@@ -282,9 +286,9 @@ class Scalar_field_XY(object):
         center_rotation = y0, x0
 
         u_real_rotate = rotate_image(self.x, self.y, np.real(self.u),
-                                     -angle * 180 / pi, center_rotation)
+                                     -angle * 180 / np.pi, center_rotation)
         u_imag_rotate = rotate_image(self.x, self.y, np.imag(self.u),
-                                     -angle * 180 / pi, center_rotation)
+                                     -angle * 180 / np.pi, center_rotation)
         u_rotate = u_real_rotate + 1j * u_imag_rotate
 
         if new_field is True:
@@ -294,7 +298,7 @@ class Scalar_field_XY(object):
         else:
             self.u = u_rotate
 
-    def apodization(self, power=10):
+    def apodization(self, power: int = 10):
         """Multiply field by an apodizer. The apodizer is a super_gauss function.
 
         Args:
@@ -317,12 +321,13 @@ class Scalar_field_XY(object):
         """
         self.u = np.zeros_like(self.u, dtype=complex)
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -338,11 +343,11 @@ class Scalar_field_XY(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Scalar_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -352,14 +357,14 @@ class Scalar_field_XY(object):
             print(dict0.keys())
 
     def save_mask(self,
-                  filename="",
-                  kind='amplitude',
-                  binarize=False,
-                  cmap='gray',
-                  info=""):
+                  filename: str = "",
+                  kind: str = 'amplitude',
+                  binarize: bool = False,
+                  cmap: str = 'gray',  # or cm
+                  info: str = ""):
         """Create a mask in a file, for example, ablation or litography engraver
 
-        Parameters:
+        Args:
             filename (str): file name
             kind (str): save amplitude, phase or intensity. If intensity it is normalized to (0,1)
             binarize (bool): If True convert the mask in (0,1) levels
@@ -424,14 +429,14 @@ class Scalar_field_XY(object):
         return mask
 
     def cut_resample(self,
-                     x_limits='',
-                     y_limits='',
-                     num_points=[],
-                     new_field=False,
-                     interp_kind=(3, 1)):
+                     x_limits: list[float, float] = '',
+                     y_limits: list[float, float] = '',
+                     num_points: int = [],
+                     new_field: bool = False,
+                     interp_kind: list[int, int] = (3, 1)):
         """it cut the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
-        Parameters:
+        Args:
             x_limits (float,float): (x0,x1) starting and final points to cut. if '' - takes the current limit x[0] and x[-1]
             y_limits (float,float): (y0,y1) - starting and final points to cut. if '' - takes the current limit y[0] and y[-1]
             num_points (int): it resamples x, y and u. [],'',,None -> it leave the points as it is
@@ -516,15 +521,17 @@ class Scalar_field_XY(object):
     def incident_field(self, u0):
         """Incident field for the experiment. It takes a Scalar_source_X field.
 
-        Parameters:
+        Args:
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
         """
         self.u = u0.u
 
-    def pupil(self, r0=None, radius=None, angle=0 * degrees):
+    def pupil(self, r0: list[float, float] | None = None,
+              radius: float | None = None,
+              angle: float = 0 * degrees):
         """place a pupil in the field. If r0 or radius are None, they are computed using the x,y parameters.
 
-        Parameters:
+        Args:
             r0 (float, float): center of circle/ellipse
             radius (float, float) or (float): radius of circle/ellipse
             angle (float): angle of rotation in radians
@@ -556,7 +563,7 @@ class Scalar_field_XY(object):
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
         # Definicion de la transmitancia
-        pupil0 = zeros(shape(self.X))
+        pupil0 = np.zeros(np.shape(self.X))
         ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
             (Yrot)**2 / (radiusy**2 + 1e-15) < 1
         pupil0[ipasa] = 1
@@ -567,11 +574,11 @@ class Scalar_field_XY(object):
                      z=0,
                      shift=True,
                      remove0=True,
-                     matrix=False,
-                     new_field=False,
+                     matrix: bool = False,
+                     new_field: bool = False,
                      cut_square=True):
         Fast Fourier Transform (FFT) of the field.
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens
                        if z==0, no x,y scaled is produced
             shift (bool): if True, fftshift is performed
@@ -639,15 +646,11 @@ class Scalar_field_XY(object):
             self.X, self.Y = np.meshgrid(self.x, self.y)
     """
 
-    def fft(self,
-            z=0,
-            shift=True,
-            remove0=True,
-            matrix=False,
-            new_field=False):
+    def fft(self, z: float = 0, shift: bool = True, remove0: bool = True,
+            matrix: bool = False, new_field: bool = False):
         """Fast Fourier Transform (FFT) of the field.
 
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens
                        if z==0, no x,y scaled is produced
             shift (bool): if True, fftshift is performed
@@ -704,15 +707,11 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-    def ifft_proposal(self,
-                      z=0 * mm,
-                      shift=True,
-                      remove0=True,
-                      matrix=False,
-                      new_field=False):
+    def ifft_proposal(self, z: float = 0 * mm, shift: bool = True, remove0: bool = True,
+                      matrix: bool = False, new_field: bool = False):
         """Fast Fourier Transform (fft) of the field.
 
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
@@ -771,15 +770,11 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-    def ifft(self,
-             z=0 * mm,
-             shift=True,
-             remove0=True,
-             matrix=False,
-             new_field=False):
+    def ifft(self, z: float = 0 * mm, shift: bool = True, remove0: bool = True,
+             matrix: bool = False, new_field: bool = False):
         """Fast Fourier Transform (fft) of the field.
 
-        Parameters:
+        Args:
             z (float): distance to the observation plane or focal of lens
             shift (bool): if True, fftshift is performed
             remove0 (bool): if True, central point is removed
@@ -839,21 +834,15 @@ class Scalar_field_XY(object):
             self.y = y_new
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-    def _RS_(self,
-             z,
-             n,
-             new_field=True,
-             out_matrix=False,
-             kind='z',
-             xout=None,
-             yout=None,
-             verbose=False):
+    def _RS_(self, z: float, n: float, new_field: bool = True, out_matrix: bool = False,
+             kind: str = 'z', xout: float | None = None, yout: float | None = None,
+             verbose: bool = False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        Parameters:
+        Args:
             z (float): distance to observation plane.
                 if z<0 inverse propagation is executed
-            n (float): refraction index
+            n (float): refractive index
             new_field (bool): if False the computation goes to self.u
                               if True a new instance is produced
 
@@ -887,10 +876,10 @@ class Scalar_field_XY(object):
         dx = xout[1] - xout[0]
         dy = yout[1] - yout[0]
 
-        dr_real = sqrt(dx**2 + dy**2)
-        rmax = sqrt((xout**2).max() + (yout**2).max())
-        dr_ideal = sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
-                        (self.wavelength / n) * sqrt(rmax**2 + z**2)) - rmax
+        dr_real = np.sqrt(dx**2 + dy**2)
+        rmax = np.sqrt((xout**2).max() + (yout**2).max())
+        dr_ideal = np.sqrt((self.wavelength / n)**2 + rmax**2 + 2 *
+                           (self.wavelength / n) * np.sqrt(rmax**2 + z**2)) - rmax
         self.quality = dr_ideal / dr_real
 
         if verbose is True:
@@ -905,35 +894,35 @@ class Scalar_field_XY(object):
             a = [4, 2]
             num_repx = int(round((nx) / 2) - 1)
             num_repy = int(round((ny) / 2) - 1)
-            bx = array(a * num_repx)
-            by = array(a * num_repy)
-            cx = concatenate(((1, ), bx, (2, 1))) / 3.
-            cy = concatenate(((1, ), by, (2, 1))) / 3.
+            bx = np.array(a * num_repx)
+            by = np.array(a * num_repy)
+            cx = np.concatenate(((1, ), bx, (2, 1))) / 3.
+            cy = np.concatenate(((1, ), by, (2, 1))) / 3.
 
             if float(nx) / 2 == round(nx / 2):  # es par
                 i_centralx = num_repx + 1
-                cx = concatenate((cx[:i_centralx], cx[i_centralx + 1:]))
+                cx = np.concatenate((cx[:i_centralx], cx[i_centralx + 1:]))
             if float(ny) / 2 == round(ny / 2):  # es par
                 i_centraly = num_repy + 1
-                cy = concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
+                cy = np.concatenate((cy[:i_centraly], cy[i_centraly + 1:]))
 
             W = (cx[:, np.newaxis] * cy[np.newaxis, :]).T
 
         else:
             W = 1
 
-        U = zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
-        U[0:ny, 0:nx] = array(W * self.u)
+        U = np.zeros((2 * ny - 1, 2 * nx - 1), dtype=complex)
+        U[0:ny, 0:nx] = np.array(W * self.u)
 
         xext = self.x[0] - xout[::-1]
         xext = xext[0:-1]
-        xext = concatenate((xext, self.x - xout[0]))
+        xext = np.concatenate((xext, self.x - xout[0]))
 
         yext = self.y[0] - yout[::-1]
         yext = yext[0:-1]
-        yext = concatenate((yext, self.y - yout[0]))
+        yext = np.concatenate((yext, self.y - yout[0]))
 
-        Xext, Yext = meshgrid(xext, yext)
+        Xext, Yext = np.meshgrid(xext, yext)
 
         # permite calcula la propagacion y la propagacion inverse, cuando z<0.
         if z > 0:
@@ -960,22 +949,16 @@ class Scalar_field_XY(object):
         else:
             self.u = Usalida
 
-    def RS(self,
-           z,
-           amplification=(1, 1),
-           n=1,
-           new_field=True,
-           matrix=False,
-           xout=None,
-           yout=None,
-           kind='z',
-           verbose=False):
+    def RS(self, z: float, amplification: list[int, int] = (1, 1), n: float = 1.,
+            new_field: bool = True, matrix: bool = False,
+            xout: float | None = None, yout: float | None = None,
+            kind: str = 'z', verbose: bool = False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        Parameters:
+        Args:
             amplification (int, int): number of frames in x and y direction
             z (float): distance to observation plane. if z<0 inverse propagation is executed
-            n (float): refraction index
+            n (float): refractive index
             new_field (bool): if False the computation goes to self.u, if True a new instance is produced.
             matrix(Bool): if True returns a matrix, else a Scalar_field_XY
             xout (float): If not None, the sampling area is moved. This is the left position
@@ -994,31 +977,31 @@ class Scalar_field_XY(object):
         """
 
         amplification_x, amplification_y = amplification
-        ancho_x = self.x[-1] - self.x[0]
-        ancho_y = self.y[-1] - self.y[0]
+        width_x = self.x[-1] - self.x[0]
+        width_y = self.y[-1] - self.y[0]
         num_pixels_x = len(self.x)
         num_pixels_y = len(self.y)
 
         if amplification_x * amplification_y > 1:
 
-            posiciones_x = -amplification_x * ancho_x / 2 + array(
-                list(range(amplification_x))) * ancho_x
-            posiciones_y = -amplification_y * ancho_y / 2 + array(
-                list(range(amplification_y))) * ancho_y
+            posiciones_x = -amplification_x * width_x / 2 + np.array(
+                list(range(amplification_x))) * width_x
+            posiciones_y = -amplification_y * width_y / 2 + np.array(
+                list(range(amplification_y))) * width_y
 
-            X0 = linspace(-amplification_x * ancho_x / 2,
-                          amplification_x * ancho_x / 2,
-                          num_pixels_x * amplification_x)
-            Y0 = linspace(-amplification_y * ancho_y / 2,
-                          amplification_y * ancho_y / 2,
-                          num_pixels_y * amplification_y)
+            X0 = np.linspace(-amplification_x * width_x / 2,
+                             amplification_x * width_x / 2,
+                             num_pixels_x * amplification_x)
+            Y0 = np.linspace(-amplification_y * width_y / 2,
+                             amplification_y * width_y / 2,
+                             num_pixels_y * amplification_y)
 
             U_final = Scalar_field_XY(x=X0, y=Y0, wavelength=self.wavelength)
 
             for i, xi in zip(list(range(len(posiciones_x))),
-                             flipud(posiciones_x)):
+                             np.flipud(posiciones_x)):
                 for j, yi in zip(list(range(len(posiciones_y))),
-                                 flipud(posiciones_y)):
+                                 np.flipud(posiciones_y)):
                     # num_ventana = j * amplification_x + i + 1
                     u3 = self._RS_(z=z,
                                    n=n,
@@ -1058,8 +1041,8 @@ class Scalar_field_XY(object):
                                 new_field=new_field,
                                 out_matrix=True,
                                 kind=kind,
-                                xout=-xout + self.x[0] - ancho_x / 2,
-                                yout=-yout + self.y[0] - ancho_y / 2,
+                                xout=-xout + self.x[0] - width_x / 2,
+                                yout=-yout + self.y[0] - width_y / 2,
                                 verbose=verbose)
 
             if matrix is True:
@@ -1073,40 +1056,40 @@ class Scalar_field_XY(object):
                 if xout is not None:
                     U_final.x = self.x + xout - self.x[0]
                     U_final.y = self.y + yout - self.y[0]
-                    U_final.X, U_final.Y = meshgrid(self.x, self.y)
+                    U_final.X, U_final.Y = np.meshgrid(self.x, self.y)
 
                 return U_final
             else:
                 self.u = u_s
                 self.x = self.x + xout - self.x[0]
                 self.y = self.y + yout - self.y[0]
-                self.X, self.Y = meshgrid(self.x, self.y)
+                self.X, self.Y = np.meshgrid(self.x, self.y)
 
     def WPM(self,
             fn,
-            zs,
-            num_sampling=(512, 512),
-            ROI=(None, None),
-            r_pos=None,
-            z_pos=None,
-            get_u_max=False,
-            has_edges=True,
-            pow_edge=80,
-            matrix=False,
-            verbose=False):
+            zs: NDArrayFloat,
+            num_sampling: list = (512, 512),
+            ROI: list[NDArrayFloat] | None = (None, None),
+            r_pos: float | None = None,
+            z_pos: float | None = None,
+            get_u_max: bool = False,
+            has_edges: bool = True,
+            pow_edge: int = 80,
+            matrix: bool = False,
+            verbose: bool = False):
         """WPM method used for very dense sampling. It does not storages the intensity distribution at propagation, but only selected areas. The areas to be stored are:
             - global view with a desired sampling given by num_sampling.
             - intensity at the last plane.
             - Intensity at plane with maximum intensity (focus of a lens, for example)
             - Region of interest given by ROI.
 
-        Parameters:
-            fn (function): Function that returns the refraction index at a plane in a numpy.array
-            zs (np.array): linspace with positions z where to evaluate the field.
+        Args:
+            fn (function): Function that returns the refractive index at a plane in a numpy.np.array
+            zs (np.array): np.linspace with positions z where to evaluate the field.
             num_sampling (int, int) or None: If None, it does not storage intermediate data. Otherwise, it stores a small XZ matrix which size in num_sampling.
             ROI (np.array, np.array) or None: x and z arrays with positions and sampling to store. It is used when we need to store with a high density a small area of the total field.
-            r_pos (float or None): If not None, a high density longitudinal array with the field at x_pos position is stored.
-            z_pos (float or None): If not None, a high density transversal array with the field at z_pos is stored.
+            r_pos (float or None): If not None, a high density longitudinal np.array with the field at x_pos position is stored.
+            z_pos (float or None): If not None, a high density transversal np.array with the field at z_pos is stored.
             get_u_max (bool): If True, returns field at z position with maximum intensity.
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian.
@@ -1137,30 +1120,26 @@ class Scalar_field_XY(object):
         k_perp2 = KX**2 + KY**2
         k_perp = np.sqrt(k_perp2)
 
-       
         if has_edges is False:
             if hasattr(self, 'z'):
                 has_filter = np.zeros_like(self.z)
             else:
-                has_filter=0
+                has_filter = 0
         elif isinstance(has_edges, int):
             if hasattr(self, 'z'):
                 has_filter = np.ones_like(self.z)
             else:
-                has_filter=1      
+                has_filter = 1
         else:
             has_filter = has_edges
-        
-        
-        width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center=(self.x[-1]+self.x[0])/2
-        y_center=(self.y[-1]+self.y[0])/2
 
- 
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center = (self.x[-1]+self.x[0])/2
+        y_center = (self.y[-1]+self.y[0])/2
+
         filter_x = np.exp(-(np.abs(self.X-x_center) / width_edge)**pow_edge)
         filter_y = np.exp(-(np.abs(self.Y-y_center) / width_edge)**pow_edge)
         filter_function = filter_x*filter_y
-
 
         u_iter = self.duplicate()
 
@@ -1245,7 +1224,7 @@ class Scalar_field_XY(object):
         iz_out_roi = 0
 
         for j in range(1, num_steps):
-            
+
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
@@ -1298,14 +1277,15 @@ class Scalar_field_XY(object):
 
         return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
-    def CZT_backup(self, z, xout=None, yout=None, verbose=False):
+    def CZT_backup(self, z: float, xout: NDArrayFloat | None = None,
+                   yout: NDArrayFloat | None = None, verbose: bool = False):
         """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
         The output Scheme depends on this input parameters.
 
-        Parameters:
+        Args:
             z (float): diffraction distance
-            xout (np.array): x array with positions of the output plane
-            yout (np.array): y array with positions of the output plane
+            xout (np.array): x np.array with positions of the output plane
+            yout (np.array): y np.array with positions of the output plane
             verbose (bool): If True, it prints some information
 
         Returns:
@@ -1372,10 +1352,6 @@ class Scalar_field_XY(object):
                 num_x, num_y, num_z))
 
         if num_z == 1:
-            # calculating scalar diffraction below
-            # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-            #     1j * k / 2 / z * (Xout**2 + Yout**2))
-            # F = np.exp(1j * k / 2 / z * (self.X**2 + self.Y**2))
 
             R = np.sqrt(Xout**2 + Yout**2 + z**2)
             F0 = 1 / (2 * np.pi) * np.exp(
@@ -1426,7 +1402,7 @@ class Scalar_field_XY(object):
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_X(xout, self.wavelength)
-                #u_out.u = u0.transpose()[: ,0]
+                # u_out.u = u0.transpose()[: ,0]
                 u_out.u = u0[0, :]
                 return u_out
 
@@ -1518,14 +1494,15 @@ class Scalar_field_XY(object):
 
         return u_out
 
-    def CZT(self, z, xout=None, yout=None, verbose=False):
+    def CZT(self, z: float, xout: NDArrayFloat | None = None,
+            yout: NDArrayFloat | None = None, verbose: bool = False):
         """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
         The output Scheme depends on this input parameters.
 
-        Parameters:
+        Args:
             z (float): diffraction distance
-            xout (np.array): x array with positions of the output plane
-            yout (np.array): y array with positions of the output plane
+            xout (np.array): x np.array with positions of the output plane
+            yout (np.array): y np.array with positions of the output plane
             verbose (bool): If True, it prints some information
 
         Returns:
@@ -1793,23 +1770,23 @@ class Scalar_field_XY(object):
         return 1j*u_out
 
     def profile(self,
-                point1='',
-                point2='',
-                npixels=None,
-                kind='intensity',
-                order=2):
+                point1: list[float, float] | str = '',
+                point2: list[float, float] | str = '',
+                npixels: int | None = None,
+                kind: str = 'intensity',
+                order: int = 2):
         """Determine profile in image. If points are not given, then image is shown and points are obtained clicking.
 
-        Parameters:
-            point1 (float): initial point. if '' get from click
-            point2 (float): final point. if '' get from click
+        Args:
+            point1 (float, float): initial point. if '' get from click
+            point2 (float, float): final point. if '' get from click
             npixels (int): number of pixels for interpolation
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase'
             order (int): order for interpolation
 
         Returns:
-            numpy.array: profile
-            numpy.array: z values for profile
+            numpy.np.array: profile
+            numpy.np.array: z values for profile
             (float, float): point1
             (float, float): point2
         """
@@ -1830,18 +1807,18 @@ class Scalar_field_XY(object):
         iy1, value, distance = nearest(self.y, y1)
         iy2, value, distance = nearest(self.y, y2)
 
-        x = linspace(ix1, ix2, npixels)
-        y = linspace(iy1, iy2, npixels)
+        x = np.linspace(ix1, ix2, npixels)
+        y = np.linspace(iy1, iy2, npixels)
 
         if kind == 'intensity':
             image = np.abs(self.u)**2
         elif kind == 'amplitude':
-            image = real(self.u)
+            image = np.real(self.u)
         elif kind == 'phase':
-            image = angle(self.u)  # / pi
+            image = np.angle(self.u)  # / np.pi
             image[image == 1] = -1
 
-        h = linspace(0, sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
+        h = np.linspace(0, np.sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = h - h[-1] / 2
 
         z_profile = scipy.ndimage.map_coordinates(image.transpose(),
@@ -1852,14 +1829,14 @@ class Scalar_field_XY(object):
         return h, z_profile, point1, point2
 
     def draw_profile(self,
-                     point1='',
-                     point2='',
-                     npixels=None,
-                     kind='intensity',
-                     order=2):
+                     point1: list[float, float] | str = '',
+                     point2: list[float, float] | str = '',
+                     npixels: int | None = None,
+                     kind: str = 'intensity',
+                     order: int = 2):
         """Draws profile in image. If points are not given, then image is shown and points are obtained clicking.
 
-        Parameters:
+        Args:
             point1 (float): initial point. if '' get from click
             point2 (float): final point. if '' get from click
             npixels (int): number of pixels for interpolation
@@ -1867,8 +1844,8 @@ class Scalar_field_XY(object):
             order (int): order for interpolation
 
         Returns:
-            numpy.array: profile
-            numpy.array: z values for profile
+            numpy.np.array: profile
+            numpy.np.array: z values for profile
             (float, float): point1
             (float, float): point2
         """
@@ -1887,19 +1864,19 @@ class Scalar_field_XY(object):
         return h, z_profile, point1, point2
 
     def get_edges(self,
-                  kind_transition='amplitude',
-                  min_step=0,
-                  verbose=False,
-                  filename=''):
+                  kind_transition: str = 'amplitude',
+                  min_step: float = 0,
+                  verbose: bool = False,
+                  filename: str = ''):
         """
         Determine locations of edges for a binary mask. Valid for litography engraving of gratings.
 
-        Parameters:
+        Args:
             kind_transition:'amplitude' 'phase'.
             min_step: minimum step for consider a transition
 
         Returns:
-            type_transition: array with +1, -1 with rasing or falling edges
+            type_transition: np.array with +1, -1 with rasing or falling edges
             pos_transition: positions x of transitions
             raising: positions of raising
             falling: positions of falling
@@ -1909,10 +1886,10 @@ class Scalar_field_XY(object):
             self.x, self.u, kind_transition, min_step, verbose, filename)
         return pos_transitions, type_transitions, raising, falling
 
-    def search_focus(self, kind='moments', verbose=True):
+    def search_focus(self, kind: str = 'moments', verbose: bool = True):
         """Search for location of .
 
-        Parameters:
+        Args:
             kind (str): 'moments' or 'maximum'
             verbose (bool): If True prints information.
 
@@ -1936,16 +1913,16 @@ class Scalar_field_XY(object):
 
         return pos_x, pos_y
 
-    def MTF(self, kind='mm', has_draw=True, is_matrix=True):
+    def MTF(self, kind: str = 'mm', has_draw: bool = True, is_matrix: bool = True):
         """Computes the MTF of a field, If this field is near to focal point, the MTF will be wide
 
-        Parameters:
+        Args:
             kind (str): 'mm', 'degrees'
             has_draw (bool): If True draws the MTF
 
         Returns:
-            (numpy.array) fx: frequencies in lines/mm
-            (numpy.array) mtf_norm: normalizd MTF
+            (numpy.np.array) fx: frequencies in lines/mm
+            (numpy.np.array) mtf_norm: normalizd MTF
         """
 
         tmp_field = self.u
@@ -2003,10 +1980,10 @@ class Scalar_field_XY(object):
             u_mtf.u = mtf_norm
             return u_mtf
 
-    def beam_width_4s(self, has_draw=True):
+    def beam_width_4s(self, has_draw: bool = True):
         """Returns the beam width parameters according to ISO11146.
 
-        Parameters:
+        Args:
             has_draw (bool): If True, it draws
 
         Returns:
@@ -2082,10 +2059,10 @@ class Scalar_field_XY(object):
         intensity = (np.abs(self.u)**2)
         return intensity
 
-    def average_intensity(self, verbose=False):
+    def average_intensity(self, verbose: bool = False):
         """Returns average intensity as: (np.abs(self.u)**2).sum() / num_data.
 
-        Parameters:
+        Args:
             verbose(bool): If True prints data.
         """
         average_intensity = (np.abs(self.u)**2).mean()
@@ -2094,10 +2071,10 @@ class Scalar_field_XY(object):
 
         return average_intensity
 
-    def send_image_screen(self, id_screen, kind='amplitude'):
+    def send_image_screen(self, id_screen: int, kind: str = 'amplitude'):
         """Takes the images and sends the images to a screen in full size.
 
-        Parameters:
+        Args:
             id_screen(hdl): handle to screen
             kind('str'): 'amplitude', 'intensity', 'phase'
         """
@@ -2130,16 +2107,16 @@ class Scalar_field_XY(object):
         cv2.waitKey()
         cv2.destroyAllWindows()
 
-    def get_amplitude(self, matrix=False, new_field=False):
+    def get_amplitude(self, matrix: bool = False, new_field: bool = False):
         """Gets the amplitude of the field.
 
-        Parameters:
+        Args:
             matrix (bool): if True numpy.matrix is returned
             new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X
-            if matrix is True: numpy.array
+            if matrix is True: numpy.np.array
         """
         amplitude = abs(self.u)
 
@@ -2154,18 +2131,18 @@ class Scalar_field_XY(object):
         else:
             self.u = amplitude
 
-    def get_phase(self, matrix=False, new_field=False):
+    def get_phase(self, matrix: bool = False, new_field: bool = False):
         """Gets the phase of the field.
 
-        Parameters:
+        Args:
             matrix(bool): if True numpy.matrix is returned
             new_field(bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
-            if Matrix is True: numpy.array.
+            if Matrix is True: numpy.np.array.
         """
-        phase = exp(1j * angle(self.u))
+        phase = np.exp(1j * np.angle(self.u))
 
         if matrix is True:
             return phase
@@ -2178,17 +2155,17 @@ class Scalar_field_XY(object):
         else:
             self.u = phase
 
-    def remove_phase(self, sign=False, matrix=False, new_field=False):
+    def remove_phase(self, sign: bool = False, matrix: bool = False, new_field: bool = False):
         """Removes the phase of the field. Amplitude is kept.
 
-        Parameters:
+        Args:
             sign (bool): If True, sign is kept, else, it is removed
             matrix (bool): if True numpy.matrix is returned
             new_field (bool): if True it returns a new Scalar_field_XY
 
         Returns:
             if New_field is True: Scalar_field_X.
-            if Matrix is True: numpy.array.
+            if Matrix is True: numpy.np.array.
         """
 
         amplitude = np.abs(self.u)
@@ -2211,15 +2188,15 @@ class Scalar_field_XY(object):
             self.u = only_amplitude
 
     def binarize(self,
-                 kind="amplitude",
-                 bin_level=None,
-                 level0=None,
-                 level1=None,
-                 new_field=False,
-                 matrix=False):
+                 kind: str = "amplitude",
+                 bin_level: float | None = None,
+                 level0: float | None = None,
+                 level1: float | None = None,
+                 new_field: bool = False,
+                 matrix: bool = False):
         """Changes the number of points in field, mantaining the area.
 
-        Parameters:
+        Args:
             kind (str): 'amplitude' or 'phase'
             bin_level (float): value of cut. If None, the cut is in the mean value
             level0 (float): minimum value. If None, minimum value of field
@@ -2279,15 +2256,15 @@ class Scalar_field_XY(object):
             return cn
 
     def discretize(self,
-                   kind='amplitude',
-                   num_levels=2,
-                   factor=1,
-                   phaseInicial=0,
-                   new_field=True,
-                   matrix=False):
+                   kind: str = 'amplitude',
+                   num_levels: int = 2,
+                   factor: floating = 1,
+                   phaseInicial: floating = 0,
+                   new_field: bool = True,
+                   matrix: bool = False):
         """Discretize in a number of levels equal to num_levels.
 
-        Parameters:
+        Args:
             kind (str): "amplitude" o "phase"
             num_levels (int): number of levels for the discretization
             factor (float): from the level, how area is binarized. if 1 everything is binarized,
@@ -2302,7 +2279,7 @@ class Scalar_field_XY(object):
         """
 
         if kind == 'amplitude':
-            heights = linspace(0, 1, num_levels)
+            heights = np.linspace(0, 1, num_levels)
             posX = 256 / num_levels
 
             amplitude = self.get_amplitude(matrix=True, new_field=False)
@@ -2321,31 +2298,31 @@ class Scalar_field_XY(object):
             u_binarized = discretized_image * phase
 
         if kind == 'phase':
-            ang = angle(self.get_phase(matrix=True,
-                                       new_field=False)) + phaseInicial + pi
-            ang = ang % (2 * pi)
+            ang = np.angle(self.get_phase(matrix=True,
+                                          new_field=False)) + phaseInicial + np.pi
+            ang = ang % (2 * np.pi)
             amplitude = self.get_amplitude(matrix=True, new_field=False)
 
-            heights = linspace(0, 2 * pi, num_levels + 1)
+            heights = np.linspace(0, 2 * np.pi, num_levels + 1)
 
             dist = factor * (heights[1] - heights[0])
 
-            discretized_image = exp(1j * (ang))
+            discretized_image = np.exp(1j * (ang))
 
             for i in range(num_levels + 1):
                 centro = heights[i]
                 abajo = (ang) > (centro - dist / 2)
                 arriba = (ang) <= (centro + dist / 2)
                 Trues = abajo * arriba
-                discretized_image[Trues] = exp(1j * (centro))  # - pi
+                discretized_image[Trues] = np.exp(1j * (centro))  # - np.pi
 
             Trues = (ang) > (centro + dist / 2)
-            discretized_image[Trues] = exp(1j * (heights[0]))  # - pi
+            discretized_image[Trues] = np.exp(1j * (heights[0]))  # - np.pi
 
-            phase = angle(discretized_image) / pi
+            phase = np.angle(discretized_image) / np.pi
             phase[phase == 1] = -1
             phase = phase - phase.min()
-            discretized_image = exp(1j * pi * phase)
+            discretized_image = np.exp(1j * np.pi * phase)
 
             u_binarized = amplitude * discretized_image
 
@@ -2361,21 +2338,21 @@ class Scalar_field_XY(object):
         if matrix is True:
             return u_binarized
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
-            u (numpy.array): normalized optical field
+            u (numpy.np.array): normalized optical field
         """
         return normalize_field(self, new_field)
 
-    def get_RS_minimum_z(self, n=1, quality=1, verbose=True):
+    def get_RS_minimum_z(self, n: float = 1., quality: float = 1., verbose=True):
         """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter
 
             Args:
-                n (float): refraction index of the surrounding medium.
+                n (float): refractive index of the surrounding medium.
                 quality (int, optional): quality. Defaults to 1.
                 verbose (bool, optional): prints info. Defaults to True.
 
@@ -2412,20 +2389,20 @@ class Scalar_field_XY(object):
         return z_min
 
     def draw(self,
-             kind='intensity',
-             logarithm=False,
-             normalize=False,
-             title="",
-             filename='',
-             cut_value=None,
-             has_colorbar='',
-             colormap_kind='',
-             reduce_matrix='standard',
-             percentage_intensity=None,
+             kind: str = 'intensity',
+             logarithm: floating = 0.,
+             normalize: bool = False,
+             title: str = "",
+             filename: str = '',
+             cut_value: floating | None = None,
+             has_colorbar: str = '',
+             colormap_kind: str = '',
+             reduce_matrix: str = 'standard',
+             percentage_intensity: floating | None = None,
              **kwargs):
         """Draws  XY field.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
@@ -2469,7 +2446,7 @@ class Scalar_field_XY(object):
             plt.colorbar(orientation=has_colorbar, shrink=0.5)
 
         plt.tight_layout()
-        if not filename == '':
+        if filename != '':
             plt.savefig(filename,
                         dpi=100,
                         bbox_inches='tight',
@@ -2478,15 +2455,15 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def __draw_intensity__(self,
-                           logarithm=False,
+                           logarithm: floating = 0.,
                            normalize='maximum',
-                           title="",
-                           cut_value=None,
-                           colormap_kind='',
+                           title: str = "",
+                           cut_value: floating | None = None,
+                           colormap_kind: str = '',
                            **kwargs):
         """Draws intensity  XY field.
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
             title (str): title for the drawing
@@ -2514,15 +2491,15 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def __drawAmplitude__(self,
-                          logarithm=False,
+                          logarithm: floating = 0.,
                           normalize='maximum',
                           title='intensity',
                           cut_value=1,
-                          colormap_kind='',
+                          colormap_kind: str = '',
                           **kwargs):
         """Draws amplitude  XY field.
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
             title (str): title for the drawing
@@ -2548,13 +2525,13 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def __draw_phase__(self,
-                       title=r'phase/pi',
-                       colormap_kind='',
-                       percentage_intensity='None',
+                       title: str = r'phase/np.pi',
+                       colormap_kind: str = '',
+                       percentage_intensity: floating | None = None,
                        **kwargs):
         """Draws phase of  XY field
 
-        Parameters:
+        Args:
             title (str): title for the drawing
         """
         amplitude, intensity, phase = field_parameters(self.u,
@@ -2584,16 +2561,16 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def __draw_field__(self,
-                       logarithm=False,
-                       normalize='maximum',
-                       title="",
-                       cut_value=None,
-                       colormap_kind='',
-                       percentage_intensity=None,
+                       logarithm: floating = 0.,
+                       normalize: str = 'maximum',
+                       title: str = "",
+                       cut_value: floating | None = None,
+                       colormap_kind: str = '',
+                       percentage_intensity: floating | None = None,
                        **kwargs):
         """Draws field  XY field.
 
-        Parameters:
+        Args:
             logarithm(bool): If True, intensity is scaled in logarithm
             normalize(str):  False, 'maximum', 'area', 'intensity'
             title(str): title for the drawing
@@ -2615,7 +2592,7 @@ class Scalar_field_XY(object):
 
         xsize, ysize = rcParams['figure.figsize']
 
-        #plt.figure(figsize=(2 * xsize, 2 * ysize))
+        # plt.figure(figsize=(2 * xsize, 2 * ysize))
         plt.figure()
         plt.suptitle(title)
         extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
@@ -2662,16 +2639,16 @@ class Scalar_field_XY(object):
         return (h1, h2)
 
     def __draw_real_field__(self,
-                            logarithm=False,
-                            normalize='maximum',
-                            cut_value=1,
-                            title="",
-                            colormap_kind='',
-                            percentage_intensity=None,
+                            logarithm: floating = 0.,
+                            normalize: str = 'maximum',
+                            cut_value: floating | None = 1,
+                            title: str = "",
+                            colormap_kind: str = '',
+                            percentage_intensity: floating | None = None,
                             **kwargs):
-        """Draws real field  XY field.
+        """Draws np.real field  XY field.
 
-        Parameters:
+        Args:
             logarithm(bool): If True, intensity is scaled in logarithm
             normalize(str):  False, 'maximum', 'area', 'intensity'
             title(str): title for the drawing
@@ -2700,17 +2677,17 @@ class Scalar_field_XY(object):
         return id_fig, IDax, IDimage
 
     def video(self,
-              kind,
-              zs,
-              logarithm=False,
-              normalize=False,
-              time_video=10 * seconds,
-              frames_reduction=1,
-              filename='video.avi',
-              dpi=100):
-        """Makes a video
+              kind: str,
+              zs: NDArrayFloat,
+              logarithm: floating = 0.,
+              normalize: bool = False,
+              time_video: floating = 10 * seconds,
+              frames_reduction: int = 1,
+              filename: str = 'video.avi',
+              dpi: int = 100):
+        """Makes a video TODO
 
-        Parameters:
+        Args:
             kind(str): 'intensity', 'phase', 'amplitude'
         """
 
@@ -2743,90 +2720,94 @@ class Scalar_field_XY(object):
         ani.save(filename, fps=fps, dpi=dpi)
 
 
-def kernelRS(X, Y, wavelength, z, n=1, kind='z'):
+def kernelRS(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
+             n: float = 1., kind: str = 'z'):
     """Kernel for RS propagation. 
 
-    Parameters:
-        X(numpy.array): positions x
-        Y(numpy.array): positions y
+    Args:
+        X(numpy.np.array): positions x
+        Y(numpy.np.array): positions y
         wavelength(float): wavelength of incident fields
         z(float): distance for propagation
-        n(float): refraction index of background
+        n(float): refractive index of background
         kind(str): 'z', 'x', '0': for simplifying vector propagation
 
     Returns:
         complex np.array: kernel
     """
-    k = 2 * pi * n / wavelength
-    R = sqrt(X**2 + Y**2 + z**2)
+    k = 2 * np.pi * n / wavelength
+    R = np.sqrt(X**2 + Y**2 + z**2)
     if kind == 'z':
-        return 1 / (2 * pi) * exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
     elif kind == 'x':
-        return 1 / (2 * pi) * exp(1.j * k * R) * X / R**2 * (1 / R - 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(1.j * k * R) * X / R**2 * (1 / R - 1.j * k)
     elif kind == 'y':
-        return 1 / (2 * pi) * exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(1.j * k * R) * Y / R**2 * (1 / R - 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(1.j * k * R) / R * (1 / R - 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(1.j * k * R) / R * (1 / R - 1.j * k)
 
 
-def kernelRSinverse(X, Y, wavelength=0.6328 * um, z=-10 * mm, n=1, kind='z'):
+def kernelRSinverse(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
+                    n: floating = 1., kind: str = 'z'):
     """Kernel for inverse RS propagation
 
-    Parameters:
-        X(numpy.array): positions x
-        Y(numpy.array): positions y
+    Args:
+        X(numpy.np.array): positions x
+        Y(numpy.np.array): positions y
         wavelength(float): wavelength of incident fields
         z(float): distance for propagation
-        n(float): refraction index of background
+        n(float): refractive index of background
         kind(str): 'z', 'x', '0': for simplifying vector propagation
 
     Returns:
         complex np.array: kernel
     """
-    k = 2 * pi * n / wavelength
-    R = sqrt(X**2 + Y**2 + z**2)
+    k = 2 * np.pi * n / wavelength
+    R = np.sqrt(X**2 + Y**2 + z**2)
     if kind == 'z':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * z / R**2 * (1 / R + 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(-1.j * k * R) * z / R**2 * (1 / R + 1.j * k)
     elif kind == 'x':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * X / R**2 * (1 / R + 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(-1.j * k * R) * X / R**2 * (1 / R + 1.j * k)
     elif kind == 'y':
-        return 1 / (2 * pi) * exp(-1.j * k * R) * Y / R**2 * (1 / R + 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(-1.j * k * R) * Y / R**2 * (1 / R + 1.j * k)
     elif kind == '0':
-        return 1 / (2 * pi) * exp(-1.j * k * R) / R * (1 / R + 1.j * k)
+        return 1 / (2 * np.pi) * np.exp(-1.j * k * R) / R * (1 / R + 1.j * k)
 
 
-def kernelFresnel(X, Y, wavelength=0.6328 * um, z=10 * mm, n=1):
+def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
+                  n: floating = 1.):
     """
-    Kernel for Fesnel propagation.
+    Kernel for Fresnel propagation.
 
-    Parameters:
-        X(numpy.array): positions x
-        Y(numpy.array): positions y
+    Args:
+        X(numpy.np.array): positions x
+        Y(numpy.np.array): positions y
         wavelength(float): wavelength of incident fields
         z(float): distance for propagation
-        n(float): refraction index of background
+        n(float): refractive index of background
 
     Returns:
         complex np.array: kernel
     """
-    k = 2 * pi * n / wavelength
-    return exp(1.j * k * (z + (X**2 + Y**2) /
-                          (2 * z))) / (1.j * wavelength * z)
+    k = 2 * np.pi * n / wavelength
+    return np.exp(1.j * k * (z + (X**2 + Y**2) /
+                             (2 * z))) / (1.j * wavelength * z)
 
 
-def PWD_kernel(u, n, k0, k_perp2, dz):
+def PWD_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: NDArrayComplex,
+               dz: floating):
     """
     Step for scalar(TE) Plane wave decomposition(PWD) algorithm.
 
-    Parameters:
+    Args:
         u(np.array): field
-        n(np.array): refraction index
+        n(np.array): refractive index
         k0(float): wavenumber
         k_perp(np.array): transversal k
         dz(float): increment in distances
 
     Returns:
-        (numpy.array): Field at at distance dz from the incident field
+        (numpy.np.array): Field at at distance dz from the incident field
 
     References:
         1. Schmidt, S. et al. Wave - optical modeling beyond the thin - element - approximation. Opt. Express 24, 30188 (2016).
@@ -2842,13 +2823,14 @@ def PWD_kernel(u, n, k0, k_perp2, dz):
     return result
 
 
-def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
+def WPM_schmidt_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: NDArrayComplex,
+                       dz: floating):
     """
     Kernel for fast propagation of WPM method
 
-    Parameters:
+    Args:
         u (np.array): fields
-        n (np.array): refraction index
+        n (np.array): refractive index
         k0 (float): wavenumber
         k_perp2 (np.array): transversal k**2
         dz (float): increment in distances
@@ -2871,14 +2853,14 @@ def WPM_schmidt_kernel(u, n, k0, k_perp2, dz):
     return u_final
 
 
-def get_RS_minimum_z(range_x,
-                     range_y,
-                     num_x,
-                     num_y,
-                     wavelength,
-                     n=1,
-                     quality=1,
-                     verbose=True):
+def get_RS_minimum_z(range_x: floating,
+                     range_y: floating,
+                     num_x: int,
+                     num_y: int,
+                     wavelength: floating,
+                     n: float = 1.,
+                     quality: floating = 1,
+                     verbose: bool = True):
     """_summary_
 
     Args:
@@ -2888,6 +2870,7 @@ def get_RS_minimum_z(range_x,
         num_y (int): num_y
         z (float): z
         wavelength (float): wavelength
+        n (float): refractive index
         quality (int, optional): quality. Defaults to 1.
         verbose (bool, optional): prints info. Defaults to True.
 
@@ -2916,22 +2899,20 @@ def get_RS_minimum_z(range_x,
     return zmin
 
 
-def quality_factor(range_x,
-                   range_y,
-                   num_x,
-                   num_y,
-                   z,
-                   wavelength,
-                   n=1,
-                   verbose=False):
+def quality_factor(range_x: floating, range_y: floating, num_x: int, num_y: int,
+                   z: floating, wavelength: floating, n: float = 1., verbose: bool = False):
     """Determine the quality factor for RS algorithm
 
     Args:
-        x (np.array): x array with positions
-        y (np.array): y array with positions
-        z (float): observation distance
-        wavelength (float): wavelength)
-        n (float): refraction index
+        range_x (float): range_x
+        range_y (float): range_y
+        num_x (int): num_x
+        num_y (int): num_y
+        z (float): z
+        wavelength (float): wavelength
+        n (float): refractive index
+        verbose (bool, optional): prints info. Defaults to True.
+
 
     Returns:
         _type_: _description_

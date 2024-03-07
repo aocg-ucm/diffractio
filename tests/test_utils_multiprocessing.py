@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # -------------------------------------------------------------------------------
 # Name:       scalar_fields_XZ.py
@@ -38,7 +38,7 @@ def function_to_test(iterable, constant):
     return iterable**2 * constant
 
 
-class Test_utils_math(object):
+class Test_utils_math():
     def test_distance(self):
 
         dict_constants = {'x': 3, 'y': 4}

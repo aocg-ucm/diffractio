@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Example of an elaborate dialog showing a multiple views on the same data, with 3 cuts synchronized.
 
 This example shows how to have multiple views on the same data, how to

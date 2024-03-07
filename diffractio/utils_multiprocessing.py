@@ -1,5 +1,6 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# flake8: noqa
 
 import copyreg
 import multiprocessing
@@ -8,6 +9,9 @@ import types
 from multiprocessing import Pool
 
 import numpy as np
+
+
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
 def _pickle_method(method):
@@ -62,7 +66,7 @@ def separate_from_iterable(iterable, shape=0):
     return variables
 
 
-class auxiliar_multiprocessing(object):
+class auxiliar_multiprocessing():
 
     def __init__(self):
         pass
@@ -104,12 +108,12 @@ class auxiliar_multiprocessing(object):
 def execute_multiprocessing(__function_process__,
                             dict_Parameters,
                             num_processors,
-                            verbose=False):
+                            verbose: bool = False):
     """Executes multiprocessing reading a dictionary.
 
-    Parameters:
+    Args:
         __function_process__ function tu process, it only accepts a dictionary
-        dict_Parameters, dictionary / array with Parameters:
+        dict_Parameters, dictionary / array with Args:
         num_processors, if 1 no multiprocessing is used
         verbose, prints processing time
 
@@ -126,7 +130,7 @@ def execute_multiprocessing(__function_process__,
             return dict(sumas=suma, ij=xd['ij'])
 
         def creation_dictionary_multiprocessing():
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             t1 = time.time()
             X = np.linspace(1, 2, 10)
             Y = np.linspace(1, 2, 1000)

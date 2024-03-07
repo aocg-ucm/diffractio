@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """The setup script."""
 
 from setuptools import find_packages, setup
@@ -16,7 +16,7 @@ with open('HISTORY.rst', encoding='utf8') as history_file:
 
 requirements = [
     'screeninfo', 'Pillow', 'numexpr', 'pandas', 'py_pol',
-    'ipywidgets', 'ipympl', 'opencv-python', "psutil"
+    'ipywidgets', 'ipympl', 'opencv-python'
 ]
 
 setup_requirements = [

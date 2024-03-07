@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -32,7 +32,7 @@ polarization_45 = [1, 1] / np.sqrt(2)
 polarization_m45 = [1, -1] / np.sqrt(2)
 
 
-class Test_vector_sources_XY(object):
+class Test_vector_sources_XY():
 
     def test_constant_polarization(self):
         func_name = sys._getframe().f_code.co_name
