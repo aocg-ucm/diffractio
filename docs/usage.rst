@@ -210,10 +210,10 @@ from diffractio import nm, um, mm, degrees
 
   M0 = Vector_mask_XY(x=x0, y=y0, wavelength=wavelength)
 
-  state_0 = np.array([[1, 0],[0, 0]])
-  state_1 = np.array([[0, 0],[0, 1]])
+  pol_state_0 = np.array([[1, 0],[0, 0]])
+  pol_state_1 = np.array([[0, 0],[0, 1]])
 
-  M0.complementary_masks(t0, state_0, state_1)
+  M0.complementary_masks(t0, pol_state_0, pol_state_1)
 
   EM1 = EM0 * M0
   EM1.draw(kind='ellipses')

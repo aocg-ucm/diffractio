@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """tests for scalar_fields_X"""
 
 import copyreg
@@ -87,7 +87,7 @@ def __experiment_grating_movement__(dict_params):
     return u2
 
 
-class Test_Scalar_fields_X(object):
+class Test_Scalar_fields_X():
 
     def test_extended_source_simple(self):
         """
@@ -203,7 +203,7 @@ class Test_Scalar_fields_X(object):
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(deltas_x, period, t1, t2):
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             dict_Parameters = []
             for i, delta_x in enumerate(deltas_x):
                 dict_Parameters.append(
@@ -334,7 +334,7 @@ def __experiment_extended_polychromatic_source__(dict_params):
     return u1
 
 
-class Test_Scalar_fields_X_multiprocessing(object):
+class Test_Scalar_fields_X_multiprocessing():
 
     def test_multiprocessing_dictionary(self):
         func_name = sys._getframe().f_code.co_name
@@ -342,7 +342,7 @@ class Test_Scalar_fields_X_multiprocessing(object):
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         def creation_dictionary(wavelengths, x0, z, slit_size, separation):
-            # create Parameters: for multiprocessing
+            # create Args: for multiprocessing
             dict_Parameters = []
             for i, wavelength in enumerate(wavelengths):
                 dict_Parameters.append(

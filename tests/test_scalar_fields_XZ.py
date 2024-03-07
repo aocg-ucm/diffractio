@@ -1,12 +1,10 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Tests for Scalar_mask_XZ"""
 import datetime
 import os
 import sys
 import time
-
-import pytest
 
 from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
                         um)
@@ -105,7 +103,7 @@ u_focus = generate_BPM_field()
 u_gauss = generate_BPM_gauss()
 
 
-class Test_Scalar_fields_XZ(object):
+class Test_Scalar_fields_XZ():
 
     def test_rotate_field(self):
         func_name = sys._getframe().f_code.co_name
@@ -527,12 +525,11 @@ class Test_Scalar_fields_XZ(object):
 
         diferencias = np.abs(u_RS)**2 - np.abs(u_BPM)**2
         u1.u = diferencias
-        u1.draw(kind='intensity', logarithm=False, normalize=False)
+        u1.draw(kind='intensity', logarithm=0., normalize=False)
         u1.save_data(filename=filename + '.npz', add_name='_diff')
         save_figure_test(newpath, func_name, add_name='_diff')
         assert True
 
-    @pytest.mark.xfail
     def test_draw_profiles(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -559,7 +556,7 @@ class Test_Scalar_fields_XZ(object):
         u1.RS()
 
         u1.draw(kind='intensity',
-                logarithm=False,
+                logarithm=0.,
                 normalize='maximum',
                 draw_borders=True,
                 filename='')
@@ -578,7 +575,6 @@ class Test_Scalar_fields_XZ(object):
 
         assert True
 
-    @pytest.mark.xfail
     def test_BPM_profile_automatico(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
@@ -676,7 +672,7 @@ class Test_Scalar_fields_XZ(object):
         # u1.draw_refractive_index()
         # u1.BPM(verbose=False)
         u1 = u_focus
-        u1.draw(logarithm=False, normalize=False, draw_borders=True)
+        u1.draw(logarithm=0., normalize=False, draw_borders=True)
         save_figure_test(newpath, func_name, add_name='')
 
         x_max, z_max = u1.search_focus()
@@ -809,7 +805,7 @@ class Test_Scalar_fields_XZ(object):
         # Hago la inverse y drawing los resultados
         u2 = u1.BPM_back_propagation()
         # u2.draw_incident_field(
-        #     kind='intensity', logarithm=False, normalize=False, filename='')
+        #     kind='intensity', logarithm=0., normalize=False, filename: str = '')
         u2.draw_refractive_index(draw_borders=True, min_incr=0.001)
         u2.draw(logarithm=True,
                 normalize='maximum',

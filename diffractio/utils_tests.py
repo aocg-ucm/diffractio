@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# flake8: noqa
 
 # ------------------------------------
 # Authors:    Luis Miguel Sanchez Brea
@@ -12,6 +13,8 @@ import datetime
 import multiprocessing
 import sys
 import time
+
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 from . import mm, no_date, np, plt, um
 from .scalar_masks_XY import Scalar_mask_XY
@@ -37,7 +40,15 @@ path_class = "utils_math"
 newpath = "{}_{}/{}/".format(path_base, date, path_class)
 
 
-def _test_slit_RS_XY(num_pixels):
+def _test_slit_RS_XY(num_pixels: int):
+    """_test_slit_RS_XY
+
+    Args:
+        num_pixels (int): num_pixels
+
+    Returns:
+        u: field
+    """
     length = 512 * um
     x = np.linspace(-length / 2, length / 2, num_pixels)
     y = np.linspace(-length / 2, length / 2, num_pixels)
@@ -49,7 +60,13 @@ def _test_slit_RS_XY(num_pixels):
     return u1
 
 
-def run_benchmark(num_pixels):
+def run_benchmark(num_pixels: int):
+    """_summary_
+
+    Args:
+        num_pixels (int): _description_
+    """
+
     _test_slit_RS_XY(num_pixels=num_pixels)
 
     def test_pixels(self):
@@ -76,10 +93,10 @@ def run_benchmark(num_pixels):
         save_figure_test(newpath, func_name, '_acc')
 
 
-def comparison(proposal, solution, maximum_diff):
+def comparison(proposal: NDArrayFloat, solution: NDArrayFloat, maximum_diff: float):
     """This functions is mainly for testing. It compares compares proposal to solution.
 
-    Parameters:
+    Args:
         proposal (numpy.matrix): proposal of result.
         solution (numpy.matrix): results of the test.
         maximum_diff (float): maximum difference allowed.
@@ -93,7 +110,14 @@ def comparison(proposal, solution, maximum_diff):
     return comparison1
 
 
-def save_figure_test(newpath, func_name, add_name=''):
+def save_figure_test(newpath: str, func_name: str, add_name: str = ''):
+    """_summary_
+
+    Args:
+        newpath (str): _description_
+        func_name (str): _description_
+        add_name (str, optional): _description_. Defaults to ''.
+    """
     title = '{}{}'.format(func_name, add_name)
     plt.suptitle(title)
     filename = '{}{}{}.{}'.format(newpath, func_name, add_name, 'png')
@@ -101,22 +125,28 @@ def save_figure_test(newpath, func_name, add_name=''):
     plt.close('all')
 
 
-def ejecute_multiprocessing(num_cores, n_pixels):
+def ejecute_multiprocessing(num_cores: int, n_pixels: int):
+    """_summary_
+
+    Args:
+        num_cores (int): _description_
+        n_pixels (int): _description_
+    """
     num_pixeles = n_pixels * np.ones(NUM_PROCESSES)
     if num_cores == 1:
         [run_benchmark(i_pixels) for i_pixels in num_pixeles]
     else:
-        pool = multiprocessing.Pool(processes=num_cores, )
+        pool = multiprocessing.Pool(processes=num_cores)
         pool.map(run_benchmark, num_pixeles)
         pool.close()
         pool.join()
 
 
-def benchmark_num_pixels(function, n_max=10):
+def benchmark_num_pixels(function, n_max: int = 10):
     """This function is for benchmarking using an increasing number of pixels 2**n.
 
-    Parameters:
-        function (function): Functions that has as argumetn the number of pixels 2**n.
+    Args:
+        function (function): Functions that has as argument the number of pixels 2**n.
     """
 
     n = np.array(range(6, n_max + 1))
@@ -136,7 +166,16 @@ def benchmark_num_pixels(function, n_max=10):
     plt.plot(NUM_PIXELS, time_array / NUM_PIXELS, 'ko', ms=12)
 
 
-def benchmark_processors_n_pixels(n_pixels):
+def benchmark_processors_n_pixels(n_pixels: int):
+    """_summary_
+
+    Args:
+        n_pixels (int): _description_
+
+    Returns:
+        _type_: _description_
+    """
+
     time_array = np.zeros_like(NUM_CORES, dtype='float')
     for i, core in enumerate(NUM_CORES):
         t1 = time.time()
@@ -146,19 +185,15 @@ def benchmark_processors_n_pixels(n_pixels):
     return time_array
 
 
-def save_data_test(cls, newpath, func_name, add_name=''):
+def save_data_test(cls, newpath: str, func_name: str, add_name: str = ''):
+    """_summary_
+
+    Args:
+        newpath (_type_): _description_
+        func_name (_type_): _description_
+        add_name (str, optional): _description_. Defaults to ''.
+    """
+
     filename = '{}{}{}.{}'.format(newpath, func_name, add_name, 'npz')
     print(filename)
     np.savez_compressed(file=filename, dict=cls.__dict__)
-
-
-def compare_npz_folders(folder1, folder2):
-    """look for identical files, open and verifies that all the dicts are equal
-    """
-    pass
-
-
-def compare_drawings_folders(folder1, folder2):
-    """look for identical images, open and verifies that are equal
-    """
-    pass

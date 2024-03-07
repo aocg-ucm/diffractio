@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """tests for scalar_fields_X"""
 
 import copyreg
@@ -32,7 +32,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_fields_X(object):
+class Test_Scalar_fields_X():
 
     def test_add(self):
         pass

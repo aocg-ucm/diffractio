@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# flake8: noqa
+
 """
 This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
@@ -35,6 +37,8 @@ from matplotlib import rcParams
 import time
 from scipy.interpolate import RectBivariateSpline
 
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -50,13 +54,12 @@ from scipy.fftpack import fft, fftshift, ifft, ifftshift
 
 percentage_intensity = CONF_DRAWING["percentage_intensity"]
 
-# From Scalar_mask_XZ to have refraction index.
-# TODO: anistropic masks.
+
 class Vector_field_XZ(Scalar_mask_XZ):
     """Class for vectorial fields.
-    
 
-    Parameters:
+
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
@@ -69,7 +72,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x, z, wavelength, n_background=1, info=""):
+    def __init__(self, x: NDArrayFloat | None = None, z: NDArrayFloat | None = None,
+                 wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
         self.wavelength = wavelength  # la longitud de onda
@@ -80,19 +84,16 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
         self.Ez = np.zeros_like(self.X, dtype=complex)
-        
+
         self.Hx = None
         self.Hy = None
         self.Hz = None
-        
-        self.n = n_background * np.ones(np.shape(self.X), dtype=complex)
-        self.borders = None  # borders at refraction index
 
-        
+        self.n = n_background * np.ones(np.shape(self.X), dtype=complex)
+        self.borders = None  # borders at refractive index
+
         self.Ex0 = np.zeros_like(self.x)
         self.Ey0 = np.zeros_like(self.x)
-        
-        
 
         self.reduce_matrix = "standard"  # 'None, 'standard', (5,5)
         self.type = "Vector_field_XZ"
@@ -131,7 +132,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def __add__(self, other, kind="standard"):
         """adds two Vector_field_X. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Vector_field_X): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -148,12 +149,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return EM
 
-    def save_data(self, filename, add_name="", description="", verbose=False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
 
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -170,11 +172,11 @@ class Vector_field_XZ(Scalar_mask_XZ):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -196,18 +198,17 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
-    
-    
+
     def incident_field(self, E0, z0=None):
         """Incident field for the experiment. It takes a Scalar_source_X field
 
-        Parameters:
+        Args:
             E0 (Vector_source_X): field produced by Scalar_source_X (or a X field)
             z0 (float): position of the incident field. if None, '', [], is at the beginning
         """
@@ -215,10 +216,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if z0 in (None, '', []):
             self.Ex0 = E0.Ex
             self.Ey0 = E0.Ey
-            
+
             self.Ex[:, 0] = self.Ex[:, 0] + E0.Ex
             self.Ey[:, 0] = self.Ey[:, 0] + E0.Ey
-            
+
         else:
             iz, _, _ = nearest(self.z, z0)
             self.Ex[:, iz] = self.Ex[:, iz] + E0.Ex
@@ -228,22 +229,22 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """Returns the final field as a Vector_field_X."""
 
         EH_final = Vector_field_X(x=self.x,
-                                 wavelength=self.wavelength,
-                                 n_background=self.n_background,
-                                 info="from final_field at z0= {} um".format(
-                                     self.z[-1]))
+                                  wavelength=self.wavelength,
+                                  n_background=self.n_background,
+                                  info="from final_field at z0= {} um".format(
+                                      self.z[-1]))
         EH_final.Ex = self.Ex[:, -1]
         EH_final.Ey = self.Ey[:, -1]
         EH_final.Ez = self.Ez[:, -1]
         EH_final.Hx = self.Hx[:, -1]
         EH_final.Hy = self.Hy[:, -1]
-        EH_final.Hz = self.Hz[:, -1]   
+        EH_final.Hz = self.Hz[:, -1]
         return EH_final
 
     def get(self, kind="fields", is_matrix=True):
         """Takes the vector field and divide in Scalar_field_X.
 
-        Parameters:
+        Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
@@ -319,7 +320,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
-        Parameters:
+        Args:
            u (Scalar_mask_X): mask
         """
         self.Ex = self.Ex * u.u
@@ -327,13 +328,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Ez = self.Ez * u.u
 
     def FP_WPM(
-        self, has_edges=True, pow_edge=80, matrix=False, has_H=True, verbose=False
+        self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False
     ):
         """
-        WPM Method. 'schmidt methodTrue is very fast, only needs discrete number of refraction indexes'
+        WPM Method. 'schmidt methodTrue is very fast, only needs discrete number of refractive indexes'
 
 
-        Parameters:
+        Args:
             has_edges (bool): If True absorbing edges are used.
             pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns a matrix else
@@ -387,7 +388,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         for j in range(1, num_steps):
 
-                
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
@@ -403,7 +403,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 self.wavelength,
                 dz,
             )
-
 
             self.Ex[j, :] = self.Ex[j, :] + E_step[0] * filter_edge
             self.Ey[j, :] = self.Ey[j, :] + E_step[1] * filter_edge
@@ -425,17 +424,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if matrix is True:
             return (self.Ex, self.Ey, self.Ez), (self.Hx, self.Hy, self.Hz)
 
-
     def intensity(self):
         """ "Returns intensity."""
         intensity = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
 
         return intensity
 
-
-
-
-    def Poynting_vector(self, has_draw=True, axis='equal'):
+    def Poynting_vector(self, has_draw: bool = True, axis='equal'):
         "Instantaneous Poynting Vector"
 
         Sx = self.Ey * self.Hz - self.Ez * self.Hy
@@ -493,17 +488,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return Sx, Sy, Sz
 
-
-    def Poynting_vector_averaged(self, has_draw=False, axis='scaled'):
+    def Poynting_vector_averaged(self, has_draw: bool = False, axis='scaled'):
         "Averaged Poynting Vector"
-
 
         Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
         Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
         Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
-        
+
         # if possible elliminate
-        Sz[0,:]=Sz[1,:]
+        Sz[0, :] = Sz[1, :]
 
         S_max = np.max((Sx, Sy, Sz))
         S_min = np.min((Sx, Sy, Sz))
@@ -541,19 +534,19 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.title("$S_x$")
                 im1 = draw_field(Sx, x0, z0, axis, cmap='seismic')
                 plt.clim(-S_lim, S_lim)
-                #axes[0].set_axis_off()
+                # axes[0].set_axis_off()
 
                 plt.subplot(3, 1, 2)
                 plt.title("$S_y$")
                 im2 = draw_field(Sy, x0, z0, axis, cmap='seismic')
                 plt.clim(-S_lim, S_lim)
-                #axes[1].set_axis_off()
+                # axes[1].set_axis_off()
 
                 plt.subplot(3, 1, 3)
                 im3 = draw_field(Sz, x0, z0, axis, cmap='seismic')
                 plt.title("$S_z$")
                 plt.clim(-S_lim, S_lim)
-                #axes[2].set_axis_off()
+                # axes[2].set_axis_off()
 
                 # = fig.colorbar(im3, ax=axes.ravel().tolist(), shrink=0.95)
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
@@ -561,8 +554,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return Sx, Sy, Sz
 
-
-    def Poynting_total(self, has_draw=False, axis='scaled'):
+    def Poynting_total(self, has_draw: bool = False, axis='scaled'):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
@@ -585,12 +577,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return S
 
+    def energy_density(self, has_draw: bool = False, axis='scaled'):
 
-    def energy_density(self, has_draw=False, axis='scaled'):
-
-        epsilon = self.n **2
+        epsilon = self.n ** 2
         permeability = 4 * np.pi * 1e-7
-        
 
         U = epsilon * (np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2) + permeability * (np.abs(self.Hx)**2 + np.abs(self.Hy)**2 + np.abs(self.Hz)**2)
 
@@ -607,16 +597,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.colorbar(orientation='horizontal')
 
             plt.title("energy_density")
-        
-    
-            
+
         return U
 
+    def irradiance(self, has_draw: bool = False, axis='scaled'):
 
-
-    def irradiance(self, has_draw=False, axis='scaled'):
-
-        epsilon = self.n **2
+        epsilon = self.n ** 2
         permeability = 4 * np.pi * 1e-7
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
@@ -632,43 +618,40 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
                 draw_field(Sz, self.x, self.z, axis, cmap='hot')
                 plt.colorbar(orientation='horizontal')
-                plt.clim(0,Sz.max())
+                plt.clim(0, Sz.max())
 
             plt.title("Irradiance")
-        
-    
-            
-        return Sz
 
+        return Sz
 
     def check_energy(self, I0=None):
         permeability = 4 * np.pi * 1e-7
         Z0 = 376.82
-        
+
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
         U = self.energy_density(has_draw=False)
 
-        check_Sz = Sz.mean(axis=1)/Sz[0,:].mean()
-        check_U = U.mean(axis=1)/U[0,:].mean()
+        check_Sz = Sz.mean(axis=1)/Sz[0, :].mean()
+        check_U = U.mean(axis=1)/U[0, :].mean()
 
         plt.figure()
         plt.plot(self.z, check_Sz, 'r', label='Sz')
-        #plt.plot(self.z, check_U, 'b', label='U')
+        # plt.plot(self.z, check_U, 'b', label='U')
         plt.legend()
-        
+
         plt.xlim(self.z[0], self.z[-1])
         plt.grid('on')
-        
+
         if I0 is not None:
             plt.ylim(ymin=I0)
-        
-        return check_Sz #, check_U
-# 
 
-    def polarization_states(self, matrix=False):
+        return check_Sz  # , check_U
+#
+
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
-        Parameters:
+        Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
         Returns:
@@ -696,10 +679,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
+        Args:
             pol_state (None or (I, Q, U, V) ): Polarization state previously computed
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
@@ -738,10 +721,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field=False):
+    def normalize(self, new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
-        Parameters:
+        Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
         Returns
             u (numpy.array): normalized optical field
@@ -751,16 +734,16 @@ class Vector_field_XZ(Scalar_mask_XZ):
     def draw(
         self,
         kind="intensity",
-        logarithm=0,
-        normalize=False,
-        cut_value=None,
+        logarithm: floating = 0,
+        normalize: bool = False,
+        cut_value: floating | None = None,
         filename="",
         draw=True,
         **kwargs
     ):
         """Draws electromagnetic field
 
-        Parameters:
+        Args:
             kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -797,7 +780,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 print("not good kind parameter in vector_fields_X.draw()")
                 id_fig = None
 
-            if not filename == "":
+            if filename != "":
                 plt.savefig(filename, dpi=100, bbox_inches="tight", pad_inches=0.1)
 
             return id_fig
@@ -812,7 +795,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """Draws the intensity
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -841,7 +824,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -907,7 +890,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -991,7 +974,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -1114,8 +1097,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
     def __draw_ellipses__(
         self,
-        logarithm=False,
-        normalize=False,
+        logarithm: floating = 0.,
+        normalize: bool = False,
         cut_value="",
         num_ellipses=(21, 21),
         amplification=0.75,
@@ -1128,7 +1111,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """__internal__: draw ellipses
 
-        Parameters:
+        Args:
             num_ellipses (int): number of ellipses for parameters_ellipse
         """
 
@@ -1202,10 +1185,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 #     print(max_r, intensity_max,
                 #           percentage_intensity * intensity_max)
 
-    def __draw1__(self, image, colormap, title="", has_max=False, only_image=False):
+    def __draw1__(self, image, colormap, title: str = "", has_max=False, only_image=False):
         """Draws image
 
-        Parameters:
+        Args:
             image (numpy.array): array with drawing
             colormap (str): colormap
             title (str): title of drawing
@@ -1256,10 +1239,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return h
 
 
-def polarization_ellipse(self, pol_state=None, matrix=False):
+def polarization_ellipse(self, pol_state=None, matrix: bool = False):
     """returns A, B, theta, h polarization parameter of elipses
 
-    Parameters:
+    Args:
         pol_state (None or (I, Q, U, V) ): Polarization state previously computed
         Matrix (bool): if True returns Matrix, else Scalar_field_X
 
@@ -1329,8 +1312,8 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     Args:
         Ex (np.array): field Ex
         Ey (np.array): field Ey
-        n1 (np.array): refraction index at the first layer
-        n2 (np.array): refraction index at the second layer
+        n1 (np.array): refractive index at the first layer
+        n2 (np.array): refractive index at the second layer
         k0 (float): wavenumber
         kx (np.array): transversal wavenumber
         wavelength (float): wavelength
@@ -1344,10 +1327,8 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
 
     # amplitude of waveplanes
 
-
     Exk = fftshift(fft(Ex))
     Eyk = fftshift(fft(Ey))
-
 
     kr = n1 * k0
     ks = n2 * k0
@@ -1400,7 +1381,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     Hx_final = ifft(ifftshift(hx0))
     Hy_final = ifft(ifftshift(hy0))
     Hz_final = ifft(ifftshift(hz0))
-    
 
     return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
 
@@ -1409,12 +1389,11 @@ def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     """
     Kernel for fast propagation of WPM method
 
-
     Args:
         Ex (np.array): field Ex
         Ey (np.array): field Ey
-        n1 (np.array): refraction index at the first layer
-        n2 (np.array): refraction index at the second layer
+        n1 (np.array): refractive index at the first layer
+        n2 (np.array): refractive index at the second layer
         k0 (float): wavenumber
         kx (np.array): transversal wavenumber
         wavelength (float): wavelength
@@ -1459,7 +1438,6 @@ def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
             Hy_final = Hy_final + Imz * H[1]
             Hz_final = Hz_final + Imz * H[2]
     return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
-
 
 
 def draw_field(u, x_f, z_f, axis, interpolation='bilinear', cmap=None):

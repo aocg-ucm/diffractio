@@ -1,11 +1,11 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
 import sys
 import time
-import pytest
+
 from diffractio import degrees, eps, mm, no_date, np, plt, um
 from diffractio.scalar_fields_XY import Scalar_field_XY
 from diffractio.scalar_masks_XY import Scalar_mask_XY
@@ -90,7 +90,7 @@ square = square_test()
 plane_wave = plane_wave_test()
 
 
-class Test_Scalar_fields_XY(object):
+class Test_Scalar_fields_XY():
 
     def test_add(self):
         func_name = sys._getframe().f_code.co_name
@@ -307,7 +307,6 @@ class Test_Scalar_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    @pytest.mark.xfail
     def test_profile_manual(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -364,7 +363,6 @@ class Test_Scalar_fields_XY(object):
         print(inten1)
         assert True
 
-    @pytest.mark.xfail
     def test_send_image_screen(self):
         # func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -489,7 +487,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.draw(kind='intensity', normalize=None)
 
         field.binarize(kind="amplitude",
@@ -548,7 +546,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.draw(kind='field')
 
         fieldAmplitud = field.discretize(kind='amplitude',
@@ -603,7 +601,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.set_phase(q=1, phase_min=-np.pi, phase_max=np.pi)
         field.draw(kind='field')
 
