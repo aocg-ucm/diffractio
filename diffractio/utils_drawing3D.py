@@ -119,7 +119,6 @@ def draw(
     opacity = kwargs["opacity"]
     dimensions = kwargs["dimensions"]
     scale = kwargs["scale"]
-    cmap = kwargs["cmap"]
     spacing = kwargs["spacing"]
     pos_centers = kwargs["pos_centers"]
     pos_slices = kwargs["pos_slices"]
@@ -134,9 +133,11 @@ def draw(
 
     if variable == "intensity":
         data = intensity
+        cmap = kwargs["cmap_intensity"]
+
     elif variable == "refractive_index":
         data = n
-    
+        cmap = kwargs["cmap_n"]
         
     data = data.reshape((len(self.y),len(self.x),len(self.z)))
     grid["scalars"] =  np.transpose(data,axes=(2,1,0)).flatten()
@@ -189,7 +190,7 @@ def draw(
         slice1 = grid.slice_orthogonal(x=0, z=0)
         slice2 = grid.slice_orthogonal(x=0, y=0)
         slice3 = grid.slice_orthogonal(y=0, z=0)
-        slice4 = grid.slice_orthogonal(x=pos_centers[2], z=pos_centers[2])
+        slice4 = grid.slice_orthogonal()
 
         # XYZ - show 3D scene first
         pl.subplot(1, 1)
