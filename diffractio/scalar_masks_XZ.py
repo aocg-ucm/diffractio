@@ -448,14 +448,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """
 
         def _discretize_(refractive_index: NDArrayComplex, n_layers: int):
-            """internal function to discretize the refraction index
+            """internal function to discretize the refractive index
 
             Args:
                 refractive_index (NDArrayComplex): refractive index
                 n_layers (int): number of layers
 
             Returns:
-                NDArrayComplex: discretized refraction index
+                NDArrayComplex: discretized refractive index
             """
             n_new = np.zeros_like(refractive_index, dtype=float)
 

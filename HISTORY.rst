@@ -158,7 +158,7 @@ Beta state
 
 * Mask parameters is removed in some XY masks, as lenses, FPZ, etc. The new way to do this is the .pupil() function.
 
-* Smooth_refraction index can be used also for Wave Propagation Method algorithm (WPM).
+* Smooth_refractive index can be used also for Wave Propagation Method algorithm (WPM).
 
 
 0.2.3 (2023-11-21)

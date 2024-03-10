@@ -68,9 +68,9 @@ XZ fields
   u1.rectangle(r0=(0 * um, 100 * um),
     size=(100 * um, 100 * um),
     angle=45 * degrees,
-    refraction_index=2)
+    refractive_index=2)
 
-  u1.draw_refraction_index(filename='usage5.png', scale='scaled')
+  u1.draw_refractive_index(filename='usage5.png', scale='scaled')
   u1.WPM(verbose=False)
   u1.draw(logarithm=True, normalize='maximum', draw_borders=True, filename='usage6.png', scale='scaled');
 

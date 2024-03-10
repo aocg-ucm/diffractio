@@ -541,7 +541,7 @@ class Scalar_field_XYZ():
                                      new_field=False,
                                      matrix=True,
                                      kind='z',
-                                     bool=False)
+                                     verbose=False)
         return self.u[:, :, i]
 
     def RS(self, verbose: bool = False, num_processors=num_max_processors - 2):

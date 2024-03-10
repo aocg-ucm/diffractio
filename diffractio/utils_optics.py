@@ -253,7 +253,7 @@ def beam_width_2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat,
 
 def refractive_index(filename: str, wavelength: floating, raw: bool = False,
                      has_draw: bool = bool):
-    """gets refraction index from https://refractiveindex.info .
+    """gets refractive index from https://refractiveindex.info .
 
     * Files has to be converted to xlsx format.
     * n and k checks has to be activated.
@@ -811,8 +811,8 @@ def convert_phase2heigths(phase: NDArrayFloat, wavelength: floating, n: floating
     Args:
         phase (np.array): Phases
         wavelength (float): wavelength
-        n (float or complex): refraction index of material
-        n_background (float): refraction index of background
+        n (float or complex): refractive index of material
+        n_background (float): refractive index of background
 
     Returns:
         (np.array): depths related to phases
@@ -830,8 +830,8 @@ def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: floating,
     Args:
         phase (np.array): Phases
         wavelength (float): wavelength
-        kappa (float): refraction index of material.
-        n_background (float): refraction index of background
+        kappa (float): refractive index of material.
+        n_background (float): refractive index of background
 
     Returns:
         (np.array): depths related to amplitudes
@@ -854,8 +854,8 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: floating, n1: floating,
     Args:
         kx (np.array): kx
         wavelength (float): wavelength
-        n1 (float): refraction index of first materia
-        n2 (float): refraction index of second materia
+        n1 (float): refractive index of first materia
+        n2 (float): refractive index of second materia
         outputs (bool,bool,bool,bool): Selects the outputs to compute
         has_draw (bool, optional): if True, it draw. Defaults to False.
         kind (str): It draw 'amplitude_phase' or 'real_imag'
@@ -970,8 +970,8 @@ def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: floating, n1: 
     Args:
         kx (np.array): kx
         wavelength (float): wavelength
-        n1 (float): refraction index of first materia
-        n2 (float): refraction index of second materia
+        n1 (float): refractive index of first materia
+        n2 (float): refractive index of second materia
         has_draw (bool, optional): if True, it draw. Defaults to False.
         outputs (bool,bool,bool,bool): Selects the outputs to compute
 
@@ -1036,8 +1036,8 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
     Args:
         theta (np.array): kx
         wavelength (float): wavelength
-        n1 (float): refraction index of first materia
-        n2 (float): refraction index of second materia
+        n1 (float): refractive index of first materia
+        n2 (float): refractive index of second materia
         kind (str): It draw 'amplitude_phase' or 'real_imag'
         has_draw (bool, optional): if True, it draw. Defaults to False.
         kind (str): It draw 'amplitude_phase' or 'real_imag'
@@ -1171,8 +1171,8 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: floating, n1: fl
     Args:
         theta (np.array): angles
         wavelength (float): wavelength
-        n1 (float): refraction index of first materia
-        n2 (float): refraction index of second materia
+        n1 (float): refractive index of first materia
+        n2 (float): refractive index of second materia
         has_draw (bool, optional): if True, it draw. Defaults to False.
         outputs (bool,bool,bool,bool): Selects the outputs to compute
 

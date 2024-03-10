@@ -34,7 +34,7 @@ Single step to propagate to a near or far observation plane, which allows fast c
 
 - Feit, M. D., and Fleck, J. A. (1978). Light propagation in graded-index optical fibers.
 
-Propation of light in volumetric elements, provided that the spatial variations in the refraction index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. Computed according to split-step propagation scheme.
+Propation of light in volumetric elements, provided that the spatial variations in the refractive index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. Computed according to split-step propagation scheme.
 
 
 **Wave Propagation Method (WPM)**
@@ -45,7 +45,7 @@ Propation of light in volumetric elements, provided that the spatial variations 
 
 - Schmidt, S., Thiele, S., Herkommer, A., Tünnermann, A., and Gross, H. (2017). Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses. Optics Letters, 42(8), 1612. https://doi.org/10.1364/ol.42.001612
 
-Solves the major limitations of the beam propagation method (BPM). The wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Very fast with a discrete number of refraction indexes.
+Solves the major limitations of the beam propagation method (BPM). The wave propagation scheme provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Very fast with a discrete number of refractive indexes.
 
 
 **Chirped z Transform (CZT)**
