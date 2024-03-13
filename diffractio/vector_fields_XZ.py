@@ -108,9 +108,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Imin = intensity.min()
         Imax = intensity.max()
 
-        print(
-            "{}\n - x:  {},     Ex:  {}".format(self.type, self.x.shape, self.Ex.shape)
-        )
+        print("{}\n - x:  {},   z:  {},   Ex:  {}".format(
+            self.type, self.x.shape, self.z.shape, self.Ex.shape))
+
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
                 self.x[0], self.x[-1], self.x[1] - self.x[0]

@@ -101,8 +101,8 @@ class Vector_field_XY():
         Imin = intensity.min()
         Imax = intensity.max()
 
-        print("{}\n - x:  {},     Ex:  {}".format(self.type, self.x.shape,
-                                                  self.Ex.shape))
+        print("{}\n - x:  {},   y:  {},   u:  {}".format(
+            self.type, self.x.shape, self.y.shape, self.Ex.shape))
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
             .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
@@ -790,7 +790,7 @@ class Vector_field_XY():
             E_out (variable): Output field. It depends on the size of xout, yout, and z.
 
         References:
-             [Light: Science and Applications, 9(1), (2020)] 
+            - [Light: Science and Applications, 9(1), (2020)] 
         """
         if xout is None:
             xout = self.x
@@ -890,7 +890,9 @@ class Vector_field_XY():
                     e0z_zs.u[i] = e0z_u
 
                 elif num_x > 1 and num_y == 1:
-                    e0z_zs.u[:, i] = e0z_u.u
+                    e0z_zs.u[i, :] = e0z_u.u
+                elif num_x > 1 and num_y > 1:
+                    e0z_zs.u[:, :, i] = e0z_u.u
 
             if num_x == 1 and num_y == 1:
                 from diffractio.vector_fields_Z import Vector_field_Z
@@ -911,6 +913,7 @@ class Vector_field_XY():
             elif num_x > 1 and num_y > 1:
                 # TODO: need to implement Vector_field_XYZ
                 from diffractio.vector_fields_XYZ import Vector_field_XYZ
+                print("# TODO: need to implement Vector_field_XYZ")
                 E_out = Vector_field_XYZ(xout, yout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
@@ -925,36 +928,28 @@ class Vector_field_XY():
 
         Returns:
             S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3  for Matrix=False
+            S0,S1,S2,S3 for Matrix=False
         """
 
-        I = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
-        Q = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
-        U = 2 * np.real(self.Ex * np.conjugate(self.Ey))
-        V = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
+        S0 = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
+        S1 = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
+        S2 = 2 * np.real(self.Ex * np.conjugate(self.Ey))
+        S3 = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
 
         if matrix is True:
-            return I, Q, U, V
+            return S0, S1, S2, S3
         else:
-            CI = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
-            CQ = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
-            CU = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
-            CV = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
+            C_S0 = Scalar_field_XY(self.x, self.y, self.wavelength)
+            C_S1 = Scalar_field_XY(self.x, self.y, self.wavelength)
+            C_S2 = Scalar_field_XY(self.x, self.y, self.wavelength)
+            C_S3 = Scalar_field_XY(self.x, self.y, self.wavelength)
 
-            CI.u = I
-            CQ.u = Q
-            CU.u = U
-            CV.u = V
+            C_S0.u = S0
+            C_S1.u = S1
+            C_S2.u = S2
+            C_S3.u = S3
 
-            return CI, CQ, CU, CV
+            return C_S0, C_S1, C_S2, C_S3
 
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
@@ -987,18 +982,10 @@ class Vector_field_XY():
         if matrix is True:
             return A, B, theta, h
         else:
-            CA = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
-            CB = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
-            Ctheta = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
-            Ch = Scalar_field_XY(x=self.x,
-                                 y=self.y,
-                                 wavelength=self.wavelength)
+            CA = Scalar_field_XY(self.x, self.y, self.wavelength)
+            CB = Scalar_field_XY(self.x, self.y, self.wavelength)
+            Ctheta = Scalar_field_XY(self.x, self.y, self.wavelength)
+            Ch = Scalar_field_XY(self.x, self.y, self.wavelength)
 
             CA.u = A
             CB.u = B

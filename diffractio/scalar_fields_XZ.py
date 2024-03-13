@@ -1805,7 +1805,7 @@ class Scalar_field_XZ():
         positions_center = np.zeros_like(self.z)
 
         for i, zi in enumerate(self.z):
-            field = np.abs(self.u[:, i])
+            field = np.abs(self.u[i, :])
             if kind == 'sigma4':
                 widths[i], positions_center[i] = beam_width_1D(field, self.x)
             elif kind == 'FWHM1D':
