@@ -43,6 +43,7 @@ from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_X import Scalar_mask_X
 from .utils_math import nearest, nearest2
 from .utils_optics import roughness_1D
+from .utils_dxf import load_dxf
 
 
 class Scalar_mask_XZ(Scalar_field_XZ):
@@ -545,6 +546,48 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         if invert is False:
             image = image.max() - image
         self.n = n_min + image * (n_max - n_min)
+
+    def dxf(self, filename_dxf: str, n_max: floating, n_min: floating, num_pixels: list[int, int] | None = None, extent: list[float] | None = None,
+            units: str = 'mm', invert: bool = False, filename_png: str = 'new.png', has_draw: bool = False, verbose: bool = False):
+        """Loads a dxf file. Internally it has the extension of the drawing, so it is not required to generate x,y spaces. It is possible with extent, but then the file is scaled. Warning: Dxf files are usually in mm. and diffractio works in um. To generate .u, a temporal .png file is generated. 
+
+        Args:
+            filename_dxf (str): DXF filename .dxf
+            num_pixels (list[int, int] | None, optional): If . Defaults to None.
+            extent (_type_, optional): _description_. Defaults to None.
+            units (str, optional): _description_. Defaults to 'mm'.
+            invert (bool, optional): _description_. Defaults to False.
+            filename_png (str, optional): _description_. Defaults to 'new.png'.
+            has_draw (bool, optional): _description_. Defaults to True.
+            verbose (bool, optional): _description_. Defaults to True.
+        """
+
+        if num_pixels is None:
+            num_pixels = len(self.z), len(self.x)
+
+        image_new, p_min, p_max = load_dxf(filename_dxf, num_pixels, filename_png, has_draw, verbose)
+        # image_new = np.transpose(image_new)
+        # image_new = np.flipud(image_new)
+        # ok in xy but not here?
+
+        if units == 'mm':
+            p_min = p_min*1000
+            p_max = p_max*1000
+
+        if extent is None:
+            self.z = np.linspace(p_min[0], p_max[0], num_pixels[0])
+            self.x = np.linspace(p_min[1], p_max[1], num_pixels[1])
+            self.X, self.Z = np.meshgrid(self.x, self.z)
+        else:
+            self.z = np.linspace(extent[0], extent[1], num_pixels[0])
+            self.x = np.linspace(extent[2], extent[3], num_pixels[1])
+            self.X, self.Z = np.meshgrid(self.x, self.z)
+
+        if invert is True:
+            image_new = 1-image_new
+
+        self.n = self.n + image_new * (n_max - n_min)
+        # cuidado con n_min y n_background ¿es lo mismo?
 
     def dots(self, positions: list[floating, floating], refractive_index: floating = 1.):
         """Generates 1 or several point masks at positions r0
