@@ -171,4 +171,4 @@ def load_dxf(filename_dxf, num_pixels, filename_png='', has_draw=True, verbose=T
         plt.colorbar()
         plt.clim(0, 1)
 
-    return image_new, p_min, p_max
+    return image_new, p_min, p_max, msp
