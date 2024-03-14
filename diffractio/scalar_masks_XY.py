@@ -393,10 +393,12 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         if self.x is not None:
             num_pixels = len(self.x), len(self.y)
+        
 
         image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, verbose)
         image_new = np.flipud(image_new)
 
+        print(" units = ", msp.units)
         if units == 'mm':
             p_min = p_min*1000
             p_max = p_max*1000
@@ -405,16 +407,6 @@ class Scalar_mask_XY(Scalar_field_XY):
             p_max = p_max*25400
 
         if self.x is None:
-
-            if extent is None:
-
-                self.x = np.linspace(p_min[0], p_max[0], num_pixels[0])
-                self.y = np.linspace(p_min[1], p_max[1], num_pixels[1])
-                self.X, self.Y = np.meshgrid(self.x, self.y)
-            else:
-                self.x = np.linspace(extent[0], extent[1], num_pixels[0])
-                self.y = np.linspace(extent[2], extent[3], num_pixels[1])
-                self.X, self.Y = np.meshgrid(self.x, self.y)
 
         if invert is True:
             image_new = 1-image_new
