@@ -376,6 +376,7 @@ class Scalar_mask_XY(Scalar_field_XY):
     def dxf(self, filename_dxf: str, num_pixels: list[int, int] | None = None, extent: list[float] | None = None,
             units: str = 'mm', invert: bool = False, filename_png: str = 'new.png', has_draw: bool = False, verbose: bool = False):
         """Loads a dxf file. Internally it has the extension of the drawing, so it is not required to generate x,y spaces. It is possible with extent, but then the file is scaled. Warning: Dxf files are usually in mm. and diffractio works in um. To generate .u, a temporal .png file is generated. 
+        If x and y arrays are given, then num_pixels and extent are not used.
 
         Args:
             filename_dxf (str): DXF filename .dxf
@@ -388,25 +389,30 @@ class Scalar_mask_XY(Scalar_field_XY):
             verbose (bool, optional): _description_. Defaults to True.
         """
 
-        if num_pixels is None:
+        if self.x is not None:
             num_pixels = len(self.x), len(self.y)
+        
 
-        image_new, p_min, p_max = load_dxf(filename_dxf, num_pixels, filename_png, has_draw, verbose)
+        image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, filename_png, has_draw, verbose)
         image_new = np.flipud(image_new)
 
+        print(" units = ", msp.units)
         if units == 'mm':
             p_min = p_min*1000
             p_max = p_max*1000
 
-        if extent is None:
-            self.x = np.linspace(p_min[0], p_max[0], num_pixels[0])
-            self.y = np.linspace(p_min[1], p_max[1], num_pixels[1])
-            self.X, self.Y = np.meshgrid(self.x, self.y)
-        else:
-            self.x = np.linspace(extent[0], extent[1], num_pixels[0])
-            self.y = np.linspace(extent[2], extent[3], num_pixels[1])
-            self.X, self.Y = np.meshgrid(self.x, self.y)
+        if self.x is None:
 
+            if extent is None:
+                
+                self.x = np.linspace(p_min[0], p_max[0], num_pixels[0])
+                self.y = np.linspace(p_min[1], p_max[1], num_pixels[1])
+                self.X, self.Y = np.meshgrid(self.x, self.y)
+            else:
+                self.x = np.linspace(extent[0], extent[1], num_pixels[0])
+                self.y = np.linspace(extent[2], extent[3], num_pixels[1])
+                self.X, self.Y = np.meshgrid(self.x, self.y)
+        
         if invert is True:
             image_new = 1-image_new
 
