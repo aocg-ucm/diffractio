@@ -149,7 +149,7 @@ class Scalar_field_XY():
             phase_min, phase_max))
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
-        print(" - date:    other   {}".format(self.date))
+        print(" - date:       {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
         return ("")

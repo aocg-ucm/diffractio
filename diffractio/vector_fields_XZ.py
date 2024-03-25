@@ -442,12 +442,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
         S_lim = np.max((abs(S_max), np.abs(S_min)))
 
         if has_draw:
+            tx, ty = rcParams["figure.figsize"]
+
             dims = np.shape(self.Ex)
             num_dims = len(dims)
             if num_dims == 1:
                 z0 = self.z
 
-                plt.figure()
+                plt.figure(figsize=(1 * tx, 3 * ty))
                 plt.subplot(1, 3, 1)
                 plt.plot(z0, np.real(Sx))
                 plt.ylim(-S_lim, S_lim)
@@ -464,7 +466,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.title("$S_z$")
 
             elif num_dims == 2:
-                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
+                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True,
+                                         figsize=(1 * tx, 2 * ty))
                 plt.subplot(3, 1, 1)
                 plt.title("$S_x$")
                 draw_field(np.real(Sx), self.x, self.z, axis, cmap='seismic')
@@ -484,7 +487,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
                 cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal')
 
-            plt.suptitle("Instantaneous Poynting vector")
+            # plt.suptitle("Instantaneous Poynting vector")
 
         return Sx, Sy, Sz
 
