@@ -86,19 +86,27 @@ def binarize(image, center_level=128):
     return image_new
 
 
-def load_dxf(filename_dxf, num_pixels, filename_png='', has_draw=True, verbose=True):
+def load_dxf(filename_dxf: str, num_pixels: list[int, int], verbose: bool = False):
     """_summary_
 
     Args:
         filename_dxf (_type_): _description_
         num_pixels (_type_): _description_
         filename_png (str, optional): _description_. Defaults to ''.
-        has_draw (bool, optional): _description_. Defaults to True.
-        verbose (bool, optional): _description_. Defaults to True.
+
 
     Returns:
         _type_: _description_
+
     """
+    # Example frame:
+    #     frame: dict or bool = False,
+    #     r0 = np.array((0*um, 0))
+    #     extent_dxf = [-500*um, +500*um, -250*um, +250*um]
+
+    # temporal, for debugging
+    filename_png = ''
+    has_draw = False
 
     try:
         doc, auditor = recover.readfile(filename_dxf)
@@ -144,10 +152,6 @@ def load_dxf(filename_dxf, num_pixels, filename_png='', has_draw=True, verbose=T
     p_min = np.array((p1[0], p1[1]))
     p_max = np.array((p2[0], p2[1]))
 
-    if verbose:
-        print("p_min = ", p_min)
-        print("p_max = ", p_max)
-
     im_frame = Image.open(filename_png2)
 
     np_frame = np.array(im_frame.getdata())
@@ -156,7 +160,17 @@ def load_dxf(filename_dxf, num_pixels, filename_png='', has_draw=True, verbose=T
 
     image_new = binarize(im, 128)
 
+    # if frame is not False:
+    #     r0 = frame['r0']
+    #     ext_dxf = frame['extension']
+    #     points0 = np.array([(ext_dxf[0], ext_dxf[2]), (ext_dxf[1], ext_dxf[2]),
+    #                         (ext_dxf[1], ext_dxf[3]), (ext_dxf[0], ext_dxf[3])])
+    #     points0 = points0 + r0
+    #     msp.add_lwpolyline(points0, close=True, dxfattribs={"color": 6})
+
     if verbose:
+        print("p_min = ", p_min)
+        print("p_max = ", p_max)
         print("frame size: ", im_frame.size)
         # print(im_frame.format)
         # print(im_frame.mode)
