@@ -393,12 +393,10 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         if self.x is not None:
             num_pixels = len(self.x), len(self.y)
-        
 
         image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, verbose)
         image_new = np.flipud(image_new)
 
-        print(" units = ", msp.units)
         if units == 'mm':
             p_min = p_min*1000
             p_max = p_max*1000
