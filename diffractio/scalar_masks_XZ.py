@@ -547,8 +547,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             image = image.max() - image
         self.n = n_min + image * (n_max - n_min)
 
-    def dxf(self, filename_dxf: str, n_max: floating, n_min: floating, num_pixels: list[int, int] | None = None, extent: list[float] | None = None,
-            units: str = 'mm', invert: bool = False, filename_png: str = 'new.png', has_draw: bool = False, verbose: bool = False):
+    def dxf(self, filename_dxf: str, n_max: floating, n_min: floating, num_pixels: list[int, int] | None = None,
+            extent: list[float] | None = None, units: str = 'um', invert: bool = False, verbose: bool = False):
         """Loads a dxf file. Internally it has the extension of the drawing, so it is not required to generate x,y spaces. It is possible with extent, but then the file is scaled. Warning: Dxf files are usually in mm. and diffractio works in um. To generate .u, a temporal .png file is generated. 
 
         Args:
@@ -564,29 +564,31 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         if self.x is not None:
             num_pixels = len(self.x), len(self.z)
-        
 
-        image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, filename_png, has_draw, verbose)
-        #image_new = np.rot90(image_new, k=-1)
-        # image_new = np.transpose(image_new)
-        print(" units = ", msp.units)
+        image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, verbose)
+        image_new = np.flipud(image_new)
+        image_new = np.transpose(image_new)
+
         if units == 'mm':
             p_min = p_min*1000
             p_max = p_max*1000
+        elif units == 'inches':
+            p_min = p_min*25400
+            p_max = p_max*25400
 
         if self.x is None:
 
             if extent is None:
-                
-                self.z = np.linspace(p_min[0], p_max[0], num_pixels[1])
-                self.x = np.linspace(p_min[1], p_max[1], num_pixels[0])
-                self.X, self.Z = np.meshgrid(self.x, self.z)
+
+                self.z = np.linspace(p_min[0], p_max[0], num_pixels[0])
+                self.x = np.linspace(p_min[1], p_max[1], num_pixels[1])
+                self.Z, self.X = np.meshgrid(self.z, self.x)
                 self.n = self.n_background*np.ones_like(self.X)
                 self.u = np.zeros_like(self.X, dtype=complex)
             else:
-                self.x = np.linspace(extent[0], extent[1], num_pixels[0])
-                self.z = np.linspace(extent[2], extent[3], num_pixels[1])
-                self.X, self.Z = np.meshgrid(self.x, self.z)
+                self.z = np.linspace(extent[2], extent[3], num_pixels[0])
+                self.x = np.linspace(extent[0], extent[1], num_pixels[1])
+                self.Z, self.X = np.meshgrid(self.z, self.x)
                 self.n = self.n_background*np.ones_like(self.X)
                 self.u = np.zeros_like(self.X, dtype=complex)
 
