@@ -111,7 +111,7 @@ class Scalar_field_X():
             self.u = np.zeros(shape(self.x), dtype=complex)
         else:
             self.u = None
-            
+
         self.quality = 0
         self.info = info
         self.type = "Scalar_field_X"
@@ -927,7 +927,7 @@ class Scalar_field_X():
                 from diffractio.scalar_fields_XZ import Scalar_field_XZ
 
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
-                u_out.u = 1j * u_zs.transpose()
+                u_out.u = 1j * u_zs
 
         return u_out
 
