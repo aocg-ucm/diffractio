@@ -1985,8 +1985,8 @@ class Scalar_field_XZ():
 
         extension = [self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()]
 
-        imenor, value, distance = nearest(vector=self.z, number=z_actual)
-        I_drawing_actual = np.squeeze(I_drawing[imenor, :])
+        i_z_min, value, distance = nearest(vector=self.z, number=z_actual)
+        I_drawing_actual = np.squeeze(I_drawing[i_z_min, :])
 
         z = self.z
 
@@ -2007,8 +2007,8 @@ def __update__(val: floating):
     """for making videos.
     """
     zz = zZ.val
-    imenor, value, distance = nearest(vector=z, number=zz)
-    I_drawing_profile = np.squeeze(I_drawing[:, imenor])
+    i_z_min, value, distance = nearest(vector=z, number=zz)
+    I_drawing_profile = np.squeeze(I_drawing[i_z_min, :])
 
     I_drawing_profile = normalize_draw(I_drawing_profile, log1, norm1)
     l2a.set_ydata(I_drawing_profile)
