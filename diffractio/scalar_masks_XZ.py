@@ -561,7 +561,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """
 
         if self.x is not None:
-            num_pixels = len(self.x), len(self.z)
+            num_pixels = len(self.z), len(self.x)
 
         image_new, p_min, p_max, msp = load_dxf(filename_dxf, num_pixels, verbose)
         image_new = np.flipud(image_new)
@@ -577,16 +577,15 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         if self.x is None:
 
             if extent is None:
-
                 self.z = np.linspace(p_min[0], p_max[0], num_pixels[0])
                 self.x = np.linspace(p_min[1], p_max[1], num_pixels[1])
-                self.Z, self.X = np.meshgrid(self.z, self.x)
+                self.X, self.Z = np.meshgrid(self.x, self.z)
                 self.n = self.n_background*np.ones_like(self.X)
                 self.u = np.zeros_like(self.X, dtype=complex)
             else:
                 self.z = np.linspace(extent[2], extent[3], num_pixels[0])
                 self.x = np.linspace(extent[0], extent[1], num_pixels[1])
-                self.Z, self.X = np.meshgrid(self.z, self.x)
+                self.X, self.Z = np.meshgrid(self.x, self.z)
                 self.n = self.n_background*np.ones_like(self.X)
                 self.u = np.zeros_like(self.X, dtype=complex)
 
