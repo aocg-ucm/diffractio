@@ -192,29 +192,27 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         if has_draw is True:
             plt.figure()
-            plt.plot(self.x, F1)
+            plt.plot(self.x, F1, "b")
             plt.plot(self.x, F2, "r")
 
         Xrot, Zrot = self.__rotate__(angle, r0)
 
         i_z1, _, _ = nearest2(self.z, F1)
         i_z2, _, _ = nearest2(self.z, F2)
-        ipasa = np.zeros_like(self.n, dtype=bool)
+        ipasa1 = np.zeros_like(self.n, dtype=bool)
         for i, xi in enumerate(self.x):
-            #     minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
-            #     ipasa[i, minor:mayor] = True
-            ipasa[i, i_z1[i]: i_z2[i]] = True
+            ipasa1[i_z1[i]: i_z2[i], i] = True
 
         if x_sides is None:
-            self.n[ipasa] = refractive_index
-            return ipasa
+            self.n[ipasa1] = refractive_index
+            return ipasa1
 
         else:
             ipasa2 = Xrot < x_sides[1]
             ipasa3 = Xrot > x_sides[0]
 
-            self.n[ipasa * ipasa2 * ipasa3] = refractive_index
-            return ipasa * ipasa2 * ipasa3
+            self.n[ipasa1 * ipasa2 * ipasa3] = refractive_index
+            return ipasa1 * ipasa2 * ipasa3
 
     def mask_from_array_proposal(
         self,
@@ -1511,7 +1509,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         i_z, _, _ = nearest2(self.z, z0 + sizez - fx)
         i_final = len(self.z)
         for i in range(len(self.x)):
-            self.n[i, i_z[i]: i_final] = n_back[i, i_z[i]: i_final]
+            self.n[i_z[i]: i_final, i] = n_back[i_z[i]: i_final, i]
 
         if angle != 0:
             self.rotate_field(angle, rotation_point,

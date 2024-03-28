@@ -498,14 +498,12 @@ class Scalar_field_XZ():
             interp_kind: numbers between 1 and 5
         """
         if x_limits == '':
-            # used only for resampling
             x0 = self.x[0]
             x1 = self.x[-1]
         else:
             x0, x1 = x_limits
 
         if z_limits == '':
-            # used only for resampling
             z0 = self.z[0]
             z1 = self.z[-1]
         else:
@@ -523,7 +521,7 @@ class Scalar_field_XZ():
 
         i_x0, _, _ = nearest(self.x, x0)
         i_x1, _, _ = nearest(self.x, x1)
-        # new_num_points = i_x1 - i_x0
+
         i_z0, _, _ = nearest(self.z, z0)
         i_z1, _, _ = nearest(self.z, z1)
 
@@ -535,14 +533,14 @@ class Scalar_field_XZ():
             z_new = np.linspace(z0, z1, num_points_z)
             X_new, Z_new = np.meshgrid(x_new, z_new)
 
-            f_interp_abs = RectBivariateSpline(self.x,
-                                               self.z,
+            f_interp_abs = RectBivariateSpline(self.z,
+                                               self.x,
                                                np.abs(self.u),
                                                kx=kxu,
                                                ky=kxu,
                                                s=0)
-            f_interp_phase = RectBivariateSpline(self.x,
-                                                 self.z,
+            f_interp_phase = RectBivariateSpline(self.z,
+                                                 self.x,
                                                  np.angle(self.u),
                                                  kx=kxu,
                                                  ky=kxu,
@@ -551,30 +549,30 @@ class Scalar_field_XZ():
             u_new_phase = f_interp_phase(z_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
 
-            n_interp_real = RectBivariateSpline(self.x,
-                                                self.z,
+            n_interp_real = RectBivariateSpline(self.z,
+                                                self.x,
                                                 np.real(self.n),
                                                 kx=kxn,
                                                 ky=kxn,
                                                 s=0)
-            n_interp_imag = RectBivariateSpline(self.x,
-                                                self.z,
+            n_interp_imag = RectBivariateSpline(self.z,
+                                                self.x,
                                                 np.imag(self.n),
                                                 kx=kxn,
                                                 ky=kxn,
                                                 s=0)
-            n_new_real = n_interp_real(x_new, z_new)
-            n_new_imag = n_interp_imag(x_new, z_new)
+            n_new_real = n_interp_real(z_new, x_new)
+            n_new_imag = n_interp_imag(z_new, x_new)
             n_new = n_new_real + 1j * n_new_imag
 
         else:
-            i_s = slice(i_x0, i_x1)
-            j_s = slice(i_z0, i_z1)
-            x_new = self.x[i_s]
-            z_new = self.z[j_s]
+            iz_s = slice(i_z0, i_z1)
+            jx_s = slice(i_x0, i_x1)
+            x_new = self.x[jx_s]
+            z_new = self.z[iz_s]
             X_new, Z_new = np.meshgrid(x_new, z_new)
-            u_new = self.u[i_s, j_s]
-            n_new = self.n[i_s, j_s]
+            u_new = self.u[iz_s, jx_s]
+            n_new = self.n[iz_s, jx_s]
 
         if new_field is False:
             self.x = x_new
@@ -583,12 +581,13 @@ class Scalar_field_XZ():
             self.n = n_new
             self.X = X_new
             self.Z = Z_new
-        elif new_field is True:
+        else:
             field = Scalar_field_XZ(x=x_new,
                                     z=z_new,
                                     wavelength=self.wavelength)
             field.u = u_new
             field.n = n_new
+
             return field
 
     def incident_field(self, u0, z0: floating | None = None):
@@ -603,7 +602,7 @@ class Scalar_field_XZ():
             self.u0 = u0
         else:
             iz, _, _ = nearest(self.z, z0)
-            self.u[:, iz] = self.u[:, iz] + u0.u
+            self.u[iz, :] = self.u[iz, :] + u0.u
 
     def final_field(self):
         """Returns the final field as a Scalar_field_X."""
@@ -664,9 +663,12 @@ class Scalar_field_XZ():
 
         if has_edges is False:
             has_filter = np.zeros_like(self.z)
-
-        elif isinstance(has_edges, int):
+        elif has_edges is True:
             has_filter = np.ones_like(self.z)
+        elif isinstance(has_edges, (int, float)):
+            has_filter = np.zeros_like(self.z)
+            iz, _, _ = nearest(self.z, has_edges)
+            has_filter[iz:] = 1
         else:
             has_filter = has_edges
 
@@ -968,7 +970,8 @@ class Scalar_field_XZ():
 
         Args:
             kind (str): 'schmidt', 'scalar'
-            has_edges (bool): If True absorbing edges are used.
+            has_edges (bool): If True absorbing edges are used. 
+                It can be a float, indicanting z value when edges start
             pow_edge (float): If has_edges, power of the supergaussian
             matrix (bool): if True returns a matrix else
             verbose (bool): If True prints information
@@ -996,8 +999,12 @@ class Scalar_field_XZ():
 
         if has_edges is False:
             has_filter = np.zeros_like(self.z)
-        elif isinstance(has_edges, int):
+        elif has_edges is True:
             has_filter = np.ones_like(self.z)
+        elif isinstance(has_edges, (int, float)):
+            has_filter = np.zeros_like(self.z)
+            iz, _, _ = nearest(self.z, has_edges)
+            has_filter[iz:] = 1
         else:
             has_filter = has_edges
 
@@ -1242,7 +1249,7 @@ class Scalar_field_XZ():
         # surface detection
         diff1a = np.diff(iborders, axis=1)
 
-        # cada uno de los lados
+        # each size
         ix_l, iz_l = (diff1a > incr_n).nonzero()
         ix_r, iz_r = (diff1a < -incr_n).nonzero()
 
@@ -1327,52 +1334,19 @@ class Scalar_field_XZ():
             reduce_matrix (int, int) or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             has_draw (bool): If True draw.
         """
+        n_new = self.n
+        z_new = self.z
+        x_new = self.x
 
-        if reduce_matrix is False:
-            n_new = self.n
-            z_new = self.z
-            x_new = self.x
-
-        elif reduce_matrix == 'standard':
-            num_x = len(self.x)
-            num_z = len(self.z)
-            reduction_x = int(num_x / 1000)
-            reduction_z = int(num_z / 1000)
-
-            if reduction_x == 0:
-                reduction_x = 1
-            if reduction_z == 0:
-                reduction_z = 1
-
-            n_new = self.n[::reduction_z, ::reduction_x]
-            z_new = self.z[::reduction_z]
-            x_new = self.x[::reduction_x]
-
-        else:
-            n_new = self.n[::reduce_matrix[0], ::reduce_matrix[1]]
-
-            # cuidado, que puede ser al revés
-            z_new = self.z[::reduce_matrix[1]]
-            x_new = self.x[::reduce_matrix[0]]
-
-        mode = 1
-        if mode == 1:
-            diff1 = gradient(np.abs(n_new), axis=0)
-            diff2 = gradient(np.abs(n_new), axis=1)
-        elif mode == 2:
-            diff1 = diff(np.abs(n_new), axis=0)
-            diff2 = diff(np.abs(n_new), axis=1)
-            # print(diff1.shape, diff2.shape, len(self.z), len(self.x))
-            diff1 = np.append(diff1, np.zeros((1, len(x_new))), axis=0)
-            diff2 = np.append(diff2, np.zeros((len(z_new), 1)), axis=1)
-            # print(diff1.shape, diff2.shape)
+        diff1 = gradient(np.abs(n_new), axis=0)
+        diff2 = gradient(np.abs(n_new), axis=1)
 
         # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
         t = np.abs(diff1) + np.abs(diff2)
 
-        iz, ix = (t > min_incr).nonzero()
-        # print(iz, ix, z_new.shape, x_new.shape)
-        self.borders = z_new[iz], x_new[ix]
+        ix, iz = (t > min_incr).nonzero()
+
+        self.borders = x_new[iz], z_new[ix]
 
         if has_draw:
             plt.figure()
@@ -1508,19 +1482,14 @@ class Scalar_field_XZ():
             plt.axis(scale)
 
         if draw_borders is True:
-            if edge_matrix is not None:
-                borderz, borderx = edge_matrix
-                # print("tengo")
+            if edge_matrix is None:
+                self.surface_detection(1, min_incr, reduce_matrix=False)
+                border0 = self.borders[0]
+                border1 = self.borders[1]
             else:
-                if self.borders is None:
-                    # print("no tengo")
-                    self.surface_detection(1, min_incr, reduce_matrix)
-                borderz = self.borders[0]
-                borderx = self.borders[1]
+                border0, border1 = edge_matrix
 
-            # print("draw edges")
-            # print(self.borders)
-            plt.plot(borderz, borderx, 'w.', ms=0.5)
+            plt.plot(border1, border0, 'w.', ms=.5)
 
         if filename != '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
@@ -1537,7 +1506,8 @@ class Scalar_field_XZ():
                               reduce_matrix: str = 'standard',
                               colorbar_kind: str | None = None,
                               colormap_kind: str | str = cm.Blues,
-                              edge_matrix: NDArrayFloat | None = None):
+                              edge_matrix: NDArrayFloat | None = None
+                              ):
         """Draws refractive index.
 
         Args:
@@ -1580,7 +1550,13 @@ class Scalar_field_XZ():
                 reduction_z = 1
             n_new = n_draw[::reduction_z, ::reduction_x]
             h1 = plt.imshow(n_new.transpose(),
-                            interpolation='bilinear',
+
+                            # if self.borders is None or edge_matrix is None:
+                            #     self.surface_detection(1, min_incr, reduce_matrix)
+                            #     border0 = self.borders[0]
+                            #     border1 = self.borders[1]
+                            # if edge_matrix is not None:
+                            #     border0, border1 = edge_matrix          interpolation='bilinear',
                             aspect='auto',
                             origin='lower',
                             extent=extension)
@@ -1588,7 +1564,13 @@ class Scalar_field_XZ():
             n_new = n_draw[::reduce_matrix[0], ::reduce_matrix[1]]
             h1 = plt.imshow(n_new.transpose(),
                             interpolation='bilinear',
-                            aspect='auto',
+
+                            # if self.borders is None or edge_matrix is None:
+                            #     self.surface_detection(1, min_incr, reduce_matrix)
+                            #     border0 = self.borders[0]
+                            #     border1 = self.borders[1]
+                            # if edge_matrix is not None:
+                            #     border0, border1 = edge_matrix          aspect='auto',
                             origin='lower',
                             extent=extension)
 
@@ -1612,7 +1594,7 @@ class Scalar_field_XZ():
                 border1 = self.borders[1]
             if edge_matrix is not None:
                 border0, border1 = edge_matrix
-            plt.plot(border0, border1, 'w.', ms=1)
+            plt.plot(border1, border0, 'c.', ms=.25)
 
         if filename != '':
             plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
@@ -1957,7 +1939,7 @@ class Scalar_field_XZ():
 
         def animate(i):
 
-            hdl_line.set_data(self.x, I_drawing[i,:])
+            hdl_line.set_data(self.x, I_drawing[i, :])
             ax.set_title("$z = {:2.0f} \mu m$".format(self.z[i]))
             return i
 
@@ -2003,8 +1985,8 @@ class Scalar_field_XZ():
 
         extension = [self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()]
 
-        imenor, value, distance = nearest(vector=self.z, number=z_actual)
-        I_drawing_actual = np.squeeze(I_drawing[imenor,:])
+        i_z_min, value, distance = nearest(vector=self.z, number=z_actual)
+        I_drawing_actual = np.squeeze(I_drawing[i_z_min, :])
 
         z = self.z
 
@@ -2025,8 +2007,8 @@ def __update__(val: floating):
     """for making videos.
     """
     zz = zZ.val
-    imenor, value, distance = nearest(vector=z, number=zz)
-    I_drawing_profile = np.squeeze(I_drawing[:, imenor])
+    i_z_min, value, distance = nearest(vector=z, number=zz)
+    I_drawing_profile = np.squeeze(I_drawing[i_z_min, :])
 
     I_drawing_profile = normalize_draw(I_drawing_profile, log1, norm1)
     l2a.set_ydata(I_drawing_profile)
