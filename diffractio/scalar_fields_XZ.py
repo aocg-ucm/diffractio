@@ -1985,8 +1985,8 @@ class Scalar_field_XZ():
 
         extension = [self.x[0], self.x[-1], I_drawing.min(), I_drawing.max()]
 
-        i_z_min, value, distance = nearest(vector=self.z, number=z_actual)
-        I_drawing_actual = np.squeeze(I_drawing[i_z_min, :])
+        imenor, value, distance = nearest(vector=self.z, number=z_actual)
+        I_drawing_actual = np.squeeze(I_drawing[imenor, :])
 
         z = self.z
 
