@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -30,7 +30,7 @@ v_lineal = (1, 0, 0)
 v_circular = (1, 1j, 0) / np.sqrt(2)
 
 
-class Test_Vector_fields_XY(object):
+class Test_Vector_fields_XY():
 
     def test_save_load(self):
         # func_name = sys._getframe().f_code.co_name
@@ -59,11 +59,10 @@ class Test_Vector_fields_XY(object):
                           focal=(2 * mm, 2 * mm),
                           kind='amplitudes')
 
-        state=np.array([[1,0], [0,1j]])
-
+        pol_state = np.array([[1, 0], [0, 1j]])
 
         vc = Vector_mask_XY(x0, y0, wavelength)
-        vc.scalar_to_vector_mask(mask=mask, state=state)
+        vc.scalar_to_vector_mask(mask=mask, pol_state=pol_state)
 
         vp = Vector_mask_XY(x0, y0, wavelength)
         vp.polarizer_linear(azimuth=0 * degrees)
@@ -154,8 +153,8 @@ class Test_Vector_fields_XY(object):
                   radius=(
                       length / 2,
                       length / 2,
-                  ),
-                  angle=0 * degrees)
+        ),
+            angle=0 * degrees)
 
         EM.apply_mask(t1)
 

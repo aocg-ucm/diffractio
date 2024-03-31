@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -90,7 +90,7 @@ square = square_test()
 plane_wave = plane_wave_test()
 
 
-class Test_Scalar_fields_XY(object):
+class Test_Scalar_fields_XY():
 
     def test_add(self):
         func_name = sys._getframe().f_code.co_name
@@ -487,7 +487,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.draw(kind='intensity', normalize=None)
 
         field.binarize(kind="amplitude",
@@ -546,7 +546,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.draw(kind='field')
 
         fieldAmplitud = field.discretize(kind='amplitude',
@@ -601,7 +601,7 @@ class Test_Scalar_fields_XY(object):
 
         # field total
         field = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        field.gray_scale(num_levels=255, levelMin=0, levelMax=1)
+        field.gray_scale(num_levels=255, level_min=0, level_max=1)
         field.set_phase(q=1, phase_min=-np.pi, phase_max=np.pi)
         field.draw(kind='field')
 

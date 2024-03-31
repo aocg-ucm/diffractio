@@ -20,6 +20,6 @@ Examples
    source/examples/talbot_effect.ipynb
    source/examples/blazed_grating.ipynb
    source/examples/dammann.ipynb
-   source/examples/variable_refraction_index.ipynb
+   source/examples/variable_refractive_index.ipynb
    source/examples/vector_double_slit_experiment.ipynb
    source/examples/VRS_paper.ipynb

@@ -1,5 +1,7 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# flake8: noqa
+
 """
 This module generates Vector_field_X class. It is required also for generating masks and fields.
 The main atributes are:
@@ -32,6 +34,8 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+
 from . import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
@@ -41,10 +45,10 @@ from .utils_drawing import normalize_draw
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
 
-class Vector_field_X(object):
+class Vector_field_X():
     """Class for vectorial fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
         info (str): String with info about the simulation
@@ -57,14 +61,15 @@ class Vector_field_X(object):
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x, wavelength, info=''):
+    def __init__(self, x: NDArrayFloat = None, wavelength: float | None = None,
+                 info: str = ""):
         self.x = x
         self.wavelength = wavelength  # la longitud de onda
 
         self.Ex = np.zeros_like(self.x, dtype=complex)
         self.Ey = np.zeros_like(self.x, dtype=complex)
         self.Ez = np.zeros_like(self.x, dtype=complex)
-        
+
         self.Hx = np.zeros_like(self.x, dtype=complex)
         self.Hy = np.zeros_like(self.x, dtype=complex)
         self.Hz = np.zeros_like(self.x, dtype=complex)
@@ -74,7 +79,6 @@ class Vector_field_X(object):
         self.info = info
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
-
 
     def __str__(self):
         """Represents data from class."""
@@ -98,10 +102,10 @@ class Vector_field_X(object):
 
         return ""
 
-    def __add__(self, other, kind='standard'):
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_X. For example two light sources or two masks
 
-        Parameters:
+        Args:
             other (Vector_field_X): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -118,12 +122,12 @@ class Vector_field_X(object):
 
         return EM
 
-    def save_data(self, filename, add_name='', description='', verbose=False):
+    def save_data(self, filename: str, add_name: str = "",
+                  description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
-
-        Parameters:
+        Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
             description (str): text to be stored in the dictionary to save.
@@ -132,6 +136,7 @@ class Vector_field_X(object):
         Returns:
             (str): filename. If False, file could not be saved.
         """
+
         try:
             final_filename = save_data_common(self, filename, add_name,
                                               description, verbose)
@@ -139,11 +144,11 @@ class Vector_field_X(object):
         except:
             return False
 
-    def load_data(self, filename, verbose=False):
+    def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
 
-        Parameters:
+        Args:
             filename (str): filename
             verbose (bool): shows data process by screen
         """
@@ -164,17 +169,17 @@ class Vector_field_X(object):
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
 
-    def duplicate(self, clear=False):
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def get(self, kind='fields', is_matrix=True):
+    def get(self, kind: str = 'fields', is_matrix: bool = True):
         """Takes the vector field and divide in Scalar_field_X.
 
-        Parameters:
+        Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
@@ -204,7 +209,6 @@ class Vector_field_X(object):
 
             if is_matrix:
                 return intensity
-
             else:
                 Intensity = Scalar_field_X(x=self.x,
                                            wavelength=self.wavelength)
@@ -248,7 +252,7 @@ class Vector_field_X(object):
     def apply_mask(self, u):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
-        Parameters:
+        Args:
             u (Scalar_mask_X): mask
         """
         self.Ex = self.Ex * u.u
@@ -263,10 +267,10 @@ class Vector_field_X(object):
 
         return intensity
 
-    def polarization_states(self, matrix=False):
+    def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
-        Parameters:
+        Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
         Returns:
@@ -294,10 +298,10 @@ class Vector_field_X(object):
 
             return CI, CQ, CU, CV
 
-    def polarization_ellipse(self, pol_state=None, matrix=False):
+    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
-        Parameters:
+        Args:
             pol_state (None or (I, Q, U, V) ): Polarization state previously computed
             Matrix (bool): if True returns Matrix, else Scalar_field_X
 
@@ -338,6 +342,7 @@ class Vector_field_X(object):
 
     def normalize(self):
         """Normalizes the field"""
+
         max_amplitude = np.sqrt(
             np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
             np.abs(self.Ez)**2).max()
@@ -347,16 +352,16 @@ class Vector_field_X(object):
         self.Ez = self.Ez / max_amplitude
 
     def draw(self,
-             kind='intensity',
-             logarithm=0,
-             normalize=False,
-             cut_value=None,
-             filename='',
-             draw=True,
+             kind: str = 'intensity',
+             logarithm: floating = 0,
+             normalize: bool = False,
+             cut_value: float | bool = None,
+             filename: str = '',
+             draw: bool = True,
              **kwargs):
         """Draws electromagnetic field
 
-        Parameters:
+        Args:
             kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -391,7 +396,7 @@ class Vector_field_X(object):
                 print("not good kind parameter in vector_fields_X.draw()")
                 id_fig = None
 
-            if not filename == '':
+            if filename != '':
                 plt.savefig(filename,
                             dpi=100,
                             bbox_inches='tight',
@@ -399,10 +404,10 @@ class Vector_field_X(object):
 
             return id_fig
 
-    def __draw_intensity__(self, logarithm, normalize, cut_value):
+    def __draw_intensity__(self, logarithm: bool, normalize: bool, cut_value: float):
         """Draws the intensity
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -421,10 +426,10 @@ class Vector_field_X(object):
 
         return h1
 
-    def __draw_intensities__(self, logarithm, normalize, cut_value):
+    def __draw_intensities__(self, logarithm: bool, normalize: bool, cut_value: float):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -498,7 +503,7 @@ class Vector_field_X(object):
     def __draw_phases__(self):
         """internal funcion: draws phase
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -556,8 +561,8 @@ class Vector_field_X(object):
             plt.tight_layout()
 
             return h1, h2
-        else:
 
+        else:
             plt.figure(figsize=(3 * tx, ty))
 
             h1 = plt.subplot(1, 3, 1)
@@ -595,14 +600,14 @@ class Vector_field_X(object):
             return h1, h2, h3
 
     def __draw_fields__(self,
-                        logarithm,
-                        normalize,
-                        cut_value,
-                        color_intensity=CONF_DRAWING['color_intensity'],
-                        color_phase=CONF_DRAWING['color_phase']):
+                        logarithm: bool | float,
+                        normalize: bool,
+                        cut_value: float,
+                        color_intensity: str = CONF_DRAWING['color_intensity'],
+                        color_phase: str = CONF_DRAWING['color_phase']):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
+        Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
@@ -611,12 +616,10 @@ class Vector_field_X(object):
         """
 
         intensity_x = np.abs(self.Ex)**2
-        intensity_x = normalize_draw(intensity_x, logarithm, normalize,
-                                     cut_value)
+        intensity_x = normalize_draw(intensity_x, logarithm, normalize, cut_value)
 
         intensity_y = np.abs(self.Ey)**2
-        intensity_y = normalize_draw(intensity_y, logarithm, normalize,
-                                     cut_value)
+        intensity_y = normalize_draw(intensity_y, logarithm, normalize, cut_value)
 
         intensity_max = np.max((intensity_x.max(), intensity_y.max()))
         tx, ty = rcParams['figure.figsize']
@@ -655,8 +658,16 @@ class Vector_field_X(object):
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self, logarithm, normalize, cut_value):
-        """__internal__: computes and draws CI, CQ, CU, CV parameters
+    def __draw_stokes__(self, logarithm: floating | bool, normalize: bool, cut_value: floating):
+        """ __internal__: computes and draws CI, CQ, CU, CV parameters
+
+        Args:
+            logarithm (floating | bool): _description_
+            normalize (bool): _description_
+            cut_value (floating): _description_
+
+        Returns:
+            _type_: _description_
         """
 
         tx, ty = rcParams['figure.figsize']
@@ -695,8 +706,16 @@ class Vector_field_X(object):
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, logarithm, normalize, cut_value):
-        """__internal__: computes and draws polariations ellipses
+    def __draw_param_ellipse__(self, logarithm: floating, normalize: bool, cut_value: floating):
+        """_internal__: computes and draws polariations ellipses
+
+        Args:
+            logarithm (bool | floating): _description_
+            normalize (bool): _description_
+            cut_value (floating): _description_
+
+        Returns:
+            _type_: _description_
         """
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
@@ -731,11 +750,12 @@ class Vector_field_X(object):
 
         return (h1, h2, h3, h4)
 
-    def __draw1__(self, data, ylabel='', title=''):
+    def __draw1__(self, data: NDArrayFloat, ylabel: str = '', title: str = ''):
         """Draws image
 
-        Parameters:
-            image (numpy.array): array with drawing
+        Args:
+            data (numpy.array): array with drawing
+            ylabel (str): ylabel
             title (str): title of drawing
         """
 

@@ -1,9 +1,8 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import datetime
 import os
-import sys
+import sys  
 
 from diffractio import mm, no_date, np, um
 from diffractio.utils_tests import save_figure_test
@@ -42,7 +41,7 @@ Ex, Ey, _ = EM.get()
 EM.reduce_matrix = ''
 
 
-class Test_Vector_fields_XY(object):
+class Test_Vector_fields_XY():
 
     def test_draw_intensity(self):
 

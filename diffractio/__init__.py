@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Top-level package for Python Scalar and vector diffraction and interference."""
-"""
+
+"""Top-level package for Python Scalar and vector diffraction and interference.
+
 Diffractio: A scientific computing package for Optical Interference and Diffraction in Python
 ======================================================================================================
 
@@ -30,14 +30,13 @@ scalar bidimensional XY fields propagated in Z direction
     * sources are acquired using scalar_sources_XY
 """
 
+
 import datetime
 import multiprocessing
-
+from matplotlib import cm, rcParams
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-from matplotlib import cm, rcParams
-
 from .config import CONF_DRAWING
 
 __author__ = """Luis Miguel Sanchez Brea"""
@@ -64,7 +63,5 @@ date_test = now.strftime("%Y-%m-%d_%H")
 number_types = (int, float, complex, np.int32, np.float64)
 
 num_max_processors = multiprocessing.cpu_count()
-
-from matplotlib import rcParams
 
 rcParams['figure.dpi'] = 75

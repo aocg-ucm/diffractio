@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """Tests form Scalar_masks_XY"""
 
 import datetime
@@ -25,7 +25,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_XY(object):
+class Test_Scalar_masks_XY():
 
     def test_add(self):
         func_name = sys._getframe().f_code.co_name
@@ -558,7 +558,7 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6328 * um
 
         t1 = Scalar_mask_XY(x, y, wavelength)
-        t1.gray_scale(num_levels=128, levelMin=0, levelMax=1)
+        t1.gray_scale(num_levels=128, level_min=0, level_max=1)
         t1.draw(kind='intensity')
 
         t1.save_data(filename=filename + '.npz')
@@ -877,8 +877,8 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6238 * um
         red = Scalar_mask_XY(x, y, wavelength)
         red.binary_grating(period=50 * um,
-                           amin=.5,
-                           amax=.75,
+                           a_min=.5,
+                           a_max=.75,
                            phase=np.pi,
                            x0=0,
                            fill_factor=0.25,
@@ -898,8 +898,8 @@ class Test_Scalar_masks_XY(object):
         wavelength = 0.6238 * um
         red = Scalar_mask_XY(x, y, wavelength)
         red.binary_grating(period=50 * um,
-                           amin=1,
-                           amax=1,
+                           a_min=1,
+                           a_max=1,
                            phase=np.pi / 2,
                            x0=0,
                            fill_factor=0.5,
@@ -940,8 +940,8 @@ class Test_Scalar_masks_XY(object):
         red = Scalar_mask_XY(x, y, wavelength)
         red.grating_2D(r0=(0., 0.),
                        period=period,
-                       amin=0,
-                       amax=1.,
+                       a_min=0,
+                       a_max=1.,
                        phase=0 * np.pi / 2,
                        fill_factor=0.5,
                        angle=0 * degrees)
@@ -962,8 +962,8 @@ class Test_Scalar_masks_XY(object):
         red = Scalar_mask_XY(x, y, wavelength)
         red.grating_2D_chess(r0=(0., 0.),
                              period=period,
-                             amin=0,
-                             amax=1.,
+                             a_min=0,
+                             a_max=1.,
                              phase=0 * np.pi / 2,
                              fill_factor=0.75,
                              angle=0 * degrees)

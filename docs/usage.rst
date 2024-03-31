@@ -68,9 +68,9 @@ XZ fields
   u1.rectangle(r0=(0 * um, 100 * um),
     size=(100 * um, 100 * um),
     angle=45 * degrees,
-    refraction_index=2)
+    refractive_index=2)
 
-  u1.draw_refraction_index(filename='usage5.png', scale='scaled')
+  u1.draw_refractive_index(filename='usage5.png', scale='scaled')
   u1.WPM(verbose=False)
   u1.draw(logarithm=True, normalize='maximum', draw_borders=True, filename='usage6.png', scale='scaled');
 
@@ -210,10 +210,10 @@ from diffractio import nm, um, mm, degrees
 
   M0 = Vector_mask_XY(x=x0, y=y0, wavelength=wavelength)
 
-  state_0 = np.array([[1, 0],[0, 0]])
-  state_1 = np.array([[0, 0],[0, 1]])
+  pol_state_0 = np.array([[1, 0],[0, 0]])
+  pol_state_1 = np.array([[0, 0],[0, 1]])
 
-  M0.complementary_masks(t0, state_0, state_1)
+  M0.complementary_masks(t0, pol_state_0, pol_state_1)
 
   EM1 = EM0 * M0
   EM1.draw(kind='ellipses')

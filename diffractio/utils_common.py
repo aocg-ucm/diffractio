@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # ----------------------------------------------------------------------
 # Name:        common.py
@@ -12,6 +12,7 @@
 # Licence:     GPL
 # ----------------------------------------------------------------------
 """ Common functions to classes """
+# flake8: noqa
 
 import datetime
 import multiprocessing
@@ -20,15 +21,17 @@ import numpy as np
 import psutil
 from scipy.io import loadmat, savemat
 
+from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-def computer_parameters(verbose=False):
-    """Determine several computer parameters:
+
+def computer_purcearameters(verbose: bool = False) -> list:
+    """Determine several computer Args:
         - number of processors
         - available memory
         - total memory
         - max frequency
 
-    Parameters:
+    Args:
         verbose (bool): If True prints data
 
     Returns:
@@ -61,11 +64,11 @@ def clear_all():
         del globals()[var]
 
 
-def several_propagations(iluminacion, masks, distances):
+def several_propagations(source, masks, distances: list[float]):
     '''performs RS propagation through several masks
 
-    Parameters:
-        iluminacion (Scalar_source_XY): illumination
+    Args:
+        source (Scalar_source_XY): illumination
         masks (list): list with several (Scalar_masks_XY)
         distances (list): list with seera distances
 
@@ -75,7 +78,7 @@ def several_propagations(iluminacion, masks, distances):
         Scalar_field_XY: u1 field just at the plane of the last mask
     '''
 
-    u0 = iluminacion
+    u0 = source
 
     for mask, distance in zip(masks, distances):
         u1 = u0 * mask
@@ -96,14 +99,14 @@ def get_date():
 
 
 def save_data_common(cls,
-                     filename,
-                     add_name='',
-                     description='',
-                     verbose=False):
+                     filename: str,
+                     add_name: str = '',
+                     description: str = '',
+                     verbose: bool = False) -> str:
     """Common save data function to be used in all the modules.
     The methods included are: npz, matlab
 
-    Parameters:
+    Args:
         filename(str): filename
         add_name = (str): sufix to the name, if 'date' includes a date
         description(str): text to be stored in the dictionary to save.
@@ -137,17 +140,17 @@ def save_data_common(cls,
     return final_filename
 
 
-def load_data_common(cls, filename, verbose=False):
+def load_data_common(cls, filename: str, verbose: bool = False):
     """Common load data function to be used in all the modules.
         The methods included are: npz, matlab
 
-    Parameters:
+    Args:
         cls(class): class X, XY, XZ, XYZ, etc..
         filename(str): filename
         verbose(bool): If True prints data
     """
 
-    def print_data_dict(dict0):
+    def print_data_dict(dict0: dict):
         for k, v in dict0.items():
             print("{:12} = {}".format(k, v))
         print("\nnumber of data = {}".format(len(dict0['x'])))
@@ -167,7 +170,7 @@ def load_data_common(cls, filename, verbose=False):
 
         if verbose is True:
             print(dict0.keys())
-        
+
         if dict0 is not None:
             if isinstance(dict0, dict):
                 cls.__dict__ = dict0
@@ -185,10 +188,10 @@ def load_data_common(cls, filename, verbose=False):
     #     y_read = f['dict']['Y'][:]
 
 
-def print_axis_info(cls, axis):
+def print_axis_info(cls, axis: str):
     """Prints info about axis
 
-    Parameters:
+    Args:
         cls(class): class of the modulus.
         axis(): axis x, y, z... etc.
     """
@@ -202,10 +205,10 @@ def print_axis_info(cls, axis):
           format(**axis_info))
 
 
-def date_in_name(filename):
+def date_in_name(filename: str) -> str:
     """introduces a date in the filename.
 
-    Parameters:
+    Args:
         filename(str): filename
 
     Returns:

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # -------------------------------------------------------------------------------
 # Name:        scalar_sources_X.py
@@ -19,7 +19,6 @@ import sys
 from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_sources_X import Scalar_source_X
 from diffractio.utils_tests import comparison, save_figure_test
-from numpy import linspace
 
 # from functools import wraps
 
@@ -38,7 +37,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_sources_X(object):
+class Test_Scalar_sources_X():
     # def saving_data(f):
     #     @wraps(f)
     #     def wrapped(inst, *args, **kwargs):
@@ -186,7 +185,7 @@ class Test_Scalar_sources_X(object):
         filename = '{}{}'.format(newpath, func_name)
 
         length = 2 * mm
-        x0 = linspace(-length / 2, length / 2, 1024)
+        x0 = np.linspace(-length / 2, length / 2, 1024)
         wavelength0 = 0.6238 * um
 
         u1 = Scalar_source_X(x=x0, wavelength=wavelength0)

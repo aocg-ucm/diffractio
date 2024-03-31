@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Test for scalar_sources_XY"""
 
@@ -28,7 +28,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_sources_XY(object):
+class Test_Scalar_sources_XY():
 
     def test_plane_wave(self):
         func_name = sys._getframe().f_code.co_name
