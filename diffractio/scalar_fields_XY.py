@@ -1621,28 +1621,32 @@ class Scalar_field_XY():
 
             elif num_x > 1 and num_y == 1:
                 u0 = self.u * F
+                u0 = u0.transpose()
 
                 # one-dimensional FFT in the other direction
                 fx1 = xstart + fsx / 2
                 fx2 = xend + fsx / 2
                 u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
-
+                
                 fy1 = ystart + fsy / 2
                 fy2 = yend + fsy / 2
                 u0 = Bluestein_dft_xy(u0, fy1, fy2, fsy, num_y)
-                u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
+
+                u0 = F0 * u0* k_factor  # obtain the complex amplitude of the outgoing light beam
 
             elif num_x == 1 and num_y > 1:
                 u0 = self.u * F
-                fx1 = xstart + fsx / 2
-                fx2 = xend + fsx / 2
-                u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
                 fy1 = ystart + fsy / 2
                 fy2 = yend + fsy / 2
                 u0 = Bluestein_dft_xy(u0, fy1, fy2, fsy, num_y)
 
+                fx1 = xstart + fsx / 2
+                fx2 = xend + fsx / 2
+                u0 = Bluestein_dft_xy(u0, fx1, fx2, fsx, num_x)
+                
+
                 # one-dimensional FFT in the other direction
-                u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
+                u0 = F0 * u0.transpose() * k_factor  # obtain the complex amplitude of the outgoing light beam
 
             u0 = u0.squeeze()
 

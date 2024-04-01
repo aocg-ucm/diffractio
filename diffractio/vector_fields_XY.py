@@ -42,6 +42,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 
 from matplotlib import rcParams
+import copy
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
@@ -348,15 +349,25 @@ class Vector_field_XY():
         self.Ey = self.Ey * pupil0
         self.Ez = self.Ez * pupil0
 
-    def apply_mask(self, u):
+    def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
         Args:
            u (Scalar_mask_XY): mask
+
+
          """
-        self.Ex = self.Ex * u.u
-        self.Ey = self.Ey * u.u
-        self.Ez = self.Ez * u.u
+
+        if new_field == False:
+            self.Ex = self.Ex * u.u
+            self.Ey = self.Ey * u.u
+            self.Ez = self.Ez * u.u
+        else:
+            E_new = self.duplicate()
+            E_new.Ex = self.Ex * u.u
+            E_new.Ey = self.Ey * u.u
+            E_new.Ez = self.Ez * u.u
+            return E_new
 
     def intensity(self):
         """"Returns intensity.
@@ -850,6 +861,13 @@ class Vector_field_XY():
             elif num_x > 1 and num_y == 1:
                 from diffractio.vector_fields_X import Vector_field_X
                 E_out = Vector_field_X(xout, self.wavelength)
+                E_out.Ex = e0x.u
+                E_out.Ey = e0y.u
+                E_out.Ez = e0z.u
+                return E_out
+            elif num_x == 1 and num_y > 1:
+                from diffractio.vector_fields_X import Vector_field_X
+                E_out = Vector_field_X(yout, self.wavelength)
                 E_out.Ex = e0x.u
                 E_out.Ey = e0y.u
                 E_out.Ez = e0z.u

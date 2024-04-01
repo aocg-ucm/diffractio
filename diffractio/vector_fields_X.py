@@ -249,15 +249,22 @@ class Vector_field_X():
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
-    def apply_mask(self, u):
+    def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
         Args:
             u (Scalar_mask_X): mask
         """
-        self.Ex = self.Ex * u.u
-        self.Ey = self.Ey * u.u
-        self.Ez = self.Ez * u.u
+        if new_field == False:
+            self.Ex = self.Ex * u.u
+            self.Ey = self.Ey * u.u
+            self.Ez = self.Ez * u.u
+        else:
+            E_new = self.duplicate()
+            E_new.Ex = self.Ex * u.u
+            E_new.Ey = self.Ey * u.u
+            E_new.Ez = self.Ez * u.u
+            return E_new
 
     def intensity(self):
         """"Returns intensity.
