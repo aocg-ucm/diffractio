@@ -99,6 +99,7 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 * Lenses, diffractive lenses, aspherical lenses...
 * Axicon, prisms, biprism, image, rough surface, gray scale ...
 * Gratings: Ronchi, phase, radial, angular, sine, forked, blazed, 2D, chess...
+* Others: Masks can also be loaded (.png, .dxf for 2D and .stl for 3D)
 
 .. image:: readme2.png
    :height: 400
@@ -107,8 +108,9 @@ In the XZ scheme there is also a number of masks:
 
 * image, sphere, layer, lenses, wedge, prism, probe, gratings...
 * Additionally, any X_mask can be extruded to the XZ scheme.
-* Masks from functions
-* Surfaces can be added to objects
+* Masks from functions.
+* Surfaces can be added to objects.
+* Others: Masks can also be loaded (.png, .dxf)
 
 
 .. image:: readme3.png
@@ -134,8 +136,10 @@ Several propagation algorithms for propagation of light are implemented in the *
 
 * **Vector Chirped Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
 
+* **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
 
-The fields, masks and sources can be stored in files.
+
+The fields, masks, and sources can be stored in files.
 
 Also drawings can be easily obtained, for intensity, phase, fields, etc.
 
@@ -143,7 +147,6 @@ In some modules, videos can be generated for a better analysis of optical fields
 
 .. image:: readme6.png
    :width: 600
-
 
 
 
@@ -249,11 +252,9 @@ References for algorithms
 
 * Hu Y. et al. "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method" Light: Science & Applications  9(119) (2020)
 
-**VWPM** (not implemented yet)
+**FPWPM** 
 
-* Fertig, M., Brenner, K.-H. "Vector wave propagation method". J. Opt. Soc. Am. A 27, 709 (2010).
-
-* Fertig, M., Brenner, K.-H. "Vector wave propagation method". PhD thesis (Mannheim, 2010).
+* Wende M,et al. "Fast algorithm for the simulation of 3D-printed microoptics based on the vector wave propagation method". Opt Express. 30(22) 40161-40173 (2022)
 
 
 Other References

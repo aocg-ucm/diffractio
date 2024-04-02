@@ -16,3 +16,5 @@ About functiong
    source/functioning/quality_factor.ipynb
    source/functioning/WPM_ws.ipynb
    source/functioning/has_edges.ipynb
+   source/functioning/dxf_XY.ipynb
+   source/functioning/dxf_XZ.ipynb

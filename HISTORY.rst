@@ -204,19 +204,26 @@ Beta state
   - new fresnel_equations_kx, fresnel_equations, transmitances_reflectances_kx, transmitances_reflectances functions.
 
 
-
-0.3.1
---------------------------------
-
 * Fix bugs:
 
   - new definition of X mask: fresnel_lens
+  
+  - ndgrid -> meshgrid (this produced a lot of minor bugs)
+  
+  
 
 * Refactoring:
 
   - refraction_index -> refractive_index ... in all words.
 
+
 * New features:
+
+  - XY masks: .dxf method for loading masks from .dxf files.
+
+  - XZ masks: .dxf method for loading masks from .dxf files.
+  
+  - XYZ masks: .stl method for loading 3D masks from .stl files.
 
   - XZ masks: New refractive_index_from_scalar_mask_XY method.
 

@@ -2439,7 +2439,7 @@ class Scalar_field_XY():
             id_fig, IDax, IDimage = self.__draw_real_field__(
                 logarithm, normalize, title, cut_value, **kwargs)
         else:
-            print("not in kinds")
+            print("Accepted values: intensity, amplitude, phase, field, real_field")
 
         if has_colorbar in ('horizontal', 'vertical'):
             plt.colorbar(orientation=has_colorbar, shrink=0.5)
