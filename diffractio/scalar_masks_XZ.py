@@ -18,7 +18,7 @@ The magnitude is related to microns: `micron = 1.`
 *Functions*
     * extrude_mask, mask_from_function, mask_from_array, object_by_surfaces
     * image
-    * semi_plane, layer, rectangle, slit, sphere, semi_sphere
+    * semi_plane, layer, rectangle, slit, cylinder, semi_sphere
     * wedge, prism, biprism
     * ronchi_grating, sine_grating
     * probe
@@ -569,7 +569,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def semi_plane(self, r0: list[floating, floating], refractive_index: floating | str,
                    angle: floating = 0., rotation_point: list[floating, floating] | None = None):
-        """Inserts a semi-sphere in background (x>x0). If something else previous, it is removed.
+        """Inserts a semi-cylinder in background (x>x0). If something else previous, it is removed.
 
         Args:
             r0=(x0,z0) (float,float): Location of the same plane.
@@ -706,14 +706,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             self.n[ipasa] = n_back[ipasa]
         return ipasa_slit != ipasa
 
-    def sphere(self, r0: list[floating, floating], radius: list[floating, floating],
+    def cylinder(self, r0: list[floating, floating], radius: list[floating, floating],
                refractive_index: floating | str, angle: floating = 0.,
                rotation_point: list[floating, floating] | None = None):
-        """Insert a sphere in background.
+        """Insert a cylinder in background.
 
         Args:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
-            radius (float, float): radius x,y of the sphere (ellipsoid)
+            radius (float, float): radius x,y of the cylinder (ellipsoid)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -746,7 +746,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         Args:
             r0 (float, float): (x0,z0) Location of the rectangle, for example (0 * um, 20 * um)
-            radius (float, float): radius x,y of the sphere (ellipsoid)
+            radius (float, float): radius x,y of the cylinder (ellipsoid)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -1460,7 +1460,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Sheet with one of the surface rough.
 
         Args:
-            r0 (float, float):(x0,z0) Location of sphere, for example (0 * um, 20 * um)
+            r0 (float, float):(x0,z0) Location of cylinder, for example (0 * um, 20 * um)
             size (float, float): (sizex, sizez) size of the sheet
             s (float): std roughness
             t (float): correlation length of roughness

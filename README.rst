@@ -105,7 +105,7 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 
 In the XZ scheme there is also a number of masks:
 
-* image, sphere, layer, lenses, wedge, prism, probe, gratings...
+* image, cylinder, layer, lenses, wedge, prism, probe, gratings...
 * Additionally, any X_mask can be extruded to the XZ scheme.
 * Masks from functions
 * Surfaces can be added to objects

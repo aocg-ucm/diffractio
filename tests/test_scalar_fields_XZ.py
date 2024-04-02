@@ -71,7 +71,7 @@ def generate_BPM_field():
     u0.plane_wave(A=1, theta=0 * degrees)
     u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
     u1.incident_field(u0)
-    u1.sphere(r0=(0 * um, 0 * um),
+    u1.cylinder(r0=(0 * um, 0 * um),
               radius=(25 * um, 25 * um),
               refractive_index=2)
     u1.BPM(verbose=False)
@@ -183,7 +183,7 @@ class Test_Scalar_fields_XZ():
         wavelength = .5 * um
 
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
-        u1.sphere(r0=(0 * um, 0 * um),
+        u1.cylinder(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
                   refractive_index=2)
 
@@ -587,7 +587,7 @@ class Test_Scalar_fields_XZ():
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
         u1.mask_field(size_edge=5 * um)
-        u1.sphere(r0=(0 * um, 20 * um),
+        u1.cylinder(r0=(0 * um, 20 * um),
                   radius=(20 * um, 20 * um),
                   refractive_index=1.5)
         u1.BPM(verbose=False)
@@ -611,7 +611,7 @@ class Test_Scalar_fields_XZ():
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
         u1.mask_field(size_edge=5 * um)
-        u1.sphere(r0=(0 * um, 0 * um),
+        u1.cylinder(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
                   refractive_index=2)
         u1.BPM(verbose=False)
@@ -634,7 +634,7 @@ class Test_Scalar_fields_XZ():
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
         u1.mask_field(size_edge=5 * um)
-        u1.sphere(r0=(0 * um, 0 * um),
+        u1.cylinder(r0=(0 * um, 0 * um),
                   radius=(25 * um, 25 * um),
                   refractive_index=2)
         u1.BPM(verbose=False)
@@ -665,7 +665,7 @@ class Test_Scalar_fields_XZ():
         # u1.incident_field(u0)
         # u1.mask_field(size_edge=5 * um)
         #
-        # u1.sphere(
+        # u1.cylinder(
         #     r0=(0, 2 * radius_sphere),
         #     radius=(radius_sphere, radius_sphere),
         #     refractive_index=dielectrico)
@@ -837,7 +837,7 @@ class Test_Scalar_fields_XZ():
         u1.incident_field(u0)
         u1.mask_field(size_edge=5 * um)
 
-        u1.sphere(r0=(0, 40 * um),
+        u1.cylinder(r0=(0, 40 * um),
                   radius=(radius_sphere, radius_sphere),
                   refractive_index=1)
 

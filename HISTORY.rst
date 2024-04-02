@@ -216,6 +216,8 @@ Beta state
 
   - refraction_index -> refractive_index ... in all words.
 
+  - XZ masks: sphere -> cylinder.
+
 * New features:
 
   - XZ masks: New refractive_index_from_scalar_mask_XY method.
