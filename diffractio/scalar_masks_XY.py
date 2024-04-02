@@ -405,7 +405,16 @@ class Scalar_mask_XY(Scalar_field_XY):
             p_max = p_max*25400
 
         if self.x is None:
-
+            if extent is None:
+                self.x = np.linspace(p_min[0], p_max[0], num_pixels[0])
+                self.y = np.linspace(p_min[1], p_max[1], num_pixels[1])
+                self.X, self.Y = np.meshgrid(self.x, self.y)
+                self.u = np.zeros_like(self.X, dtype=complex)
+            else:
+                self.x = np.linspace(extent[0], extent[1], num_pixels[0])
+                self.y = np.linspace(extent[2], extent[3], num_pixels[1])
+                self.X, self.Y = np.meshgrid(self.x, self.y)
+                self.u = np.zeros_like(self.X, dtype=complex)
         if invert is True:
             image_new = 1-image_new
 
