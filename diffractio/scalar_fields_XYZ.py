@@ -899,9 +899,9 @@ class Scalar_field_XYZ():
                                            z=self.z,
                                            wavelength=self.wavelength)
             if ix0 is None:
-                ix, tmp1, tmp2 = nearest(self.x, x0)
+                ix, _, _ = nearest(self.x, x0)
             else:
-                iy = ix0
+                ix = ix0
             field_output.u = np.squeeze(self.u[:, ix, :])
             return field_output
 
@@ -912,12 +912,12 @@ class Scalar_field_XYZ():
                 ix = ix0
             return np.squeeze(self.u[:, ix, :])
 
-    def to_Z(self,
-             kind: str = 'amplitude',
-             x0: float | None = None,
-             y0: float | None = None,
-             has_draw: bool = True,
-             z_scale='mm'):
+    def to_Scalar_field_Z(self,
+                          kind: str = 'amplitude',
+                          x0: float | None = None,
+                          y0: float | None = None,
+                          has_draw: bool = True,
+                          z_scale='mm'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
 
         Args:

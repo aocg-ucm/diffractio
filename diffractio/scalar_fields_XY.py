@@ -149,7 +149,7 @@ class Scalar_field_XY():
             phase_min, phase_max))
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
-        print(" - date:    other   {}".format(self.date))
+        print(" - date:       {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
         return ("")
@@ -1672,7 +1672,7 @@ class Scalar_field_XY():
                 return u_out
 
         elif num_z > 1:
-            u_zs = np.zeros((num_x, num_y, num_z), dtype=complex)
+            u_zs = np.zeros((num_y, num_x, num_z), dtype=complex)
             u_zs = u_zs.squeeze()
             Xout, Yout = np.meshgrid(xout, yout)
 
@@ -1746,9 +1746,8 @@ class Scalar_field_XY():
                     u_zs[:, i] = u0[0, :] * k_factor
                 elif num_x == 1 and num_y > 1:
                     u_zs[:, i] = u0[0, :] * k_factor
-
                 elif num_x > 1 and num_y > 1:
-                    u_zs[:, :, i] = u0.transpose() * k_factor
+                    u_zs[:, :, i] = u0 * k_factor
 
             if num_x == 1 and num_y == 1:
                 u_out = Scalar_field_Z(z, self.wavelength)
@@ -1757,12 +1756,12 @@ class Scalar_field_XY():
 
             elif num_x > 1 and num_y == 1:
                 u_out = Scalar_field_XZ(xout, z, self.wavelength)
-                u_out.u = 1j*u_zs
+                u_out.u = 1j*u_zs.transpose()
                 return u_out
 
             elif num_x == 1 and num_y > 1:
                 u_out = Scalar_field_XZ(yout, z, self.wavelength)
-                u_out.u = 1j*u_zs
+                u_out.u = 1j*u_zs.transpose()
                 return u_out
 
             elif num_x > 1 and num_y > 1:
@@ -2444,7 +2443,7 @@ class Scalar_field_XY():
             id_fig, IDax, IDimage = self.__draw_real_field__(
                 logarithm, normalize, title, cut_value, **kwargs)
         else:
-            print("not in kinds")
+            print("Accepted values: intensity, amplitude, phase, field, real_field")
 
         if has_colorbar in ('horizontal', 'vertical'):
             plt.colorbar(orientation=has_colorbar, shrink=0.5)

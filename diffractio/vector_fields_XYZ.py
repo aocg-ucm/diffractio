@@ -108,8 +108,9 @@ class Vector_field_XYZ():
         Imin = intensity.min()
         Imax = intensity.max()
 
-        print("{}\n - x:  {},     Ex:  {}".format(self.type, self.x.shape,
-                                                  self.Ex.shape))
+        print("{}\n - x:  {},   y:  {},  z:  {},   u:  {}".format(
+            self.type, self.x.shape, self.y.shape, self.z.shape, self.Ex.shape))
+
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
             .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
@@ -413,9 +414,7 @@ class Vector_field_XYZ():
 
     def to_Vector_field_XY(self,
                            iz0: int | None = None,
-                           z0: float | None = None,
-                           is_class: bool = True,
-                           matrix: bool = False):
+                           z0: float | None = None):
         """pass results to Scalar_field_XY. Only one of the first two variables (iz0,z0) should be used
 
         Args:
@@ -423,32 +422,22 @@ class Vector_field_XYZ():
             z0 (float): position z to extract
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
-
-        TODO: Simplify and change variable name clase
         """
-        if is_class is True:
-            field_output = Scalar_field_XY(x=self.x,
-                                           y=self.y,
-                                           wavelength=self.wavelength)
-            if iz0 is None:
-                iz, tmp1, tmp2 = nearest(self.z, z0)
-            else:
-                iz = iz0
-            field_output.u = np.squeeze(self.u[:, :, iz])
-            return field_output
-
-        if matrix is True:
-            if iz0 is None:
-                iz, tmp1, tmp2 = nearest(self.z, z0)
-            else:
-                iz = iz0
-            return np.squeeze(self.u[:, :, iz])
+        field_output = Scalar_field_XY(x=self.x,
+                                       y=self.y,
+                                       wavelength=self.wavelength)
+        if iz0 is None:
+            iz, _, _ = nearest(self.z, z0)
+        else:
+            iz = iz0
+        field_output.Ex = np.squeeze(self.Ex[:, :, iz])
+        field_output.Ey = np.squeeze(self.Ey[:, :, iz])
+        field_output.Ez = np.squeeze(self.Ez[:, :, iz])
+        return field_output
 
     def to_Vector_field_XZ(self,
                            iy0: int | None = None,
-                           y0: float | None = None,
-                           is_class: bool = True,
-                           matrix: bool = False):
+                           y0: float | None = None):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
         Args:
@@ -458,31 +447,21 @@ class Vector_field_XYZ():
             matrix (bool): If True it returns a matrix
 
         """
-        if is_class is True:
-            field_output = Vector_field_XZ(x=self.x,
-                                           z=self.z,
-                                           wavelength=self.wavelength)
-            if iy0 is None:
-                iy, tmp1, tmp2 = nearest(self.y, y0)
-            else:
-                iy = iy0
-            field_output.Ex = np.squeeze(self.Ex[:, iy, :])
-            field_output.Ey = np.squeeze(self.Ey[:, iy, :])
-            field_output.Ez = np.squeeze(self.Ez[:, iy, :])
-            return field_output
-
-        if matrix is True:
-            if iy0 is None:
-                iy, tmp1, tmp2 = nearest(self.y, y0)
-            else:
-                iy = iy0
-            return np.squeeze(self.Ex[:, iy, :]), np.squeeze(self.Ey[:, iy, :]), np.squeeze(self.Ez[:, iy, :])
+        field_output = Vector_field_XZ(x=self.x,
+                                       z=self.z,
+                                       wavelength=self.wavelength)
+        if iy0 is None:
+            iy, _, _ = nearest(self.y, y0)
+        else:
+            iy = iy0
+        field_output.Ex = np.squeeze(self.Ex[iy, :, :]).transpose()
+        field_output.Ey = np.squeeze(self.Ey[iy, :, :]).transpose()
+        field_output.Ez = np.squeeze(self.Ez[iy, :, :]).transpose()
+        return field_output
 
     def to_Vector_field_YZ(self,
                            ix0: int | None = None,
-                           x0: float | None = None,
-                           is_class: bool = True,
-                           matrix: bool = False):
+                           x0: float | None = None):
         """pass results to Vector_field_XZ. Only one of the first two variables (iy0,y0) should be used
 
         Args:
@@ -492,32 +471,21 @@ class Vector_field_XYZ():
             matrix (bool): If True it returns a matrix
 
         """
-        if is_class is True:
-            field_output = Scalar_field_XZ(x=self.y,
-                                           z=self.z,
-                                           wavelength=self.wavelength)
-            if ix0 is None:
-                ix, tmp1, tmp2 = nearest(self.x, x0)
-            else:
-                iy = ix0
-            field_output.Ex = np.squeeze(self.Ex[ix, :, :])
-            field_output.Ey = np.squeeze(self.Ey[ix, :, :])
-            field_output.Ez = np.squeeze(self.Ez[ix, :, :])
-            return field_output
+        field_output = Vector_field_XZ(x=self.y,
+                                       z=self.z,
+                                       wavelength=self.wavelength)
+        if ix0 is None:
+            ix, _, _ = nearest(self.x, x0)
+        else:
+            ix = ix0
+        field_output.Ex = np.squeeze(self.Ex[:, ix, :]).transpose()
+        field_output.Ey = np.squeeze(self.Ey[:, ix, :]).transpose()
+        field_output.Ez = np.squeeze(self.Ez[:, ix, :]).transpose()
+        return field_output
 
-        if matrix is True:
-            if ix0 is None:
-                ix, _, _ = nearest(self.x, x0)
-            else:
-                ix = ix0
-            return np.squeeze(self.Ex[ix, :, :]), np.squeeze(self.Ey[ix, :, :]), np.squeeze(self.Ez[ix, :, :])
-
-    def to_Z(self,
-             kind: str = 'amplitude',
-             x0: int | None = None,
-             y0: int | None = None,
-             has_draw: bool = True,
-             z_scale: str = 'mm'):
+    def to_Vector_field_Z(self, kind: str = 'amplitude', x0: int | None = None,
+                          y0: int | None = None, has_draw: bool = True,
+                          z_scale: str = 'um'):
         """pass results to u(z). Only one of the first two variables (iy0,y0) and (ix0,x0) should be used.
 
         Args:
@@ -531,30 +499,40 @@ class Vector_field_XYZ():
             z (numpy.array): array with z
             field (numpy.array): amplitude, intensity or phase of the field
         """
-        ix, _, _ = nearest(self.y, y0)
-        iy, _, _ = nearest(self.x, x0)
+        ix, _, _ = nearest(self.x, x0)
+        iy, _, _ = nearest(self.y, y0)
 
-        u = np.squeeze(self.u[ix, iy, :])
+        Ex = np.squeeze(self.Ex[iy, ix, :])
+        Ey = np.squeeze(self.Ey[iy, ix, :])
+        Ez = np.squeeze(self.Ez[iy, ix, :])
 
         if kind == 'amplitude':
-            y = np.abs(u)
+            field_x = np.abs(Ex)
+            field_y = np.abs(Ey)
+            field_z = np.abs(Ez)
         elif kind == 'intensity':
-            y = np.abs(u)**2
+            field_x = np.abs(Ex)**2
+            field_y = np.abs(Ey)**2
+            field_z = np.abs(Ez)**2
         elif kind == 'phase':
-            y = np.angle(u)
+            field_x = np.angle(Ex)
+            field_y = np.angle(Ey)
+            field_z = np.angle(Ez)
 
         if has_draw is True:
             if z_scale == 'mm':
-                plt.plot(self.z / mm, y, 'k', lw=2)
+                plt.plot(self.z / mm, field_x, 'k', lw=2)
                 plt.xlabel('$z\,(mm)$')
                 plt.xlim(left=self.z[0] / mm, right=self.z[-1] / mm)
 
             elif z_scale == 'um':
-                plt.plot(self.z, y, 'k', lw=2)
+                plt.plot(self.z, field_x, 'k', lw=2)
                 plt.xlabel('$z\,(\mu m)$')
                 plt.xlim(left=self.z[0], right=self.z[-1])
 
             plt.ylabel(kind)
+
+        return (field_x, field_y, field_z)
 
     def draw_XY(self,
                 z0: float,
@@ -580,10 +558,7 @@ class Vector_field_XYZ():
             reduce_matrix ()
         """
 
-        ufield = self.to_Vector_field_XY(iz0=None,
-                                         z0=z0,
-                                         is_class=True,
-                                         matrix=False)
+        ufield = self.to_Vector_field_XY(z0=z0)
         ufield.draw(kind=kind,
                     logarithm=logarithm,
                     normalize=normalize,
@@ -619,15 +594,17 @@ class Vector_field_XYZ():
         return h1
 
     def draw_YZ(self,
-                x0: float = 0.,
+                kind: str = 'intensity',
+                x0: float = 0 * mm,
                 logarithm: floating = 0,
-                normalize: bool = '',
+                normalize: bool = False,
                 draw_borders: bool = False,
-                filename: str = ''):
-        """Longitudinal profile YZ at a given x0 value.
+                filename: str = '',
+                **kwargs):
+        """Longitudinal profile XZ at a given x0 value.
 
         Args:
-            x0 (float): value of x for interpolation
+            x0 (float): value of x0 for interpolation
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
             draw_borders (bool): check
@@ -636,49 +613,15 @@ class Vector_field_XYZ():
 
         plt.figure()
         ufield = self.to_Vector_field_YZ(x0=x0)
-        intensity = np.abs(ufield.u)**2
-
-        if logarithm == 1:
-            intensity = np.log(intensity + 1)
-
-        if normalize == 'maximum':
-            intensity = intensity / intensity.max()
-        if normalize == 'area':
-            area = (self.y[-1] - self.y[0]) * (self.z[-1] - self.z[0])
-            intensity = intensity / area
-        if normalize == 'intensity':
-            intensity = intensity / (intensity.sum() / len(intensity))
-
-        h1 = plt.imshow(intensity,
-                        interpolation='bilinear',
-                        aspect='auto',
-                        origin='lower',
-                        extent=[
-                            self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
-                            self.y[-1]
-                        ])
-        plt.xlabel('z (mm)', fontsize=16)
-        plt.ylabel('y $(um)$', fontsize=16)
-        plt.title('intensity YZ', fontsize=20)
-        h1.set_cmap(
-            self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
-        plt.colorbar()
-
-        # -----------------     TODO: not working -----------------
-        if draw_borders is True:
-            x_surface, y_surface, z_surface, x_draw_intensity, y_draw_intensity, z_draw_intensity = self.surface_detection(
-            )
-            plt.plot(y_draw_intensity, z_draw_intensity, 'w.', ms=2)
-
-        if filename != '':
-            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
+        h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename,
+                         **kwargs)
 
         return h1
 
 
 def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,
-                      h: float = 0, amplification: float = 1):
-    """computes polarization ellipse for drawing
+                      amplification: float = 1):
+    """computes polarization ellipse for drawing.
 
     Args:
         x0 (float): position x of ellipse
@@ -686,10 +629,7 @@ def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,
         A (float): axis 1 of ellipse
         B (float): axis 2 of ellipse
         theta (float): angle of ellipse
-        h (float): to remove
         amplification (float): increase of size of ellipse
-
-    TODO: Remove hs
     """
     # esto es para verlo más grande
     A = A * amplification
