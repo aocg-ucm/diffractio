@@ -220,6 +220,8 @@ Beta state
 
 * New features:
 
+  - XY masks: edge_rough, slit_rough, double_slit_rough
+
   - XZ masks: New refractive_index_from_scalar_mask_XY method.
 
   - has_edges parameters in WPM and BPM methods can be an array masking in desired z positions.
