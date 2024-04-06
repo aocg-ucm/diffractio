@@ -50,8 +50,7 @@ from .scalar_fields_XY import Scalar_field_XY
 from .scalar_sources_XY import Scalar_source_XY
 from .utils_math import (fft_convolution2d, laguerre_polynomial_nk, nearest,
                          nearest2)
-from .utils_optics import roughness_2D
-
+from .utils_optics import roughness_1D, roughness_2D
 
 class Scalar_mask_XY(Scalar_field_XY):
     """Class for working with XY scalar masks.
@@ -837,6 +836,48 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = u
 
+    def edge_rough(self,
+                    s: floating,
+                    t: floating,
+                    level1: floating = 0, 
+                    level2: floating = 1,
+                    x_edge: floating = 0.,
+                    angle: floating = 0 * degrees,
+                    invert: bool = True):
+        """
+        edge_rough: rough edge
+
+        Divides the field in two levels, with a rough edge. 
+
+        Args:
+            s (floating): std of rough edge
+            t (floating): correlation length of rough edge
+            level1 (floating, optional): value of the first level. Defaults to 0.
+            level2 (floating, optional): value of the second level. Defaults to 1.
+            x_edge (_type_, optional): position of division. Defaults to 0.
+            angle (floating, optional): angle of rotation in radians. Defaults to 0*degrees.
+
+        Returns:
+            NDArray: edge
+        """
+
+        Xrot, Yrot = self.__rotate__(angle)
+        Yrot = Yrot
+
+
+        # Definicion de la transmitancia
+        self.u = level1 * np.ones(self.X.shape)
+
+        edge =  roughness_1D(self.y, s=s, t=t)
+
+        _, Edge = np.meshgrid(self.x, edge)
+
+        ipasa = Edge < Xrot - x_edge
+
+        self.u[ipasa] = level2
+        return edge
+
+
     def slit(self, x0: floating, size: floating, angle: floating = 0.):
         """Slit: 1 inside, 0 outside
 
@@ -857,6 +898,31 @@ class Scalar_mask_XY(Scalar_field_XY):
         ix = (Xrot < xmax) & (Xrot > xmin)
         u[ix] = 1
         self.u = u
+
+    def slit_rough(self, x0: floating, width: floating,
+                    s: floating, t: floating, angle: floating = 0.):
+        """Creates a lineal function using the Fourier coefficients.
+
+            Args:
+                x0 (float): position of the center of the slit
+                width (float): slit width
+                s (float): std of rough edge
+                t (float): correlation length of rough edge
+                angle (float): angle of rotation in radians
+
+            Example:
+                t1.slit_series(x0=0, width=10, period1=50,
+                            period2=20, a_coef1=np.array([[0,1],[100,50]]) )
+            """
+
+        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        edge1 = t1.edge_rough(x_edge=x0-width/2, s=s, t=t, angle = angle, invert=True)
+        t2 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        edge2 = t2.edge_rough(x_edge=x0+width/2, s=s, t=t, angle = angle, invert=False)
+        
+        self.u = t1.u - t2.u
+        return edge1, edge2
+
 
     def slit_series(self,
                     x0: floating,
@@ -926,6 +992,38 @@ class Scalar_mask_XY(Scalar_field_XY):
         slit2.slit(x0=x0 + separation / 2, size=size, angle=angle)
 
         self.u = slit1.u + slit2.u
+
+
+    def double_slit_rough(self,
+                    x0: floating,
+                    width: floating,
+                    separation: floating,
+                    s: floating,
+                    t: floating,
+                    angle: floating = 0.):
+        """Creates a double slit with rough edges.
+
+            Args:
+                x0 (float): position of the center of the slit
+                width (float): slit width
+                s (float): std of rough edge
+                t (float): correlation length of rough edge
+                angle (float): angle of rotation in radians
+            Returns:
+                edge1, edge2, edge3, edge4
+            """
+
+        t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        edge1, edge2 = t1.slit_rough(x0=x0-separation/2, width=width, s=s, t=t, angle=angle)
+
+        t2 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        edge3, edge4  = t2.slit_rough(x0=x0+separation/2, width=width, s=s, t=t, angle=angle)
+
+
+        self.u = t1.u + t2.u
+        return edge1, edge2, edge3, edge4
+
+
 
     def square(self, r0: list[floating], size: floating, angle: floating = 0.):
         """Square: 1 inside, 0 outside
