@@ -1617,6 +1617,7 @@ class Vector_field_XY():
         """
 
         tx, ty = rcParams['figure.figsize']
+        rcParams['figure.dpi']=150
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
@@ -1626,20 +1627,20 @@ class Vector_field_XY():
 
         intensity_max = S0.max()
 
-        plt.figure(figsize=(1.1 * tx, 1.75 * ty))
-        h1 = plt.subplot(2, 2, 1)
+        plt.figure(figsize=(1.75 * tx, 0.95 * ty))
+        h1 = plt.subplot(1,4, 1)
         self.__draw1__(S0, color_intensity, "$S_0$")
         plt.clim(0, intensity_max)
 
-        h2 = plt.subplot(2, 2, 2)
+        h2 = plt.subplot(1,4, 2)
         self.__draw1__(S1, color_stokes, "$S_1$")
         plt.clim(-intensity_max, intensity_max)
 
-        h3 = plt.subplot(2, 2, 3)
+        h3 = plt.subplot(1,4, 3)
         self.__draw1__(S2, color_stokes, "$S_2$")
         plt.clim(-intensity_max, intensity_max)
 
-        h4 = plt.subplot(2, 2, 4)
+        h4 = plt.subplot(1,4, 4)
         self.__draw1__(S3, color_stokes, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
 
@@ -1687,9 +1688,9 @@ class Vector_field_XY():
                           num_ellipses: list[int, int] = (21, 21),
                           amplification: float = 0.75,
                           color_line: str = 'w',
-                          line_width: float = 0.75,
+                          line_width: float = 0.5,
                           draw_arrow: bool = True,
-                          head_width: float = 1,
+                          head_width: float = .25,
                           ax: bool = False,
                           color_intensity: str = CONF_DRAWING['color_intensity']):
         """__internal__: draw ellipses
