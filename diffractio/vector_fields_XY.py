@@ -1635,14 +1635,20 @@ class Vector_field_XY():
         h2 = plt.subplot(1,4, 2)
         self.__draw1__(S1, color_stokes, "$S_1$")
         plt.clim(-intensity_max, intensity_max)
-
+        plt.ylabel('')
+        plt.gca().set_yticks([])
+        
         h3 = plt.subplot(1,4, 3)
         self.__draw1__(S2, color_stokes, "$S_2$")
         plt.clim(-intensity_max, intensity_max)
-
+        plt.ylabel('')
+        plt.gca().set_yticks([])    
+        
         h4 = plt.subplot(1,4, 4)
         self.__draw1__(S3, color_stokes, "$S_3$")
         plt.clim(-intensity_max, intensity_max)
+        plt.ylabel('')
+        plt.gca().set_yticks([])    
 
         plt.tight_layout()
 
@@ -1776,6 +1782,7 @@ class Vector_field_XY():
                   colormap: str,
                   title: str = '',
                   has_max: bool = False,
+                  colorbar: bool = True,
                   only_image: bool = False):
         """Draws image.
 
@@ -1820,9 +1827,11 @@ class Vector_field_XY():
                                facecolor='white',
                                alpha=0.75))
 
+        if colorbar is True:
+            plt.colorbar(orientation='horizontal', shrink=0.66, pad=0.15)
+
         plt.xlabel("$x  (\mu m)$")
         plt.ylabel("$y  (\mu m)$")
-        plt.colorbar(orientation='horizontal', shrink=0.5, pad=0.15)
         h.set_clim(0, image.max())
         plt.subplots_adjust(0.01, 0.01, 0.99, 0.95, 0.05, 0.05)
 
