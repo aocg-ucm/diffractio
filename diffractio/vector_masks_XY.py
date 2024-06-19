@@ -210,7 +210,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def scalar_to_vector_mask(self, mask: Scalar_mask_XY, pol_state: Jones_matrix, is_intensity: bool = True):
+    def scalar_to_vector_mask(self, mask: Scalar_mask_XY, pol_state:  None |Jones_matrix = None, is_intensity: bool = True):
         """The same mask (binary) is applied to all the Jones Matrix.
 
         Args:
@@ -219,6 +219,9 @@ class Vector_mask_XY(Vector_field_XY):
             is intensity (bool): If True, abs(mask)**2 is applied.
         """
 
+        if pol_state is None:
+            pol_state = Jones_matrix().vacuum()
+
         if isinstance(pol_state, Jones_matrix):
             pol_state = pol_state.M.squeeze()
 
@@ -226,6 +229,8 @@ class Vector_mask_XY(Vector_field_XY):
         #     t = np.abs(mask.u)**2
         # else:
         t = mask.u
+        
+            
 
         self.M00 = pol_state[0, 0] * t
         self.M01 = pol_state[0, 1] * t
