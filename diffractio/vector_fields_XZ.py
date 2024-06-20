@@ -492,7 +492,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.xlabel('z ($\mu$m)')
 
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal')
+                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
             # plt.suptitle("Instantaneous Poynting vector")
 
@@ -513,11 +513,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
         S_lim = np.max((abs(S_max), np.abs(S_min)))
 
         if has_draw:
+            tx, ty = rcParams["figure.figsize"]
+
             dims = np.shape(Sx)
             num_dims = len(dims)
             if num_dims == 1:
                 z0 = self.z
-                plt.figure()
+                plt.figure(figsize=(1 * tx, 3 * ty))
                 plt.subplot(3, 1, 1)
                 plt.plot(z0, Sx)
                 plt.ylim(-S_lim, S_lim)
@@ -539,7 +541,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 z0 = self.z
                 x0 = self.x
 
-                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
+                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True,
+                                         figsize=(1 * tx, 2 * ty))
                 plt.subplot(3, 1, 1)
                 plt.title("$S_x$")
                 im1 = draw_field(Sx, x0, z0, axis, cmap='seismic')
@@ -558,9 +561,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.clim(-S_lim, S_lim)
                 # axes[2].set_axis_off()
 
-                # = fig.colorbar(im3, ax=axes.ravel().tolist(), shrink=0.95)
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal')
+                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
         return Sx, Sy, Sz
 
@@ -581,7 +583,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.suptitle("$S_{total}$")
             elif num_dims == 2:
                 draw_field(S, self.x, self.z, axis, cmap='hot')
-                plt.colorbar(orientation='horizontal')
+                plt.colorbar(orientation='horizontal', shrink=0.5)
                 plt.suptitle("$S_{total}$")
                 plt.clim(vmin=0)
 
@@ -604,7 +606,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif num_dims == 2:
 
                 draw_field(np.real(U), self.x, self.z, axis, cmap='hot')
-                plt.colorbar(orientation='horizontal')
+                plt.colorbar(orientation='horizontal', shrink=0.5)
 
             plt.title("energy_density")
 
@@ -627,7 +629,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif num_dims == 2:
 
                 draw_field(Sz, self.x, self.z, axis, cmap='hot')
-                plt.colorbar(orientation='horizontal')
+                plt.colorbar(orientation='horizontal', shrink=0.5)
                 plt.clim(0, Sz.max())
 
             plt.title("Irradiance")
@@ -641,13 +643,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
         U = self.energy_density(has_draw=False)
 
-        check_Sz = Sz.mean(axis=1)/Sz[0, :].mean()
-        check_U = U.mean(axis=1)/U[0, :].mean()
+        check_Sz = Sz.mean(axis=1)/Sz[0, :].mean()*self.n.max(axis=1)**0.25
+        check_U = U.mean(axis=1)/U[0, :].mean()/self.n.max(axis=1)**1
 
         plt.figure()
         plt.plot(self.z, check_Sz, 'r', label='Sz')
-        # plt.plot(self.z, check_U, 'b', label='U')
+        plt.plot(self.z, check_U, 'b', label='U')
         plt.legend()
+        plt.title('Pruebas')
 
         plt.xlim(self.z[0], self.z[-1])
         plt.grid('on')
@@ -820,8 +823,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
         self.__draw1__(intensity, color_intensity, "", only_image=only_image)
-        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-        plt.tight_layout()
+        plt.colorbar(orientation='vertical', shrink=0.66)
+        # plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
+        # plt.tight_layout()
         return h1
 
     def __draw_intensities__(
@@ -1243,7 +1247,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.xlabel("$z  (\mu m)$")
         plt.ylabel("$x  (\mu m)$")
         if colormap is not None:
-            plt.colorbar(orientation="horizontal", fraction=0.046)
+            plt.colorbar(orientation="horizontal", fraction=0.046, shrink=0.5)
             h.set_clim(0, image.max())
 
         return h

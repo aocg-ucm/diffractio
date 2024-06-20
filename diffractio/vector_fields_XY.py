@@ -1305,7 +1305,8 @@ class Vector_field_XY():
                                 wspace=0.05,
                                 hspace=0)
             plt.tight_layout()
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
             return h1, h2
         else:
 
@@ -1330,7 +1331,9 @@ class Vector_field_XY():
 
             self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+            
             h3 = plt.subplot(1, 3, 3)
 
             phase = np.angle(Ez_r)
@@ -1340,7 +1343,8 @@ class Vector_field_XY():
 
             self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
             plt.clim(-180, 180)
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
             plt.subplots_adjust(left=0,
                                 bottom=0,
                                 right=1,
@@ -1376,7 +1380,8 @@ class Vector_field_XY():
         intensity2 = np.abs(Ey_r)**2
         intensity2 = normalize_draw(intensity2, logarithm, normalize,
                                     cut_value)
-
+    
+        
         intensity3 = np.abs(Ez_r)**2
         intensity3 = normalize_draw(intensity3, logarithm, normalize,
                                     cut_value)
@@ -1398,6 +1403,10 @@ class Vector_field_XY():
 
             self.__draw1__(intensity2, color_intensity, "$I_y$")
             plt.clim(0, intensity_max)
+
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+        
 
             plt.subplots_adjust(left=0,
                                 bottom=0,
@@ -1422,11 +1431,17 @@ class Vector_field_XY():
             self.__draw1__(intensity2, color_intensity, "$I_y$")
             # plt.clim(0, intensity_max)
 
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+        
             h3 = plt.subplot(1, 3, 3)
 
             self.__draw1__(intensity3, color_intensity, "$I_z$")
             # plt.clim(0, intensity_max)
 
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+        
             plt.subplots_adjust(left=0,
                                 bottom=0,
                                 right=1,
@@ -1463,7 +1478,7 @@ class Vector_field_XY():
         intensity_z = np.abs(Ez_r)**2
         intensity_z = normalize_draw(intensity_z, logarithm, normalize,
                                      cut_value)
-
+        
         intensity_max = np.max((intensity_r, intensity_z))
 
         plt.figure(figsize=(tx, ty))
@@ -1476,7 +1491,9 @@ class Vector_field_XY():
         h2 = plt.subplot(1, 2, 2)
 
         self.__draw1__(intensity_z, color_intensity, "$I_z$")
-
+        plt.ylabel('')
+        plt.gca().set_yticks([])
+        
         plt.subplots_adjust(left=0,
                             bottom=0,
                             right=1,
@@ -1532,11 +1549,15 @@ class Vector_field_XY():
 
             self.__draw1__(amplitude1, color_intensity, "$A_x$")
             plt.clim(0, amplitude_max)
-
+            plt.xlabel('')
+            plt.gca().set_xticks([])
             h2 = plt.subplot(2, 2, 2)
             self.__draw1__(amplitude2, color_intensity, "$A_y$")
             plt.clim(0, amplitude_max)
-
+            plt.xlabel('')
+            plt.gca().set_xticks([])
+            plt.ylabel('')
+            plt.gca().set_yticks([])
             h3 = plt.subplot(2, 2, 3)
             phase = np.angle(self.Ex)
             phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
@@ -1550,9 +1571,10 @@ class Vector_field_XY():
 
             self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
-            # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
             h4 = plt.gca()
+            
             plt.subplots_adjust(left=0,
                                 bottom=0,
                                 right=1,
@@ -1562,21 +1584,30 @@ class Vector_field_XY():
             plt.tight_layout()
             return h1, h2, h3, h4
         else:
-            plt.figure(figsize=(1.1 * 1.5 * tx, 1.4 * 1.5 * ty))
+            plt.figure(figsize=( 1.5 * tx,  1.75 * ty))
 
             h1 = plt.subplot(2, 3, 1)
 
             self.__draw1__(amplitude1, color_intensity, "$A_x$")
             plt.clim(0, amplitude_max)
-
+            plt.xlabel('')
+            plt.gca().set_xticks([])
             h2 = plt.subplot(2, 3, 2)
             self.__draw1__(amplitude2, color_intensity, "$A_y$")
             plt.clim(0, amplitude_max)
-
+            plt.xlabel('')
+            plt.gca().set_xticks([])
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+            
             h3 = plt.subplot(2, 3, 3)
             self.__draw1__(amplitude3, color_intensity, "$A_z$")
             plt.clim(0, amplitude_max)
-
+            plt.xlabel('')
+            plt.gca().set_xticks([])
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+            
             h4 = plt.subplot(2, 3, 4)
             phase = np.angle(self.Ex)
             phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
@@ -1590,19 +1621,23 @@ class Vector_field_XY():
 
             self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+            
+            
             h6 = plt.subplot(2, 3, 6)
             phase = np.angle(self.Ez)
             phase[amplitude3 < percentage_intensity * (amplitude3.max())] = 0
             self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
             plt.clim(-180, 180)
-            # cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
-
+            plt.ylabel('')
+            plt.gca().set_yticks([])
+            
             plt.subplots_adjust(left=0,
                                 bottom=0,
                                 right=1,
                                 top=1,
-                                wspace=0.05,
+                                wspace=0.025,
                                 hspace=0)
             plt.tight_layout()
             return h1, h2, h3, h4, h5, h6
