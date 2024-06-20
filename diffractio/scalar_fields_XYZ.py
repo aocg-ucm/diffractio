@@ -1321,15 +1321,16 @@ class Scalar_field_XYZ():
         """
         video_isovalue(self,  filename, variable,  **kwargs)
 
+    """
     def draw_XYZ_deprecated(self,
                  kind='intensity',
                  logarithm=False,
                  normalize='',
                  pixel_size=(128, 128, 128)):
-        """Draws  XZ field.
+        Draws  XZ field.
+    """
 
-
-
+    """
     # def draw_refractive(self, kind='real'):
     #     pass
 
@@ -1338,6 +1339,7 @@ class Scalar_field_XYZ():
             slicerLM(drawing)
         else:
             return
+    """
 
     def draw_volume_deprecated(self, logarithm=0, normalize='', maxintensity=None):
         """Draws  XYZ field with mlab
