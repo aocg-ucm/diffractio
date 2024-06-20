@@ -643,17 +643,18 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
         U = self.energy_density(has_draw=False)
 
-        check_Sz = Sz.mean(axis=1)/Sz[0, :].mean()*self.n.max(axis=1)**0.25
-        check_U = U.mean(axis=1)/U[0, :].mean()/self.n.max(axis=1)**1
+        check_Sz = (Sz*self.n**0.25).mean(axis=1)/Sz[0, :].mean()
+        #check_U = (U/self.n).mean(axis=1)/U[0, :].mean()
 
         plt.figure()
         plt.plot(self.z, check_Sz, 'r', label='Sz')
-        plt.plot(self.z, check_U, 'b', label='U')
+        #plt.plot(self.z, check_U, 'b', label='U')
         plt.legend()
-        plt.title('Pruebas')
+        #plt.title('Pruebas')
 
         plt.xlim(self.z[0], self.z[-1])
         plt.grid('on')
+        plt.ylim(ymin=0)
 
         if I0 is not None:
             plt.ylim(ymin=I0)
@@ -1458,6 +1459,7 @@ def draw_field(u, x_f, z_f, axis, interpolation='bilinear', cmap=None):
     extent = [z_f[0], z_f[-1], x_f[0], x_f[-1]]
     im = plt.imshow(u.transpose(),
                     origin='lower',
+                    aspect='auto',
                     interpolation=interpolation,
                     extent=extent,
                     cmap=cmap)
