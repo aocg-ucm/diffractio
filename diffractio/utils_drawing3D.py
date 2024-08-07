@@ -11,6 +11,8 @@ import collections
 from pyvista.core import _vtk_core as _vtk
 from pyvista.core.utilities.helpers import wrap
 
+from .config import CONF_DRAWING
+
 def load_stl(filename, has_draw=True, verbose=True):
 
     mesh = pv.read(filename)
@@ -133,11 +135,11 @@ def draw(
 
     if variable == "intensity":
         data = intensity
-        cmap = kwargs["cmap_intensity"]
+        cmap = kwargs["cmap"]
 
     elif variable == "refractive_index":
         data = n
-        cmap = kwargs["cmap_n"]
+        cmap = CONF_DRAWING['color_n']
         
     data = data.reshape((len(self.y),len(self.x),len(self.z)))
     grid["scalars"] =  np.transpose(data,axes=(2,1,0)).flatten()
@@ -232,12 +234,12 @@ def draw(
             pl.screenshot(filename)
 
 
-def video_isovalue(self, filename: str, variable: str = "refractive_index", **kwargs):
+def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs):
     """_summary_
 
     Args:
         filename (str): _description_. Defaults to ''.
-        variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+        kind (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
     """
     # pv.set_jupyter_backend('server')
     # pv.set_jupyter_backend(None)
@@ -246,20 +248,27 @@ def video_isovalue(self, filename: str, variable: str = "refractive_index", **kw
     opacity = kwargs["opacity"]
     dimensions = kwargs["dimensions"]
     scale = kwargs["scale"]
-    cmap = kwargs["cmap"]
     spacing = kwargs["spacing"]
     pos_centers = kwargs["pos_centers"]
     pos_slices = kwargs["pos_slices"]
 
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
-    if variable == "intensity":
+    if kind == "intensity":
         intensity = self.intensity()
         intensity /= intensity.max()
+        data = intensity
+        cmap = kwargs["cmap"]
 
         data = intensity
-    elif variable == "refractive_index":
+    elif kind == "refractive_index":
         data = self.n
+        data = data-data.min()
+        data /=data.max()
+        cmap = CONF_DRAWING['color_n']
+        print("refractive_index")
+
+    print(data.min(), data.max())
 
     grid["scalars"] = data.flatten()
 
@@ -275,14 +284,15 @@ def video_isovalue(self, filename: str, variable: str = "refractive_index", **kw
     vol = pl.add_volume(grid, opacity=opacity, cmap=cmap)
     vol.prop.interpolation_type = "linear"
 
-    values = np.linspace(0.1 * data.max(), data.max(), num=25)
-    surface = grid.contour(values[:1])
+    values = np.linspace(0.05 * data.max(), data.max(), num=25)
+    surface = grid.contour(values[:1]) #
 
     surfaces = [grid.contour([v]) for v in values]
 
     surface = surfaces[0].copy()
-
+    print(surface)
     plotter = pv.Plotter(off_screen=True)
+
     # Open a movie file
     plotter.open_gif(filename)
 

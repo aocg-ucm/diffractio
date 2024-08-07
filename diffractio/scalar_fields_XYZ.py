@@ -1311,7 +1311,7 @@ class Scalar_field_XYZ():
         draw(self, kind, drawing, has_grid,  filename, **kwargs)
 
 
-    def video_isovalue(self,  filename: str, variable: str = 'refractive_index',   **kwargs):
+    def video_isovalue(self,  filename: str, kind: str = 'refractive_index',   **kwargs):
 
         """_summary_
 
@@ -1319,7 +1319,7 @@ class Scalar_field_XYZ():
             filename (str): _description_. Defaults to ''.
             variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
         """
-        video_isovalue(self,  filename, variable,  **kwargs)
+        video_isovalue(self,  filename, kind,  **kwargs)
 
     """
     def draw_XYZ_deprecated(self,
@@ -1352,7 +1352,7 @@ class Scalar_field_XYZ():
         TODO: Simplify, drawing
             include kind and other parameters of draw
         """
-        video_isovalue(self,  filename, variable,  **kwargs)
+        video_isovalue(self,  filename, kind,  **kwargs)
 
 
  
