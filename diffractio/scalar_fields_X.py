@@ -1290,26 +1290,26 @@ class Scalar_field_X():
 
         if kind == "field":
             plt.subplot(211)
-            plt.plot(self.x, y, "k", lw=2)
+            plt.plot(self.x, y, "k", lw=0.5)
             plt.xlabel("$x\,(\mu m)$")
             plt.ylabel("$A\,(arb.u.)$")
             plt.xlim(left=self.x[0], right=self.x[-1])
             plt.ylim(bottom=0)
 
             plt.subplot(212)
-            plt.plot(self.x, phase, "k", lw=2)
+            plt.plot(self.x, phase, "k", lw=0.5)
             plt.xlabel("$x\,(\mu m)$")
             plt.ylabel("$phase\,(radians)$")
             plt.xlim(left=self.x[0], right=self.x[-1])
 
         elif kind in ("amplitude", "intensity", "phase"):
-            plt.plot(self.x, y, "k", lw=2)
+            plt.plot(self.x, y, "k", lw=0.5)
             plt.xlabel("$x\,(\mu m)$")
             plt.ylabel(kind)
             plt.xlim(left=self.x[0], right=self.x[-1])
 
         elif kind == "fft":
-            plt.plot(self.x / degrees, y, "k", lw=2)
+            plt.plot(self.x / degrees, y, "k", lw=0.5)
             plt.xlim(left=self.x[0] / degrees, right=self.x[-1] / degrees)
             plt.xlabel("$\phi\,(degrees)$")
             plt.ylabel(kind)
