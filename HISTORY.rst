@@ -216,8 +216,12 @@ Beta state
 
   - refraction_index -> refractive_index ... in all words.
 
+  - XZ masks: sphere -> cylinder.
+
 
 * New features:
+
+  - XY masks: edge_rough, slit_rough, double_slit_rough
 
   - XY masks: .dxf method for loading masks from .dxf files.
 

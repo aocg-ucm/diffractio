@@ -207,7 +207,7 @@ class Test_Scalar_masks_XZ():
         ref_index = "{p[n_out]}+({p[n_center]}-{p[n_out]})*(1-((X-{p[cx]})**2+(Z-{p[cz]})**2)/{p[radius]}**2)".format(
             p=pn)
 
-        t0.sphere(r0=center,
+        t0.cylinder(r0=center,
                   radius=(radius, radius),
                   refractive_index=ref_index,
                   angle=0)
@@ -273,7 +273,7 @@ class Test_Scalar_masks_XZ():
         ref_index = "{p[n_out]}+({p[n_center]}-{p[n_out]})*(1-((X-{p[cx]})**2+(Z-{p[cz]})**2)/{p[radius]}**2)".format(
             p=pn)
 
-        t0.sphere(r0=center,
+        t0.cylinder(r0=center,
                   radius=(radius, radius),
                   refractive_index=ref_index,
                   angle=0)
@@ -300,12 +300,12 @@ class Test_Scalar_masks_XZ():
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength, n_background=1)
 
-        t1.sphere(r0=(0, 100 * um),
+        t1.cylinder(r0=(0, 100 * um),
                   radius=(40 * um, 40 * um),
                   refractive_index=2.5,
                   angle=0)
 
-        t1.sphere(r0=(0, 100 * um),
+        t1.cylinder(r0=(0, 100 * um),
                   radius=(10 * um, 10 * um),
                   refractive_index=1,
                   angle=0)
@@ -459,7 +459,7 @@ class Test_Scalar_masks_XZ():
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
 
-        t1.sphere(r0=(0, 100 * um),
+        t1.cylinder(r0=(0, 100 * um),
                   radius=(75 * um, 75 * um),
                   refractive_index=1.5,
                   angle=0 * degrees)

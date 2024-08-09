@@ -10,5 +10,6 @@ numexpr
 pandas
 ipywidgets
 ipympl
-
+ezdxf
+pyvista
 # opencv-python
