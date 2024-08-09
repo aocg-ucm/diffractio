@@ -626,7 +626,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if kind == 'Sz':
             S_total = Sz
 
-        elif kind == 'Stotal':
+        elif kind == 'Ssum':
+            S_total = Sx+Sy+Sz
+
+        elif kind == 'S2': #más bien descartada, la normalización >1
             S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
 
         if has_draw:
@@ -635,6 +638,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             if num_dims == 1:
                 plt.figure()
                 plt.plot(self.z, S_total)
+                plt.ylim(0, S_total.max())
 
             elif num_dims == 2:
                 draw_field(S_total, self.x, self.z, axis, cmap='hot')
@@ -646,6 +650,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return Sz
 
     def check_energy(self, kind='Sz', I0=None):
+        """Checks the energy
+
+        Args:
+            kind (str, optional): Sz S2 Ssum. Defaults to 'Sz'.
+            I0 (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         permeability = 4 * np.pi * 1e-7
         Z0 = 376.82
 
@@ -657,10 +670,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if kind == 'Sz':
             S_total = Sz
 
-        elif kind == 'Stotal':
+        elif kind == 'S2':
             S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
 
-        elif kind == 'S2':
+        elif kind == 'Ssum':
             S_total = Sx+Sy+Sz
 
 
