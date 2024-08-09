@@ -217,8 +217,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
             self.Ex0 = E0.Ex
             self.Ey0 = E0.Ey
 
-            self.Ex[:, 0] = self.Ex[:, 0] + E0.Ex
-            self.Ey[:, 0] = self.Ey[:, 0] + E0.Ey
+            self.Ex[0, :] = self.Ex[0, :] + E0.Ex
+            self.Ey[0, :] = self.Ey[0, :] + E0.Ey
+            # self.Ex[:, 0] = self.Ex[:, 0] + E0.Ex
+            # self.Ey[:, 0] = self.Ey[:, 0] + E0.Ey
 
         else:
             iz, _, _ = nearest(self.z, z0)
@@ -364,8 +366,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         dx = x[1] - x[0]
         dz = z[1] - z[0]
 
-        # self.Ex[:, 0] = self.Ex0
-        # self.Ey[:, 0] = self.Ey0
+        self.Ex[0,:] = self.Ex0
+        self.Ey[0,:] = self.Ey0
 
         if has_H:
             self.Hx = np.zeros_like(self.Ex)
@@ -612,52 +614,74 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return U
 
-    def irradiance(self, has_draw: bool = False, axis='scaled'):
+    def irradiance(self, kind: str = 'Sz', has_draw: bool = False, axis='scaled'):
+        """
+        """
 
         epsilon = self.n ** 2
         permeability = 4 * np.pi * 1e-7
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
+        if kind == 'Sz':
+            S_total = Sz
+
+        elif kind == 'Stotal':
+            S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
+
         if has_draw:
             dims = np.shape(Sz)
             num_dims = len(dims)
             if num_dims == 1:
                 plt.figure()
-                plt.plot(self.z, np.Sz)
+                plt.plot(self.z, S_total)
 
             elif num_dims == 2:
-
-                draw_field(Sz, self.x, self.z, axis, cmap='hot')
+                draw_field(S_total, self.x, self.z, axis, cmap='hot')
                 plt.colorbar(orientation='horizontal', shrink=0.5)
-                plt.clim(0, Sz.max())
+                plt.clim(0, S_total.max())
 
             plt.title("Irradiance")
 
         return Sz
 
-    def check_energy(self, I0=None):
+    def check_energy(self, kind='Sz', I0=None):
         permeability = 4 * np.pi * 1e-7
         Z0 = 376.82
 
-        Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
-        U = self.energy_density(has_draw=False)
 
-        check_Sz = (Sz*self.n**0.25).mean(axis=1)/Sz[0, :].mean()
-        #check_U = (U/self.n).mean(axis=1)/U[0, :].mean()
+
+        Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
+        # U = self.energy_density(has_draw=False)
+
+        if kind == 'Sz':
+            S_total = Sz
+
+        elif kind == 'Stotal':
+            S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
+
+        elif kind == 'S2':
+            S_total = Sx+Sy+Sz
+
+
+
+        check_Sz = (S_total/self.n**0.5).mean(axis=1)/(S_total[1, :]/self.n[1, :]**0.5).mean()
+        check_Sz = (S_total).mean(axis=1)/(S_total[1, :]).mean()
+        #check_U = (U/self.n**2).mean(axis=1)/U[1, :].mean()
 
         plt.figure()
         plt.plot(self.z, check_Sz, 'r', label='Sz')
-        #plt.plot(self.z, check_U, 'b', label='U')
+        # plt.plot(self.z, check_U, 'b', label='U')
         plt.legend()
-        #plt.title('Pruebas')
 
         plt.xlim(self.z[0], self.z[-1])
         plt.grid('on')
-        plt.ylim(ymin=0)
 
         if I0 is not None:
             plt.ylim(ymin=I0)
+        else:
+            plt.ylim(ymin=0)
+
 
         return check_Sz  # , check_U
 #
@@ -782,6 +806,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif kind == "fields":
                 id_fig = self.__draw_fields__(logarithm, normalize, cut_value, **kwargs)
 
+            elif kind == "EH":
+                id_fig = self.__draw_EH__(logarithm, normalize, cut_value, **kwargs)
+
             elif kind == "stokes":
                 id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, **kwargs)
 
@@ -836,6 +863,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         only_image=False,
         color_intensity=CONF_DRAWING["color_intensity"],
+        draw_z = True,
     ):
         """internal funcion: draws phase
 
@@ -858,9 +886,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
+        # percentage_z = 0.01
 
-        if intensity3.max() < percentage_z * intensity_max:
+        # if intensity3.max() < percentage_z * intensity_max:
+        if draw_z is False:
             plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
@@ -902,6 +931,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         only_image=False,
         color_intensity=CONF_DRAWING["color_phase"],
+        draw_z = True,
     ):
         """internal funcion: draws phase
 
@@ -924,9 +954,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
 
-        if intensity3.max() < percentage_z * intensity_max:
+        if draw_z is False:
             plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
@@ -986,6 +1015,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
+        draw_z = True, #TODO
+
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
@@ -1010,30 +1041,135 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         h1 = plt.subplot(2, 2, 1)
 
-        __draw1__(self, intensity_x, "$I_x$")
+        self.__draw1__( intensity_x, color_intensity, "$I_x$")
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
-        __draw1__(self, intensity_y, "$I_y$")
+        self.__draw1__(intensity_y, color_intensity,"$I_y$")
         plt.clim(0, intensity_max)
 
         h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
 
-        __draw1__(self, phase / degrees, color_phase, "$\phi_x$")
+        self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)
         phase = np.angle(self.Ey)
         phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
 
-        __draw1__(self, phase / degrees, color_phase, "$\phi_y$")
+        self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
         h4 = plt.gca()
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
         return h1, h2, h3, h4
+
+
+
+    def __draw_EH__(
+        self,
+        logarithm,
+        normalize,
+        cut_value,
+        cmap=CONF_DRAWING["color_amplitude_sign"],
+        edge=None,
+        draw_z = True
+    ):
+        """__internal__: draws amplitude and phase in 2x2 drawing
+
+        Parameters:
+            logarithm (bool): If True, intensity is scaled in logarithm
+            normalize (bool): If True, max(intensity)=1
+            title (str): title of figure
+            cut_value (float): If not None, cuts the maximum intensity to this value
+
+        """
+
+        E_x = self.Ex
+        E_x = normalize_draw(E_x, logarithm, normalize, cut_value)
+
+        E_y = self.Ey
+        E_y = normalize_draw(E_y, logarithm, normalize, cut_value)
+
+        E_z = self.Ez
+        E_z = normalize_draw(E_z, logarithm, normalize, cut_value)
+
+        H_x = self.Hx
+        H_x = normalize_draw(H_x, logarithm, normalize, cut_value)
+
+        H_y = self.Hy
+        H_y = normalize_draw(H_y, logarithm, normalize, cut_value)
+
+        H_z = self.Hz
+        H_z = normalize_draw(H_z, logarithm, normalize, cut_value)
+
+        tx, ty = rcParams["figure.figsize"]
+
+        E_max = np.max((E_x.max(), E_y.max(), E_z.max()))
+        H_max = np.max((H_x.max(), H_y.max(), H_z.max()))
+
+        if draw_z is True:
+
+            fig, axs = plt.subplots(
+                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.25 * tx, 2 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_proposal(
+                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_x$')
+            IDimage.set_clim(-E_max,E_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                E_y, self.z, self.x, ax=axs[1, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_y$')
+            IDimage.set_clim(-E_max,E_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                E_z, self.z, self.x, ax=axs[2, 0], xlabel="$z  (\mu m)$", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_z$')
+            IDimage.set_clim(-E_max,E_max)
+           # ax.colorbar()
+          
+
+            id_fig, ax, IDimage = draw2D_proposal(
+                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+            IDimage.set_clim(-H_max,H_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                H_y, self.z, self.x, ax=axs[1, 1], xlabel="", ylabel="", color=cmap, title=r'H$_y$')
+            IDimage.set_clim(-H_max,H_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                H_z, self.z, self.x, ax=axs[2, 1], xlabel="$z  (\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
+            # ax.colorbar()
+            IDimage.set_clim(-H_max,H_max)
+
+            fig.subplots_adjust(right=1.25)
+            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
+            fig.colorbar(IDimage, cax=cbar_ax)
+
+            plt.tight_layout()
+        else: 
+            fig, axs = plt.subplots(
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(2 * tx, 2 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_proposal(
+                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_x$')
+            IDimage.set_clim(-E_max,E_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                E_y, self.z, self.x, ax=axs[1, 0],  xlabel="$z  (\mu m)$", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_y$')
+            IDimage.set_clim(-E_max,E_max)
+
+
+            id_fig, ax, IDimage = draw2D_proposal(
+                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+            IDimage.set_clim(-H_max,H_max)
+            id_fig, ax, IDimage = draw2D_proposal(
+                H_y, self.z, self.x, ax=axs[1, 1],  xlabel="$z  (\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
+            IDimage.set_clim(-H_max,H_max)
+
+            fig.subplots_adjust(right=1.25)
+            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
+            fig.colorbar(IDimage, cax=cbar_ax)
+
+            plt.tight_layout()
+        return self
 
     def __draw_stokes__(
         self,
@@ -1465,3 +1601,90 @@ def draw_field(u, x_f, z_f, axis, interpolation='bilinear', cmap=None):
                     cmap=cmap)
     plt.axis(axis)
     return im
+
+
+def draw2D_proposal(
+        image,
+        x,
+        y,
+        ax=None,
+        xlabel="$x  (\mu m)$",
+        ylabel="$y  (\mu m)$",
+        title="",
+        color="YlGnBu",  # YlGnBu  seismic
+        interpolation='bilinear',  # 'bilinear', 'nearest'
+        scale='scaled',
+        reduce_matrix='standard',
+        range_scale='um',
+        verbose=False):
+    """makes a drawing of XY
+
+    Parameters:
+        image (numpy.array): image to draw
+        x (numpy.array): positions x
+        y (numpy.array): positions y
+        ax (): axis
+        xlabel (str): label for x
+        ylabel (str): label for y
+        title (str): title
+        color (str): color
+        interpolation (str): 'bilinear', 'nearest'
+        scale (str): kind of axis (None, 'equal', 'scaled', etc.)
+        range_scale (str): 'um' o 'mm'
+        verbose (bool): if True prints information
+
+    Returns:
+        id_fig: handle of figure
+        IDax: handle of axis
+        IDimage: handle of image
+    """
+    if reduce_matrix in (None, '', []):
+        pass
+    elif reduce_matrix == 'standard':
+        num_x = len(x)
+        num_y = len(y)
+        reduction_x = int(num_x / 500)
+        reduction_y = int(num_y / 500)
+
+        if reduction_x == 0:
+            reduction_x = 1
+        if reduction_y == 0:
+            reduction_y = 1
+
+        image = image[::reduction_x, ::reduction_y]
+    else:
+        image = image[::reduce_matrix[0], ::reduce_matrix[1]]
+
+    if verbose is True:
+        print(("image size {}".format(image.shape)))
+
+    if ax is None:
+        id_fig = plt.figure()
+        ax = id_fig.add_subplot(111)
+    else:
+        id_fig = None
+
+    if range_scale == 'um':
+        extension = (x[0], x[-1], y[0], y[-1])
+    else:
+        extension = (x[0] / mm, x[-1] / mm, y[0] / mm, y[-1] / mm)
+        xlabel = "x (mm)"
+        ylabel = "y (mm)"
+
+    IDimage = ax.imshow(image.transpose(),
+                        interpolation=interpolation,
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension,
+                        )
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    if scale != '':
+        ax.axis(scale)
+    # plt.axis(extension)
+    # if scale not in ('', None, []):
+    #     ax.set_axis(scale)
+    IDimage.set_cmap(color)
+
+    return id_fig, ax, IDimage

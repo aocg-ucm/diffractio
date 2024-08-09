@@ -16,4 +16,4 @@ CONF_DRAWING['color_real'] = cm.seismic
 CONF_DRAWING['color_stokes'] = cm.seismic
 CONF_DRAWING['color_n'] = cm.Blues
 CONF_DRAWING[
-    'percentage_intensity'] = 0.002  # percentage of intensity not shown in phase
+    'percentage_intensity'] = 0.05  # percentage of intensity not shown in phase
