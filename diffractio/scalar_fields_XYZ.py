@@ -1225,6 +1225,7 @@ class Scalar_field_XYZ():
 
         plt.figure()
         ufield = self.to_Scalar_field_XZ(y0=y0)
+        ufield.u = ufield.u.transpose()
         h1 = ufield.draw(kind, logarithm, normalize, draw_borders, filename,
                          **kwargs)
 
@@ -1247,6 +1248,8 @@ class Scalar_field_XYZ():
             filename (str): filename to save
         """
 
+        percentage_intensity = CONF_DRAWING['percentage_intensity']
+
         plt.figure()
         ufield = self.to_Scalar_field_YZ(x0=x0)
         
@@ -1258,12 +1261,15 @@ class Scalar_field_XYZ():
         if kind == 'intensity':
             I_drawing = I_drawing
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
+            cmap = CONF_DRAWING['color_intensity']
         elif kind == 'amplitude':
             I_drawing = amplitude
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
+            cmap = CONF_DRAWING['color_amplitude']
         elif kind == 'phase':
             phase = phase / degrees
             phase[I_drawing < percentage_intensity * (I_drawing.max())] = 0
+            cmap = CONF_DRAWING['color_phase']
 
             I_drawing = phase
         elif kind == 'real':
@@ -1273,8 +1279,8 @@ class Scalar_field_XYZ():
             return
 
 
-        if logarithm == 1:
-            I_drawing = np.log(I_drawing + 1)
+        # if logarithm == 1:
+        #     I_drawing = np.log(I_drawing + 1)
 
         if normalize == 'maximum':
             I_drawing = I_drawing / I_drawing.max()
@@ -1289,14 +1295,12 @@ class Scalar_field_XYZ():
                         aspect='auto',
                         origin='lower',
                         extent=[
-                            self.z[0] / 1000, self.z[-1] / 1000, self.y[0],
+                            self.z[0] , self.z[-1] , self.y[0],
                             self.y[-1]
                         ])
-        plt.xlabel('z (mm)', fontsize=16)
-        plt.ylabel('y $(um)$', fontsize=16)
-        plt.title('intensity YZ', fontsize=20)
-        h1.set_cmap(
-            self.CONF_DRAWING['color_intensity'])  # OrRd # Reds_r gist_heat
+        plt.xlabel('z ($\mu$m)')
+        plt.ylabel('y ($\mu$m)')
+        h1.set_cmap(cmap)  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
     def draw_XYZ(self, kind: str = 'volume', drawing: str = 'intensity', has_grid: bool=False,  filename='', **kwargs):

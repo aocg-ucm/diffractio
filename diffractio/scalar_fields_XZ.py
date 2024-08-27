@@ -1369,7 +1369,7 @@ class Scalar_field_XZ():
              colormap_kind: str = "",
              z_scale: str = 'um',
              edge_matrix: NDArrayFloat | None = None,
-             interpolation: str = 'spline36',
+             interpolation: str = 'bilinear',
              percentage_intensity: floating | None = None,
              **kwargs):
         """Draws  XZ field.
