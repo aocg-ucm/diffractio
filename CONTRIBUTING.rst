@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://bitbucket.com/optbrea/diffractio/issues.
+Report bugs at https://github.com/optbrea/diffractio/pulls.
 
 If you are reporting a bug, please include:
 
@@ -26,13 +26,13 @@ If you are reporting a bug, please include:
 Fix Bugs
 ~~~~~~~~
 
-Look through the Bitbucket issues for bugs. Anything tagged with "bug" and "help
+Look through the Github issues for bugs. Anything tagged with "bug" and "help
 wanted" is open to whoever wants to implement it.
 
 Implement Features
 ~~~~~~~~~~~~~~~~~~
 
-Look through the Bitbucket issues for features. Anything tagged with "enhancement"
+Look through the Github issues for features. Anything tagged with "enhancement"
 and "help wanted" is open to whoever wants to implement it.
 
 Write Documentation
@@ -45,7 +45,7 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://bitbucket.com/optbrea/diffractio/issues.
+The best way to send feedback is to file an issue at https://github.com/optbrea/diffractio/pulls.
 
 If you are proposing a feature:
 
@@ -59,10 +59,10 @@ Get Started!
 
 Ready to contribute? Here's how to set up `diffractio` for local development.
 
-1. Fork the `diffractio` repo on Bitbucket.
+1. Fork the `diffractio` repo on Github.
 2. Clone your fork locally::
 
-    $ git clone git@bitbucket.org:optbrea/diffractio.git
+    $ git clone git@github.com:optbrea/diffractio.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
@@ -91,7 +91,7 @@ Ready to contribute? Here's how to set up `diffractio` for local development.
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-7. Submit a pull request through the Bitbucket website.
+7. Submit a pull request through the Github website.
 
 Pull Request Guidelines
 -----------------------------
@@ -102,7 +102,7 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 2.7, 3.4, 3.5 and 3.6, and for PyPy. Check
+3. The pull request should work for Python 3.8, and for PyPy. Check
    https://travis-ci.org/optbrea/diffractio/pull_requests
    and make sure that the tests pass for all supported Python versions.
 

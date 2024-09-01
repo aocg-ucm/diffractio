@@ -609,6 +609,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
                 draw_field(np.real(U), self.x, self.z, axis, cmap='hot')
                 plt.colorbar(orientation='horizontal', shrink=0.5)
+                plt.clim(0)
 
             plt.title("energy_density")
 
@@ -669,22 +670,23 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         if kind == 'Sz':
             S_total = Sz
+            label = 'Sz'
 
         elif kind == 'S2':
             S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
+            label = 'S2'
 
         elif kind == 'Ssum':
             S_total = Sx+Sy+Sz
+            label = 'Ssum'
 
 
 
         check_Sz = (S_total/self.n**0.5).mean(axis=1)/(S_total[1, :]/self.n[1, :]**0.5).mean()
         check_Sz = (S_total).mean(axis=1)/(S_total[1, :]).mean()
-        #check_U = (U/self.n**2).mean(axis=1)/U[1, :].mean()
 
         plt.figure()
-        plt.plot(self.z, check_Sz, 'r', label='Sz')
-        # plt.plot(self.z, check_U, 'b', label='U')
+        plt.plot(self.z, check_Sz, 'r', label=label)
         plt.legend()
 
         plt.xlim(self.z[0], self.z[-1])
@@ -1126,7 +1128,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if draw_z is True:
 
             fig, axs = plt.subplots(
-                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.25 * tx, 2 * ty)
+                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.5 * tx, 2 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_proposal(

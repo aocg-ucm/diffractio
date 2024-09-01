@@ -50,7 +50,7 @@ from .scalar_fields_XY import Scalar_field_XY
 from .scalar_sources_XY import Scalar_source_XY
 from .utils_math import (fft_convolution2d, laguerre_polynomial_nk, nearest,
                          nearest2)
-from .utils_optics import roughness_2D
+from .utils_optics import roughness_1D, roughness_2D
 from .utils_dxf import load_dxf
 
 class Scalar_mask_XY(Scalar_field_XY):

@@ -40,6 +40,7 @@ It implements Scalar and vector Optics. The main algorithms used are:
 * Vectorial Rayleigh-Sommerfeld (VRS).
 * Vector Fast Fourier Tranform (VFFT).
 * Vector Chirp z-transform (VCZT).
+* Vector Wave Propagation Method (FPWPM)
 
 When possible, multiprocessing is implemented for a faster computation.
 
@@ -216,7 +217,34 @@ Collaborators
 Citing
 ---------------------------
 
-L.M. Sanchez Brea, "Diffractio, python module for diffraction and interference optics", https://pypi.org/project/diffractio/ (2019)
+There is a `paper about Diffractio <https://doi.org/10.1117/12.3021879>`_.
+
+If you are using Diffractio in your scientific research, please help our scientific visibility by citing our work.
+
+
+   Luis Miguel Sanchez-Brea, Angela Soria-Garcia, Joaquin Andres-Porras, Veronica Pastor-Villarrubia, Mahmoud H. Elshorbagy, Jesus del Hoyo Muñoz, Francisco Jose Torcal-Milla, and Javier Alda "Diffractio: an open-source library for diffraction and interference calculations", Proc. SPIE 12997, Optics and Photonics for Advanced Dimensional Metrology III, 129971B (18 June 2024); https://doi.org/10.1117/12.3021879 
+
+
+BibTex:
+
+.. code::
+
+   @inproceedings{10.1117/12.3021879,
+      author = {Luis Miguel Sanchez-Brea and Angela Soria-Garcia and Joaquin Andres-Porras and Veronica Pastor-Villarrubia and Mahmoud H. Elshorbagy and Jesus del Hoyo Mu{\~n}oz and Francisco Jose Torcal-Milla and Javier Alda},
+      title = {{Diffractio: an open-source library for diffraction and interference calculations}},
+      volume = {12997},
+      booktitle = {Optics and Photonics for Advanced Dimensional Metrology III},
+      editor = {Peter J. de Groot and Felipe Guzman and Pascal Picart},
+      organization = {International Society for Optics and Photonics},
+      publisher = {SPIE},
+      pages = {129971B},
+      keywords = {Design of micro-optical devices, Diffractive optical elements, Propagation algorithms, Scalar propagation, Vector propagation},
+      year = {2024},
+      doi = {10.1117/12.3021879},
+      URL = {https://doi.org/10.1117/12.3021879}
+   }
+
+
 
 
 References for algorithms

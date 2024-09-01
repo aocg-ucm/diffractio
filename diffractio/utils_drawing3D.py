@@ -208,10 +208,15 @@ def draw(
         data = n
         cmap = CONF_DRAWING['color_n']
         
-    data = data.reshape((len(self.y),len(self.x),len(self.z)))
-    grid["scalars"] =  np.transpose(data,axes=(2,1,0)).flatten()
+    data = data.reshape((len(self.y), len(self.x), len(self.z)))
+
+    # grid["scalars"] =  np.transpose(data, axes=(2,1,0)).flatten()
+    # print("here")
 
     if kind == "volume":
+        data = np.transpose(data, axes=(2,0,1)) # prueba y error - bien en volume
+        
+        
         pl = pyvista.Plotter()
         
         if cpos != None:
@@ -219,45 +224,57 @@ def draw(
             reset_camera = False
 
         pl.set_scale(
-            xscale=scale[1],
-            yscale=scale[0],
-            zscale=scale[2],
-            reset_camera=reset_camera,
-            render=True,
-        )
+            xscale=1/scale[1],
+            yscale=1/scale[0],
+            zscale=1/scale[2],
+            reset_camera=True,
+            render=True)
         vol = pl.add_volume(data, cmap=cmap, opacity=opacity, shade=False)
         vol.prop.interpolation_type = "linear"
+        pl.reset_camera()
+
 
     elif kind == "clip":
+
+        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+        
         pl = pyvista.Plotter()
-        pl.add_volume_clip_plane(grid, normal="x", opacity=opacity, cmap=cmap)
         pl.add_volume_clip_plane(grid, normal="y", opacity=opacity, cmap=cmap)
-        pl.add_volume_clip_plane(grid, normal="-z", opacity=opacity, cmap=cmap)
+        pl.add_volume_clip_plane(grid, normal="x", opacity=opacity, cmap=cmap)
+        pl.add_volume_clip_plane(grid, normal="z", opacity=opacity, cmap=cmap)
         pl.set_scale(
-            xscale=scale[1],
-            yscale=scale[0],
-            zscale=scale[2],
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
             reset_camera=True,
             render=True)
 
     elif kind == "slices":
+        
+        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+
         pl = pyvista.Plotter()
         slice = grid.slice_orthogonal()
         dargs = dict(cmap=cmap)
-        pl.add_mesh(slice, **dargs)
         pl.set_scale(
-            xscale=scale[1],
-            yscale=scale[0],
-            zscale=scale[2],
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
             reset_camera=True,
             render=True,
         )
+        pl.add_mesh(slice, **dargs)
 
     elif kind == "projections":
+        data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
+        #data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
+
+        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+
         pl = pv.Plotter(shape=(2, 2))
         dargs = dict(cmap=cmap)
-        slice1 = grid.slice_orthogonal(x=0, z=0)
-        slice2 = grid.slice_orthogonal(x=0, y=0)
+        slice1 = grid.slice_orthogonal(x=0, y=0)
+        slice2 = grid.slice_orthogonal(x=0, z=0)
         slice3 = grid.slice_orthogonal(y=0, z=0)
         slice4 = grid.slice_orthogonal()
 
@@ -268,19 +285,19 @@ def draw(
         pl.subplot(0, 0)
         pl.add_mesh(slice1, **dargs)
         # p.show_grid()
-        pl.camera_position = "xz"
+        pl.camera_position = "xy"
         pl.enable_parallel_projection()
         # ZY
         pl.subplot(0, 1)
         pl.add_mesh(slice2, **dargs)
         # p.show_grid()
-        pl.camera_position = "xy"
+        pl.camera_position = "zx"
         pl.enable_parallel_projection()
         # XZ
         pl.subplot(1, 0)
         pl.add_mesh(slice3, **dargs)
         # p.show_grid()
-        pl.camera_position = "yz"
+        pl.camera_position = "zy"
         pl.enable_parallel_projection()
 
     # pl.view_isometric()
@@ -331,7 +348,7 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     elif kind == "refractive_index":
         data = self.n
         data = data-data.min()
-        data /=data.max()
+        data /= data.max()
         cmap = CONF_DRAWING['color_n']
         print("refractive_index")
 
@@ -352,7 +369,7 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     vol.prop.interpolation_type = "linear"
 
     values = np.linspace(0.05 * data.max(), data.max(), num=25)
-    surface = grid.contour(values[:1]) #
+    surface = grid.contour(values[:1])
 
     surfaces = [grid.contour([v]) for v in values]
 

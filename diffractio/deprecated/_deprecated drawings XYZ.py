@@ -12,7 +12,7 @@
             pixel_size (float, float, float): pixels for drawing
             """
         try:
-            from .utils_slicer_deprecated import slicerLM
+            from ._utils_slicer import slicerLM
             is_slicer = True
         except ImportError:
             print("slicerLM is not loaded.")
@@ -101,7 +101,7 @@
             kind (str): 'real', 'imag', 'abs'
         """
         try:
-            from .utils_slicer_deprecated import slicerLM
+            from ._utils_slicer import slicerLM
             is_slicer = True
         except ImportError:
             print("slicerLM is not loaded.")

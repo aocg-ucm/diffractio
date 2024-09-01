@@ -924,7 +924,7 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: floating, n1: floating,
             axs[1].grid()
             axs[1].set_xlim(kx[0], kx[-1])
             axs[0].set_xlabel(r"$k_x$")
-            axs[1].set_title(r"phase $(^o)$")
+            axs[1].set_title(r"phase $\, (^{\circ})$")
             axs[1].set_ylim(-190, 190)
             axs[1].set_yticks([-180, -90, 0, 90, 180])
 
@@ -1000,9 +1000,9 @@ def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: floating, n1: 
     T_TM, T_TE, R_TM, R_TE = None, None, None, None
 
     if outputs[0]:
-        T_TM = kz_2 / kz_1 * np.abs(t_TM) ** 2
+        T_TM = np.real(kz_2 / kz_1 * np.abs(t_TM ** 2))
     if outputs[1]:
-        T_TE = kz_2 / kz_1 * np.abs(t_TE) ** 2
+        T_TE = np.real(kz_2 / kz_1 * np.abs(t_TE) ** 2)
     if outputs[2]:
         R_TM = np.abs(r_TM) ** 2
     if outputs[3]:
@@ -1069,7 +1069,7 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
             axs[0].grid()
 
             axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
-            axs[0].set_xlabel(r"$\theta (^o)$")
+            axs[0].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[0].set_title("amplitude")
 
             if outputs[0]:
@@ -1089,14 +1089,14 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
             if outputs[2]:
                 axs[1].plot(
                     theta / degrees,
-                    np.angle(r_TM) / degrees,
+                    np.angle(np.abs(r_TM)) / degrees,
                     "r-.",
                     label="$r_{\parallel, TM}$",
                 )
             if outputs[3]:
                 axs[1].plot(
                     theta / degrees,
-                    np.angle(r_TE) / degrees,
+                    np.angle(np.abs(r_TE)) / degrees,
                     "b-.",
                     label="$r_{\perp, TE}$",
                 )
@@ -1104,8 +1104,8 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
             axs[1].legend()
             axs[1].grid()
             axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
-            axs[1].set_xlabel(r"$\theta (^o)$")
-            axs[1].set_title(r"phase $(^o)$")
+            axs[1].set_xlabel(r"$\theta \, (^{\circ})$")
+            axs[1].set_title(r"phase $\, (^{\circ})$")
             axs[1].set_ylim(-190, 190)
             axs[1].set_yticks([-180, -90, 0, 90, 180])
 
@@ -1125,7 +1125,7 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
 
             axs[0].legend()
             axs[0].grid()
-            axs[0].set_xlabel(r"$\theta (^o)$")
+            axs[0].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
             axs[0].set_title("real")
 
@@ -1158,7 +1158,7 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
             axs[1].legend()
             axs[1].grid()
             axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
-            axs[1].set_xlabel(r"$\theta (^o)$")
+            axs[1].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[1].set_title(r"imag")
 
     return t_TM, t_TE, r_TM, r_TE  # parallel, perpendicular
@@ -1200,7 +1200,7 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: floating, n1: fl
             plt.plot(theta / degrees, R_TE, "b-.", label="$R_{\perp, TE}$")
 
         plt.xlim(theta[0] / degrees, theta[-1] / degrees)
-        plt.xlabel(r"$\theta (^o)$")
+        plt.xlabel(r"$\theta \, (^{\circ})$")
         plt.legend()
         plt.grid()
 

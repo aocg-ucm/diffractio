@@ -1315,6 +1315,8 @@ class Vector_field_XY():
             plt.tight_layout()
             plt.ylabel('')
             plt.gca().set_yticks([])
+            rcParams['figure.figsize']= tx, ty
+
             return h1, h2
         else:
 
@@ -1360,6 +1362,8 @@ class Vector_field_XY():
                                 wspace=0.05,
                                 hspace=0)
             plt.tight_layout()
+
+            rcParams['figure.figsize']= tx, ty
 
             return h1, h2, h3
 
@@ -1660,7 +1664,6 @@ class Vector_field_XY():
         """
 
         tx, ty = rcParams['figure.figsize']
-        rcParams['figure.dpi']=150
 
         S0, S1, S2, S3 = self.polarization_states(matrix=True)
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)

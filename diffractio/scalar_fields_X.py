@@ -1079,12 +1079,12 @@ class Scalar_field_X():
 
             if num_sampling is not None:
                 if j in indexes_z_gv:
-                    u_out_gv.u[:, iz_out_gv] = u_iter.u[indexes_x_gv]
+                    u_out_gv.u[iz_out_gv,:] = u_iter.u[indexes_x_gv]
                     iz_out_gv = iz_out_gv + 1
 
             if ROI is not None:
                 if j in indexes_z_roi:
-                    u_out_roi.u[:, iz_out_roi] = u_iter.u[indexes_x_roi]
+                    u_out_roi.u[iz_out_roi,:] = u_iter.u[indexes_x_roi]
                     iz_out_roi = iz_out_roi + 1
 
             if get_u_max is True:

@@ -1133,9 +1133,9 @@ class Scalar_field_XY():
         else:
             has_filter = has_edges
 
-        width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center = (self.x[-1]+self.x[0])/2
-        y_center = (self.y[-1]+self.y[0])/2
+        width_edge = 0.95*(self.x[-1] - self.x[0])/2
+        x_center = (self.x[-1] + self.x[0])/2
+        y_center = (self.y[-1] + self.y[0])/2
 
         filter_x = np.exp(-(np.abs(self.X-x_center) / width_edge)**pow_edge)
         filter_y = np.exp(-(np.abs(self.Y-y_center) / width_edge)**pow_edge)
@@ -1176,7 +1176,6 @@ class Scalar_field_XY():
 
         # STORING global view matrices
         if num_sampling is not None:
-
             len_x, len_y, len_z = num_sampling
             xout_gv = np.linspace(x[0], x[-1], len_x)
             yout_gv = np.linspace(y[0], y[-1], len_y)
@@ -1189,8 +1188,7 @@ class Scalar_field_XY():
             indexes_x_gv, _, _ = nearest2(x, xout_gv)
             indexes_y_gv, _, _ = nearest2(y, yout_gv)
             indexes_z_gv, _, _ = nearest2(zs, zout_gv)
-            indexes_X_gv, indexes_Y_gv = np.meshgrid(indexes_x_gv,
-                                                     indexes_y_gv)
+            indexes_X_gv, indexes_Y_gv = np.meshgrid(indexes_x_gv, indexes_y_gv)
 
             u_out_gv.n = fn(xout_gv, yout_gv, zout_gv, self.wavelength)
         else:
