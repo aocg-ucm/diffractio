@@ -293,7 +293,7 @@ def extract_image_from_video(nombre_video: str | None = None, num_frame: str = "
     os.system(texto)
 
 
-def normalize_draw(u, logarithm: np.float_ | bool = False, normalize: bool = False, cut_value: int | None = None):
+def normalize_draw(u, logarithm: float | bool = False, normalize: bool = False, cut_value: int | None = None):
     """
     Gets a field and changes its caracteristics for drawing
 
@@ -324,7 +324,7 @@ def normalize_draw(u, logarithm: np.float_ | bool = False, normalize: bool = Fal
     return u
 
 
-def prepare_drawing(u, kind: str = "intensity", logarithm: np.float_ | bool = False,
+def prepare_drawing(u, kind: str = "intensity", logarithm: float | bool = False,
                     normalize: bool = False):
     """It is necessary that figure is previously defined: plt.figure()
 
