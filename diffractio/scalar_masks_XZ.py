@@ -399,11 +399,11 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         fx1, fx2 = fx
 
         if fx1 is not None:
-            x_1, h_1 = fx1  # primera superficie
+            x_1, h_1 = fx1  # first surface
             h_1_new = np.interp(x_lens_l, x_1, h_1)
             h_lens_l = h_lens_l + h_1_new
         if fx2 is not None:
-            x_2, h_2 = fx2  # segunda superficie
+            x_2, h_2 = fx2  # second surface
             h_2_new = np.interp(x_lens_r, x_2, h_2)
             h_lens_r = h_lens_r + h_2_new
 
@@ -413,7 +413,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         len_z2 = len(x_lens_r)
         fx2_n = np.concatenate((x_lens_r, h_lens_r)).reshape(2, len_z2).T
 
-        perfil_previo = self.borders
+        previous_profile = self.borders
         self.clear_refractive_index()
         self.mask_from_array(
             r0=(0 * um, 0 * um),
@@ -426,9 +426,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
 
         self.surface_detection()  # bordes nuevos
-        perfil_nuevo = self.borders
+        new_profile = self.borders
 
-        return perfil_previo, perfil_nuevo
+        return previous_profile, new_profile
 
     def discretize_refractive_index(
         self, num_layers: list[int, int] | None = None, n_layers: NDArrayComplex | complex = None,

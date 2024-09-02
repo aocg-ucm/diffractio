@@ -775,6 +775,9 @@ class Vector_field_XY():
                     kind='0',
                     verbose=verbose,
                     amplification=amplification)
+        
+        self.x = Ex.x
+        self.y = Ey.y
 
         if new_field is True:
             EM = Vector_field_XY(self.x, self.y, self.wavelength)
