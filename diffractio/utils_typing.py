@@ -11,10 +11,10 @@ import numpy.typing as npt
 
 
 NDArray = npt.NDArray
-NDArrayInt = npt.NDArray[np.int_]
-NDArrayFloat = npt.NDArray[np.float_]
-NDArrayComplex = npt.NDArray[np.complex_]
-floating = np.float_
+NDArrayInt = npt.NDArray[np.integer]
+NDArrayFloat = npt.NDArray[np.floating]
+NDArrayComplex = npt.NDArray[np.complexfloating]
+floating = np.floating
 integer = np.integer
 
 
