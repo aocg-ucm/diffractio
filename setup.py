@@ -17,7 +17,7 @@ with open('HISTORY.rst', encoding='utf8') as history_file:
 requirements = [
     'matplotlib', 'numpy>=1.20', 'scipy', 'ezdxf',
     'screeninfo', 'Pillow', 'numexpr', 'pandas', 'py_pol',
-    'ipywidgets', 'ipympl', 'opencv-python'
+    'ipywidgets', 'ipympl', 'opencv-python', 'psutil'
 ]
 
 setup_requirements = [
