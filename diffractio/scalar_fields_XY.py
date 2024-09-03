@@ -1072,7 +1072,7 @@ class Scalar_field_XY():
             ROI: list[NDArrayFloat] | None = (None, None),
             r_pos: float | None = None,
             z_pos: float | None = None,
-            get_u_max: bool = False,
+            get_u_max: bool = True,
             has_edges: bool = True,
             pow_edge: int = 80,
             matrix: bool = False,
@@ -1152,7 +1152,7 @@ class Scalar_field_XY():
             u_max = None
             z_max = None
 
-        # Storing intensities at axis (x=0,0 de momento)
+        # Storing intensities at axis (x=0,0)
         intensities = np.zeros_like(zs)
         index_x_axis, _, _ = nearest(x, 0.)
         index_y_axis, _, _ = nearest(y, 0.)
@@ -1247,14 +1247,14 @@ class Scalar_field_XY():
 
             if num_sampling is not None:
                 if j in indexes_z_gv:
-                    u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_X_gv,
-                                                           indexes_Y_gv]
+                    u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_Y_gv,
+                                                           indexes_X_gv]
                     iz_out_gv = iz_out_gv + 1
 
             if ROI is not None:
                 if j in indexes_z_roi:
-                    u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_X_roi,
-                                                             indexes_Y_roi]
+                    u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_Y_roi,
+                                                             indexes_X_roi]
                     iz_out_roi = iz_out_roi + 1
 
             if get_u_max is True:

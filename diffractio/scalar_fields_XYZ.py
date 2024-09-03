@@ -123,7 +123,6 @@ class Scalar_field_XYZ():
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Scalar_field_XYZ'
         self.date = get_date()
-        print(self.X.shape, self.X[:,:,1].shape)
 
     def xy_2_xyz(self, u0_XY, z: NDArrayFloat):
         """Similar to Init. send a Scalarfield_XY and passes to XYZ.
