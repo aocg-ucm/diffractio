@@ -169,7 +169,7 @@ def draw(
     kind: str = "volume",
     variable: str = "refractive_index",
     has_grid: bool = False,
-    filename="",
+    filename: str = "",
     **kwargs
 ):
     """_summary_
@@ -181,18 +181,64 @@ def draw(
         filename (str, optional): saves images: html, png or svg. Defaults to ''.
     """
 
-    # pv.set_jupyter_backend('server')
-    # pv.set_jupyter_backend(None)
+        
+    x_center = (self.x[-1]+self.x[0])/2
+    y_center = (self.y[-1]+self.y[0])/2
+    z_center = (self.z[-1]+self.z[0])/2
 
-    # print(kwargs)
-    opacity = kwargs["opacity"]
-    dimensions = kwargs["dimensions"]
-    scale = kwargs["scale"]
-    spacing = kwargs["spacing"]
-    pos_centers = kwargs["pos_centers"]
-    pos_slices = kwargs["pos_slices"]
-    cpos = kwargs["cpos"]
+    len_x = len(self.x)
+    len_y = len(self.y)
+    len_z = len(self.z)
+    
+    delta_x = self.x[1]-self.x[0]
+    delta_y = self.y[1]-self.y[0]
+    delta_z = self.z[1]-self.z[0]
+    
 
+    if 'opacity' in kwargs.keys():
+        opacity = kwargs["opacity"]
+    else:
+        opacity = 'sigmoid'
+
+    if 'dimensions' in kwargs.keys():
+        dimensions = kwargs["dimensions"]
+    else:
+        dimensions = (len_y, len_z, len_x)
+
+    if 'scale' in kwargs.keys():
+        scale = kwargs["scale"]
+    else:
+        scale = (len_y, len_z, len_x)
+        
+    if 'cmap' in kwargs.keys():
+        cmap = kwargs["cmap"]
+    else:
+        cmap = 'coolwarm'
+
+    if 'spacing' in kwargs.keys():
+        spacing = kwargs["spacing"]
+    else:
+        spacing = np.array((delta_y, delta_x, delta_z))
+
+    if 'cpos' in kwargs.keys():
+        cpos = kwargs["cpos"]
+    else:
+        cpos = [(540, -617, 180),
+                (128, 126., 111.),
+                (-0, 0 ,0)]
+    if 'background_color' in kwargs.keys():
+        background_color = kwargs["background_color"]
+    else:
+        background_color = (1.,1.,1.)
+
+    if 'camera_position' in kwargs.keys():
+        camera_position = kwargs["camera_position"]
+    else:
+        camera_position = "xy"
+
+
+
+                       
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
     intensity = self.intensity()
@@ -202,7 +248,6 @@ def draw(
 
     if variable == "intensity":
         data = intensity
-        cmap = kwargs["cmap"]
 
     elif variable == "refractive_index":
         data = n
@@ -210,28 +255,29 @@ def draw(
         
     data = data.reshape((len(self.y), len(self.x), len(self.z)))
 
-    # grid["scalars"] =  np.transpose(data, axes=(2,1,0)).flatten()
-    # print("here")
-
     if kind == "volume":
-        data = np.transpose(data, axes=(2,0,1)) # prueba y error - bien en volume
+        #data = np.transpose(data, axes=(2,0,1))
+        data = np.transpose(data, axes=(2,0,1))
         
         
         pl = pyvista.Plotter()
         
-        if cpos != None:
-            pl.camera_position = cpos
-            reset_camera = False
+        # if cpos is not None:
+        #     pl.camera_position = cpos
+
+        vol = pl.add_volume(data, cmap=cmap, opacity=opacity, shade=False)
 
         pl.set_scale(
-            xscale=1/scale[1],
+            xscale=1/scale[2],
             yscale=1/scale[0],
-            zscale=1/scale[2],
+            zscale=1/scale[1],
             reset_camera=True,
             render=True)
-        vol = pl.add_volume(data, cmap=cmap, opacity=opacity, shade=False)
-        vol.prop.interpolation_type = "linear"
+        #vol.prop.interpolation_type = "linear"
         pl.reset_camera()
+        pl.camera_position = camera_position
+        print(vol)
+
 
 
     elif kind == "clip":
@@ -240,14 +286,15 @@ def draw(
         
         pl = pyvista.Plotter()
         pl.add_volume_clip_plane(grid, normal="y", opacity=opacity, cmap=cmap)
-        pl.add_volume_clip_plane(grid, normal="x", opacity=opacity, cmap=cmap)
         pl.add_volume_clip_plane(grid, normal="z", opacity=opacity, cmap=cmap)
+        pl.add_volume_clip_plane(grid, normal="x", opacity=opacity, cmap=cmap)
         pl.set_scale(
             xscale=1/scale[2],
             yscale=1/scale[0],
             zscale=1/scale[1],
             reset_camera=True,
             render=True)
+        pl.camera_position = camera_position
 
     elif kind == "slices":
         
@@ -264,6 +311,7 @@ def draw(
             render=True,
         )
         pl.add_mesh(slice, **dargs)
+        # pl.camera_position = camera_position
 
     elif kind == "projections":
         data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
@@ -271,7 +319,7 @@ def draw(
 
         grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
 
-        pl = pv.Plotter(shape=(2, 2))
+        pl = pyvista.Plotter(shape=(2, 2))
         dargs = dict(cmap=cmap)
         slice1 = grid.slice_orthogonal(x=0, y=0)
         slice2 = grid.slice_orthogonal(x=0, z=0)
@@ -281,28 +329,61 @@ def draw(
         # XYZ - show 3D scene first
         pl.subplot(1, 1)
         pl.add_mesh(slice4, **dargs)
+        pl.set_scale(
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
+            reset_camera=True,
+            render=True,
+            )
         # XY
         pl.subplot(0, 0)
         pl.add_mesh(slice1, **dargs)
-        # p.show_grid()
+        pl.set_scale(
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
+            reset_camera=True,
+            render=True,
+            )
+
+        if has_grid is True:
+            pl.show_grid()
         pl.camera_position = "xy"
         pl.enable_parallel_projection()
         # ZY
         pl.subplot(0, 1)
         pl.add_mesh(slice2, **dargs)
-        # p.show_grid()
+        pl.set_scale(
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
+            reset_camera=True,
+            render=True,
+            )
+        if has_grid is True:
+            pl.show_grid()
         pl.camera_position = "zx"
         pl.enable_parallel_projection()
         # XZ
         pl.subplot(1, 0)
         pl.add_mesh(slice3, **dargs)
-        # p.show_grid()
+        pl.set_scale(
+            xscale=1/scale[2],
+            yscale=1/scale[0],
+            zscale=1/scale[1],
+            reset_camera=True,
+            render=True,
+            )
+        if has_grid is True:
+            pl.show_grid()
         pl.camera_position = "zy"
         pl.enable_parallel_projection()
 
     # pl.view_isometric()
     # pl.show_axes()
     # pl.show_bounds()
+    pl.background_color = background_color
 
     if has_grid is True:
         pl.show_grid()

@@ -103,7 +103,7 @@ class Scalar_field_X():
     """
 
     def __init__(self, x: NDArrayFloat | None = None, wavelength: float | None = None,
-                 n_background: float = 1, info: str = ""):
+                 n_background: float = 1., info: str = ""):
         self.x = x
         self.wavelength = wavelength
         self.n_background = n_background

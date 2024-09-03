@@ -24,7 +24,7 @@ from scipy.io import loadmat, savemat
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-def computer_purcearameters(verbose: bool = False) -> list:
+def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:
     """Determine several computer Args:
         - number of processors
         - available memory

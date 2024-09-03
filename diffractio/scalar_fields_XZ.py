@@ -56,7 +56,6 @@ The magnitude is related to microns: `micron = 1.`
 
 import copy
 import copyreg
-import sys
 import time
 import types
 from copy import deepcopy
@@ -249,8 +248,10 @@ class Scalar_field_XZ():
         # new_field.u = self.u
         # return new_field
         new_field = copy.deepcopy(self)
+        
         if clear is True:
             new_field.clear_field()
+            
         return new_field
 
     def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max: floating):
@@ -274,8 +275,8 @@ class Scalar_field_XZ():
         self.n = mask_XY.u * refractive_index_max
         self.n[self.n < 1] = self.n_background
 
-    def rotate_field(self, angle: floating, center_rotation: list[floating],
-                     kind: str = 'all', n_background: floating = 1.):
+    def rotate_field(self, angle: floating, center_rotation: tuple[floating, floating],
+                     kind: str = 'all', n_background: float = 1.):
         """Rotate all the image a certain angle
 
         Args:
@@ -306,7 +307,7 @@ class Scalar_field_XZ():
             u_rotate = u_real_rotate + 1j * u_imag_rotate
             self.u = u_rotate
 
-        if kind == 'n':
+        if kind in ('n', 'all'):
             self.u = np.zeros_like(self.u)
 
     def clear_field(self):
@@ -448,7 +449,6 @@ class Scalar_field_XZ():
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
-
         Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
@@ -459,8 +459,7 @@ class Scalar_field_XZ():
             (str): filename. If False, file could not be saved.
         """
         try:
-            final_filename = save_data_common(self, filename, add_name,
-                                              description, verbose)
+            final_filename = save_data_common(self, filename, add_name, description, verbose)
             return final_filename
         except:
             return False
@@ -483,11 +482,11 @@ class Scalar_field_XZ():
                 raise Exception('no dictionary in load_data')
 
     def cut_resample(self,
-                     x_limits: list[float, float] = '',
-                     z_limits: list[float, float] = '',
+                     x_limits: tuple[float, float] | str = '',
+                     z_limits: tuple[float, float] | str = '',
                      num_points: int | None = None,
                      new_field: bool = False,
-                     interp_kind: list[int] = (3, 1)):
+                     interp_kind: tuple[int, int] = (3, 1)):
         """it cut the field to the range (x0,x1). if one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Args:

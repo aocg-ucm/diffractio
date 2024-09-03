@@ -86,7 +86,7 @@ def binarize(image, center_level=128):
     return image_new
 
 
-def load_dxf(filename_dxf: str, num_pixels: list[int, int], verbose: bool = False):
+def load_dxf(filename_dxf: str, num_pixels: tuple[int, int], verbose: bool = False):
     """_summary_
 
     Args:
@@ -114,7 +114,7 @@ def load_dxf(filename_dxf: str, num_pixels: list[int, int], verbose: bool = Fals
         print(f'Not a DXF file or a generic I/O error.')
         sys.exit(1)
     except ezdxf.DXFStructureError:
-        print(f'Invalid or corrupted DXF file.')
+        print(f'{"Invalid or corrupted DXF file."}')
         sys.exit(2)
 
     if filename_png == '':

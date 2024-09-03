@@ -69,6 +69,8 @@ from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 from .utils_drawing3D import draw, video_isovalue
 
+
+
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 
@@ -142,8 +144,7 @@ class Scalar_field_XYZ():
         self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
 
         self.u = np.zeros_like(self.X, dtype=complex)
-        self.n = np.ones(np.shape(self.X),
-                         dtype=float)  # el índice de refracción
+        self.n = np.ones(np.shape(self.X), dtype=float)
 
         for i in range(len(self.z)):
             # print self.u[:,:,i].shape
@@ -381,9 +382,9 @@ class Scalar_field_XYZ():
         return intensity
 
     def cut_resample(self,
-                     x_limits: list[float, float] | str = '',
-                     y_limits: list[float, float] | str = '',
-                     z_limits: list[float, float] | str = '',
+                     x_limits: tuple[float, float] | str = '',
+                     y_limits: tuple[float, float] | str = '',
+                     z_limits: tuple[float, float] | str = '',
                      num_points: int | None = None,
                      new_field: bool = False,
                      interp_kind=(3, 1)):
@@ -1303,7 +1304,7 @@ class Scalar_field_XYZ():
         h1.set_cmap(cmap)  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
-    def draw_XYZ(self, kind: str = 'volume', drawing: str = 'intensity', has_grid: bool=False,  filename='', **kwargs):
+    def draw_XYZ(self, kind: str = 'volume', drawing: str = 'intensity', has_grid: bool=False,  filename: str = '', **kwargs):
         """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:
@@ -1324,48 +1325,6 @@ class Scalar_field_XYZ():
             variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
         """
         video_isovalue(self,  filename, kind,  **kwargs)
-
-    """
-    def draw_XYZ_deprecated(self,
-                 kind='intensity',
-                 logarithm=False,
-                 normalize='',
-                 pixel_size=(128, 128, 128)):
-        Draws  XZ field.
-    """
-
-    """
-    # def draw_refractive(self, kind='real'):
-    #     pass
-
-
-
-            slicerLM(drawing)
-        else:
-            return
-    """
-
-    def draw_volume_deprecated(self, logarithm=0, normalize='', maxintensity=None):
-        """Draws  XYZ field with mlab
-
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
-            normalize (bool): If True, max(intensity)=1
-            maxintensity (float): maximum value of intensity
-
-        TODO: Simplify, drawing
-            include kind and other parameters of draw
-        """
-        video_isovalue(self,  filename, kind,  **kwargs)
-
-
- 
-    # def draw_volume(self, logarithm=0, normalize='', maxintensity=None):
-    #     pass
-
-
-    # def draw_refractive(self, kind='real'):
-    #     pass
 
 
 

@@ -141,7 +141,7 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
 def find_local_extrema(kind: str,
                        y: NDArrayFloat,
                        x: NDArrayFloat,
-                       pixels_interpolation: floating = 0.):
+                       pixels_interpolation: float = 0.):
     """Determine local minima in a numpy np.array.
 
     Args:
@@ -255,7 +255,7 @@ def nearest2(vector: NDArrayFloat, numbers: NDArrayFloat):
     return indexes, values, distances
 
 
-def find_extrema(array2D: NDArrayFloat, x: NDArrayFloat, y: NDArrayFloat, kind: float = 'max',
+def find_extrema(array2D: NDArrayFloat, x: NDArrayFloat, y: NDArrayFloat, kind: float | str = 'max',
                  verbose: bool = False):
     """In a 2D-np.array, formed by vectors x, and y, the maxima or minima are found
 
@@ -365,7 +365,7 @@ def phase2amplitude(u: NDArrayComplex):
     return u_amplitud
 
 
-def normalize(v: NDArray, order=2):
+def normalize(v: NDArray, order: int = 2):
     """Normalize vectors with different L norm (standard is 2).
 
     Args:
@@ -408,8 +408,8 @@ def binarize(vector: NDArrayFloat, min_value: floating = 0., max_value: floating
 def discretize(u: NDArrayComplex,
                kind: str = 'amplitude',
                num_levels: int = 2,
-               factor: floating = 1.,
-               phase0: floating = 0.,
+               factor: float = 1.,
+               phase0: float = 0.,
                new_field: bool = True,
                matrix: bool = False):
     """Discretize in a number of levels equal to num_levels.
@@ -567,13 +567,13 @@ def curl(E: NDArrayFloat, r: NDArrayFloat):
     return curl_X, curl_Y, curl_Z
 
 
-def get_edges(x: floating, f: NDArrayFloat, kind_transition: str = 'amplitude',
-              min_step: floating = 0., verbose: bool = False, filename: str = ''):
+def get_edges(x: NDArrayFloat, f: NDArrayFloat, kind_transition: str = 'amplitude',
+              min_step: float = 0., verbose: bool = False, filename: str = ''):
     """We have a binary mask and we obtain locations of edges. Valid for litography engraving of gratings
 
     Args:
-        x (float): position x
-        f (numpy.np.array): Field. If real function, use 'amplitude' in kind_transition.
+        x (NDArrayFloat): position x
+        f (NDArrayFloat): Field. If real function, use 'amplitude' in kind_transition.
         kind_transition (str):'amplitude' 'phase' of the field where to get the transitions.
         min_step (float): minimum step for consider a transition
         verbose (bool): If True prints information about the process.
@@ -629,7 +629,7 @@ def get_edges(x: floating, f: NDArrayFloat, kind_transition: str = 'amplitude',
     return pos_transitions, type_transitions, raising, falling
 
 
-def cut_function(x: NDArrayFloat, y: NDArrayFloat, length: float, x_center: floating | None = None):
+def cut_function(x: NDArrayFloat, y: NDArrayFloat, length: float, x_center: float | None = None):
     """Takes values of function inside (x_center+length/2: x_center+length/2)
 
 
@@ -730,7 +730,7 @@ def fft_correlation2d(x: NDArrayFloat, y: NDArrayFloat):
 
 
 def rotate_image(x: NDArrayFloat, z: NDArrayFloat, img: NDArrayFloat, angle: float,
-                 pivot_point: list[float, float]):
+                 pivot_point: tuple[float, float]):
     """similar to rotate image, but not from the center but from the given
 
     Args:
@@ -929,7 +929,7 @@ def get_k(x: NDArrayComplex, flavour: str = '-'):
     return dk * intRange
 
 
-def filter_edge_1D(x: NDArrayFloat, size: floating = 1.1, exponent: floating = 32):
+def filter_edge_1D(x: NDArrayFloat, size: float = 1.1, exponent: float = 32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
     Args:
@@ -946,7 +946,7 @@ def filter_edge_1D(x: NDArrayFloat, size: floating = 1.1, exponent: floating = 3
     return np.exp(-(2 * (x - x_center) / (Dx))**np.abs(exponent))
 
 
-def filter_edge_2D(x: NDArrayFloat, y: NDArrayFloat, size: floating = 1.1, exponent: floating = 32):
+def filter_edge_2D(x: NDArrayFloat, y: NDArrayFloat, size: float = 1.1, exponent: float = 32):
     """function 1 at center and reduced at borders. For propagation algorithms
 
     Args:

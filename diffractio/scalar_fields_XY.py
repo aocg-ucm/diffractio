@@ -197,7 +197,7 @@ class Scalar_field_XY():
         return new_field
 
     def __rotate__(self, angle: float,
-                   position: list[float, float] | None = None):
+                   position: tuple[float, float] | None = None):
         """Rotation of X,Y with respect to position
 
         Args:ing
