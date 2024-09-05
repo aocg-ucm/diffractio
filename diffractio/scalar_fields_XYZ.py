@@ -1303,12 +1303,12 @@ class Scalar_field_XYZ():
         h1.set_cmap(cmap)  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
-    def draw_XYZ(self, kind: str = 'volume', drawing: str = 'intensity', has_grid: bool=False,  filename: str = '', **kwargs):
+    def draw_XYZ(self, kind: str = 'intensity', drawing: str = 'volume',  has_grid: bool=False,  filename: str = '', **kwargs):
         """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:
-            kind (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
-            variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+            kind (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+            drawing (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
             has_grid (bool, optional): add grid. Defaults to False.
             filename (str, optional): saves images: html, png or svg. Defaults to ''.
         """        

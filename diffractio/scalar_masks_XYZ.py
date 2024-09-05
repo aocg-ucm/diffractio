@@ -30,7 +30,7 @@ from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComp
 
 from . import degrees, np, um
 from .scalar_fields_XYZ import Scalar_field_XYZ
-
+from .utils_drawing3D import load_stl, voxelize_volume_diffractio
 
 class Scalar_mask_XYZ(Scalar_field_XYZ):
 
@@ -190,3 +190,78 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.n[ipasa] = refractive_index
 
         return ipasa
+
+
+
+
+    def stl(self, filename: str, refractive_index: float, Dx: float | None = None, Dy: float | None = None, 
+            Dz: float | None = None, has_draw: bool = False, verbose: bool = False):
+        """
+        stl _summary_
+
+        _extended_summary_
+
+        Args:
+            filename (str): _description_
+            refractive_index (float): _description_
+            Dx (float | None, optional): _description_. Defaults to None.
+            Dy (float | None, optional): _description_. Defaults to None.
+            Dz (float | None, optional): _description_. Defaults to None.
+            has_draw (bool, optional): _description_. Defaults to False.
+            verbose (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
+        
+        mesh = load_stl(filename, has_draw=has_draw)
+        
+        bounds = mesh.bounds
+
+        if Dx is None:
+            x = self.x
+        else:
+            x = np.linspace(bounds[0]-Dx[0], bounds[1]+Dx[1], len(self.x))
+
+        if Dy is None:
+            y = self.y
+        else:
+            y = np.linspace(bounds[2]-Dy[0], bounds[3]+Dy[1], len(self.y))
+
+        if Dz is None:
+            z = self.z
+        else:
+            z = np.linspace(bounds[4]-Dz[0], bounds[5]+Dz[1], len(self.z))
+
+        self.x = x
+        self.y = y
+        self.z = z
+        
+        self.X, self.Y, self.Z = np.meshgrid(x, y, z)
+
+        # x_center = (x[-1]+x[0])/2
+        # y_center = (y[-1]+y[0])/2
+        # z_center = (z[-1]+z[0])/2
+
+        # len_x = len(x)
+        # len_y = len(y)
+        # len_z = len(z)
+
+        self, voi= voxelize_volume_diffractio(self, mesh, refractive_index = refractive_index)
+
+        # params_pyvista = {
+        # 'opacity': [0,0.2,0.5, 1], #'sigmoid',
+        # 'dimensions': (len(y),len(x), len(z)) ,
+        # 'scale': (1, 1, 1),
+        # 'cmap': 'hot',
+        # 'spacing' : np.array((y[1]-y[0],x[1]-x[0],z[1]-z[0])),
+        # 'pos_slices': np.array([(x_center, z_center),(x_center, y_center), (y_center, z_center)]), #xz, xy, yz, z0
+        # 'pos_centers': np.array([y_center, x_center, z_center]),
+        
+        # 'cpos': [(540, -617, 180),
+        #         (128, 126., 111.),
+        #         (-0, 0 ,0)],
+        
+        # }
+
+        return voi, mesh, bounds

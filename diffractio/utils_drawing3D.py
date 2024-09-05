@@ -13,8 +13,21 @@ from pyvista.core.utilities.helpers import wrap
 
 from .config import CONF_DRAWING
 
-def load_stl(filename, has_draw=True, verbose=True):
+def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):# -> tuple[MultiBlock | UnstructuredGrid | DataSet | pyvista_n...:
+    """
+    load_stl _summary_
 
+    _extended_summary_
+
+    Args:
+        filename (str): _description_
+        has_draw (bool, optional): _description_. Defaults to False.
+        verbose (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: mesh
+    """
+    
     mesh = pv.read(filename)
     
     if has_draw:
@@ -28,7 +41,7 @@ def load_stl(filename, has_draw=True, verbose=True):
         print(mesh.volume)
         print("center")
         print(mesh.center)
-    return mesh, filename, mesh.bounds
+    return mesh
 
 def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True):
     """Voxelize mesh to create a RectilinearGrid voxel volume.
@@ -166,8 +179,8 @@ def voxelize_volume_diffractio_backup(self, mesh, refractive_index,  check_surfa
 
 def draw(
     self,
-    kind: str = "volume",
-    variable: str = "refractive_index",
+    kind: str = "intnsity",
+    drawing: str = "volume",
     has_grid: bool = False,
     filename: str = "",
     **kwargs
@@ -226,6 +239,7 @@ def draw(
         cpos = [(540, -617, 180),
                 (128, 126., 111.),
                 (-0, 0 ,0)]
+        
     if 'background_color' in kwargs.keys():
         background_color = kwargs["background_color"]
     else:
@@ -236,34 +250,28 @@ def draw(
     else:
         camera_position = "xy"
 
-
-
                        
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
-    intensity = self.intensity()
-    intensity = intensity/intensity.max()
-
-    n = self.n
-
-    if variable == "intensity":
+    if kind == "intensity":
+        intensity = self.intensity()
+        intensity = intensity/intensity.max()
         data = intensity
 
-    elif variable == "refractive_index":
-        data = n
+    elif kind == "refractive_index":
+        data = np.abs(self.n)
         cmap = CONF_DRAWING['color_n']
+        
+    else:
+        print("bad kind in draw_XYZ")
         
     data = data.reshape((len(self.y), len(self.x), len(self.z)))
 
-    if kind == "volume":
-        #data = np.transpose(data, axes=(2,0,1))
+    if drawing == "volume":
         data = np.transpose(data, axes=(2,0,1))
-        
-        
+                
         pl = pyvista.Plotter()
         
-        # if cpos is not None:
-        #     pl.camera_position = cpos
 
         vol = pl.add_volume(data, cmap=cmap, opacity=opacity, shade=False)
 
@@ -276,11 +284,11 @@ def draw(
         #vol.prop.interpolation_type = "linear"
         pl.reset_camera()
         pl.camera_position = camera_position
-        print(vol)
+        pl.camera_position = cpos
 
 
 
-    elif kind == "clip":
+    elif drawing == "clip":
 
         grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
         
@@ -296,7 +304,7 @@ def draw(
             render=True)
         pl.camera_position = camera_position
 
-    elif kind == "slices":
+    elif drawing == "slices":
         
         grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
 
@@ -313,7 +321,7 @@ def draw(
         pl.add_mesh(slice, **dargs)
         # pl.camera_position = camera_position
 
-    elif kind == "projections":
+    elif drawing == "projections":
         data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
         #data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
 
@@ -379,6 +387,63 @@ def draw(
             pl.show_grid()
         pl.camera_position = "zy"
         pl.enable_parallel_projection()
+        
+    elif drawing == 'video_isovalue':
+        #data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
+
+        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+
+        pl = pv.Plotter()
+        pl.set_scale(
+            xscale=scale[1],
+            yscale=scale[0],
+            zscale=scale[2],
+            reset_camera=True,
+            render=True,
+        )
+
+        vol = pl.add_volume(grid, opacity=opacity, cmap=cmap)
+        vol.prop.interpolation_type = "linear"
+
+        values = np.linspace(0.05 * data.max(), data.max(), num=25)
+        surface = grid.contour(values[:1])
+
+        surfaces = [grid.contour([v]) for v in values]
+
+        surface = surfaces[0].copy()
+        plotter = pv.Plotter(off_screen=True)
+
+        # Open a movie file
+        plotter.open_gif(filename)
+
+        # Add initial mesh
+        plotter.add_mesh(
+            surface,
+            opacity=opacity,
+            cmap=cmap,
+            clim=grid.get_data_range(),
+            show_scalar_bar=False,
+        )
+        # Add outline for reference
+        plotter.add_mesh(grid.outline_corners(), color="r")
+
+        # print('Orient the view, then press "q" to close window and produce movie')
+
+        # initial render and do NOT close
+        plotter.show(auto_close=True)
+
+        # Run through each frame
+        for surf in surfaces:
+            surface.copy_from(surf)
+            plotter.write_frame()  # Write this frame
+        # Run through backwards
+        for surf in surfaces[::-1]:
+            surface.copy_from(surf)
+            plotter.write_frame()  # Write this frame
+
+        # Be sure to close the plotter when finished
+        plotter.close()
+
 
     # pl.view_isometric()
     # pl.show_axes()
@@ -397,6 +462,8 @@ def draw(
             pl.export_html(filename)
         elif filename[-3:] == "png":
             pl.screenshot(filename)
+            
+    
 
 
 def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs):
@@ -406,16 +473,64 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
         filename (str): _description_. Defaults to ''.
         kind (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
     """
-    # pv.set_jupyter_backend('server')
-    # pv.set_jupyter_backend(None)
 
-    print(kwargs)
-    opacity = kwargs["opacity"]
-    dimensions = kwargs["dimensions"]
-    scale = kwargs["scale"]
-    spacing = kwargs["spacing"]
-    pos_centers = kwargs["pos_centers"]
-    pos_slices = kwargs["pos_slices"]
+    x_center = (self.x[-1]+self.x[0])/2
+    y_center = (self.y[-1]+self.y[0])/2
+    z_center = (self.z[-1]+self.z[0])/2
+
+    len_x = len(self.x)
+    len_y = len(self.y)
+    len_z = len(self.z)
+    
+    delta_x = self.x[1]-self.x[0]
+    delta_y = self.y[1]-self.y[0]
+    delta_z = self.z[1]-self.z[0]
+    
+
+
+    if 'opacity' in kwargs.keys():
+        opacity = kwargs["opacity"]
+    else:
+        opacity = 'sigmoid'
+
+    if 'dimensions' in kwargs.keys():
+        dimensions = kwargs["dimensions"]
+    else:
+        dimensions = (len_y, len_z, len_x)
+
+    if 'scale' in kwargs.keys():
+        scale = kwargs["scale"]
+    else:
+        scale = (len_y, len_z, len_x)
+        
+    if 'cmap' in kwargs.keys():
+        cmap = kwargs["cmap"]
+    else:
+        cmap = 'hot'
+
+    if 'spacing' in kwargs.keys():
+        spacing = kwargs["spacing"]
+    else:
+        spacing = np.array((delta_y, delta_x, delta_z))
+
+    if 'cpos' in kwargs.keys():
+        cpos = kwargs["cpos"]
+    else:
+        cpos = [(540, -617, 180),
+                (128, 126., 111.),
+                (-0, 0 ,0)]
+        
+    if 'background_color' in kwargs.keys():
+        background_color = kwargs["background_color"]
+    else:
+        background_color = (1.,1.,1.)
+
+    if 'camera_position' in kwargs.keys():
+        camera_position = kwargs["camera_position"]
+    else:
+        camera_position = "xy"
+
+
 
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
@@ -423,7 +538,6 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
         intensity = self.intensity()
         intensity /= intensity.max()
         data = intensity
-        cmap = kwargs["cmap"]
 
         data = intensity
     elif kind == "refractive_index":
@@ -464,7 +578,7 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     # Add initial mesh
     plotter.add_mesh(
         surface,
-        opacity=0.5,
+        opacity=opacity,
         cmap=cmap,
         clim=grid.get_data_range(),
         show_scalar_bar=False,
