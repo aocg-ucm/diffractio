@@ -615,36 +615,48 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return U
 
-    def irradiance(self, kind: str = 'Sz', has_draw: bool = False, axis='scaled'):
+    def irradiance(self, has_draw: bool = False, axis='scaled'):
         """
+        irradiance in plane z
+
+        _extended_summary_
+
+        Args:
+            kind (str, optional): _description_. Defaults to 'Sz'.
+            has_draw (bool, optional): _description_. Defaults to False.
+            axis (str, optional): _description_. Defaults to 'scaled'.
+
+        Returns:
+            _type_: _description_
         """
+        #  kind: str = 'Sz',
 
         epsilon = self.n ** 2
         permeability = 4 * np.pi * 1e-7
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
-        if kind == 'Sz':
-            S_total = Sz
+        # if kind == 'Sz':
+        #     S_total = Sz
 
-        elif kind == 'Ssum':
-            S_total = Sx+Sy+Sz
+        # elif kind == 'Ssum':
+        #     S_total = Sx+Sy+Sz
 
-        elif kind == 'S2': #más bien descartada, la normalización >1
-            S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
+        # elif kind == 'S2': #más bien descartada, la normalización >1
+        #     S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
 
         if has_draw:
             dims = np.shape(Sz)
             num_dims = len(dims)
             if num_dims == 1:
                 plt.figure()
-                plt.plot(self.z, S_total)
-                plt.ylim(0, S_total.max())
+                plt.plot(self.z, Sz)
+                plt.ylim(0, Sz.max())
 
             elif num_dims == 2:
-                draw_field(S_total, self.x, self.z, axis, cmap='hot')
+                draw_field(Sz, self.x, self.z, axis, cmap='hot')
                 plt.colorbar(orientation='horizontal', shrink=0.5)
-                plt.clim(0, S_total.max())
+                plt.clim(0, Sz.max())
 
             plt.title("Irradiance")
 
@@ -666,7 +678,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
-        # U = self.energy_density(has_draw=False)
+        U = self.energy_density(has_draw=False)
 
         if kind == 'Sz':
             S_total = Sz
@@ -680,13 +692,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
             S_total = Sx+Sy+Sz
             label = 'Ssum'
 
+        elif kind == 'U':
+            S_total = U
+            label = 'U'
 
-
-        check_Sz = (S_total/self.n**0.5).mean(axis=1)/(S_total[1, :]/self.n[1, :]**0.5).mean()
-        check_Sz = (S_total).mean(axis=1)/(S_total[1, :]).mean()
+        #Energy_z = (S_total/self.n**0.5).mean(axis=1)/(S_total[1, :]/self.n[1, :]**0.5).mean()
+        Energy_z = (S_total).mean(axis=1)/(S_total[1, :]).mean()
 
         plt.figure()
-        plt.plot(self.z, check_Sz, 'r', label=label)
+        plt.plot(self.z, Energy_z, 'r', label=label)
         plt.legend()
 
         plt.xlim(self.z[0], self.z[-1])
@@ -698,7 +712,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             plt.ylim(ymin=0)
 
 
-        return check_Sz  # , check_U
+        return Energy_z  # , check_U
 #
 
     def polarization_states(self, matrix: bool = False):
@@ -1527,8 +1541,10 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
 
     ex0 = T2_00 * Exk
     ey0 = T2_11 * Eyk
-    ez0 = -(kx / kz_s) * T2_00 * Exk
-
+    # ez0 = -(kx / kz_s) * T2_00 * Exk
+    ez0 = (kx / ks )  * ex0  #this works "better" but I 
+    
+    
     if has_H:
         Z0 = 376.82  # ohms (proportional m**2)
         H_factor = n2 / (ks * kz_s * Z0)
