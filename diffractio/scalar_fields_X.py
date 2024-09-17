@@ -808,6 +808,11 @@ class Scalar_field_X():
     def CZT(self, z: float | NDArrayFloat, xout: float | NDArrayFloat | None,
             verbose: float = False):
         """Chirped z-transform.
+        
+        The code for this algoritm is based on "Hu, Yanlei, et al. "Efficient full-path optical calculation of scalar and 
+        vector diffraction using the Bluestein method." Light: Science & Applications 9.1 (2020): 119."
+        
+        However, the convolution Kernel has been changed to Rayleigh-Sommerfeld.
 
         Args:
             z (float or np.array): diffraction distance

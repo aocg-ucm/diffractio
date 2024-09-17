@@ -235,12 +235,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
                                   n_background=self.n_background,
                                   info="from final_field at z0= {} um".format(
                                       self.z[-1]))
-        EH_final.Ex = self.Ex[:, -1]
-        EH_final.Ey = self.Ey[:, -1]
-        EH_final.Ez = self.Ez[:, -1]
-        EH_final.Hx = self.Hx[:, -1]
-        EH_final.Hy = self.Hy[:, -1]
-        EH_final.Hz = self.Hz[:, -1]
+        EH_final.Ex = self.Ex[-1, :]
+        EH_final.Ey = self.Ey[-1, :]
+        EH_final.Ez = self.Ez[-1, :]
+        EH_final.Hx = self.Hx[-1, :]
+        EH_final.Hy = self.Hy[-1, :]
+        EH_final.Hz = self.Hz[-1, :]
         return EH_final
 
     def get(self, kind="fields", is_matrix=True):

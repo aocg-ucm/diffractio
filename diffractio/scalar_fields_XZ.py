@@ -611,7 +611,7 @@ class Scalar_field_XZ():
                                  n_background=self.n_background,
                                  info="from final_field at z0= {} um".format(
                                      self.z[-1]))
-        u_final.u = self.u[:, -1]
+        u_final.u = self.u[-1,:]
         return u_final
 
     def __BPM__(self,

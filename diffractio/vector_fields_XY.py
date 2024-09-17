@@ -794,6 +794,11 @@ class Vector_field_XY():
     def CZT(self, z, xout=None, yout=None, verbose: bool = False):
         """Vector Z Chirped Transform algorithm (VCZT)
 
+        The code for this algoritm is based on "Hu, Yanlei, et al. "Efficient full-path optical calculation of scalar and 
+        vector diffraction using the Bluestein method." Light: Science & Applications 9.1 (2020): 119."
+        
+        However, the convolution Kernel has been changed to Rayleigh-Sommerfeld.
+
         Args:
             z (float): diffraction distance
             xout (np.array): x array with positions of the output plane

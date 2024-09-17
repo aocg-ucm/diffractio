@@ -1497,6 +1497,11 @@ class Scalar_field_XY():
         """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
         The output Scheme depends on this input parameters.
 
+        The code for this algoritm is based on "Hu, Yanlei, et al. "Efficient full-path optical calculation of scalar and 
+        vector diffraction using the Bluestein method." Light: Science & Applications 9.1 (2020): 119."
+        
+        However, the convolution Kernel has been changed to Rayleigh-Sommerfeld.
+        
         Args:
             z (float): diffraction distance
             xout (np.array): x np.array with positions of the output plane
