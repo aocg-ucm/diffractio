@@ -16,7 +16,7 @@ import time
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import mm, no_date, np, plt, um
+from .__init__ import mm, no_date, np, plt, um
 from .scalar_masks_XY import Scalar_mask_XY
 
 max_num_cores = multiprocessing.cpu_count()

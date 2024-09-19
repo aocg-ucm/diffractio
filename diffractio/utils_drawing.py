@@ -14,7 +14,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import degrees, eps, mm
+from .__init__ import degrees, eps, mm
 from .config import CONF_DRAWING
 from .utils_optics import field_parameters
 

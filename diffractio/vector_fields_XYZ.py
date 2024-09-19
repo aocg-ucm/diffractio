@@ -46,7 +46,7 @@ import copy
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, eps, mm, np, plt
+from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY

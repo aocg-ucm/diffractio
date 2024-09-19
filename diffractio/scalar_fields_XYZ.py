@@ -57,7 +57,7 @@ from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RegularGridInterpolator
 
-from . import degrees, mm, np, plt, num_max_processors
+from .__init__ import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel

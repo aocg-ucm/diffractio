@@ -31,7 +31,7 @@ from py_pol.jones_matrix import Jones_matrix
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, np, number_types, plt
+from .__init__ import degrees, np, number_types, plt
 from .config import CONF_DRAWING
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_optics import field_parameters

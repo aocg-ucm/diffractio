@@ -38,7 +38,7 @@ from scipy.interpolate import interp1d
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, np, plt, sp, um
+from .__init__ import degrees, np, plt, sp, um
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_X import Scalar_mask_X
 from .utils_math import nearest, nearest2

@@ -27,7 +27,7 @@ from scipy.interpolate import interp1d
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-from . import degrees, np, plt, um
+from .__init__ import degrees, np, plt, um
 from .scalar_fields_X import Scalar_field_X
 from .utils_math import cut_function, fft_convolution1d, nearest, nearest2
 from .utils_optics import roughness_1D

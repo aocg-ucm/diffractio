@@ -41,7 +41,7 @@ from scipy.interpolate import interp1d
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-from . import degrees, mm, np, plt
+from .__init__ import degrees, mm, np, plt
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import nearest

@@ -30,7 +30,7 @@ from py_pol.jones_vector import Jones_vector
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, eps, np, um
+from .__init__ import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY

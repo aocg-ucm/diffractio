@@ -30,7 +30,7 @@ The magnitude is related to microns: `mifcron = 1.`
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, np, um
+from .__init__ import degrees, np, um
 from .scalar_fields_X import Scalar_field_X
 
 

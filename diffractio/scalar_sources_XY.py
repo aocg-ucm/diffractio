@@ -41,7 +41,7 @@ from scipy.special import eval_hermite, j0, j1, jv
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, np, um
+from .__init__ import degrees, np, um
 from .scalar_fields_XY import Scalar_field_XY
 from .utils_math import fZernike, laguerre_polynomial_nk
 

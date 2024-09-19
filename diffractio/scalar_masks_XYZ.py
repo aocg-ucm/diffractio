@@ -28,7 +28,7 @@ The magnitude is related to microns: `micron = 1.`
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-from . import degrees, np, um
+from .__init__ import degrees, np, um
 from .scalar_fields_XYZ import Scalar_field_XYZ
 from .utils_drawing3D import load_stl, voxelize_volume_diffractio
 

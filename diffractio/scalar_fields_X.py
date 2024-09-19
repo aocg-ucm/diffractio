@@ -66,7 +66,7 @@ from scipy.fftpack import fft, fftshift, ifft
 from scipy.interpolate import interp1d
 from scipy.special import hankel1
 
-from . import degrees, mm, np, plt
+from .__init__ import degrees, mm, np, plt
 
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw

@@ -72,8 +72,8 @@ from scipy.interpolate import RectBivariateSpline
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-from . import np, plt
-from . import num_max_processors, degrees, eps, mm, seconds, um
+from .__init__ import np, plt
+from .__init__ import num_max_processors, degrees, eps, mm, seconds, um
 from .config import CONF_DRAWING
 from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
                               kernelRS, kernelRSinverse)

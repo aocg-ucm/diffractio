@@ -39,7 +39,7 @@ from scipy.interpolate import RectBivariateSpline
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, eps, mm, np, plt
+from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_XZ import Scalar_mask_XZ

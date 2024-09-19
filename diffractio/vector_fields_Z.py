@@ -37,7 +37,7 @@ from matplotlib import rcParams
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
-from . import degrees, eps, mm, np, plt
+from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
 from .scalar_fields_Z import Scalar_field_Z
 from .utils_common import get_date, load_data_common, save_data_common

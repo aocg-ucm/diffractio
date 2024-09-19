@@ -9,7 +9,7 @@ import pandas as pd
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
 
 
-from . import degrees, np, plt
+from .__init__ import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, find_extrema, nearest
 
 

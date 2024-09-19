@@ -62,8 +62,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from . import np, plt
-from . import degrees, mm, seconds, um
+from .__init__ import np, plt
+from .__init__ import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex

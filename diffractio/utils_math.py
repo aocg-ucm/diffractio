@@ -15,7 +15,7 @@ from numpy.fft import fft, ifft
 from scipy.ndimage import rank_filter
 
 from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
-from . import mm
+from .__init__ import mm
 
 
 def nextpow2(x: float):
