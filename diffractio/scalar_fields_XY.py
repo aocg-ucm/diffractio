@@ -789,9 +789,6 @@ class Scalar_field_XY():
         ttf1 = np.fft.ifft2(self.u)
         ttf1 = ttf1
 
-        # * np.exp(-1j * k * (z + (self.X**2 +
-        #                                      self.Y**2) / (2 * z))) / (-1j * self.wavelength * z)
-
         if remove0 is True:
             ttf1[0, 0] = 0
 
@@ -801,7 +798,7 @@ class Scalar_field_XY():
         if matrix is True:
             return ttf1
 
-        # x scaling - Infor
+        # x scaling - Jose Antonio Gómez Pedrero
         num_x = self.x.size
         delta_x = self.x[1] - self.x[0]
         freq_nyquist_x = 1 / (2 * delta_x)
@@ -889,7 +886,9 @@ class Scalar_field_XY():
             else:
                 print('- Needs denser sampling: factor {:2.2f}\n'.format(
                     self.quality))
-        precise = 0
+        
+        # could not make work properly           
+        precise = 0 
         if precise:
             a = [4, 2]
             num_repx = int(round((nx) / 2) - 1)
@@ -924,19 +923,13 @@ class Scalar_field_XY():
 
         Xext, Yext = np.meshgrid(xext, yext)
 
-        # permite calcula la propagacion y la propagacion inverse, cuando z<0.
         if z > 0:
             H = kernelRS(Xext, Yext, self.wavelength, z, n, kind=kind)
         else:
             H = kernelRSinverse(Xext, Yext, self.wavelength, z, n, kind=kind)
 
-        # calculo de la transformada de Fourier
         S = ifft2(fft2(U) * fft2(H)) * dx * dy
-        # transpose cambiado porque daba problemas para matrices no cuadradas
-        Usalida = S[ny - 1:, nx - 1:]  # hasta el final
-        # los calculos se pueden dejar en la instancia o crear un new field
-
-        # Usalida = Usalida / z  210131
+        Usalida = S[ny - 1:, nx - 1:]  
 
         if out_matrix is True:
             return Usalida
@@ -1124,12 +1117,12 @@ class Scalar_field_XY():
             if hasattr(self, 'z'):
                 has_filter = np.zeros_like(self.z)
             else:
-                has_filter = 0
+                has_filter = np.zeros_like(zs)
         elif isinstance(has_edges, int):
             if hasattr(self, 'z'):
                 has_filter = np.ones_like(self.z)
             else:
-                has_filter = 1
+                has_filter = np.ones_line(zs)
         else:
             has_filter = has_edges
 
@@ -1222,7 +1215,6 @@ class Scalar_field_XY():
         iz_out_roi = 0
 
         for j in range(1, num_steps):
-
             if has_filter[j] == 0:
                 filter_edge = 1
             else:
@@ -1236,10 +1228,10 @@ class Scalar_field_XY():
                                           k_perp2, dz) * filter_edge
 
             current_intensity = np.max(np.abs(u_iter.u)**2)
-            intensities[j] = u_iter.intensity()[index_x_axis, index_y_axis]
+            intensities[j] = u_iter.intensity().transpose()[index_x_axis, index_y_axis]
 
             if r_pos is not None:
-                u_axis_x.u[j] = u_iter.u[index_x_axis, index_y_axis]
+                u_axis_x.u[j] = u_iter.u[index_y_axis, index_x_axis]
 
             if z_pos is not None:
                 if j == index_zpos:
@@ -1249,12 +1241,17 @@ class Scalar_field_XY():
                 if j in indexes_z_gv:
                     u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_Y_gv,
                                                            indexes_X_gv]
+                    u_out_gv.n[:, :, iz_out_gv] = refractive_index[indexes_Y_gv, indexes_X_gv]                   
                     iz_out_gv = iz_out_gv + 1
 
             if ROI is not None:
                 if j in indexes_z_roi:
                     u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_Y_roi,
                                                              indexes_X_roi]
+                    
+                    u_out_roi.n[:, :, iz_out_roi] = refractive_index[indexes_Y_roi,
+                                                             indexes_X_roi]                 
+                    
                     iz_out_roi = iz_out_roi + 1
 
             if get_u_max is True:
@@ -1275,222 +1272,6 @@ class Scalar_field_XY():
 
         return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
-    def CZT_backup(self, z: float, xout: NDArrayFloat | None = None,
-                   yout: NDArrayFloat | None = None, verbose: bool = False):
-        """Chirped Z Transform algorithm for XY Scheme. z, xout, and yout parameters can be numbers or arrays.
-        The output Scheme depends on this input parameters.
-
-        Args:
-            z (float): diffraction distance
-            xout (np.array): x np.array with positions of the output plane
-            yout (np.array): y np.array with positions of the output plane
-            verbose (bool): If True, it prints some information
-
-        Returns:
-            u_out: Scalar_field_** depending of the input scheme. When all the parameters are numbers, it returns the complex field at that point.
-
-
-        References:
-             [Light: Science and Applications, 9(1), (2020)] 
-        """
-
-        if xout is None:
-            xout = self.x
-
-        if yout is None:
-            yout = self.y
-
-        k = 2 * np.pi / self.wavelength
-
-        if isinstance(z, (float, int)):
-            num_z = 1
-            # print("z = 0 dim")
-        else:
-            num_z = len(z)
-            # print("z = 1 dim")
-
-        if isinstance(xout, (float, int)):
-            num_x = 1
-            # print("x = 0 dim")
-            xstart = xout
-            xend = xout
-        else:
-            num_x = len(xout)
-            # print("x = 1 dim")
-
-            xstart = xout[0]
-            xend = xout[-1]
-
-        if isinstance(yout, (float, int)):
-            num_y = 1
-            # print("y = 0 dim")
-            ystart = yout
-            yend = yout
-        else:
-            num_y = len(yout)
-            # print("y = 1 dim")
-
-            ystart = yout[0]
-            yend = yout[-1]
-
-        dx = self.x[1] - self.x[0]
-        dy = self.y[1] - self.y[0]
-
-        delta_out = np.zeros(2)
-        if num_x > 1:
-            delta_out[0] = (xend - xstart) / (num_x - 1)
-
-        if num_y > 1:
-            delta_out[1] = (yend - ystart) / (num_y - 1)
-
-        Xout, Yout = np.meshgrid(xout, yout)
-
-        if verbose:
-            print("num x, num y, num z = {}, {}, {}".format(
-                num_x, num_y, num_z))
-
-        if num_z == 1:
-
-            R = np.sqrt(Xout**2 + Yout**2 + z**2)
-            F0 = 1 / (2 * np.pi) * np.exp(
-                1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-
-            R = np.sqrt(self.X**2 + self.Y**2 + z**2)
-            F = 1 / (2 * np.pi) * np.exp(
-                1.j * k * R) * z / R**2 * (1 / R - 1.j * k)
-
-            u0 = self.u * F
-
-            # using Bluestein method to calculate the complex amplitude of the outgoing light beam
-
-            # one-dimensional FFT in one direction
-            fs = self.wavelength * z / dx  # dimension of the imaging plane
-
-            if num_x > 1 and num_y == 1:
-
-                # one-dimensional FFT in the other direction
-                fx1 = xstart + fs / 2
-                fx2 = xend + fs / 2
-                u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
-
-                fy1 = ystart + fs / 2
-                fy2 = yend + fs / 2
-                u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
-
-            else:
-
-                fy1 = ystart + fs / 2
-                fy2 = yend + fs / 2
-                u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
-
-                # one-dimensional FFT in the other direction
-                fx1 = xstart + fs / 2
-                fx2 = xend + fs / 2
-                u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
-
-            k_factor = z * dx * dy * self.wavelength
-
-            u0 = F0 * u0 * k_factor  # obtain the complex amplitude of the outgoing light beam
-
-            u0 = u0.squeeze()
-
-            if num_x == 1 and num_y == 1:
-                # just 1 number
-                return u0.mean()
-
-            elif num_x > 1 and num_y == 1:
-                u_out = Scalar_field_X(xout, self.wavelength)
-                # u_out.u = u0.transpose()[: ,0]
-                u_out.u = u0[0, :]
-                return u_out
-
-            elif num_x == 1 and num_y > 1:
-                u_out = Scalar_field_X(yout, self.wavelength)
-                u_out.u = u0.transpose()[:, 0]
-
-                return u_out
-
-            elif num_x > 1 and num_y > 1:
-                from diffractio.scalar_fields_XY import Scalar_field_XY
-                u_out = Scalar_field_XY(xout, yout, self.wavelength)
-                u_out.u = u0
-                return u_out
-
-        elif num_z > 1:
-            u_zs = np.zeros((num_x, num_y, num_z), dtype=complex)
-            u_zs = u_zs.squeeze()
-            Xout, Yout = np.meshgrid(xout, yout)
-
-            for i, z_now in enumerate(z):
-                if verbose is True:
-                    print("{}/{}".format(i, num_z), sep="\r", end="\r")
-                R = np.sqrt(Xout**2 + Yout**2 + z_now**2)
-                F0 = 1 / (2 * np.pi) * np.exp(
-                    1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
-
-                R = np.sqrt(self.X**2 + self.Y**2 + z_now**2)
-                F = 1 / (2 * np.pi) * np.exp(
-                    1.j * k * R) * z_now / R**2 * (1 / R - 1.j * k)
-
-                u0 = self.u * F
-
-                # one-dimensional FFT in one direction
-                fs = self.wavelength * z_now / dx
-
-                if num_x > 1 and num_y == 1:
-                    fx1 = xstart + fs / 2
-                    fx2 = xend + fs / 2
-                    u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
-
-                    fy1 = ystart + fs / 2
-                    fy2 = yend + fs / 2
-                    u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
-
-                else:
-                    fy1 = ystart + fs / 2
-                    fy2 = yend + fs / 2
-                    u0 = Bluestein_dft_xy(u0, fy1, fy2, fs, num_y)
-
-                    fx1 = xstart + fs / 2
-                    fx2 = xend + fs / 2
-                    u0 = Bluestein_dft_xy(u0, fx1, fx2, fs, num_x)
-
-                u0 = F0 * u0
-
-                k_factor = z_now * dx * dy * self.wavelength
-
-                if num_x == 1 and num_y == 1:
-                    u_zs[i] = u0.mean() * k_factor
-                elif num_x > 1 and num_y == 1:
-                    u_zs[:, i] = u0[0, :] * k_factor
-                elif num_x == 1 and num_y > 1:
-                    u_zs[:, i] = u0.transpose()[:, 0] * k_factor
-
-                elif num_x > 1 and num_y > 1:
-                    u_zs[:, :, i] = u0.transpose() * k_factor
-
-            if num_x == 1 and num_y == 1:
-                u_out = Scalar_field_Z(z, self.wavelength)
-                u_out.u = u_zs
-                return u_out
-
-            elif num_x > 1 and num_y == 1:
-                u_out = Scalar_field_XZ(xout, z, self.wavelength)
-                u_out.u = u_zs
-                return u_out
-
-            elif num_x == 1 and num_y > 1:
-                u_out = Scalar_field_XZ(yout, z, self.wavelength)
-                u_out.u = u_zs
-                return u_out
-
-            elif num_x > 1 and num_y > 1:
-                from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
-                u_out = Scalar_field_XYZ(xout, yout, z, self.wavelength)
-                u_out.u = u_zs
-                return u_out
-
-        return u_out
 
     def CZT(self, z: float, xout: NDArrayFloat | None = None,
             yout: NDArrayFloat | None = None, verbose: bool = False):
@@ -2062,7 +1843,7 @@ class Scalar_field_XY():
     def intensity(self):
         """Returns intensity."""
 
-        intensity = (np.abs(self.u)**2)
+        intensity = np.abs(self.u)**2
         return intensity
 
     def average_intensity(self, verbose: bool = False):

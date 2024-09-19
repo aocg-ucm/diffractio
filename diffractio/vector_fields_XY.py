@@ -945,9 +945,7 @@ class Vector_field_XY():
                 return E_out
 
             elif num_x > 1 and num_y > 1:
-                # TODO: need to implement Vector_field_XYZ
                 from diffractio.vector_fields_XYZ import Vector_field_XYZ
-                print("# TODO: need to implement Vector_field_XYZ")
                 E_out = Vector_field_XYZ(xout, yout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u

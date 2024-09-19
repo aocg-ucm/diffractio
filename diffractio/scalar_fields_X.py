@@ -724,18 +724,15 @@ class Scalar_field_X():
 
         if new_field is True:
             field_output = Scalar_field_X(self.x, self.wavelength)
-            # field_output.u = Usalida / sqrt(z)
             field_output.u = Usalida
             field_output.quality = self.quality
             return field_output
         else:
-            # self.u = Usalida / sqrt(z)
             self.u = Usalida
 
     def RS(self, z: float, amplification: int = 1, n: float = 1.,
            new_field: bool = True, matrix: bool = False, xout: None | NDArrayFloat = None,
            fast: bool = False, kind: str = "z", verbose: bool = True):
-        # # could be removed and use self.n
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
         Args:

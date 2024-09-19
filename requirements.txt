@@ -9,7 +9,7 @@ Pillow
 numexpr
 pandas
 ipywidgets
-ipympl
-ezdxf
+ipympl>=0.9.3
+ezdxf 
 pyvista
 # opencv-python

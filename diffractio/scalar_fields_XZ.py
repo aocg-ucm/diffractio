@@ -902,7 +902,7 @@ class Scalar_field_XZ():
 
                 # calculo de la transformada de Fourier
                 S = ifft(fft(U) * fft(H)) * dx
-                self.u[:, i_z] = S[nx - 1:]  # hasta el final
+                self.u[i_z,:] = S[nx - 1:]  # hasta el final
         else:
             pool = Pool(num_processors)
             t = pool.map(self.__RS_multiprocessing__, list(range(len(self.z))))

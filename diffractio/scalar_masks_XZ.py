@@ -412,6 +412,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         len_z2 = len(x_lens_r)
         fx2_n = np.concatenate((x_lens_r, h_lens_r)).reshape(2, len_z2).T
+        
+        print(len(x_lens_l), len(h_lens_l))
 
         previous_profile = self.borders
         self.clear_refractive_index()

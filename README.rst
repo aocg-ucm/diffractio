@@ -29,26 +29,12 @@ Features
 
 Diffractio is a Python library for Diffraction and Interference Optics.
 
-It implements Scalar and vector Optics. The main algorithms used are:
-
-* Fast Fourier Transform (FFT).
-* Rayleigh Sommerfeld (RS).
-* Chirp z-transform (CZT).
-* Plane Wave Descomposition (PWD).
-* Beam Propagation Method (BPM).
-* Wave Propagation Method (WPM).
-* Vectorial Rayleigh-Sommerfeld (VRS).
-* Vector Fast Fourier Tranform (VFFT).
-* Vector Chirp z-transform (VCZT).
-* Vector Wave Propagation Method (FPWPM)
-
-When possible, multiprocessing is implemented for a faster computation.
-
+It implements Scalar and vector Optics. 
 
 The **scalar** propagation schemes are implemented in modules:
 
 * X - fields are defined in the x axis.
-* Z - fields are defined in the z axis (for visualiztion and analysis).
+* Z - fields are defined in the z axis (for visualization and analysis).
 * XZ - fields are defined in the xz plane, being z the propagation direction.
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
@@ -65,10 +51,10 @@ The **vector** propagation schemes are implemented in modules:
 
 There are additional schemes used mainly for representation.
 
-* vector_X - fields are defined in the z axis (for visualiztion and analysis).
-* vector_Z - fields are defined in the z axis (for visualiztion and analysis).
-* vector_XZ - fields are defined in the xz axis (for visualiztion and analysis).
-* vector_XYZ - fields are defined in the xyz axis (for visualiztion and analysis).
+* vector_X - fields are defined in the z axis (for visualization and analysis).
+* vector_Z - fields are defined in the z axis (for visualization and analysis).
+* vector_XZ - fields are defined in the xz axis (for visualization and analysis).
+* vector_XYZ - fields are defined in the xyz axis (for visualization and analysis).
 
 For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
 
@@ -123,6 +109,9 @@ Fields
 
 Several propagation algorithms for propagation of light are implemented in the *fields* modules:
 
+The main algorithms for Scalar propagation are:
+
+
 * **Fast Fourier Transform (FFT)** which allows, in a single step, to determine the field at the far field.
 
 * **Rayleigh-Sommerfeld (RS)** [Appl. Opt., 45(6) 1102–1110, (2006)] RS allows, in a single step, to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
@@ -133,12 +122,19 @@ Several propagation algorithms for propagation of light are implemented in the *
 
 * **Chirped Z-Transform (CZT)**.  [Light: Science and Applications, 9(1), (2020)] CZT allows, in a single step, to propagate to a near or far observation plane. It present advantages with respecto to RS algorithm, since the region of interest and the sampling numbers can be arbitrarily chosen, endowing the proposed method with superior flexibility. CZT algorithm allows to have a XY mask and compute in XY, Z, XZ, XYZ schemes, simply defining the output arrays.
 
+* **Plane Wave Descomposition (PWD)**.
+
+The main algorithms for Vector propagation are:
+
+* **Vector Fast Fourier Tranform (VFFT)**.
+
 * **Vector Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013)] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
 
-* **Vector Chirped Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
+* **Vector Chirp Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
 
 * **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
 
+When possible, multiprocessing is implemented for a faster computation.
 
 The fields, masks, and sources can be stored in files.
 

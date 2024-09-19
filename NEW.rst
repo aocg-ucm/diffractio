@@ -2,6 +2,29 @@
 New Features
 ================================================
 
+
+0.3.1 (2024-10-**)
+--------------------------------
+* Improvement:
+
+  - New Algorithms for Vector propagation, in particular FPWPM.
+
+  - New 3D visualization tools, using pyvista.
+
+  - Use of Ezdxf for 3X DXF parts.
+
+  - Improvement in documentation and examples.
+
+  - Typing variables in functions.
+
+
+* Fix bugs:
+
+  - ndgrid function -> meshgrid (for >2D matrices).
+
+
+
+
 0.2.3 (2023-11-21)
 --------------------------------
 
@@ -11,7 +34,7 @@ New Features
 
   - utils_slicer.py is deprecated.
 
-  -  
+
 
 * Fix bugs:
 
@@ -35,10 +58,3 @@ New Features
 
   - X fields: inverse_amplitude, inverse_phase, pupil
 
-
-Future
---------------------------------
-
-  - Implement plotly for drawings
-  - Some bugs in CZT (y)
-  - VWPM
