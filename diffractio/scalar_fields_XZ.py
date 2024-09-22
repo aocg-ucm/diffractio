@@ -69,7 +69,7 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 
 
 from .__init__ import np, plt
@@ -254,7 +254,7 @@ class Scalar_field_XZ():
             
         return new_field
 
-    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max: floating):
+    def refractive_index_from_scalar_mask_XY(self, mask_XY, refractive_index_max: float):
         """Transforms XY mask into XZ mask.
             - Areas with value 0 pass to n_background.
             - When transmittance of mask_XY  is 1, pass to refractive_index_max.
@@ -275,7 +275,7 @@ class Scalar_field_XZ():
         self.n = mask_XY.u * refractive_index_max
         self.n[self.n < 1] = self.n_background
 
-    def rotate_field(self, angle: floating, center_rotation: tuple[floating, floating],
+    def rotate_field(self, angle: float, center_rotation: tuple[float, float],
                      kind: str = 'all', n_background: float = 1.):
         """Rotate all the image a certain angle
 
@@ -329,7 +329,7 @@ class Scalar_field_XZ():
         """
         return normalize_field(self, new_field)
 
-    def mask_field(self, size_edge: floating = 0):
+    def mask_field(self, size_edge: float = 0):
         """
         mask the incident field at the edges, each edge is masked size_edge
 
@@ -346,7 +346,7 @@ class Scalar_field_XZ():
     def smooth_refractive_index(self,
                                 type_filter: int = 2,
                                 pixels_filtering: int = 10,
-                                max_diff_filter: floating = 0.1,
+                                max_diff_filter: float = 0.1,
                                 draw_check: bool = False):
         """
         Technique to remove artifacts in BPM propagation.
@@ -589,7 +589,7 @@ class Scalar_field_XZ():
 
             return field
 
-    def incident_field(self, u0, z0: floating | None = None):
+    def incident_field(self, u0, z0: float | None = None):
         """Incident field for the experiment. It takes a Scalar_source_X field
 
         Args:
@@ -918,7 +918,7 @@ class Scalar_field_XZ():
 
         return self.u
 
-    def PWD(self, n: floating | None = None, matrix: bool = False, verbose: bool = False):
+    def PWD(self, n: float | None = None, matrix: bool = False, verbose: bool = False):
         """
         Plane wave decomposition algorithm (PWD).
 
@@ -1226,7 +1226,7 @@ class Scalar_field_XZ():
 
         return intensity_prof
 
-    def detect_index_variations(self, n_edge: floating, incr_n: floating = 0.1):
+    def detect_index_variations(self, n_edge: float, incr_n: float = 0.1):
         """In a XZ masks, detects refractive index variations.
 
         Parameteres:
@@ -1259,7 +1259,7 @@ class Scalar_field_XZ():
         h_lens_r = z_new[iz_r]
         return x_lens_l, h_lens_l, x_lens_r, h_lens_r
 
-    def _detect_transitions_(self, min_variation: floating = 1e-10):
+    def _detect_transitions_(self, min_variation: float = 1e-10):
         """Detects transitions areas and algorithms between RS and BPM.
 
         Args:
@@ -1322,7 +1322,7 @@ class Scalar_field_XZ():
 
     def surface_detection(self,
                           mode: int = 1,
-                          min_incr: floating = 0.1,
+                          min_incr: float = 0.1,
                           reduce_matrix: str = 'standard',
                           has_draw: bool = False):
         """detect edges of variation in refractive index.
@@ -1357,19 +1357,19 @@ class Scalar_field_XZ():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0,
+             logarithm: float = 0.,
              normalize: bool = False,
              draw_borders: bool = False,
              filename: str = '',
              scale: str = '',
-             min_incr: floating = 0.0005,
+             min_incr: float = 0.0005,
              reduce_matrix: str = 'standard',
              colorbar_kind: str | None = None,
              colormap_kind: str = "",
              z_scale: str = 'um',
              edge_matrix: NDArrayFloat | None = None,
              interpolation: str = 'bilinear',
-             percentage_intensity: floating | None = None,
+             percentage_intensity: float | None = None,
              **kwargs):
         """Draws  XZ field.
 
@@ -1491,7 +1491,7 @@ class Scalar_field_XZ():
             plt.plot(border1, border0, 'w.', ms=.5)
 
         if filename != '':
-            plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
+            plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
 
         return h1
 
@@ -1501,7 +1501,7 @@ class Scalar_field_XZ():
                               title: str = '',
                               filename: str = '',
                               scale: str = '',
-                              min_incr: floating = 0.01,
+                              min_incr: float = 0.01,
                               reduce_matrix: str = 'standard',
                               colorbar_kind: str | None = None,
                               colormap_kind: str | str = cm.Blues,
@@ -1602,7 +1602,7 @@ class Scalar_field_XZ():
 
     def draw_incident_field(self,
                             kind: str = 'intensity',
-                            logarithm: floating = 0.,
+                            logarithm: float = 0.,
                             normalize: bool = False,
                             filename: str = ''):
         """Draws incident field self.u0
@@ -1623,8 +1623,8 @@ class Scalar_field_XZ():
 
     def profile_longitudinal(self,
                              kind: str = 'intensity',
-                             x0: floating = 0 * um,
-                             logarithm: floating = 0.,
+                             x0: float = 0 * um,
+                             logarithm: float = 0.,
                              normalize: bool = False,
                              z_scale: str = 'um',
                              has_draw: bool = True,
@@ -1693,8 +1693,8 @@ class Scalar_field_XZ():
 
     def profile_transversal(self,
                             kind: str = 'intensity',
-                            z0: floating = 0 * um,
-                            logarithm: floating = 0.,
+                            z0: float = 0 * um,
+                            logarithm: float = 0.,
                             normalize: bool = False,
                             has_draw: bool = True,
                             filename: str = ''):
@@ -1776,7 +1776,7 @@ class Scalar_field_XZ():
                     kind='FWHM1D',
                     has_draw: list[bool] = [True, False],
                     z_scale: str = 'um',
-                    percentage: floating = 0.5,
+                    percentage: float = 0.5,
                     remove_background: str | None = None,
                     verbose: bool = False):
         """Computes the beam width for all the distances z.
@@ -1832,7 +1832,7 @@ class Scalar_field_XZ():
     #                    kind_profile='transversal',
     #                    step=1,
     #                    wait=0.001,
-    #                    logarithm: floating = 0.,
+    #                    logarithm: float = 0.,
     #                    normalize: bool = False,
     #                    filename: str = '',
     #                    verbose: bool = False):
@@ -1892,11 +1892,11 @@ class Scalar_field_XZ():
 
     def video(self,
               kind: str = 'intensity',
-              z_min: floating | None = None,
-              z_max: floating | None = None,
-              logarithm: floating = 0.,
+              z_min: float | None = None,
+              z_max: float | None = None,
+              logarithm: float = 0.,
               normalize: bool = False,
-              time_video: floating = 10 * seconds,
+              time_video: float = 10 * seconds,
               frames_reduction: int = 5,
               filename: str = 'video.avi',
               dpi: int = 100):
@@ -1957,7 +1957,7 @@ class Scalar_field_XZ():
 
     def draw_profiles_interactive(self,
                                   kind: str = 'intensity',
-                                  logarithm: floating = 0.,
+                                  logarithm: float = 0.,
                                   normalize: bool = False):
         """Draws profiles interactivey. Only transversal
 
@@ -2002,7 +2002,7 @@ class Scalar_field_XZ():
         zZ.on_changed(__update__)
 
 
-def __update__(val: floating):
+def __update__(val: float):
     """for making videos.
     """
     zz = zZ.val

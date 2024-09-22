@@ -37,7 +37,7 @@ from matplotlib import rcParams
 import time
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -47,12 +47,15 @@ from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_k, nearest
 from .utils_optics import normalize_field, fresnel_equations_kx
+from .vector_fields_X import Vector_field_X
+from .scalar_fields_X import Scalar_field_X
 
+from py_pol.jones_vector import Jones_vector
 
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fftshift, ifft, ifftshift
 
-percentage_intensity = CONF_DRAWING["percentage_intensity"]
+percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
 class Vector_field_XZ(Scalar_mask_XZ):
@@ -205,13 +208,23 @@ class Vector_field_XZ(Scalar_mask_XZ):
             new_field.clear_field()
         return new_field
 
-    def incident_field(self, E0, z0=None):
-        """Incident field for the experiment. It takes a Scalar_source_X field
+    def incident_field(self, E0: Vector_field_X  | None = None, u0: Scalar_field_X  | None = None, 
+                       j0: Jones_vector  | None = None, z0: float | None = None):
+        """Includes the incident field in Vector_field_XZ. 
+        
+        It can be performed using a Vector_field_X E0 or a Scalar_field_X u0 + Jones_vector j0.
 
         Args:
-            E0 (Vector_source_X): field produced by Scalar_source_X (or a X field)
-            z0 (float): position of the incident field. if None, '', [], is at the beginning
+            E0 (Vector_field_X | None): Vector field of the incident field.
+            u0 (Scalar_field_x | None): Scalar field of the incident field.
+            j0 (py_pol.Jones_vector | None): Jones vector of the incident field.
+            z0 (float | None): position of the incident field. if None, the field is at the beginning.
         """
+
+        if np.logical_and.reduce((E0 is None, u0 is not None, j0 is not None)):
+            E0 = Vector_field_X(self.x, self.wavelength, self.n_background)
+            E0.Ex = u0.u * j0.M[0]
+            E0.Ey = u0.u * j0.M[1]
 
         if z0 in (None, '', []):
             self.Ex0 = E0.Ex
@@ -219,13 +232,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             self.Ex[0, :] = self.Ex[0, :] + E0.Ex
             self.Ey[0, :] = self.Ey[0, :] + E0.Ey
-            # self.Ex[:, 0] = self.Ex[:, 0] + E0.Ex
-            # self.Ey[:, 0] = self.Ey[:, 0] + E0.Ey
-
         else:
             iz, _, _ = nearest(self.z, z0)
-            self.Ex[:, iz] = self.Ex[:, iz] + E0.Ex
-            self.Ey[:, iz] = self.Ey[:, iz] + E0.Ey
+            self.Ex[iz, :] = self.Ex[iz, :] + E0.Ex
+            self.Ey[iz, :] = self.Ey[iz, :] + E0.Ey
 
     def final_field(self):
         """Returns the final field as a Vector_field_X."""
@@ -243,7 +253,21 @@ class Vector_field_XZ(Scalar_mask_XZ):
         EH_final.Hz = self.Hz[-1, :]
         return EH_final
 
-    def get(self, kind="fields", is_matrix=True):
+
+    def refractive_index_from_scalarXZ(self, u_xz: Scalar_mask_XZ):
+        """
+        refractive_index_from_scalarXZ. Gets the refractive index from a Scalar field and passes to a vector field.
+        
+        Obviously, the refractive index is isotropic.
+
+        Args:
+            self (Vector_field_XZ): Vector_field_XZ
+            u_xz (Scalar_mask_XZ): Scalar_mask_XZ
+        """
+        self.n = u_xz.n
+        
+
+    def get(self, kind: str = "fields", is_matrix: bool =True):
         """Takes the vector field and divide in Scalar_field_X.
 
         Args:
@@ -378,13 +402,16 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         if has_edges is False:
             has_filter = np.zeros_like(self.z)
-
-        if isinstance(has_edges, int):
+        elif has_edges is True:
             has_filter = np.ones_like(self.z)
+        elif isinstance(has_edges, (int, float)):
+            has_filter = np.zeros_like(self.z)
+            iz, _, _ = nearest(self.z, has_edges)
+            has_filter[iz:] = 1
         else:
             has_filter = has_edges
 
-        width_edge = (self.x[-1] - self.x[0]) / 2
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
         x_center = (self.x[-1] + self.x[0]) / 2
 
         filter_function = np.exp(
@@ -411,7 +438,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 kx,
                 self.wavelength,
                 dz,
-            )
+            ) * filter_edge
 
             self.Ex[j, :] = self.Ex[j, :] + E_step[0] * filter_edge
             self.Ey[j, :] = self.Ey[j, :] + E_step[1] * filter_edge
@@ -662,58 +689,39 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return Sz
 
-    def check_energy(self, kind='Sz', I0=None):
-        """Checks the energy
+    def check_energy(self, has_draw : bool = True):
+        """
+        check_energy. Integrates the Sz field and checks the energy conservation.
+
+        We have used the z component of the Poynting vector.
 
         Args:
-            kind (str, optional): Sz S2 Ssum. Defaults to 'Sz'.
-            I0 (_type_, optional): _description_. Defaults to None.
+            has_draw (bool, optional): If True, it draws the energy at each plane z. Defaults to True.
 
         Returns:
-            _type_: _description_
+            np.array: normalized (to the first data) energy at each plane z.
         """
+        
         permeability = 4 * np.pi * 1e-7
         Z0 = 376.82
 
-
-
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
-        U = self.energy_density(has_draw=False)
-
-        if kind == 'Sz':
-            S_total = Sz
-            label = 'Sz'
-
-        elif kind == 'S2':
-            S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
-            label = 'S2'
-
-        elif kind == 'Ssum':
-            S_total = Sx+Sy+Sz
-            label = 'Ssum'
-
-        elif kind == 'U':
-            S_total = U
-            label = 'U'
-
-        #Energy_z = (S_total/self.n**0.5).mean(axis=1)/(S_total[1, :]/self.n[1, :]**0.5).mean()
-        Energy_z = (S_total).mean(axis=1)/(S_total[1, :]).mean()
-
-        plt.figure()
-        plt.plot(self.z, Energy_z, 'r', label=label)
-        plt.legend()
-
-        plt.xlim(self.z[0], self.z[-1])
-        plt.grid('on')
-
-        if I0 is not None:
-            plt.ylim(ymin=I0)
-        else:
-            plt.ylim(ymin=0)
+        # U = self.energy_density(has_draw=False)
 
 
-        return Energy_z  # , check_U
-#
+        energy_z = (Sz).mean(axis=1)/(Sz[1, :]).mean()
+
+        if has_draw:
+            plt.figure()
+            plt.plot(self.z, energy_z, 'r', label='Sz')
+
+            plt.xlim(self.z[0], self.z[-1])
+            plt.grid('on')
+            plt.xlabel("$z\,(mm)$")
+            plt.ylabel("$Sz(z)$")
+            plt.ylim(bottom=0)
+
+        return energy_z
 
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
@@ -796,15 +804,17 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Returns
             u (numpy.array): normalized optical field
         """
+
         return normalize_field(self, new_field)
 
     def draw(
         self,
         kind="intensity",
-        logarithm: floating = 0,
+        logarithm: float = 0,
         normalize: bool = False,
-        cut_value: floating | None = None,
+        cut_value: float | None = None,
         filename="",
+        percentage_intensity: float | None = None,
         draw=True,
         **kwargs
     ):
@@ -816,8 +826,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
             filename (str): if not '' stores drawing in file,
+            draw (bool): If True, it draws the field. Defaults to True.
+            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
+
 
         """
+
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
 
         if draw is True:
             if kind == "intensity":
@@ -830,10 +846,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 )
 
             elif kind == "phases":
-                id_fig = self.__draw_phases__(logarithm, normalize, cut_value, **kwargs)
+                id_fig = self.__draw_phases__(logarithm, normalize, cut_value, percentage_intensity, **kwargs)
 
             elif kind == "fields":
-                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, **kwargs)
+                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, percentage_intensity, **kwargs)
 
             elif kind == "EH":
                 id_fig = self.__draw_EH__(logarithm, normalize, cut_value, **kwargs)
@@ -845,13 +861,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 id_fig = self.__draw_param_ellipse__(
                     logarithm, normalize, cut_value, **kwargs
                 )
-
             else:
                 print("not good kind parameter in vector_fields_X.draw()")
                 id_fig = None
 
             if filename != "":
-                plt.savefig(filename, dpi=100, bbox_inches="tight", pad_inches=0.1)
+                plt.savefig(filename, dpi=300, bbox_inches="tight", pad_inches=0.1)
 
             return id_fig
 
@@ -958,9 +973,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         logarithm,
         normalize,
         cut_value,
-        only_image=False,
+        percentage_intensity: float | None = None,
+        only_image: bool = False,
         color_intensity=CONF_DRAWING["color_phase"],
-        draw_z = True,
+        draw_z: bool = True,
     ):
         """internal funcion: draws phase
 
@@ -968,6 +984,11 @@ class Vector_field_XZ(Scalar_mask_XZ):
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
+            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
+            only_image: todo
+            color_intensity: todo
+            draw_z: todo
+            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
         """
 
         tx, ty = rcParams["figure.figsize"]
@@ -983,6 +1004,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
 
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
 
         if draw_z is False:
             plt.figure(figsize=(2 * tx, ty))
@@ -1042,11 +1065,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         logarithm,
         normalize,
         cut_value,
+        percentage_intensity: float | None = None,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
-        draw_z = True, #TODO
-
-    ):
+        draw_z = True, ): #TODO 
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Args:
@@ -1056,6 +1078,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
             cut_value (float): If not None, cuts the maximum intensity to this value
 
         """
+
+        if percentage_intensity is None:
+            percentage_intensity = percentage_intensity_config
 
         intensity_x = np.abs(self.Ex) ** 2
         intensity_x = normalize_draw(intensity_x, logarithm, normalize, cut_value)
@@ -1080,6 +1105,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
+        print(percentage_intensity)
 
         self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
@@ -1277,7 +1303,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
     def __draw_ellipses__(
         self,
-        logarithm: floating = 0.,
+        logarithm: float = 0.,
         normalize: bool = False,
         cut_value="",
         num_ellipses=(21, 21),
@@ -1506,7 +1532,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     """
 
     # amplitude of waveplanes
-
     Exk = fftshift(fft(Ex))
     Eyk = fftshift(fft(Ey))
 

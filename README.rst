@@ -34,10 +34,10 @@ It implements Scalar and vector Optics.
 The **scalar** propagation schemes are implemented in modules:
 
 * X - fields are defined in the x axis.
-* Z - fields are defined in the z axis (for visualization and analysis).
-* XZ - fields are defined in the xz plane, being z the propagation direction.
 * XY - fields are defined in the xy transversal plane.
 * XYZ - fields are defined in the xyz volume.
+* XZ - fields are defined in the xz plane, being z the propagation direction.
+* Z - fields are defined in the z axis.
 
 Each scheme present three modules:
 
@@ -47,14 +47,11 @@ Each scheme present three modules:
 
 The **vector** propagation schemes are implemented in modules:
 
-* vector_XY - Ex, Ey, and Ez electric field components are defined, which allows polarization analysis.
-
-There are additional schemes used mainly for representation.
-
-* vector_X - fields are defined in the z axis (for visualization and analysis).
-* vector_Z - fields are defined in the z axis (for visualization and analysis).
-* vector_XZ - fields are defined in the xz axis (for visualization and analysis).
-* vector_XYZ - fields are defined in the xyz axis (for visualization and analysis).
+* vector_X - fields are defined in the x axis.
+* vector_XY - fields are defined in xy transversal plane.
+* vector_XYZ - fields are defined in the xyz axis.
+* vector_XZ - fields are defined in the xz axis.
+* vector_Z - fields are defined in the z axis.
 
 For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
 
@@ -99,13 +96,12 @@ In the XZ scheme there is also a number of masks:
 * Surfaces can be added to objects.
 * Others: Masks can also be loaded (.png, .dxf)
 
-
 .. image:: readme3.png
    :height: 400
 
 
-Fields
-=========
+Scalar Fields
+==================
 
 Several propagation algorithms for propagation of light are implemented in the *fields* modules:
 
@@ -116,23 +112,15 @@ The main algorithms for Scalar propagation are:
 
 * **Rayleigh-Sommerfeld (RS)** [Appl. Opt., 45(6) 1102–1110, (2006)] RS allows, in a single step, to propagate to a near or far observation plane, which allows fast computations. The fields and the masks must be defined in a plane.
 
+* **Plane Wave Decomposition (PWD)** [Opt. Comm. 281 4219-4233 (2008)] PWD allows to propagate to a near or far observation plane. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is computed according to the split-step propagation scheme.
+
 * **Beam propagation method (BPM)** [Appl. Opt. 24, 3390-3998 (1978)] which allows to analyze the propation of light in volumetric elements, such as spheres, cylinders and other complex forms, provided that the spatial variations in the refractive index are small. It allows graded index structures. It presents a complexity of O(n) in the two-dimensional and O(n2) in the three-dimensional case. It is computed according to the split-step propagation scheme.
 
 * **Wave Propagation Method (WPM)**. [Appl. Opt. 32, 4984 (1993)] WPM was introduced in order to overcome the major limitations of the beam propagation method (BPM). With the WPM, the range of application can be extended from the simulation of waveguides to simulation of other optical elements like lenses, prisms and gratings. WPM can accurately simulate scalar light propagation in inhomogeneous media at high numerical apertures, and provides valid results for propagation angles up to 85° and that it is not limited to small index variations in the axis of propagation. Fast implementation with discrete number of refractive indexes is also implemented.
 
 * **Chirped Z-Transform (CZT)**.  [Light: Science and Applications, 9(1), (2020)] CZT allows, in a single step, to propagate to a near or far observation plane. It present advantages with respecto to RS algorithm, since the region of interest and the sampling numbers can be arbitrarily chosen, endowing the proposed method with superior flexibility. CZT algorithm allows to have a XY mask and compute in XY, Z, XZ, XYZ schemes, simply defining the output arrays.
 
-* **Plane Wave Descomposition (PWD)**.
 
-The main algorithms for Vector propagation are:
-
-* **Vector Fast Fourier Tranform (VFFT)**.
-
-* **Vector Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013)] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
-
-* **Vector Chirp Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
-
-* **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
 
 When possible, multiprocessing is implemented for a faster computation.
 
@@ -146,9 +134,19 @@ In some modules, videos can be generated for a better analysis of optical fields
    :width: 600
 
 
+The main algorithms for Vector propagation are:
+
+* **Vector Fast Fourier Tranform (VFFT)**, which allows to determine the (Ex, Ey, Ez) fields at the far field.
+
+* **Vector Rayleigh-Sommerfeld (VRS)**. The VRS method [Laser Phys. Lett. 10(6) 065004 (2013)] allows to propagate (Ex,Ey,Ez) fields offering the advantage of significant reduction in computation, from flat diffractive elements (Thin Element Approximation) with full control of polarization. It addresses simultaneously both longitudinal polarization. This approach offers the advantage of significant reduction in computation.
+
+* **Vector Chirp Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
+
+* **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
+
 
 Vector beams
-==================================
+----------------------
 
 Here, we implement new classes where the E_x, E_y, and E_z fields are generated and propagated using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
 Also, simple and complex polarizing masks can be created.
@@ -206,7 +204,7 @@ Collaborators
 
 * Jesús del Hoyo Muñoz
 
-* Francisco Javier Torcal-Milla
+* Francisco Jose Torcal-Milla
 
 
 
@@ -243,32 +241,46 @@ BibTex:
 
 
 
-References for algorithms
+
+Scalar algorithms
 ---------------------------
+
 
 **RS**
 
-* Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula. Appl. Opt. 45, 1102–1110 (2006).
+* Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula," Appl. Opt. 45, 1102–1110 (2006).
 
-**WPM**
+**PWD**
 
-* K.-H. Brenner, W. Singer, “Light propagation through micro lenses: a new simulation method”, Appl. Opt., 32(6) 4984-4988 (1993).
-
-* Schmidt, S. et al. "Wave-optical modeling beyond the thin-element-approximation" Opt. Express 24, 30188 (2016).
-
-* Brenner, K.H. "A high-speed version of the wave propagation method applied to micro-optics."  16th Workshop on Information Optics (WIO). IEEE (2017)
-
-* Schmidt, S., et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).
-
-**VRS**
-
-* Ye, H. et al. "Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method" Laser Phys. Lett. 10, (2013).
+* Kozacki, T. "Numerical errors of diffraction computing using plane wave spectrum decomposition," Opt. Comm. 281 4219-4233 (2008).
 
 **CZT**
 
 * Bluestein, L., "A linear filtering approach to the computation of the discrete Fourier transform," Northeast Electronics Research and Engineering Meeting Record 10, 218-219 (1968).
 
 * Hu Y. et al. "Efficient full-path optical calculation of scalar and vector diffraction using the Bluestein method" Light: Science & Applications  9(119) (2020)
+
+**WPM**
+
+* Brenner K.H., Singer W. , “Light propagation through micro lenses: a new simulation method”, Appl. Opt., 32(6) 4984-4988 (1993).
+
+* Schmidt S. et al. "Wave-optical modeling beyond the thin-element-approximation" Opt. Express 24, 30188 (2016).
+
+* Brenner K.H. "A high-speed version of the wave propagation method applied to micro-optics."  16th Workshop on Information Optics (WIO). IEEE (2017)
+
+* Schmidt S. et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).
+
+
+Scalar algorithms
+---------------------------
+
+**VFFT** 
+
+Kornél J. and Bokor N., 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
+
+**VRS**
+
+* Ye, H. et al. "Creation of a longitudinally polarized subwavelength hotspot with an ultra-thin planar lens: Vectorial Rayleigh-Sommerfeld method" Laser Phys. Lett. 10, (2013).
 
 **VCZT**
 

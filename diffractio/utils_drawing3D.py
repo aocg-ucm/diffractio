@@ -153,7 +153,7 @@ def voxelize_volume_diffractio_backup(self, mesh, refractive_index,  check_surfa
         # reduce chance for artifacts, see gh-1743
         surface.triangulate(inplace=True)
 
- 
+
     # Create a RectilinearGrid
     voi = pyvista.RectilinearGrid(self.x, self.y, self.z)
 

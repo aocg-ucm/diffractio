@@ -450,10 +450,6 @@ class Vector_field_XY():
              has_draw: bool = False):
         """Vector Fast Fourier Transform (FFT) of the field.
 
-        The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
-        having a focal length fand collecting light under a convergence angle theta_max.
-        Denoting the refractive index of the medium in the focal region with n, the NA of the lens can be written as NA= n np.sin theta_max.
-        The polarization changes on the lens surfaces described by the Fresnel formulae have been neglected.
 
         Ei = (Eix, Eiy, Eiz) is the local electric field vector.
 
@@ -591,11 +587,6 @@ class Vector_field_XY():
               matrix: bool = False,
               has_draw: bool = False):
         """Inverse Vector Fast Fourier Transform (FFT) of the field.
-
-        The focusing system, shown schematically in Fig. 1 is modelled by a high NA, aberration-free, aplanatic lens obeying the sine condition,
-        having a focal length fand collecting light under a convergence angle theta_max.
-        Denoting the refractive index of the medium in the focal region with n, the NA of the lens can be written as NA= n np.sin theta_max.
-        The polarization changes on the lens surfaces described by the Fresnel formulae have been neglected.
 
         Ei = (Eix, Eiy, Eiz) is the local electric field vector.
 

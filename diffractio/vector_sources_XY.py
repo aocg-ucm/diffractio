@@ -28,7 +28,7 @@ The magnitude is related to microns: `micron = 1.`
 
 from py_pol.jones_vector import Jones_vector
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, np, um
 from .scalar_fields_XY import Scalar_field_XY
