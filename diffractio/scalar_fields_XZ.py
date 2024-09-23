@@ -1324,7 +1324,7 @@ class Scalar_field_XZ():
                           mode: int = 1,
                           min_incr: float = 0.1,
                           reduce_matrix: str = 'standard',
-                          has_draw: bool = False):
+                          has_draw: bool = False):# -> tuple[ndarray[Any, dtype[floating[Any]]] | Any, ndarray[A...:
         """detect edges of variation in refractive index.
 
         Args:
