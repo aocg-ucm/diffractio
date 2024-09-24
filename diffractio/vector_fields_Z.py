@@ -35,7 +35,7 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -360,9 +360,9 @@ class Vector_field_Z():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0,
+             logarithm: float = 0,
              normalize: bool = False,
-             cut_value: floating = None,
+             cut_value: float = None,
              filename: str = '',
              draw: bool = True,
              **kwargs):
@@ -412,7 +412,7 @@ class Vector_field_Z():
 
             return id_fig
 
-    def __draw_intensity__(self, logarithm: floating, normalize: bool, cut_value: floating):
+    def __draw_intensity__(self, logarithm: float, normalize: bool, cut_value: float):
         """Draws the intensity
 
         Args:
@@ -608,9 +608,9 @@ class Vector_field_Z():
             return h1, h2, h3
 
     def __draw_fields__(self,
-                        logarithm: floating,
+                        logarithm: float,
                         normalize: bool,
-                        cut_value: floating,
+                        cut_value: float,
                         color_intensity=CONF_DRAWING['color_intensity'],
                         color_phase=CONF_DRAWING['color_phase']):
         """__internal__: draws amplitude and phase in 2x2 drawing
@@ -668,7 +668,7 @@ class Vector_field_Z():
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self, logarithm: floating, normalize: bool, cut_value: floating):
+    def __draw_stokes__(self, logarithm: float, normalize: bool, cut_value: float):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
         """
 
@@ -708,7 +708,7 @@ class Vector_field_Z():
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, logarithm: floating, normalize: bool, cut_value: floating):
+    def __draw_param_ellipse__(self, logarithm: float, normalize: bool, cut_value: float):
         """__internal__: computes and draws polariations ellipses
         """
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)

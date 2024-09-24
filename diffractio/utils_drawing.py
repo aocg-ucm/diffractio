@@ -7,7 +7,7 @@
 
 import os
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 import matplotlib.animation as manimation
 import matplotlib.image as mpimg

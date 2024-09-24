@@ -59,7 +59,7 @@ from scipy.interpolate import RegularGridInterpolator
 
 from .__init__ import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -1074,7 +1074,7 @@ class Scalar_field_XYZ():
 
     def draw_proposal(self,
                       kind: str = 'intensity',
-                      logarithm: floating = 0,
+                      logarithm: float = 0,
                       normalize='maximum',
                       draw_borders: bool = False,
                       filename: str = '',
@@ -1171,7 +1171,7 @@ class Scalar_field_XYZ():
     def draw_XY(self,
                 z0: float = 5 * mm,
                 kind: str = 'intensity',
-                logarithm: floating = 0,
+                logarithm: float = 0,
                 normalize: str = 'maximum',
                 title: str = '',
                 filename: str = '',
@@ -1208,7 +1208,7 @@ class Scalar_field_XYZ():
     def draw_XZ(self,
                 kind: str = 'intensity',
                 y0: float = 0 * mm,
-                logarithm: floating = 0,
+                logarithm: float = 0,
                 normalize: str = '',
                 draw_borders: bool = False,
                 filename: str = '',

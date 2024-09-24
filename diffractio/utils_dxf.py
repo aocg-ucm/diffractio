@@ -30,7 +30,7 @@ from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
 from ezdxf.layouts import Modelspace
 
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .import np, plt
 
 

@@ -34,7 +34,7 @@ The magnitude is related to microns: `micron = 1.`
 import copy
 from matplotlib import rcParams
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -360,7 +360,7 @@ class Vector_field_X():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0,
+             logarithm: float = 0,
              normalize: bool = False,
              cut_value: float | bool = None,
              filename: str = '',
@@ -665,13 +665,13 @@ class Vector_field_X():
         plt.tight_layout()
         return h1, h2, h3, h4
 
-    def __draw_stokes__(self, logarithm: floating | bool, normalize: bool, cut_value: floating):
+    def __draw_stokes__(self, logarithm: float | bool, normalize: bool, cut_value: float):
         """ __internal__: computes and draws CI, CQ, CU, CV parameters
 
         Args:
-            logarithm (floating | bool): _description_
+            logarithm (float | bool): _description_
             normalize (bool): _description_
-            cut_value (floating): _description_
+            cut_value (float): _description_
 
         Returns:
             _type_: _description_
@@ -713,13 +713,13 @@ class Vector_field_X():
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
-    def __draw_param_ellipse__(self, logarithm: floating, normalize: bool, cut_value: floating):
+    def __draw_param_ellipse__(self, logarithm: float, normalize: bool, cut_value: float):
         """_internal__: computes and draws polariations ellipses
 
         Args:
-            logarithm (bool | floating): _description_
+            logarithm (bool | float): _description_
             normalize (bool): _description_
-            cut_value (floating): _description_
+            cut_value (float): _description_
 
         Returns:
             _type_: _description_

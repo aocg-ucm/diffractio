@@ -57,7 +57,7 @@ import multiprocessing
 import time
 import types
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 from numpy import angle, array, concatenate, exp, linspace, pi, shape, sqrt, zeros
@@ -1254,9 +1254,9 @@ class Scalar_field_X():
     def draw(
         self,
         kind="intensity",
-        logarithm: floating = 0.,
+        logarithm: float = 0.,
         normalize: bool = False,
-        cut_value: floating | None = None,
+        cut_value: float | None = None,
         filename: str = "",
         scale: str = "",
     ):

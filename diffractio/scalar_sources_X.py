@@ -28,7 +28,7 @@ The magnitude is related to microns: `mifcron = 1.`
 # flake8: noqa
 
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, np, um
 from .scalar_fields_X import Scalar_field_X

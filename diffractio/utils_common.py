@@ -21,7 +21,7 @@ import numpy as np
 import psutil
 from scipy.io import loadmat, savemat
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:

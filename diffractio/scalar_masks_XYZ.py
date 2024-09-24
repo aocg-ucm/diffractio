@@ -25,7 +25,7 @@ The magnitude is related to microns: `micron = 1.`
 # flake8: noqa
 
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 from .__init__ import degrees, np, um
@@ -41,8 +41,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.type = 'Scalar_mask_XYZ'
 
     def object_by_surfaces(self,
-                           r0: list[floating],
-                           refractive_index: floating,
+                           r0: list[float],
+                           refractive_index: float,
                            Fs,
                            angles,
                            v_globals={}):
@@ -87,7 +87,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.n[ipasa] = refractive_index
         return ipasa
 
-    def sphere(self, r0: list[floating], radius: list[floating], refractive_index: floating, angles):
+    def sphere(self, r0: list[float], radius: list[float], refractive_index: float, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
             Args:
@@ -108,11 +108,11 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
     def square(self,
-               r0: list[floating],
-               length: list[floating],
-               refractive_index: floating,
+               r0: list[float],
+               length: list[float],
+               refractive_index: float,
                angles=None,
-               rotation_point: list[floating] = None):
+               rotation_point: list[float] = None):
         """ Insert a rectangle in background. If something previous, is removed.
 
         Args:
@@ -145,8 +145,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         return ipasa
 
-    def cylinder(self, r0: list[floating], radius: list[floating], length: float,
-                 refractive_index: float, axis: list[floating], angle: floating):
+    def cylinder(self, r0: list[float], radius: list[float], length: float,
+                 refractive_index: float, axis: list[float], angle: float):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Args:

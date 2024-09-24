@@ -14,7 +14,7 @@ import multiprocessing
 import sys
 import time
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import mm, no_date, np, plt, um
 from .scalar_masks_XY import Scalar_mask_XY

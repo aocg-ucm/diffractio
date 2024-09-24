@@ -11,7 +11,7 @@ from multiprocessing import Pool
 import numpy as np
 
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 def _pickle_method(method):

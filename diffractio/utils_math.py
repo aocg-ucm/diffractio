@@ -14,7 +14,7 @@ from scipy.signal import fftconvolve
 from numpy.fft import fft, ifft
 from scipy.ndimage import rank_filter
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .__init__ import mm
 
 
@@ -384,7 +384,7 @@ def normalize(v: NDArray, order: int = 2):
     return v / norm
 
 
-def binarize(vector: NDArrayFloat, min_value: floating = 0., max_value: floating = 1.):
+def binarize(vector: NDArrayFloat, min_value: float = 0., max_value: float = 1.):
     """Binarizes vector between two levels, min and max. The central value is (min_value+max_value)/2
 
     Args:
@@ -479,7 +479,7 @@ def discretize(u: NDArrayComplex,
         return discretized_field
 
 
-def delta_kronecker(a: floating, b: floating):
+def delta_kronecker(a: float, b: float):
     """Delta kronecker
 
     Args:
@@ -799,7 +799,7 @@ def pol2cart(rho: NDArrayFloat, phi: NDArrayFloat):
     return (x, y)
 
 
-def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: floating):
+def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: float):
     """Zernike function for aberration computation.
 
     Args:

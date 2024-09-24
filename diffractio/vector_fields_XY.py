@@ -46,7 +46,7 @@ import copy
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 import diffractio
 from .__init__ import degrees, eps, mm, np, plt
@@ -1159,9 +1159,9 @@ class Vector_field_XY():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0,
+             logarithm: float = 0,
              normalize: bool = False,
-             cut_value: floating | None = None,
+             cut_value: float | None = None,
              num_ellipses: list[int, int] = (11, 11),
              amplification: float = 0.5,
              filename: str = '',
@@ -1731,7 +1731,7 @@ class Vector_field_XY():
         return (h1, h2, h3, h4)
 
     def __draw_ellipses__(self,
-                          logarithm: floating = 0.,
+                          logarithm: float = 0.,
                           normalize: bool = False,
                           cut_value: float = '',
                           num_ellipses: list[int, int] = (21, 21),

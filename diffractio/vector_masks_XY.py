@@ -29,7 +29,7 @@ import copy
 
 from py_pol.jones_matrix import Jones_matrix
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, np, number_types, plt
 from .config import CONF_DRAWING

@@ -12,9 +12,9 @@ import numpy.typing as npt
 
 NDArray = npt.NDArray
 NDArrayInt = npt.NDArray[np.integer]
-NDArrayFloat = npt.NDArray[np.floating]
-NDArrayComplex = npt.NDArray[np.complexfloating]
-floating = np.floating
+NDArrayFloat = npt.NDArray[np.float]
+NDArrayComplex = npt.NDArray[np.complexfloat]
+float = np.float
 integer = np.integer
 
 

@@ -38,7 +38,7 @@ import multiprocessing
 from numpy import (angle, exp, linspace, pi, shape, zeros)
 from scipy.interpolate import interp1d
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 from .__init__ import degrees, mm, np, plt
@@ -321,7 +321,7 @@ class Scalar_field_Z():
 
         return average_intensity
 
-    def FWHM1D(self, percentage: floating = 0.5, remove_background: bool = None,
+    def FWHM1D(self, percentage: float = 0.5, remove_background: bool = None,
                has_draw: bool = False):
         """
         FWHM1D
@@ -343,7 +343,7 @@ class Scalar_field_Z():
 
         return np.squeeze(width)
 
-    def DOF(self, percentage: floating = 0.5, remove_background: str | None = None,
+    def DOF(self, percentage: float = 0.5, remove_background: str | None = None,
             has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
@@ -370,9 +370,9 @@ class Scalar_field_Z():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0.,
+             logarithm: float = 0.,
              normalize: bool = False,
-             cut_value: floating | None = None,
+             cut_value: float | None = None,
              z_scale: str = 'um',
              unwrap: bool = False,
              filename: str = ''):

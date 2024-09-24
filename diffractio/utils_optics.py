@@ -6,14 +6,14 @@
 
 import pandas as pd
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 from .__init__ import degrees, np, plt
 from .utils_math import fft_convolution1d, fft_convolution2d, find_extrema, nearest
 
 
-def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind: str = "normal"):
+def roughness_1D(x: NDArrayFloat, t: float, s: float, kind: str = "normal"):
     """Rough surface, 1D.
 
     Args:
@@ -57,7 +57,7 @@ def roughness_1D(x: NDArrayFloat, t: floating, s: floating, kind: str = "normal"
     return h_corr
 
 
-def roughness_2D(x: NDArrayFloat, y: list[floating, floating], t: floating, s: floating):
+def roughness_2D(x: NDArrayFloat, y: list[float, float], t: float, s: float):
     """Rough surface, 2D
 
     Args:
@@ -135,7 +135,7 @@ def beam_width_1D(u: NDArrayComplex, x: NDArrayFloat, remove_background: bool = 
     return width_x, x_mean
 
 
-def width_percentage(x: NDArrayFloat, y: NDArrayFloat, percentage: floating = 0.5, verbose: bool = False):
+def width_percentage(x: NDArrayFloat, y: NDArrayFloat, percentage: float = 0.5, verbose: bool = False):
     """beam width (2*sigma) given at a certain height from maximum
 
     Args:
@@ -251,7 +251,7 @@ def beam_width_2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat,
     return dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean, xy_mean)
 
 
-def refractive_index(filename: str, wavelength: floating, raw: bool = False,
+def refractive_index(filename: str, wavelength: float, raw: bool = False,
                      has_draw: bool = bool):
     """gets refractive index from https://refractiveindex.info .
 
@@ -302,7 +302,7 @@ def refractive_index(filename: str, wavelength: floating, raw: bool = False,
         return f_n(wavelength), f_kappa(wavelength)
 
 
-def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
+def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: float = 0.5,
            remove_background: str | None = None, has_draw: bool = False):
     """ FWHM
 
@@ -311,7 +311,7 @@ def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
     Args:
         x (NDArrayFloat): x array
         intensity (NDArrayFloat): intensity array
-        percentage (floating, optional): heigth of peak to measure. Defaults to 0.5.
+        percentage (float, optional): heigth of peak to measure. Defaults to 0.5.
         remove_background (str | None, optional): 'min', 'mean', None. Defaults to None.
         has_draw (bool, optional): It draws. Defaults to False.
 
@@ -377,8 +377,8 @@ def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
     return np.squeeze(FWHM_x)
 
 
-def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.5,
-           remove_background: bool = False, has_draw: bool = False, xlim: list[floating] | None = None):
+def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage: float = 0.5,
+           remove_background: bool = False, has_draw: bool = False, xlim: list[float] | None = None):
     """ Get FWHM2D  in x and i direction
 
 
@@ -386,10 +386,10 @@ def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage
         x (NDArrayFloat): x array
         y (NDArrayFloat): y array
         intensity (NDArrayFloat): intensity
-        percentage (floating, optional): heigth of peak to measure. Defaults to 0.5.
+        percentage (float, optional): heigth of peak to measure. Defaults to 0.5.
         remove_background (bool, optional): 'min', 'mean', None. Defaults to False.
         has_draw (bool, optional): if True it draws. Defaults to False.
-        xlim (list[floating] | None, optional): xlim in drawing. Defaults to None.
+        xlim (list[float] | None, optional): xlim in drawing. Defaults to None.
 
     Returns:
         FWHM_x (float): width in x direction
@@ -418,7 +418,7 @@ def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage
     return FWHM_x, FWHM_y
 
 
-def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: floating = np.sqrt(2), w_fixed: floating = 0,
+def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: float = np.sqrt(2), w_fixed: float = 0,
         has_draw: bool = False, verbose: bool = False):
     """Determines Depth-of_focus (DOF) in terms of the width at different distances
 
@@ -493,7 +493,7 @@ def DOF(z: NDArrayFloat, widths: NDArrayFloat, w_factor: floating = np.sqrt(2), 
     return z_rayleigh, beam_waist, np.array([z[i_left], z[i_w0], z[i_right + i_w0]])
 
 
-def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage: floating = 0.95,
+def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage: float = 0.95,
                            has_draw: bool = True, logarithm=True):
     """Determines positions x_min, x_max where intensity of the beam is percentage
 
@@ -548,7 +548,7 @@ def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage:
     return x_min, x_max
 
 
-def MTF_ideal(frequencies: NDArrayFloat, wavelength: floating, diameter: floating, focal: floating,
+def MTF_ideal(frequencies: NDArrayFloat, wavelength: float, diameter: float, focal: float,
               kind: str, verbose: bool = False, has_draw: bool = False):
     """Determines the ideal MTF of a lens.
 
@@ -675,14 +675,14 @@ def MTF_parameters(MTF: NDArrayFloat, MTF_ideal: NDArrayFloat, lines_mm: float =
     return strehl_ratio, mtf_50_ratio, freq_50_real, freq_50_ideal
 
 
-def gauss_spectrum(wavelengths: NDArrayFloat, w_central: floating, Dw: floating, normalize: bool = True):
+def gauss_spectrum(wavelengths: NDArrayFloat, w_central: float, Dw: float, normalize: bool = True):
     """ 
     Returns weigths for a gaussian spectrum
 
     Args:
         wavelengths (NDArrayFloat): array with wavelengths
-        w_central (floating): central wavelength
-        Dw (floating): width of the spectrum
+        w_central (float): central wavelength
+        Dw (float): width of the spectrum
         normalize (bool, optional): if True sum of weights is 1. Defaults to True.
 
     Returns:
@@ -697,14 +697,14 @@ def gauss_spectrum(wavelengths: NDArrayFloat, w_central: floating, Dw: floating,
     return weights
 
 
-def lorentz_spectrum(wavelengths: NDArrayFloat, w_central: floating, Dw: floating, normalize: bool = True):
+def lorentz_spectrum(wavelengths: NDArrayFloat, w_central: float, Dw: float, normalize: bool = True):
     """ 
     Returns weigths for a Lorentz spectrum
 
     Args:
         wavelengths (NDArrayFloat): array with wavelengths
-        w_central (floating): central wavelength
-        Dw (floating): width of the spectrum
+        w_central (float): central wavelength
+        Dw (float): width of the spectrum
         normalize (bool, optional): if True sum of weights is 1. Defaults to True.
 
     Returns:
@@ -803,7 +803,7 @@ def field_parameters(u: NDArrayComplex, has_amplitude_sign: bool = False):
     return amplitude, intensity, phase
 
 
-def convert_phase2heigths(phase: NDArrayFloat, wavelength: floating, n: floating, n_background: floating):
+def convert_phase2heigths(phase: NDArrayFloat, wavelength: float, n: float, n_background: float):
     """Phase is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ
 
     phase(x,z)= k (n-n_0) h(x,z).
@@ -823,8 +823,8 @@ def convert_phase2heigths(phase: NDArrayFloat, wavelength: floating, n: floating
     return phase / (k * (n - n_background))
 
 
-def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: floating,
-                              kappa: floating, n_background: floating):
+def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: float,
+                              kappa: float, n_background: float):
     """Amplitude and it is converted to a depth. It is useful to convert Scalar_mask_X to Scalar_mask_XZ.
 
     Args:
@@ -846,7 +846,7 @@ def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: floating,
     return depth
 
 
-def fresnel_equations_kx(kx: NDArrayComplex, wavelength: floating, n1: floating, n2: floating,
+def fresnel_equations_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: float,
                          outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
                          kind: str = "amplitude_phase"):
     """Fresnel_equations where input are kx part of wavevector.
@@ -963,7 +963,7 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: floating, n1: floating,
     return t_TM, t_TE, r_TM, r_TE  # parallel, perpendicular
 
 
-def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: floating, n1: floating, n2: floating,
+def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: float,
                                   outputs: list[bool] = [True, True, True, True], has_draw: bool = True):
     """Transmitances and reflectances, where input are kx part of wavevector.
 
@@ -1028,7 +1028,7 @@ def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: floating, n1: 
     return T_TM, T_TE, R_TM, R_TE  # parallel, perpendicular
 
 
-def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n2: floating,
+def fresnel_equations(theta: NDArrayFloat, wavelength: float, n1: float, n2: float,
                       outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
                       kind="amplitude_phase"):
     """Fresnel equations and reflectances, where input are angles of incidence.
@@ -1164,7 +1164,7 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: floating, n1: floating, n
     return t_TM, t_TE, r_TM, r_TE  # parallel, perpendicular
 
 
-def transmitances_reflectances(theta: NDArrayFloat, wavelength: floating, n1: floating, n2: floating,
+def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float, n2: float,
                                outputs: list[bool] = [True, True, True, True], has_draw: bool = False):
     """Transmitances and reflectances, where input are angles of incidence.
 

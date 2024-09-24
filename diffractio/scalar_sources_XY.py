@@ -39,7 +39,7 @@ from math import factorial
 
 from scipy.special import eval_hermite, j0, j1, jv
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, np, um
 from .scalar_fields_XY import Scalar_field_XY
@@ -71,7 +71,7 @@ class Scalar_source_XY(Scalar_field_XY):
         super().__init__(x, y, wavelength, info)
         self.type = 'Scalar_source_XY'
 
-    def plane_wave(self, A: floating = 1, theta: floating = 0., phi: floating = 0., z0: floating = 0.):
+    def plane_wave(self, A: float = 1, theta: float = 0., phi: float = 0., z0: float = 0.):
         """Plane wave. self.u = A * np.exp(1.j * k *
                          (self.X * np.sin(theta) * np.cos(phi) +
                           self.Y * np.sin(theta) * np.sin(phi) + z0 * np.cos(theta)))
@@ -90,14 +90,14 @@ class Scalar_source_XY(Scalar_field_XY):
                              self.Y * np.sin(theta) * np.sin(phi) + z0 * np.cos(theta)))
 
     def gauss_beam(self,
-                   r0: list[floating, floating],
-                   w0: list[floating, floating] | float,
-                   z0: list[floating, floating] | float,
-                   alpha: floating = 0.,
-                   beta: floating = 0.,
-                   A: floating = 1,
-                   theta: floating = 0.,
-                   phi: floating = 0.):
+                   r0: list[float, float],
+                   w0: list[float, float] | float,
+                   z0: list[float, float] | float,
+                   alpha: float = 0.,
+                   beta: float = 0.,
+                   A: float = 1,
+                   theta: float = 0.,
+                   phi: float = 0.):
         """Gauss Beam.
 
         Args:
@@ -157,7 +157,7 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self, r0: list[floating, floating], z0: list[floating, floating] | floating, A: floating = 1, radius: floating = 0., normalize: bool = False):
+    def spherical_wave(self, r0: list[float, float], z0: list[float, float] | float, A: float = 1, radius: float = 0., normalize: bool = False):
         """Spherical wave.
 
         Args:
@@ -196,7 +196,7 @@ class Scalar_source_XY(Scalar_field_XY):
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
 
-    def vortex_beam(self, A: floating, r0: list[floating, floating], w0: list[floating, floating] | floating, m: int):
+    def vortex_beam(self, A: float, r0: list[float, float], w0: list[float, float] | float, m: int):
         """Vortex beam.
 
         Args:
@@ -222,9 +222,9 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * amplitude / np.abs(amplitude).max()
 
-    def hermite_gauss_beam(self, r0: list[floating, floating], A: floating,
-                           w0: list[floating, floating] | floating, n: int, m: int, z: floating,
-                           z0: list[floating, floating] | floating):
+    def hermite_gauss_beam(self, r0: list[float, float], A: float,
+                           w0: list[float, float] | float, n: int, m: int, z: float,
+                           z0: list[float, float] | float):
         """Hermite Gauss beam.
 
         Args:
@@ -237,7 +237,7 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float, float): Beam waist position at each dimension
 
         Example:
-             hermite_gauss_beam(A: floating = 1, r0=(0,0), w0=(100*um, 50*um), n=2, m=3, z=0)
+             hermite_gauss_beam(A: float = 1, r0=(0,0), w0=(100*um, 50*um), n=2, m=3, z=0)
         """
         # Prepare space
         X = self.X - r0[0]
@@ -289,9 +289,9 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Ex * Ey * Ef
 
-    def laguerre_beam(self, r0: list[floating, floating], A: floating,
-                      w0: list[floating, floating] | floating, n: int, l: int,
-                      z: float, z0: floating):
+    def laguerre_beam(self, r0: list[float, float], A: float,
+                      w0: list[float, float] | float, n: int, l: int,
+                      z: float, z0: float):
         """Laguerre beam.
 
         Args:
@@ -304,7 +304,7 @@ class Scalar_source_XY(Scalar_field_XY):
             z0 (float): Beam waist position.
 
         Example:
-            laguerre_beam(A: floating = 1, r0=(0 * um, 0 * um),  w0=1 * um,  p=0, l=0,  z=0)
+            laguerre_beam(A: float = 1, r0=(0 * um, 0 * um),  w0=1 * um,  p=0, l=0,  z=0)
         """
         # Prepare space
         X = self.X - r0[0]
@@ -337,8 +337,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Er * Ef
 
-    def zernike_beam(self, A: floating, r0: list[floating, floating], radius: floating,
-                     n: list[int], m: list[int], c_nm: list[floating]):
+    def zernike_beam(self, A: float, r0: list[float, float], radius: float,
+                     n: list[int], m: list[int], c_nm: list[float]):
         """Zernike beam.
 
         Args:
@@ -350,7 +350,7 @@ class Scalar_source_XY(Scalar_field_XY):
             c_nm (list): list of coefficients, in radians
 
         Example:
-             zernike_beam(A: floating = 1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1])
+             zernike_beam(A: float = 1, r0=(0,0), radius=5 * mm, n=[1, 3, 3, 5, 5, 5], m=[1, 1, 3, 1, 3, 5], c_nm=[.25, 1, 1, 1, 1, 1])
         """
 
         # normalizing to radius 1
@@ -365,13 +365,13 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u = A * np.exp(1.j * np.real(phase))
 
     def bessel_beam(self,
-                    A: floating,
-                    r0: list[floating, floating],
-                    alpha: floating,
+                    A: float,
+                    r0: list[float, float],
+                    alpha: float,
                     n: int,
-                    theta: floating = 0.,
-                    phi: floating = 0.,
-                    z0: floating = 0):
+                    theta: float = 0.,
+                    phi: float = 0.,
+                    z0: float = 0):
         """Bessel beam produced by an axicon. Bessel-beams are generated unp.sing 2D axicons.
 
         Args:
@@ -425,8 +425,8 @@ class Scalar_source_XY(Scalar_field_XY):
                 (self.X * np.sin(p['theta']) * np.cos(p['phi']) + self.Y *
                  np.sin(p['theta']) * np.sin(p['phi']) + p['z0'] * np.cos(p['theta'])))
 
-    def plane_waves_several_inclined(self, A: floating, num_beams: list[int, int],
-                                     max_angle: list[floating, floating], z0: floating = 0):
+    def plane_waves_several_inclined(self, A: float, num_beams: list[int, int],
+                                     max_angle: list[float, float], z0: float = 0):
         """Several paralel plane waves
 
         Args:
@@ -450,14 +450,14 @@ class Scalar_source_XY(Scalar_field_XY):
         self.u = t
 
     def gauss_beams_several_parallel(self,
-                                     r0: list[floating, floating],
-                                     A: floating,
+                                     r0: list[float, float],
+                                     A: float,
                                      num_beams: list[int, int],
-                                     w0: list[floating, floating] | floating,
-                                     z0: list[floating, floating] | floating,
-                                     r_range: list[floating, floating],
-                                     theta: floating = 0.,
-                                     phi: floating = 0.):
+                                     w0: list[float, float] | float,
+                                     z0: list[float, float] | float,
+                                     r_range: list[float, float],
+                                     theta: float = 0.,
+                                     phi: float = 0.):
         """Several parallel gauss beams
 
         Args:
@@ -491,7 +491,7 @@ class Scalar_source_XY(Scalar_field_XY):
                 t = t + self.u
         self.u = t
 
-    def gauss_beams_several_inclined(self, A: floating, num_beams, w0: list[floating, floating] | floating, r0: list[floating, floating], z0: list[floating, floating] | floating, max_angle: list[floating, floating]):
+    def gauss_beams_several_inclined(self, A: float, num_beams, w0: list[float, float] | float, r0: list[float, float], z0: list[float, float] | float, max_angle: list[float, float]):
         """Several inclined gauss beams
 
         Args:

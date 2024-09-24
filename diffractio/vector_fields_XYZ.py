@@ -44,7 +44,7 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING
@@ -537,7 +537,7 @@ class Vector_field_XYZ():
     def draw_XY(self,
                 z0: float,
                 kind: str = 'intensity',
-                logarithm: floating = 0,
+                logarithm: float = 0,
                 normalize: str = 'maximum',
                 title: str = '',
                 filename: str = '',
@@ -571,7 +571,7 @@ class Vector_field_XYZ():
     def draw_XZ(self,
                 kind: str = 'intensity',
                 y0: float = 0 * mm,
-                logarithm: floating = 0,
+                logarithm: float = 0,
                 normalize: bool = False,
                 draw_borders: bool = False,
                 filename: str = '',
@@ -596,7 +596,7 @@ class Vector_field_XYZ():
     def draw_YZ(self,
                 kind: str = 'intensity',
                 x0: float = 0 * mm,
-                logarithm: floating = 0,
+                logarithm: float = 0,
                 normalize: bool = False,
                 draw_borders: bool = False,
                 filename: str = '',

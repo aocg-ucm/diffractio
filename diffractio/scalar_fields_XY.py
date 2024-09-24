@@ -66,7 +66,7 @@ from .__init__ import np, plt
 from .__init__ import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
@@ -2045,8 +2045,8 @@ class Scalar_field_XY():
     def discretize(self,
                    kind: str = 'amplitude',
                    num_levels: int = 2,
-                   factor: floating = 1,
-                   phaseInicial: floating = 0,
+                   factor: float = 1,
+                   phaseInicial: float = 0,
                    new_field: bool = True,
                    matrix: bool = False):
         """Discretize in a number of levels equal to num_levels.
@@ -2177,15 +2177,15 @@ class Scalar_field_XY():
 
     def draw(self,
              kind: str = 'intensity',
-             logarithm: floating = 0.,
+             logarithm: float = 0.,
              normalize: bool = False,
              title: str = "",
              filename: str = '',
-             cut_value: floating | None = None,
+             cut_value: float | None = None,
              has_colorbar: str = '',
              colormap_kind: str = '',
              reduce_matrix: str = 'standard',
-             percentage_intensity: floating | None = None,
+             percentage_intensity: float | None = None,
              **kwargs):
         """Draws  XY field.
 
@@ -2242,10 +2242,10 @@ class Scalar_field_XY():
         return id_fig, IDax, IDimage
 
     def __draw_intensity__(self,
-                           logarithm: floating = 0.,
+                           logarithm: float = 0.,
                            normalize='maximum',
                            title: str = "",
-                           cut_value: floating | None = None,
+                           cut_value: float | None = None,
                            colormap_kind: str = '',
                            **kwargs):
         """Draws intensity  XY field.
@@ -2278,7 +2278,7 @@ class Scalar_field_XY():
         return id_fig, IDax, IDimage
 
     def __drawAmplitude__(self,
-                          logarithm: floating = 0.,
+                          logarithm: float = 0.,
                           normalize='maximum',
                           title='intensity',
                           cut_value=1,
@@ -2314,7 +2314,7 @@ class Scalar_field_XY():
     def __draw_phase__(self,
                        title: str = r'phase/np.pi',
                        colormap_kind: str = '',
-                       percentage_intensity: floating | None = None,
+                       percentage_intensity: float | None = None,
                        **kwargs):
         """Draws phase of  XY field
 
@@ -2348,12 +2348,12 @@ class Scalar_field_XY():
         return id_fig, IDax, IDimage
 
     def __draw_field__(self,
-                       logarithm: floating = 0.,
+                       logarithm: float = 0.,
                        normalize: str = 'maximum',
                        title: str = "",
-                       cut_value: floating | None = None,
+                       cut_value: float | None = None,
                        colormap_kind: str = '',
-                       percentage_intensity: floating | None = None,
+                       percentage_intensity: float | None = None,
                        **kwargs):
         """Draws field  XY field.
 
@@ -2426,12 +2426,12 @@ class Scalar_field_XY():
         return (h1, h2)
 
     def __draw_real_field__(self,
-                            logarithm: floating = 0.,
+                            logarithm: float = 0.,
                             normalize: str = 'maximum',
-                            cut_value: floating | None = 1,
+                            cut_value: float | None = 1,
                             title: str = "",
                             colormap_kind: str = '',
-                            percentage_intensity: floating | None = None,
+                            percentage_intensity: float | None = None,
                             **kwargs):
         """Draws np.real field  XY field.
 
@@ -2466,9 +2466,9 @@ class Scalar_field_XY():
     def video(self,
               kind: str,
               zs: NDArrayFloat,
-              logarithm: floating = 0.,
+              logarithm: float = 0.,
               normalize: bool = False,
-              time_video: floating = 10 * seconds,
+              time_video: float = 10 * seconds,
               frames_reduction: int = 1,
               filename: str = 'video.avi',
               dpi: int = 100):
@@ -2507,7 +2507,7 @@ class Scalar_field_XY():
         ani.save(filename, fps=fps, dpi=dpi)
 
 
-def kernelRS(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
+def kernelRS(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float,
              n: float = 1., kind: str = 'z'):
     """Kernel for RS propagation. 
 
@@ -2534,8 +2534,8 @@ def kernelRS(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating
         return 1 / (2 * np.pi) * np.exp(1.j * k * R) / R * (1 / R - 1.j * k)
 
 
-def kernelRSinverse(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
-                    n: floating = 1., kind: str = 'z'):
+def kernelRSinverse(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float,
+                    n: float = 1., kind: str = 'z'):
     """Kernel for inverse RS propagation
 
     Args:
@@ -2561,8 +2561,8 @@ def kernelRSinverse(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: f
         return 1 / (2 * np.pi) * np.exp(-1.j * k * R) / R * (1 / R + 1.j * k)
 
 
-def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: floating,
-                  n: floating = 1.):
+def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float,
+                  n: float = 1.):
     """
     Kernel for Fresnel propagation.
 
@@ -2581,8 +2581,8 @@ def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: floating, z: flo
                              (2 * z))) / (1.j * wavelength * z)
 
 
-def PWD_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: NDArrayComplex,
-               dz: floating):
+def PWD_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex,
+               dz: float):
     """
     Step for scalar(TE) Plane wave decomposition(PWD) algorithm.
 
@@ -2609,8 +2609,8 @@ def PWD_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: NDArrayCom
     return result
 
 
-def WPM_schmidt_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: NDArrayComplex,
-                       dz: floating):
+def WPM_schmidt_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex,
+                       dz: float):
     """
     Kernel for fast propagation of WPM method
 
@@ -2639,13 +2639,13 @@ def WPM_schmidt_kernel(u: NDArrayComplex, n: floating, k0: floating, k_perp2: ND
     return u_final
 
 
-def get_RS_minimum_z(range_x: floating,
-                     range_y: floating,
+def get_RS_minimum_z(range_x: float,
+                     range_y: float,
                      num_x: int,
                      num_y: int,
-                     wavelength: floating,
+                     wavelength: float,
                      n: float = 1.,
-                     quality: floating = 1,
+                     quality: float = 1,
                      verbose: bool = True):
     """_summary_
 
@@ -2685,8 +2685,8 @@ def get_RS_minimum_z(range_x: floating,
     return zmin
 
 
-def quality_factor(range_x: floating, range_y: floating, num_x: int, num_y: int,
-                   z: floating, wavelength: floating, n: float = 1., verbose: bool = False):
+def quality_factor(range_x: float, range_y: float, num_x: int, num_y: int,
+                   z: float, wavelength: float, n: float = 1., verbose: bool = False):
     """Determine the quality factor for RS algorithm
 
     Args:

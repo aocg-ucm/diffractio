@@ -24,7 +24,7 @@ The main atributes are:
 
 from scipy.interpolate import interp1d
 
-from .utils_typing import npt, Any, NDArray, floating, NDArrayFloat, NDArrayComplex
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 from .__init__ import degrees, np, plt, um
