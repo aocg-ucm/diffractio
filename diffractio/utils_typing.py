@@ -6,15 +6,14 @@
 
 
 import numpy as np
-from typing import Any, List
+from typing import Any, List, Literal
 import numpy.typing as npt
 
 
 NDArray = npt.NDArray
 NDArrayInt = npt.NDArray[np.integer]
-NDArrayFloat = npt.NDArray[np.float]
-NDArrayComplex = npt.NDArray[np.complexfloat]
-float = np.float
+NDArrayFloat = npt.NDArray[np.floating]
+NDArrayComplex = npt.NDArray[np.complexfloating]
 integer = np.integer
 
 

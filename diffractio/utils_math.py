@@ -483,8 +483,8 @@ def delta_kronecker(a: float, b: float):
     """Delta kronecker
 
     Args:
-        a (np.float): number
-        b (np.float): number
+        a (float): number
+        b (float): number
 
     Returns:
         1 if a==b and 0 if a<>b
