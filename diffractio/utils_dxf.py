@@ -10,7 +10,7 @@
 #
 # Created:     2024
 # Copyright:   (c) Luis Miguel Sanchez-Brea AOCG / UCM
-# License:     MIT License
+# License:     GPLv3 License
 # ----------------------------------------------------------------------
 # EZDXF by Manfred Moitzi
 

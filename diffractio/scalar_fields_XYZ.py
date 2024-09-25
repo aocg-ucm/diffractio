@@ -51,11 +51,14 @@ import sys
 import time
 import types
 from multiprocessing import Pool
+from typing import Literal
 
 import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RegularGridInterpolator
+
+from diffractio.config import Draw_XYZ_Options
 
 from .__init__ import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
@@ -68,7 +71,7 @@ from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 from .utils_drawing3D import draw, video_isovalue
-
+from .config import Draw_XZ_Options, .Draw_XY_Options
 
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
@@ -1170,7 +1173,7 @@ class Scalar_field_XYZ():
 
     def draw_XY(self,
                 z0: float = 5 * mm,
-                kind: str = 'intensity',
+                kind: Draw_XY_Options = 'intensity',
                 logarithm: float = 0,
                 normalize: str = 'maximum',
                 title: str = '',
@@ -1206,7 +1209,7 @@ class Scalar_field_XYZ():
                     reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
-                kind: str = 'intensity',
+                kind: Draw_XZ_Options = 'intensity',
                 y0: float = 0 * mm,
                 logarithm: float = 0,
                 normalize: str = '',
@@ -1232,7 +1235,7 @@ class Scalar_field_XYZ():
         return h1
 
     def draw_YZ(self,
-                kind='intensity',
+                kind: Draw_XZ_Options='intensity',
                 x0=0 * mm,
                 logarithm=0,
                 normalize='',
@@ -1303,7 +1306,7 @@ class Scalar_field_XYZ():
         h1.set_cmap(cmap)  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
-    def draw_XYZ(self, kind: str = 'intensity', drawing: str = 'volume',  has_grid: bool=False,  filename: str = '', **kwargs):
+    def draw_XYZ(self, kind: Draw_XYZ_Options = 'intensity', drawing: str = 'volume',  has_grid: bool=False,  filename: str = '', **kwargs):
         """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:

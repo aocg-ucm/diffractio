@@ -62,6 +62,8 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
+from diffractio.config import Draw_XY_Options
+
 from .__init__ import np, plt
 from .__init__ import degrees, mm, seconds, um
 
@@ -88,7 +90,6 @@ except:
     print("cv2 not imported. Function send_image_screen cannot be used")
 
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
-
 
 class Scalar_field_XY():
     """Class for working with XY scalar fields.
@@ -2176,7 +2177,7 @@ class Scalar_field_XY():
         return z_min
 
     def draw(self,
-             kind: str = 'intensity',
+             kind: Draw_XY_Options = 'intensity',
              logarithm: float = 0.,
              normalize: bool = False,
              title: str = "",

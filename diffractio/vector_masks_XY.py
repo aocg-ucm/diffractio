@@ -26,6 +26,7 @@ The main atributes are:
     * polarizer_retarder
 """
 import copy
+from typing import Literal
 
 from py_pol.jones_matrix import Jones_matrix
 
@@ -38,6 +39,8 @@ from .utils_optics import field_parameters
 from .vector_fields_XY import Vector_field_XY
 from .vector_sources_XY import Vector_source_XY
 
+
+Draw_Options = Literal['amplitudes', 'phases', 'jones', 'jones_ap']
 
 class Vector_mask_XY(Vector_field_XY):
 
@@ -321,7 +324,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         uno = np.ones_like(self.X, dtype=complex)
         M = np.asarray(M)
-
+        
         self.M00 = uno * M[0, 0]
         self.M01 = uno * M[0, 1]
         self.M10 = uno * M[1, 0]
@@ -388,7 +391,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m0
 
-    def draw(self, kind='amplitudes', range_scale='um'):
+    def draw(self, kind: Draw_Options ='amplitudes', range_scale='um'):
         """Draws the mask. It must be different to sources.
 
         Args:

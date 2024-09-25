@@ -11,7 +11,7 @@ import pyvista as pv
 from pyvista.core import _vtk_core as _vtk
 from pyvista.core.utilities.helpers import wrap
 
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_XYZ_Options, Draw_pyvista_Options
 
 def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):# -> tuple[MultiBlock | UnstructuredGrid | DataSet | pyvista_n...:
     """
@@ -179,8 +179,8 @@ def voxelize_volume_diffractio_backup(self, mesh, refractive_index,  check_surfa
 
 def draw(
     self,
-    kind: str = "intnsity",
-    drawing: str = "volume",
+    kind: Draw_XYZ_Options = "intensity",
+    drawing: Draw_pyvista_Options = "volume",
     has_grid: bool = False,
     filename: str = "",
     **kwargs
@@ -188,8 +188,8 @@ def draw(
     """_summary_
 
     Args:
-        kind (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
-        variable (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+        kind (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
+        drawing (str, optional): volume, clip, slices, projections. Defaults to 'volume'.
         has_grid (bool, optional): add grid. Defaults to False.
         filename (str, optional): saves images: html, png or svg. Defaults to ''.
     """

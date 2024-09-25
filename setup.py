@@ -34,7 +34,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GPLv3 License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
@@ -48,7 +48,7 @@ setup(
         ],
     },
     install_requires=requirements,
-    license="MIT license",
+    license="GPLv3 license",
     # long_description=readme + '\n\n' + history,
     long_description=readme,
     include_package_data=True,

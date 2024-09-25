@@ -64,23 +64,25 @@ from multiprocessing import Pool
 
 import matplotlib.animation as animation
 import matplotlib.cm as cm
-from numpy import array, concatenate, diff, gradient, pi, sqrt, zeros
+from numpy import array, concatenate, gradient, pi, sqrt, zeros
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
+
+
+from .utils_typing import NDArrayFloat
 
 
 from .__init__ import np, plt
-from .__init__ import num_max_processors, degrees, eps, mm, seconds, um
-from .config import CONF_DRAWING
+from .__init__ import num_max_processors, degrees, mm, seconds, um
+from .config import Draw_X_Options, Draw_XZ_Options, Draw_interactive_Options, Draw_refractive_index_Options, CONF_DRAWING
 from .scalar_fields_X import (PWD_kernel, Scalar_field_X, WPM_schmidt_kernel,
                               kernelRS, kernelRSinverse)
 from .scalar_masks_X import Scalar_mask_X
 from .scalar_sources_X import Scalar_source_X
 from .utils_common import get_date, load_data_common, save_data_common
-from .utils_drawing import normalize_draw, prepare_drawing, prepare_video
+from .utils_drawing import normalize_draw, prepare_drawing
 from .utils_math import get_k, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize_field
@@ -88,8 +90,6 @@ from .utils_optics import FWHM1D, beam_width_1D, field_parameters, normalize_fie
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
-
-
 class Scalar_field_XZ():
     """Class for working with XZ scalar fields.
 
@@ -307,8 +307,7 @@ class Scalar_field_XZ():
             u_rotate = u_real_rotate + 1j * u_imag_rotate
             self.u = u_rotate
 
-        if kind in ('n', 'all'):
-            self.u = np.zeros_like(self.u)
+
 
     def clear_field(self):
         """clear field"""
@@ -648,6 +647,7 @@ class Scalar_field_XZ():
         pixelx = np.linspace(-int(numx / 2), int(numx / 2), numx)
         # initial field
         field_z = self.u0.u
+        
         # Calculo de la phase 1 normalizada -------------------
         kx1 = np.linspace(0, int(numx / 2) + 1, int(numx / 2))
         kx2 = np.linspace(-int(numx / 2), -1, int(numx / 2))
@@ -679,6 +679,7 @@ class Scalar_field_XZ():
 
         field[0, :] = field_z
         for k in range(0, numz):
+            
             if has_filter[k] == 0:
                 filter_edge = 1
             else:
@@ -712,9 +713,6 @@ class Scalar_field_XZ():
         t1 = time.time()
 
         if division is False:
-            # standard BPM _algorithm
-            # self.__BPM__(matrix, verbose)
-
             self.__BPM__(has_edges, pow_edge, matrix, verbose)
 
         else:
@@ -735,7 +733,7 @@ class Scalar_field_XZ():
                 ui.n = self.n[sl, :]
                 ui.u0 = uf
 
-                ui = BPM(ui, has_edges, pow_edge, matrix, verbose)
+                ui = self.__BPM__(ui, has_edges, pow_edge, matrix, verbose)  # BPM -> __BPM__ (240925)
                 uf = ui.final_field().u
                 self.u[sl, :] = ui.u
 
@@ -957,12 +955,8 @@ class Scalar_field_XZ():
         if matrix is True:
             return self.u
 
-    def WPM(self,
-            kind: str = 'schmidt',
-            has_edges: bool = True,
-            pow_edge: int = 80,
-            matrix: bool = False,
-            verbose: bool = False):
+    def WPM(self, kind: str = 'schmidt', has_edges: bool = True, pow_edge: int = 80,
+            matrix: bool = False, verbose: bool = False):
         """
         WPM Method. 'schmidt method is very fast, only needs discrete number of refractive indexes'
 
@@ -1041,7 +1035,7 @@ class Scalar_field_XZ():
                 self.u[j, :] = self.u[j, :] + uj * filter_edge
 
             if verbose is True:
-                print("{}".format(j), sep='\r', end='\r')
+                print("WPM: {}/{}".format(j,num_steps), sep='\r', end='\r')
 
         t2 = time.time()
         if verbose is True:
@@ -1122,6 +1116,40 @@ class Scalar_field_XZ():
             I_final = I_final + spectrum[i] * np.abs(u_temp.u)**2
         u_temp.u = np.sqrt(I_final)
         return u_temp
+    
+
+    def WPM_polychromatic(self,
+                          initial_field,
+                          wavelengths: NDArrayFloat,
+                          spectrum: NDArrayFloat,
+                          verbose: bool = False,
+                          num_processors: int = 4):
+        """Rayleigh Sommerfeld propagation algorithm for polychromatic light
+
+        Args:
+            initial_field (Scalar_field_X): function with only input variable wavelength
+            wavelengths (numpy.array): array with wavelengths
+            spectrum (numpy.array): array with spectrum. if '' then uniform_spectrum
+            verbose (bool): shows the quality of algorithm (>1 good)
+            num_processors (int): number of processors for multiprocessing
+
+        Returns:
+            Scalar_field_XZ: self.u=sqrt(Intensities) - no phase is stored, only intensity
+        """
+
+        if isinstance(spectrum, np.ndarray):
+            pass
+        elif spectrum in ('', None, [], 0):
+            spectrum = np.ones_like(wavelengths)
+
+        I_final = np.zeros_like(self.u, dtype=float)
+        for i, wavelength in enumerate(wavelengths):
+            u_temp = initial_field(wavelength)
+            u_temp.WPM(verbose=False)
+            I_final = I_final + spectrum[i] * np.abs(u_temp.u)**2
+        u_temp.u = np.sqrt(I_final)
+        return u_temp
+    
 
     def fast_propagation(self, mask_xz, num_pixels_slice: int = 1024, verbose: bool = False):
         """combines RS and BPM"" to generate the final field
@@ -1356,7 +1384,7 @@ class Scalar_field_XZ():
         return self.borders
 
     def draw(self,
-             kind: str = 'intensity',
+             kind: Draw_XZ_Options = 'intensity',
              logarithm: float = 0.,
              normalize: bool = False,
              draw_borders: bool = False,
@@ -1482,13 +1510,13 @@ class Scalar_field_XZ():
 
         if draw_borders is True:
             if edge_matrix is None:
-                self.surface_detection(1, min_incr, reduce_matrix=False)
+                self.surface_detection(1, min_incr, reduce_matrix=True)
                 border0 = self.borders[0]
                 border1 = self.borders[1]
             else:
                 border0, border1 = edge_matrix
 
-            plt.plot(border1, border0, 'w.', ms=.5)
+            plt.plot(border1, border0, 'w.', ms=.25)
 
         if filename != '':
             plt.savefig(filename, dpi=300, bbox_inches='tight', pad_inches=0.1)
@@ -1496,7 +1524,7 @@ class Scalar_field_XZ():
         return h1
 
     def draw_refractive_index(self,
-                              kind: str = 'all',
+                              kind: Draw_refractive_index_Options = 'all',
                               draw_borders: bool = True,
                               title: str = '',
                               filename: str = '',
@@ -1601,7 +1629,7 @@ class Scalar_field_XZ():
         return h1
 
     def draw_incident_field(self,
-                            kind: str = 'intensity',
+                            kind: Draw_X_Options = 'intensity',
                             logarithm: float = 0.,
                             normalize: bool = False,
                             filename: str = ''):
@@ -1956,7 +1984,7 @@ class Scalar_field_XZ():
         plt.close()
 
     def draw_profiles_interactive(self,
-                                  kind: str = 'intensity',
+                                  kind: Draw_interactive_Options = 'intensity',
                                   logarithm: float = 0.,
                                   normalize: bool = False):
         """Draws profiles interactivey. Only transversal

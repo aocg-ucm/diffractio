@@ -38,6 +38,8 @@ import multiprocessing
 from numpy import (angle, exp, linspace, pi, shape, zeros)
 from scipy.interpolate import interp1d
 
+from .config import Draw_Z_Options
+
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
@@ -369,7 +371,7 @@ class Scalar_field_Z():
         return self.FWHM1D(percentage, remove_background, has_draw)
 
     def draw(self,
-             kind: str = 'intensity',
+             kind: Draw_Z_Options = 'intensity',
              logarithm: float = 0.,
              normalize: bool = False,
              cut_value: float | None = None,

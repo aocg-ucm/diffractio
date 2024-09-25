@@ -68,6 +68,7 @@ from scipy.special import hankel1
 
 from .__init__ import degrees, mm, np, plt
 
+from .config import Draw_X_Options
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
 from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
@@ -79,7 +80,6 @@ from .utils_optics import field_parameters, normalize_field
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 num_max_processors = multiprocessing.cpu_count()
-
 
 class Scalar_field_X():
     """Class for unidimensional scalar fields.
@@ -1253,7 +1253,7 @@ class Scalar_field_X():
 
     def draw(
         self,
-        kind="intensity",
+        kind: Draw_X_Options = "intensity",
         logarithm: float = 0.,
         normalize: bool = False,
         cut_value: float | None = None,

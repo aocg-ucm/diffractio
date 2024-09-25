@@ -14,7 +14,7 @@ Python Diffraction-Interference module
         :alt: Documentation Status
 
 
-* Free software: MIT license
+* Free software: GPLv3 license
 
 * Documentation: https://diffractio.readthedocs.io/en/latest/
 
