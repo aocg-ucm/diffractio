@@ -1,5 +1,5 @@
 examples_scalar
-=============
+==========================
 
 .. toctree::
    :maxdepth: 4

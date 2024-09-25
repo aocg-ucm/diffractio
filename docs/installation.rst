@@ -71,4 +71,4 @@ Once you have a copy of the source, you can install it with:
 
 
 
-.. _Github repo:https://github.com/optbrea/diffractio
+.. _Github repo: https://github.com/optbrea/diffractio
