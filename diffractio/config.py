@@ -1,11 +1,24 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        config.py
+# Purpose:     Configuration settings for diffractio package
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 Configuration file. Standard diffractio units are um: um = 1.
 """
 
 from typing import Literal
 from matplotlib import cm
+import numpy as np
 
 # Configuration params for drawings
 CONF_DRAWING = dict()
@@ -31,5 +44,7 @@ Draw_interactive_Options = Literal['intensity', 'amplitude', 'phase']
 Draw_Vector_X_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
 Draw_Vector_XY_Options = Literal['intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes', 'param_ellipse', 'ellipses']
 Draw_Vector_XZ_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
+number_types = (int, float, complex, np.int32, np.float64)
+empty_types =  ([], '', None)
 
 

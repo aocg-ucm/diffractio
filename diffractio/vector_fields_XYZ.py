@@ -1,5 +1,19 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        vector_fields_XYZ.py
+# Purpose:     Class and methods for handling 3D vector fields
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
+
 # flake8: noqa
 
 """

@@ -1,5 +1,19 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        vector_fields_Z.py
+# Purpose:     Defines the Vector_field_Z class for generating masks and fields
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
+
 # flake8: noqa
 
 """

@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        scalar_masks_XYZ.py
+# Purpose:     Define Scalar_mask_XYZ class for creating 3D scalar masks
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 This module generates Scalar_mask_XYZ class for definingn masks. Its parent is scalar_fields_XYZ.
 

@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        scalar_masks_XZ.py
+# Purpose:     Defines the Scalar_mask_XZ class for working with XZ scalar masks
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """Generates Scalar_mask_XZ class for definingn masks. Its parent is Scalar_field_XZ.
 
 The main atributes are:

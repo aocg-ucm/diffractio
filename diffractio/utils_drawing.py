@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        utils_drawing.py
+# Purpose:     Utility functions for drawing operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """ Functions for drawing """
 
 # flake8: noqa

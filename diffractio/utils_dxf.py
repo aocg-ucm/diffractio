@@ -1,6 +1,5 @@
 # !/usr/bin/env python3
 
-
 # ----------------------------------------------------------------------
 # Name:        utils_dxf.py
 # Purpose:     Common functions to dxf files. It mainly uses ezdxf pachage

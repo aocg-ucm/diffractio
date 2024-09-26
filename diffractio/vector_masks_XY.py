@@ -1,4 +1,15 @@
 # !/usr/bin/env python3
+# ----------------------------------------------------------------------
+# Name:        vector_masks_XY.py
+# Purpose:     Defines the Vector_mask_XY class for vector masks operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 
 # flake8: noqa
 
@@ -32,8 +43,8 @@ from py_pol.jones_matrix import Jones_matrix
 
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
-from .__init__ import degrees, np, number_types, plt
-from .config import CONF_DRAWING
+from .__init__ import degrees, np, plt
+from .config import CONF_DRAWING, number_types
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_optics import field_parameters
 from .vector_fields_XY import Vector_field_XY

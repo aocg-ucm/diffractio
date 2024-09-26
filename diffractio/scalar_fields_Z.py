@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        scalar_fields_Z.py
+# Purpose:     Class for unidimensional scalar fields in the z-axis
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 """
 This module generates Scalar_field_Z class
 

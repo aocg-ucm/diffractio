@@ -1,5 +1,16 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        utils_multiprocessing.py
+# Purpose:     Utility functions for multiprocessing operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 # flake8: noqa
 
 import copyreg

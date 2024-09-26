@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        scalar_masks_X.py
+# Purpose:     Define the Scalar_mask_X class for unidimensional scalar masks
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 This module generates Scalar_mask_X class for definingn masks. Its parent is Scalar_field_X.
 

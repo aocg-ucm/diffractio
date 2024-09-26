@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        vector_sources_XY.py
+# Purpose:     Define the Vector_source_XY class for vector field sources
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 # flake8: noqa
 
 """

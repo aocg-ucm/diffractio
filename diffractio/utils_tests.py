@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        utils_tests.py
+# Purpose:     Utility functions for testing operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 # flake8: noqa
 
-# ------------------------------------
-# Authors:    Luis Miguel Sanchez Brea
-# Date:       2019/01/09 (version 1.0)
-# License:    GPL
-# ------------------------------------
 """ Common functions to classes """
 
 import datetime
@@ -14,7 +21,7 @@ import multiprocessing
 import sys
 import time
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_typing import NDArrayFloat
 
 from .__init__ import mm, no_date, np, plt, um
 from .scalar_masks_XY import Scalar_mask_XY
@@ -154,9 +161,9 @@ def benchmark_num_pixels(function, n_max: int = 10):
     time_array = np.zeros_like(NUM_PIXELS, dtype='double')
 
     for n_pixels, i in zip(NUM_PIXELS, range(len(NUM_PIXELS))):
-        t1 = time.clock()
+        t1 = time.time_ns()()
         function(num_data=n_pixels)
-        t2 = time.clock()
+        t2 = time.time_ns()
         time_array[i] = (t2 - t1) * 1000
         print(n[i], n_pixels, t1, t2, time_array[i])
 

@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        scalar_fields_XYZ.py
+# Purpose:     Defines the Scalar_field_XYZ class and related functions
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 This module generates Scalar_field_XYZ class and several functions for multiprocessing.
 It is required also for generating masks and fields.

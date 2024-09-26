@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        scalar_sources_X.py
+# Purpose:     Define the Scalar_source_X class for unidimensional scalar sources
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 This module generates Scalar_field_X class for defining sources.
 Its parent is Scalar_field_X.
@@ -154,8 +166,7 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
-    def gauss_beams_several_parallel(self, A: float, num_beams: int, w0: float, z0: float,
-                                     x_central: float, x_range: float, theta: float = 0.):
+    def gauss_beams_several_parallel(self, A: float, num_beams: int, w0: float, z0: float, x_central: float, x_range: float, theta: float = 0.):
         """Several parallel gauss beams
 
         Args:
@@ -176,8 +187,7 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
-    def gauss_beams_several_inclined(self, A: float, num_beams: int, w0: float, x0: float, z0: float,
-                                     max_angle: float):
+    def gauss_beams_several_inclined(self, A: float, num_beams: int, w0: float, x0: float, z0: float, max_angle: float):
         """Several inclined gauss beams
 
         Args:

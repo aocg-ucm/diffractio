@@ -2,8 +2,8 @@
 
 
 # ----------------------------------------------------------------------
-# Name:        common.py
-# Purpose:     Common functions to classes
+# Name:        utils_common.py
+# Purpose:     Common utility functions for various operations
 #
 # Author:      Luis Miguel Sanchez Brea
 #
@@ -11,6 +11,7 @@
 # Copyright:   AOCG / UCM
 # Licence:     GPL
 # ----------------------------------------------------------------------
+
 """ Common functions to classes """
 # flake8: noqa
 
@@ -21,7 +22,6 @@ import numpy as np
 import psutil
 from scipy.io import loadmat, savemat
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
 def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:

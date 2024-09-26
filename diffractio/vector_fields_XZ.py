@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        vector_fields_XZ.py
+# Purpose:     Class for handling vector fields in the XZ plane
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 # flake8: noqa
 
 """
@@ -1588,6 +1600,8 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     Returns:
         E  list(Ex, Ey, Ez): Field E(z+dz) at at distance dz from the incident field.
         H  list(Ex, Ey, Ez): Field H(z+dz) at at distance dz from the incident field.
+        
+    TODO: The kernel is not complete. It is necessary to solve the Gamma parameter.
     """
 
     # amplitude of waveplanes

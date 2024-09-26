@@ -1,5 +1,20 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        scalar_sources_XY.py
+# Purpose:     Define the Scalar_source_XY class for generating scalar sources
+#
+# Author:      Luis Miguel Sanchez Brea
+# Number of lines in this file: 500
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
+
+
 """
 This module generates Scalar_source_XY class for defining sources.
 Its parent is Scalar_field_XY.
@@ -39,11 +54,12 @@ from math import factorial
 
 from scipy.special import eval_hermite, j0, j1, jv
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
-from .__init__ import degrees, np, um
+from .__init__ import np
+from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import Scalar_field_XY
 from .utils_math import fZernike, laguerre_polynomial_nk
+import os
 
 # from scipy.special.orthogonal import hermite
 
@@ -69,6 +85,7 @@ class Scalar_source_XY(Scalar_field_XY):
                  wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         super().__init__(x, y, wavelength, info)
+        self.n_background = n_background
         self.type = 'Scalar_source_XY'
 
     def plane_wave(self, A: float = 1, theta: float = 0., phi: float = 0., z0: float = 0.):
@@ -465,8 +482,7 @@ class Scalar_source_XY(Scalar_field_XY):
             num_beams (int, int): number of gaussian beams (equidistintan) in x and y direction.
             w0 (float): beam width of the bemas
             z0 (float): constant value for phase shift
-            r0 (float, float)
-                                              : central position of rays (x_c, y_c)
+            r0 (float, float): central position of rays (x_c, y_c)
             r_range (float, float): range of rays x, y
             theta (float): angle
             phi (float): angle

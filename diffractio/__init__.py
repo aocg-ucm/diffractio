@@ -1,35 +1,55 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        diffractio_init.py
+# Purpose:     Initialization for diffractio package
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """Top-level package for Python Scalar and vector diffraction and interference.
 
-Diffractio: A scientific computing package for Optical Interference and Diffraction in Python
-======================================================================================================
+Diffractio: A scientific computing package for Scalar and Vector Optical Interference and Diffraction in Python
+==================================================================================================================
 
-Contents
---------
-diffractio presents the following subpackages:
+__init__.py: 52 lines
+utils_tests.py: 206 lines
+vector_masks_XY.py: 622 lines
+scalar_fields_X.py: 1663 lines
+scalar_sources_X.py: 211 lines
+utils_common.py: 224 lines
+scalar_masks_X.py: 975 lines
+scalar_masks_XYZ.py: 279 lines
+utils_typing.py: 59 lines
+scalar_masks_XY.py: 2593 lines
+vector_fields_Z.py: 774 lines
+vector_fields_XZ.py: 1834 lines
+scalar_masks_XZ.py: 1582 lines
+config.py: 50 lines
+vector_fields_XY.py: 1923 lines
+utils_drawing.py: 454 lines
+utils_dxf.py: 187 lines
+scalar_fields_XZ.py: 2054 lines
+scalar_fields_Z.py: 460 lines
+vector_fields_XYZ.py: 661 lines
+utils_math.py: 982 lines
+utils_optics.py: 1218 lines
+vector_sources_XY.py: 410 lines
+utils_drawing3D.py: 623 lines
+scalar_fields_XYZ.py: 1510 lines
+scalar_fields_XY.py: 2734 lines
+utils_multiprocessing.py: 169 lines
+scalar_sources_XY.py: 537 lines
+vector_fields_X.py: 787 lines
 
-scalar unidimensional fields
-    * scalar_fields_X  (propagation and general functions)
-    * scalar_sources_X  (light sources)
-    * scalar_masks_X (scalar masks)
+Total number of lines in Python files: 26384  (2024/09/26)
 
-scalar unidimensional X fields propagated in Z direction
-    * scalar_fields_XZ  (propagation and general functions)
-    * scalar_masks_XZ (scalar masks)
-    * sources are acquired using scalar_sources_X
-
-scalar bidimensional XY fields
-    * scalar_fields_XY  (propagation and general functions)
-    * scalar_sources_XY  (light sources)
-    * scalar_masks_XY (scalar masks)
-
-scalar bidimensional XY fields propagated in Z direction
-    * scalar_fields_XYZ  (propagation and general functions)
-    * scalar_masks_XYZ (scalar masks)
-    * sources are acquired using scalar_sources_XY
 """
-
 
 import datetime
 import multiprocessing
@@ -42,7 +62,6 @@ from .config import CONF_DRAWING
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
 __version__ = '0.3.1'
-
 name = 'diffractio'
 
 um = 1.
@@ -59,8 +78,6 @@ no_date = False  # for test
 
 now = datetime.datetime.now()
 date_test = now.strftime("%Y-%m-%d_%H")
-
-number_types = (int, float, complex, np.int32, np.float64)
 
 num_max_processors = multiprocessing.cpu_count()
 

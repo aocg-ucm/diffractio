@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# ----------------------------------------------------------------------
+# Name:        utils_math.py
+# Purpose:     Utility functions for mathematical operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 
 """ Common functions to classes """
 

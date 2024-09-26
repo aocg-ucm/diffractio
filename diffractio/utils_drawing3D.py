@@ -1,4 +1,16 @@
 # !/usr/bin/env python3
+
+# ----------------------------------------------------------------------
+# Name:        utils_drawing3D.py
+# Purpose:     Utility functions for 3D drawing operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 # -*- coding: utf-8 -*-
 """ Functions for drawing with pyvista """
 

@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        utils_typing.py
+# Purpose:     Utility functions for type annotations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 
 # https://docs.python.org/3/library/typing.html
 # https://numpy.org/devdocs/reference/typing.html

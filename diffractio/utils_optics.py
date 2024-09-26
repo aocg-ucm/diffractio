@@ -1,5 +1,16 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        utils_optics.py
+# Purpose:     Utility functions for optics operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
 # flake8: noqa
 
 """ General purpose optics functions """

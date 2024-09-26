@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        vector_fields_XY.py
+# Purpose:     Class for handling vector fields in the XY plane
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 # flake8: noqa
 
 """

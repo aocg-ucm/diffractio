@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
 
+# ----------------------------------------------------------------------
+# Name:        vector_fields_X.py
+# Purpose:     Class for handling vector fields in X direction
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
+
 # flake8: noqa
 
 """

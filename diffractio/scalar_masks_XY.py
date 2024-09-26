@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
 
+
+# ----------------------------------------------------------------------
+# Name:        scalar_masks_XY.py
+# Purpose:     Class for defining and manipulating scalar masks in XY plane
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Copyright:   AOCG / UCM
+# Licence:     GPL
+# ----------------------------------------------------------------------
+
+
 """
 This module generates Scalar_mask_XY class for definingn masks. Its parent is Scalar_field_X.
 
