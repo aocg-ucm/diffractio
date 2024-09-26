@@ -269,7 +269,7 @@ class Scalar_field_XY():
 
         return u3
 
-    def rotate(self, angle: float, position: list[float, float] | None = None,
+    def rotate(self, angle: float, position: tuple[float, float] | None = None,
                new_field: bool = False):
         """Rotation of X,Y with respect to position. If position is not given, rotation is with respect to the center of the image
 
@@ -430,11 +430,11 @@ class Scalar_field_XY():
         return mask
 
     def cut_resample(self,
-                     x_limits: list[float, float] = '',
-                     y_limits: list[float, float] = '',
+                     x_limits: tuple[float, float] = '',
+                     y_limits: tuple[float, float] = '',
                      num_points: int = [],
                      new_field: bool = False,
-                     interp_kind: list[int, int] = (3, 1)):
+                     interp_kind: tuple[int, int] = (3, 1)):
         """it cut the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Args:
@@ -527,7 +527,7 @@ class Scalar_field_XY():
         """
         self.u = u0.u
 
-    def pupil(self, r0: list[float, float] | None = None,
+    def pupil(self, r0: tuple[float, float] | None = None,
               radius: float | None = None,
               angle: float = 0 * degrees):
         """place a pupil in the field. If r0 or radius are None, they are computed using the x,y parameters.
@@ -943,7 +943,7 @@ class Scalar_field_XY():
         else:
             self.u = Usalida
 
-    def RS(self, z: float, amplification: list[int, int] = (1, 1), n: float = 1.,
+    def RS(self, z: float, amplification: tuple[int, int] = (1, 1), n: float = 1.,
             new_field: bool = True, matrix: bool = False,
             xout: float | None = None, yout: float | None = None,
             kind: str = 'z', verbose: bool = False):
@@ -1558,8 +1558,8 @@ class Scalar_field_XY():
         return 1j*u_out
 
     def profile(self,
-                point1: list[float, float] | str = '',
-                point2: list[float, float] | str = '',
+                point1: tuple[float, float] | str = '',
+                point2: tuple[float, float] | str = '',
                 npixels: int | None = None,
                 kind: str = 'intensity',
                 order: int = 2):
@@ -1617,8 +1617,8 @@ class Scalar_field_XY():
         return h, z_profile, point1, point2
 
     def draw_profile(self,
-                     point1: list[float, float] | str = '',
-                     point2: list[float, float] | str = '',
+                     point1: tuple[float, float] | str = '',
+                     point2: tuple[float, float] | str = '',
                      npixels: int | None = None,
                      kind: str = 'intensity',
                      order: int = 2):

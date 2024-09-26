@@ -57,7 +57,7 @@ def roughness_1D(x: NDArrayFloat, t: float, s: float, kind: str = "normal"):
     return h_corr
 
 
-def roughness_2D(x: NDArrayFloat, y: list[float, float], t: float, s: float):
+def roughness_2D(x: NDArrayFloat, y: tuple[float, float], t: float, s: float):
     """Rough surface, 2D
 
     Args:

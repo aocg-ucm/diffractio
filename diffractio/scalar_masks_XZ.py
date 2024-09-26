@@ -148,7 +148,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         refractive_index=1.5,
         array1: NDArrayFloat | None = None,
         array2: NDArrayFloat | None = None,
-        x_sides: list[float, float] | None = None,
+        x_sides: tuple[float, float] | None = None,
         angle: float = 0 * degrees,
         v_globals: dict = {},
         interp_kind: str = "quadratic",
@@ -217,12 +217,12 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def mask_from_array_proposal(
         self,
-        r0: list[float, float] = (0 * um, 0 * um),
+        r0: tuple[float, float] = (0 * um, 0 * um),
         refractive_index_substrate: float | float = 1.5,
         refractive_index_mask: float | float = None,
         array1: NDArrayFloat | float = None,
         array2: NDArrayFloat | float = None,
-        x_sides: list[float, float] = None,
+        x_sides: tuple[float, float] = None,
         angle: float = 0.,
         v_globals: dict = {},
         interp_kind: str = "quadratic",
@@ -309,7 +309,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return ipasa * ipasa2 * ipasa3
 
     def object_by_surfaces(
-        self, rotation_point: list[float, float], refractive_index: float | str,
+        self, rotation_point: tuple[float, float], refractive_index: float | str,
         Fs: list, angle: float, v_globals: dict = {}, verbose: bool = False
     ):
         """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
@@ -366,7 +366,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             return ipasa
 
     def add_surfaces(
-            self, fx: list[NDArrayFloat, NDArrayFloat], x_sides: list[float, float],
+            self, fx: tuple[NDArrayFloat, NDArrayFloat], x_sides: tuple[float, float],
             refractive_index: float | str, min_incr: float = 0.1, angle: float = 0.):
         """A topography fx is added to one of the faces of object u (self.n).
 
@@ -433,7 +433,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return previous_profile, new_profile
 
     def discretize_refractive_index(
-        self, num_layers: list[int, int] | None = None, n_layers: NDArrayComplex | complex = None,
+        self, num_layers: tuple[int, int] | None = None, n_layers: NDArrayComplex | complex = None,
         new_field: bool = False
     ):
         """Takes a refractive index an discretize it according refractive indexes.
@@ -547,13 +547,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             image = image.max() - image
         self.n = n_min + image * (n_max - n_min)
 
-    def dxf(self, filename_dxf: str, n_max: float, n_min: float, num_pixels: list[int, int] | None = None,
+    def dxf(self, filename_dxf: str, n_max: float, n_min: float, num_pixels: tuple[int, int] | None = None,
             extent: list[float] | None = None, units: str = 'um', invert: bool = False, verbose: bool = False):
         """Loads a dxf file. Internally it has the extension of the drawing, so it is not required to generate x,y spaces. It is possible with extent, but then the file is scaled. Warning: Dxf files are usually in mm. and diffractio works in um. To generate .u, a temporal .png file is generated. 
 
         Args:
             filename_dxf (str): DXF filename .dxf
-            num_pixels (list[int, int] | None, optional): If . Defaults to None.
+            num_pixels (tuple[int, int] | None, optional): If . Defaults to None.
             extent (_type_, optional): _description_. Defaults to None.
             units (str, optional): _description_. Defaults to 'mm'.
             invert (bool, optional): _description_. Defaults to False.
@@ -597,7 +597,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n = self.n + image_new * (n_max - n_min)
         # TODO: cuidado con n_min y n_background ¿es lo mismo?
 
-    def dots(self, positions: list[float, float], refractive_index: float = 1.):
+    def dots(self, positions: tuple[float, float], refractive_index: float = 1.):
         """Generates 1 or several point masks at positions r0
 
         Args:
@@ -620,8 +620,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n = n
         return self
 
-    def semi_plane(self, r0: list[float, float], refractive_index: float | str,
-                   angle: float = 0., rotation_point: list[float, float] | None = None):
+    def semi_plane(self, r0: tuple[float, float], refractive_index: float | str,
+                   angle: float = 0., rotation_point: tuple[float, float] | None = None):
         """Inserts a semi-cylinder in background (x>x0). If something else previous, it is removed.
 
         Args:
@@ -644,8 +644,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return ipasa
 
-    def layer(self, r0: list[float, float], depth: float, refractive_index: float | str,
-              angle: float = 0., rotation_point: list[float, float] | None = None):
+    def layer(self, r0: tuple[float, float], depth: float, refractive_index: float | str,
+              angle: float = 0., rotation_point: tuple[float, float] | None = None):
         """Insert a layer. If it is something else previous, it is removed.
 
         Args:
@@ -670,9 +670,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return ipasa
 
-    def rectangle(self, r0: list[float, float], size: list[float, float],
+    def rectangle(self, r0: tuple[float, float], size: tuple[float, float],
                   refractive_index: float | str, angle: float = 0.,
-                  rotation_point: list[float, float] | None = None):
+                  rotation_point: tuple[float, float] | None = None):
         """Insert a rectangle in background. Something previous, is removed.
 
         Args:
@@ -716,9 +716,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         return ipasa
 
-    def slit(self, r0: list[float, float], aperture: float, depth: float,
+    def slit(self, r0: tuple[float, float], aperture: float, depth: float,
              refractive_index: float | str, refractive_index_center: float or str = "",
-             angle: float = 0, rotation_point: list[float, float] | None = None):
+             angle: float = 0, rotation_point: tuple[float, float] | None = None):
         """Insert a slit in background.
 
         Args:
@@ -759,9 +759,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             self.n[ipasa] = n_back[ipasa]
         return ipasa_slit != ipasa
 
-    def cylinder(self, r0: list[float, float], radius: list[float, float],
+    def cylinder(self, r0: tuple[float, float], radius: tuple[float, float],
                refractive_index: float | str, angle: float = 0.,
-               rotation_point: list[float, float] | None = None):
+               rotation_point: tuple[float, float] | None = None):
         """Insert a cylinder in background.
 
         Args:
@@ -792,9 +792,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return ipasa
 
-    def semi_sphere(self, r0: list[float, float], radius: list[float, float],
+    def semi_sphere(self, r0: tuple[float, float], radius: tuple[float, float],
                     refractive_index: float | str, angle: float = 0.,
-                    rotation_point: list[float, float] | None = None):
+                    rotation_point: tuple[float, float] | None = None):
         """Insert a semi_sphere in background.
 
         Args:
@@ -828,13 +828,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def lens_plane_convergent(
             self,
-            r0: list[float, float],
+            r0: tuple[float, float],
             aperture: float,
             radius: float,
             thickness: float,
             refractive_index: float | str,
             angle: float = 0.,
-            rotation_point: list[float, float] | None = None,
+            rotation_point: tuple[float, float] | None = None,
             mask=0):
         """Insert a plane-convergent lens in background-
 
@@ -899,13 +899,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def lens_convergent(
             self,
-            r0: list[float, float],
+            r0: tuple[float, float],
             aperture: float,
             radius: float,
             thickness: float,
             refractive_index: float | str,
             angle: float = 0.,
-            rotation_point: list[float, float] | None = None,
+            rotation_point: tuple[float, float] | None = None,
             mask=0):
         """Inserts a convergent lens in background.
 
@@ -980,13 +980,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def lens_plane_divergent(
         self,
-        r0: list[float, float],
+        r0: tuple[float, float],
         aperture: float,
         radius: float,
         thickness: float,
         refractive_index: float | str,
         angle: float = 0.,
-        rotation_point: list[float, float] | None = None,
+        rotation_point: tuple[float, float] | None = None,
         mask=False,
     ):
         """Insert a plane-divergent lens in background.
@@ -1049,13 +1049,13 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def lens_divergent(
         self,
-        r0: list[float, float],
+        r0: tuple[float, float],
         aperture: float,
         radius: float,
         thickness: float,
         refractive_index: float | str,
         angle: float = 0.,
-        rotation_point: list[float, float] | None = None,
+        rotation_point: tuple[float, float] | None = None,
         mask=0,
     ):
         """Insert a  divergent lens in background.
@@ -1135,7 +1135,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return 1 / focus_1, ipasa
 
-    def aspheric_surface_z(self, r0: list[float, float], refractive_index: float | str,
+    def aspheric_surface_z(self, r0: tuple[float, float], refractive_index: float | str,
                            cx: float, Qx: float, a2: float, a3: float, a4: float,
                            side: str, angle: float = 0.):
         """Define an aspheric surface
@@ -1182,18 +1182,18 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def aspheric_lens(
             self,
-            r0: list[float, float],
+            r0: tuple[float, float],
             angle: float,
             refractive_index: float | str,
-            cx: list[float, float],
-            Qx: list[float, float],
-            depth: list[float, float],
+            cx: tuple[float, float],
+            Qx: tuple[float, float],
+            depth: tuple[float, float],
             size: float,
-            a2: list[float, float] = (0, 0),
-            a3: list[float, float] = (0, 0),
-            a4: list[float, float] = (0, 0),
-            a5: list[float, float] = (0, 0),
-            a6: list[float, float] = (0, 0),
+            a2: tuple[float, float] = (0, 0),
+            a3: tuple[float, float] = (0, 0),
+            a4: tuple[float, float] = (0, 0),
+            a5: tuple[float, float] = (0, 0),
+            a6: tuple[float, float] = (0, 0),
             a7=(0, 0)):
         """Define an aspheric surface as defined in Gomez-Pedrero.
 
@@ -1282,8 +1282,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return ipasa, Fs
 
     def wedge(
-            self, r0: list[float, float], length, refractive_index: float | str, angle_wedge: float,
-            angle: float = 0., rotation_point: list[float, float] | None = None):
+            self, r0: tuple[float, float], length, refractive_index: float | str, angle_wedge: float,
+            angle: float = 0., rotation_point: tuple[float, float] | None = None):
         """Insert a wedge pointing towards the light beam
 
         Args:
@@ -1310,8 +1310,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         return ipasa
 
     def prism(
-            self, r0: list[float, float], length: float, refractive_index: float | str,
-            angle_prism: float, angle: float = 0., rotation_point: list[float, float] | None = None):
+            self, r0: tuple[float, float], length: float, refractive_index: float | str,
+            angle_prism: float, angle: float = 0., rotation_point: tuple[float, float] | None = None):
         """Similar to wedge but the use is different. Also the angle is usually different. One of the sides is paralel to x=x0
 
         Args:
@@ -1341,7 +1341,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return ipasa
 
-    def biprism(self, r0: list[float, float], length: float, height: float,
+    def biprism(self, r0: tuple[float, float], length: float, height: float,
                 refractive_index: float | str, angle: float = 0.):
         """Fresnel biprism.
 
@@ -1386,7 +1386,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def ronchi_grating(
             self,
-            r0: list[float, float],
+            r0: tuple[float, float],
             period: float,
             fill_factor: float,
             length: float,
@@ -1444,7 +1444,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             period: float,
             heigth_sine: float,
             heigth_substrate: float,
-            r0: list[float, float],
+            r0: tuple[float, float],
             length: float,
             Dx: float,
             refractive_index: float | str,
@@ -1476,7 +1476,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n[ipasa] = refractive_index
         return ipasa
 
-    def probe(self, r0: list[float, float], base: float, length: float,
+    def probe(self, r0: tuple[float, float], base: float, length: float,
               refractive_index: float | str, angle: float = 0.):
         """Probe with a sinusoidal shape.
 
@@ -1507,9 +1507,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
         return ipasa
 
-    def rough_sheet(self, r0: list[float, float], size: float, t: float, s: float,
+    def rough_sheet(self, r0: tuple[float, float], size: float, t: float, s: float,
                     refractive_index: float | str, angle: float = 0.,
-                    rotation_point: list[float, float] | None = None):
+                    rotation_point: tuple[float, float] | None = None):
         """Sheet with one of the surface rough.
 
         Args:

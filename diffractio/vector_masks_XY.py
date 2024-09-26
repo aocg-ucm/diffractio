@@ -141,8 +141,8 @@ class Vector_mask_XY(Vector_field_XY):
             new_field.clear_field()
         return new_field
 
-    def apply_circle(self, r0: list[float, float] | None = None,
-                     radius: list[float, float] | None = None):
+    def apply_circle(self, r0: tuple[float, float] | None = None,
+                     radius: tuple[float, float] | None = None):
         """The same circular mask is applied to all the Jones Matrix.
 
         Args:
@@ -169,8 +169,8 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * u_pupil.u
         self.M11 = self.M11 * u_pupil.u
 
-    def pupil(self, r0: list[float, float] | None = None,
-              radius: list[float, float] | None = None, angle: float = 0.):
+    def pupil(self, r0: tuple[float, float] | None = None,
+              radius: tuple[float, float] | None = None, angle: float = 0.):
         """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.
 
         Args:

@@ -305,7 +305,7 @@ class Vector_field_XY():
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
-    def pupil(self, r0: list[float, float] | None = None, radius: list[float, float] | None = None,
+    def pupil(self, r0: tuple[float, float] | None = None, radius: tuple[float, float] | None = None,
               angle: float = 0.):
         """place a pupil in the field. If r0 or radius are None, they are computed using the x,y parameters.
 
@@ -718,7 +718,7 @@ class Vector_field_XY():
                 self.draw(kind='intensities')
 
     def VRS(self, z: float, n: float = 1., new_field: bool = True, verbose: bool = False,
-            amplification: list[int, int] = (1, 1)):
+            amplification: tuple[int, int] = (1, 1)):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
 
         Args:
@@ -1027,11 +1027,11 @@ class Vector_field_XY():
         self.Ez = self.Ez / max_amplitude
 
     def cut_resample(self,
-                     x_limits: list[float, float] | None = None,
-                     y_limits: list[float, float] | None = None,
+                     x_limits: tuple[float, float] | None = None,
+                     y_limits: tuple[float, float] | None = None,
                      num_points: int | None = None,
                      new_field: bool = False,
-                     interp_kind: list[int, int] = (3, 1)):
+                     interp_kind: tuple[int, int] = (3, 1)):
         """Cuts the field to the range (x0,x1). (y0,y1). If one of this x0,x1 positions is out of the self.x range it do nothing. It is also valid for resampling the field, just write x0,x1 as the limits of self.x
 
         Args:
@@ -1162,7 +1162,7 @@ class Vector_field_XY():
              logarithm: float = 0,
              normalize: bool = False,
              cut_value: float | None = None,
-             num_ellipses: list[int, int] = (11, 11),
+             num_ellipses: tuple[int, int] = (11, 11),
              amplification: float = 0.5,
              filename: str = '',
              draw: bool = True,
@@ -1734,7 +1734,7 @@ class Vector_field_XY():
                           logarithm: float = 0.,
                           normalize: bool = False,
                           cut_value: float = '',
-                          num_ellipses: list[int, int] = (21, 21),
+                          num_ellipses: tuple[int, int] = (21, 21),
                           amplification: float = 0.75,
                           color_line: str = 'w',
                           line_width: float = 0.5,

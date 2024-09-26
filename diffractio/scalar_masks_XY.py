@@ -372,7 +372,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = data
         return filename
 
-    def dxf(self, filename_dxf: str, num_pixels: list[int, int] | None = None,
+    def dxf(self, filename_dxf: str, num_pixels: tuple[int, int] | None = None,
             extent: list[float] | None = None, units: str = 'um', invert: bool = False,
             verbose: bool = False):
         """Loads a dxf file. Internally it has the extension of the drawing, so it is not required to generate x,y spaces. It is possible with extent, but then the file is scaled. Warning: Dxf files are usually in mm. and diffractio works in um. To generate .u, a temporal .png file is generated. 
@@ -383,7 +383,7 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Args:
             filename_dxf (str): DXF filename .dxf
-            num_pixels (list[int, int] | None, optional): If . Defaults to None.
+            num_pixels (tuple[int, int] | None, optional): If . Defaults to None.
             extent (_type_, optional): _description_. Defaults to None.
             units (str, optional): _description_. Defaults to 'mm'.
             invert (bool, optional): _description_. Defaults to False.
@@ -1538,7 +1538,7 @@ class Scalar_mask_XY(Scalar_field_XY):
     def fresnel_lens(self,
                      r0: list[float],
                      focal: float,
-                     levels: list[float, float] = (1., 0.),
+                     levels: tuple[float, float] = (1., 0.),
                      kind: str = 'amplitude',
                      phase: float = 0.,
                      radius: float = 0.,
@@ -2320,7 +2320,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             lens.u = lens.u + ring.u
         self.u = lens.u
 
-    def super_ellipse(self, r0: list[float], radius: float, n: list[int, int] = (2, 2),
+    def super_ellipse(self, r0: list[float], radius: float, n: tuple[int, int] = (2, 2),
                       angle: float = 0.):
         """Super_ellipse. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
 
@@ -2370,7 +2370,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         u[ipasa] = 1
         self.u = u
 
-    def superformula(self, r0: list[float], radius: float, n: list[int, int, int],
+    def superformula(self, r0: list[float], radius: float, n: tuple[int, int, int],
                      m: float, angle: float = 0.):
         """superformula. Abs((Xrot - x0) / radiusx)^n1 + Abs()(Yrot - y0) / radiusy)=n2
 

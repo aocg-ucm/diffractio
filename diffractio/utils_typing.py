@@ -18,7 +18,7 @@ integer = np.integer
 
 
 # Para 3.12 o posterior, es decir, es muy nuevo
-# type point2D = list[float, float] | NDArray
+# type point2D = tuple[float, float] | NDArray
 
 # some temporal helps
 """
@@ -33,7 +33,7 @@ from typing import NewType
 
 UserId = NewType('UserId', int)
 some_id = UserId(524313)
-list[int, str]
+tuple[int, str]
 tuple[int] = (1, 2, 3)
 tuple[int, ...] = (1, 2)
 

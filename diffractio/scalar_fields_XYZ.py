@@ -584,7 +584,7 @@ class Scalar_field_XYZ():
                                                      num_processors)))
         return time2 - time1
 
-    def RS_amplification(self, amplification: list[int, int] = (1, 1)):
+    def RS_amplification(self, amplification: tuple[int, int] = (1, 1)):
         """Rayleigh Sommerfeld propagation algorithm. it performs amplification
 
         Args:
