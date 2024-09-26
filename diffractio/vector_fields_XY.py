@@ -50,7 +50,7 @@ from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 import diffractio
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_Vector_XY_Options
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
@@ -1158,7 +1158,7 @@ class Vector_field_XY():
             return field
 
     def draw(self,
-             kind: str = 'intensity',
+             kind: Draw_Vector_XY_Options = 'intensity',
              logarithm: float = 0,
              normalize: bool = False,
              cut_value: float | None = None,

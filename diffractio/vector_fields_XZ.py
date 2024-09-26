@@ -40,7 +40,7 @@ from scipy.interpolate import RectBivariateSpline
 from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_Vector_XZ_Options
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_XZ import Scalar_mask_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -823,7 +823,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
     def draw(
         self,
-        kind="intensity",
+        kind: Draw_Vector_XZ_Options = "intensity",
         logarithm: float = 0,
         normalize: bool = False,
         cut_value: float | None = None,
@@ -1107,9 +1107,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         percentage_intensity: float | None = None,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
-        draw_z = True, ): #TODO 
-        """__internal__: draws amplitude and phase in 2x2 drawing
-
+        draw_z = True, ):
+        """
         Args:
             logarithm (bool): If True, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
@@ -1212,7 +1211,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if draw_z is True:
 
             fig, axs = plt.subplots(
-                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.5 * tx, 2 * ty)
+                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.75 * tx, 2 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_proposal(
@@ -1227,8 +1226,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 E_z, self.z, self.x, ax=axs[2, 0], xlabel="$z  (\mu m)$", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_z$')
             format_drawing(self, axs[2, 0], scale,  draw_borders, color='b.')
             IDimage.set_clim(-E_max,E_max)
-           # ax.colorbar()
-          
+            # ax.colorbar()
+
 
             id_fig, ax, IDimage = draw2D_proposal(
                 H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
@@ -1807,7 +1806,7 @@ def draw2D_proposal(
     return id_fig, ax, IDimage
 
 
-def format_drawing(vector_field_XZ, plt, scale, draw_borders, color='w.', ms=0.125) -> None:
+def format_drawing(vector_field_XZ, plt, scale, draw_borders, color='w.', ms=0.05) -> None:
     
         if scale != '':
             plt.axis(scale)

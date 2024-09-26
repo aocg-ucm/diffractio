@@ -47,7 +47,7 @@ import copy
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -536,7 +536,7 @@ class Vector_field_XYZ():
 
     def draw_XY(self,
                 z0: float,
-                kind: str = 'intensity',
+                kind: Draw_Vector_XY_Options = 'intensity',
                 logarithm: float = 0,
                 normalize: str = 'maximum',
                 title: str = '',
@@ -569,7 +569,7 @@ class Vector_field_XYZ():
                     reduce_matrix=reduce_matrix)
 
     def draw_XZ(self,
-                kind: str = 'intensity',
+                kind: Draw_Vector_XZ_Options = 'intensity',
                 y0: float = 0 * mm,
                 logarithm: float = 0,
                 normalize: bool = False,
@@ -594,7 +594,7 @@ class Vector_field_XYZ():
         return h1
 
     def draw_YZ(self,
-                kind: str = 'intensity',
+                kind: Draw_Vector_XZ_Options = 'intensity',
                 x0: float = 0 * mm,
                 logarithm: float = 0,
                 normalize: bool = False,

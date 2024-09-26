@@ -19,6 +19,7 @@ CONF_DRAWING['color_n'] = cm.Blues
 CONF_DRAWING[
     'percentage_intensity'] = 0.05  # percentage of intensity not shown in phase
 
+# Kind parameters for drawing
 Draw_refractive_index_Options = Literal['all', 'real', 'imag']
 Draw_X_Options = Literal[ 'amplitude', 'intensity', 'field', 'phase', 'fill', 'fft']
 Draw_Z_Options = Literal['amplitude', 'intensity', 'field', 'phase']
@@ -27,3 +28,8 @@ Draw_XY_Options = Literal['amplitude', 'intensity', 'phase', ' field', 'real_fie
 Draw_XYZ_Options = Literal['intensity', 'refractive_index']
 Draw_pyvista_Options = Literal['volume', 'clip', 'slices', 'projections']
 Draw_interactive_Options = Literal['intensity', 'amplitude', 'phase']
+Draw_Vector_X_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
+Draw_Vector_XY_Options = Literal['intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes', 'param_ellipse', 'ellipses']
+Draw_Vector_XZ_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
+
+

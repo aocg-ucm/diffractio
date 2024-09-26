@@ -37,7 +37,7 @@ from matplotlib import rcParams
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_Vector_X_Options
 from .scalar_fields_X import Scalar_field_X
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
@@ -359,7 +359,7 @@ class Vector_field_X():
         self.Ez = self.Ez / max_amplitude
 
     def draw(self,
-             kind: str = 'intensity',
+             kind: Draw_Vector_X_Options = 'intensity',
              logarithm: float = 0,
              normalize: bool = False,
              cut_value: float | bool = None,
@@ -369,7 +369,7 @@ class Vector_field_X():
         """Draws electromagnetic field
 
         Args:
-            kind (str):  'intensity', 'intensities', intensities_rz, 'phases', fields', 'stokes'
+            kind (str):  'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
