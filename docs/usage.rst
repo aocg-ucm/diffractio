@@ -174,7 +174,7 @@ XY Vector fields
 .. code-block:: python
 
   from diffractio import np, sp, plt
-from diffractio import nm, um, mm, degrees
+  from diffractio import nm, um, mm, degrees
 
   from diffractio.scalar_sources_XY import Scalar_source_XY
   from diffractio.scalar_masks_XY import Scalar_mask_XY
@@ -190,13 +190,8 @@ from diffractio import nm, um, mm, degrees
   wavelength = 0.6328 * um
 
   u0 = Scalar_source_XY(x0, y0, wavelength)
-  u0.gauss_beam(
-    r0=(0, 0),
-    w0=(100 * um, 100 * um),
-    z0=0 * um,
-    A=1,
-    theta=0. * degrees,
-    phi=0 * degrees)
+  u0.gauss_beam(r0=(0, 0), w0=(100 * um, 100 * um), z0=0 * um,
+      A=1, theta=0 * degrees, phi=0 * degrees)
 
   EM0 = Vector_source_XY(x0, y0, wavelength)
   EM0.azimuthal_wave(u=u0, r0=(0, 0), radius=(200, 200))

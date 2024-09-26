@@ -71,7 +71,7 @@ from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 from .utils_drawing3D import draw, video_isovalue
-from .config import Draw_XZ_Options, .Draw_XY_Options
+from .config import Draw_XZ_Options, Draw_XY_Options
 
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
@@ -192,8 +192,7 @@ class Scalar_field_XYZ():
             Scalar_field_XYZ: `u3 = u1 + u2`
         """
 
-        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
-                              self.n_background)
+        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength, self.n_background)
         u3.n = self.n
 
         if kind == 'standard':
@@ -222,8 +221,7 @@ class Scalar_field_XYZ():
         # TODO: It can be improved for maks (not having less than 1)
         """
 
-        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength,
-                              self.n_background)
+        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength, self.n_background)
         u3.n = self.n
         u3.u = self.u - other.u
         return u3
@@ -287,7 +285,13 @@ class Scalar_field_XYZ():
         return Xrot, Yrot, Zrot
 
     def conjugate(self, new_field: bool = True):
-        """Conjugates the field
+        """Congugates the field.
+
+        Args:
+            new_field (bool, optional): Generates a new field. Defaults to True.
+
+        Returns:
+            _type_: _description_
         """
 
         if new_field is True:

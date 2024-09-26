@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 """Example of an elaborate dialog showing a multiple views on the same data, with 3 cuts synchronized.
 

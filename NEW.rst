@@ -5,7 +5,8 @@ New Features
 
 0.3.1 (2024-10-**)
 --------------------------------
-* Improvement:
+
+* Improvements:
 
   - New Algorithms for Vector propagation, in particular FPWPM.
 
@@ -16,6 +17,7 @@ New Features
   - Improvement in documentation and examples.
 
   - Typing variables in functions.
+  
 
 
 * Fix bugs:
@@ -23,6 +25,9 @@ New Features
   - ndgrid function -> meshgrid (for >2D matrices).
 
 
+* Other:
+
+  - Change license to GPLv3
 
 
 0.2.3 (2023-11-21)
