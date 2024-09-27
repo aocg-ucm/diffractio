@@ -45,6 +45,7 @@ Draw_Vector_X_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', '
 Draw_Vector_XY_Options = Literal['intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes', 'param_ellipse', 'ellipses']
 Draw_Vector_XZ_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
 number_types = (int, float, complex, np.int32, np.float64)
-empty_types =  ([], '', None)
+empty_types = ([], '', None)
+Save_mask_Options = Literal['amplitude', 'phase', 'intensity']
 
 

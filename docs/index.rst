@@ -20,6 +20,7 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    contributing
    authors
    results
+   statistics
    history
    todo
 

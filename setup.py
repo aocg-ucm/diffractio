@@ -10,9 +10,6 @@ with open('README.rst', encoding='utf8') as readme_file:
 with open('HISTORY.rst', encoding='utf8') as history_file:
     history = history_file.read()
 
-# requirements = [
-#     'Click>=6.0', 'numpy', 'scipy', 'matplotlib','nbsphinx',
-# ]
 
 requirements = [
     'matplotlib', 'numpy>=1.20,<2', 'scipy', 'ezdxf',

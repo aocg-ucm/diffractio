@@ -80,11 +80,10 @@ from scipy.special import hankel1
 
 from .__init__ import degrees, mm, np, plt
 
-from .config import Draw_X_Options
+from .config import Draw_X_Options, empty_types
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw
-from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1,
-                         Bluestein_dft_x, get_k, nearest2)
+from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x, get_k, nearest2)
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
                                     execute_multiprocessing)
 from .utils_optics import field_parameters, normalize_field
@@ -114,7 +113,7 @@ class Scalar_field_X():
         self.date (str): Date when performed.
     """
 
-    def __init__(self, x: NDArrayFloat | None = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat | None = None, wavelength: float  = 0,
                  n_background: float = 1., info: str = ""):
         self.x = x
         self.wavelength = wavelength
@@ -131,6 +130,10 @@ class Scalar_field_X():
 
     def __str__(self):
         """Represents main data of the atributes."""
+
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         Imin = (np.abs(self.u) ** 2).min()
         Imax = (np.abs(self.u) ** 2).max()
@@ -169,6 +172,9 @@ class Scalar_field_X():
 
         TODO: improve to have better usage
         """
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         u3 = Scalar_field_X(self.x, self.wavelength)
 
@@ -219,6 +225,10 @@ class Scalar_field_X():
     def conjugate(self, new_field: bool = True):
         """Conjugates the field"""
 
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
+
         if new_field is True:
             u_new = self.duplicate()
             u_new.u = np.conj(self.u)
@@ -255,7 +265,6 @@ class Scalar_field_X():
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
 
-
         Args:
             filename (str): filename
             add_name= (str): sufix to the name, if 'date' includes a date
@@ -286,14 +295,14 @@ class Scalar_field_X():
         if dict0 is not None:
             if isinstance(dict0, dict):
                 self.__dict__ = dict0
+                if verbose is True:
+                    print(dict0.keys())
             else:
                 raise Exception("no dictionary in load_data")
 
-        if verbose is True:
-            print(dict0.keys())
 
     def cut_resample(
-            self, x_limits: NDArrayFloat | str = "", num_points: int = [],
+            self, x_limits: NDArrayFloat | None = None, num_points: int | None = None,
             new_field: bool = False, interp_kind: str = "linear"):
         """Cuts the field to the range (x0,x1). If one of this x0,x1 positions is out of the self.x range it does nothing.
         It is also valid for resampling the field, just write x0,x1 as the limits of self.x
@@ -307,8 +316,16 @@ class Scalar_field_X():
         Returns:
             (Scalar_field_X): if new_field is True
         """
+        
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+        
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
 
-        if x_limits == "":
+        if x_limits is None:
             # used only for resampling
             x0 = self.x[0]
             x1 = self.x[-1]
@@ -323,7 +340,7 @@ class Scalar_field_X():
         i_x0, _, _ = nearest(self.x, x0)
         i_x1, _, _ = nearest(self.x, x1)
 
-        if num_points not in ([], "", 0, None):
+        if num_points not in empty_types:
             x_new = linspace(x0, x1, num_points)
             f_interp_abs = interp1d(
                 self.x,
@@ -376,7 +393,11 @@ class Scalar_field_X():
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
-        from .scalar_masks_X import Scalar_mask_X
+        from diffractio.scalar_masks_X import Scalar_mask_X
+
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
 
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
@@ -400,7 +421,10 @@ class Scalar_field_X():
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
-
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
+        
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
 
@@ -409,6 +433,7 @@ class Scalar_field_X():
         if new_field is False:
             self.u = new_amplitude
         else:
+            from .scalar_masks_X import Scalar_mask_X
             new = Scalar_mask_X(self.x, self.wavelength)
             new.u = new_amplitude
             return new
@@ -421,6 +446,10 @@ class Scalar_field_X():
         """
 
         from .scalar_masks_X import Scalar_mask_X  # Do not write up
+
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
 
         slit = Scalar_mask_X(self.x, self.wavelength)
         slit.slit(x0=0, size=size)
@@ -505,7 +534,14 @@ class Scalar_field_X():
             new_field (bool): If True, a new mask is produced, else, the mask is modified.
 
         """
-
+        if self.u is None:
+            print("function not available: self.u = None")
+            return -1
+        
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+        
         u0 = self.u
         x0 = self.x
         wavelength = self.wavelength
@@ -552,6 +588,10 @@ class Scalar_field_X():
         Returns:
             (array or Scalar_field_X or None): FFT of the input field
         """
+        
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         ttf1 = fft(self.u)
         if remove0 is True:
@@ -605,6 +645,10 @@ class Scalar_field_X():
         Returns:
             (array or Scalar_field_X or None): FFT of the input field
         """
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+
         ttf1 = ifft(self.u)
         if remove0 is True:
             ttf1[0] = 0
@@ -670,6 +714,10 @@ class Scalar_field_X():
         References:
                 F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
         """
+
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         if xout is None:
             xout = self.x[0]
@@ -761,11 +809,14 @@ class Scalar_field_X():
             If New_field is True:  Scalar_field_X,
             If matrix is True: numpy.array()
             Else: None
-
-
+            
         Info:
             This approach a quality parameter: If self.quality>1, propagation is right.
         """
+
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         width_x = self.x[-1] - self.x[0]
         num_pixels = len(self.x)
@@ -835,7 +886,10 @@ class Scalar_field_X():
         References:
             [Light: Science and Applications, 9(1), (2020)]
         """
-
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+        
         if xout is None:
             xout = self.x
 
@@ -984,7 +1038,11 @@ class Scalar_field_X():
 
         """
         from diffractio.scalar_masks_XZ import Scalar_mask_XZ
-
+        
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+        
         k0 = 2 * np.pi / self.wavelength
         dx = self.x[1] - self.x[0]
         dz = zs[1] - zs[0]
@@ -1131,6 +1189,7 @@ class Scalar_field_X():
         """
         return normalize_field(self, new_field)
 
+
     def MTF(self, kind: str = "mm", has_draw: bool = True):
         """Computes the MTF of a field,.
 
@@ -1142,6 +1201,10 @@ class Scalar_field_X():
             (numpy.array) fx: frequencies in lines/mm
             (numpy.array) mtf_norm: normalizd MTF
         """
+        
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         tmp_field = self.u
         x = self.x
@@ -1157,7 +1220,7 @@ class Scalar_field_X():
         # Nyquist frequencies on x and y direction
         frec_nyquist = 0.5 / delta_x
         # Defining spatial frequencies, 1000 passes um to mm
-        fx = 1000 * linspace(-frec_nyquist, frec_nyquist, len(x))
+        fx = 1000 * np.linspace(-frec_nyquist, frec_nyquist, len(x))
 
         if kind == "mm":
             frec = fx
@@ -1218,6 +1281,10 @@ class Scalar_field_X():
             falling: positions of falling
         """
 
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
+
         pos_transitions, type_transitions, raising, falling = get_edges(
             self.x, self.u, kind_transition, min_step, verbose, filename
         )
@@ -1235,6 +1302,10 @@ class Scalar_field_X():
         Returns:
             z_min (float): z_min for quality_factor>quality
         """
+
+        if self.x is None:
+            print("function not available: self.x = None")
+            return -1
 
         range_x = self.x[-1] - self.x[0]
         num_x = len(self.x)
@@ -1415,8 +1486,7 @@ def kernelRSinverse(x: NDArrayFloat, wavelength: float, z: float,
         return (-0.5j * k) * hk1
 
 
-def PWD_kernel(u: NDArrayComplex, n: NDArrayComplex, k0: float,
-               k_perp2: NDArray[Any], dz: float):
+def PWD_kernel(u: NDArrayComplex, n: NDArrayComplex, k0: float, k_perp2: NDArray[Any], dz: float):
     """
     Step for scalar (TE) Plane wave decomposition (PWD) algorithm.
 

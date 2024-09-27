@@ -1,0 +1,53 @@
+Python files
+================================
+
+ - conf.py: 164 lines
+ - config.py: 51 lines
+ - count_number_lines.py: 69 lines
+ - get_functions.py: 15 lines
+ - scalar_fields_X.py: 1733 lines
+ - scalar_fields_XY.py: 2827 lines
+ - scalar_fields_XYZ.py: 1510 lines
+ - scalar_fields_XZ.py: 2054 lines
+ - scalar_fields_Z.py: 460 lines
+ - scalar_masks_X.py: 975 lines
+ - scalar_masks_XY.py: 2593 lines
+ - scalar_masks_XYZ.py: 279 lines
+ - scalar_masks_XZ.py: 1582 lines
+ - scalar_sources_X.py: 211 lines
+ - scalar_sources_XY.py: 537 lines
+ - setup.py: 64 lines
+ - test_scalar_fields_X.py: 394 lines
+ - test_scalar_fields_XY.py: 750 lines
+ - test_scalar_fields_XZ.py: 917 lines
+ - test_scalar_fields_X_multiprocessing.py: 462 lines
+ - test_scalar_masks_X.py: 515 lines
+ - test_scalar_masks_XY.py: 1068 lines
+ - test_scalar_masks_XYZ.py: 63 lines
+ - test_scalar_masks_XZ.py: 774 lines
+ - test_scalar_sources_X.py: 210 lines
+ - test_scalar_sources_XY.py: 565 lines
+ - test_utils_math.py: 182 lines
+ - test_utils_multiprocessing.py: 59 lines
+ - test_vector_draw_XY.py: 98 lines
+ - test_vector_fields_XY.py: 232 lines
+ - test_vector_masks_XY.py: 198 lines
+ - test_vector_sources_XY.py: 259 lines
+ - utils_common.py: 224 lines
+ - utils_drawing.py: 454 lines
+ - utils_drawing3D.py: 620 lines
+ - utils_dxf.py: 187 lines
+ - utils_math.py: 982 lines
+ - utils_multiprocessing.py: 169 lines
+ - utils_optics.py: 1218 lines
+ - utils_tests.py: 206 lines
+ - utils_typing.py: 59 lines
+ - vector_fields_X.py: 787 lines
+ - vector_fields_XY.py: 1923 lines
+ - vector_fields_XYZ.py: 661 lines
+ - vector_fields_XZ.py: 1834 lines
+ - vector_fields_Z.py: 774 lines
+ - vector_masks_XY.py: 622 lines
+ - vector_sources_XY.py: 410 lines
+
+Total number of lines in Python files: 33000

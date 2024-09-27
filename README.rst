@@ -68,7 +68,7 @@ One main part of this software is the generation of optical fields such as:
 * Vortex beams.
 * Laguerre beams.
 * Hermite-Gauss beams.
-* Zernike beams.
+* Zernike beams...
 
 .. image:: readme1.png
    :width: 400
@@ -83,7 +83,7 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 * Lenses, diffractive lenses, aspherical lenses...
 * Axicon, prisms, biprism, image, rough surface, gray scale ...
 * Gratings: Ronchi, phase, radial, angular, sine, forked, blazed, 2D, chess...
-* Others: Masks can also be loaded (.png, .dxf for 2D and .stl for 3D)
+* Others: Masks can also be loaded (.png, .dxf for 2D and .stl for 3D).
 
 .. image:: readme2.png
    :height: 400

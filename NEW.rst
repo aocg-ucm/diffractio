@@ -27,7 +27,7 @@ New Features
 
 * Other:
 
-  - Change license to GPLv3
+  - Change license to GPLv3.
 
 
 0.2.3 (2023-11-21)

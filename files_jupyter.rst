@@ -1,0 +1,73 @@
+Jupyter files
+================================
+
+ - BPM.ipynb: 376 lines
+ - CZT.ipynb: 811 lines
+ - CZT_vs_RS.ipynb: 747 lines
+ - FFT.ipynb: 399 lines
+ - RS.ipynb: 580 lines
+ - RS_vs_WPM.ipynb: 265 lines
+ - VCZT.ipynb: 537 lines
+ - VFFT.ipynb: 323 lines
+ - VRS.ipynb: 305 lines
+ - VRS_paper.ipynb: 621 lines
+ - WPM.ipynb: 387 lines
+ - WPM_vs_BPM.ipynb: 800 lines
+ - WPM_ws.ipynb: 716 lines
+ - arago_point.ipynb: 560 lines
+ - artifacts_bpm.ipynb: 516 lines
+ - blazed_grating.ipynb: 335 lines
+ - creating_video.ipynb: 400 lines
+ - dammann.ipynb: 359 lines
+ - developing_new_functions.ipynb: 229 lines
+ - diffraction_objects.ipynb: 1186 lines
+ - diffraction_slit.ipynb: 434 lines
+ - diffraction_slit.ipynb: 631 lines
+ - drawing_xz.ipynb: 668 lines
+ - dxf_XY.ipynb: 367 lines
+ - dxf_XZ.ipynb: 270 lines
+ - external_qt.ipynb: 394 lines
+ - fresnel_biprism.ipynb: 821 lines
+ - fresnel_equations.ipynb: 546 lines
+ - fresnel_lens.ipynb: 590 lines
+ - gauss_beam.ipynb: 335 lines
+ - gauss_beam.ipynb: 677 lines
+ - has_edges.ipynb: 305 lines
+ - interactive_in_diffractio.ipynb: 220 lines
+ - lens.ipynb: 828 lines
+ - lenses.ipynb: 1685 lines
+ - logarithm.ipynb: 334 lines
+ - masks_x.ipynb: 1144 lines
+ - masks_xy_procedures.ipynb: 684 lines
+ - masks_xyz.ipynb: 304 lines
+ - masks_xyz.ipynb: 304 lines
+ - masks_xz.ipynb: 1619 lines
+ - multiprocessing.ipynb: 1204 lines
+ - phase_intensity.ipynb: 269 lines
+ - power_z_propagation.ipynb: 194 lines
+ - quality_factor.ipynb: 576 lines
+ - reflection_refraction.ipynb: 654 lines
+ - reflection_refraction.ipynb: 721 lines
+ - scalar_field_z.ipynb: 314 lines
+ - scattering_small_cylinders.ipynb: 251 lines
+ - sources_x.ipynb: 439 lines
+ - sources_xy.ipynb: 899 lines
+ - surfaces.ipynb: 420 lines
+ - talbot_effect.ipynb: 506 lines
+ - tutorial_vector_XY.ipynb: 1063 lines
+ - tutorial_vector_XY_draw.ipynb: 412 lines
+ - tutorial_vector_masks_XY.ipynb: 403 lines
+ - tutorial_vector_sources_XY.ipynb: 1200 lines
+ - tutorial_x.ipynb: 1145 lines
+ - tutorial_xy.ipynb: 753 lines
+ - tutorial_xyz.ipynb: 763 lines
+ - tutorial_xyz.ipynb: 763 lines
+ - tutorial_xz.ipynb: 2046 lines
+ - use_interact_visualize_profiles.ipynb: 566 lines
+ - variable_refractive_index.ipynb: 601 lines
+ - vector_double_slit_experiment.ipynb: 480 lines
+ - wpm-bpm 3d.ipynb: 435 lines
+ - wpm_without_storing.ipynb: 397 lines
+ - wpm_without_storing.ipynb: 397 lines
+
+Total number of lines in Python files: 41483

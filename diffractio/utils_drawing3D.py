@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------
 # Name:        utils_drawing3D.py
-# Purpose:     Utility functions for 3D drawing operations
+# Purpose:     Utility functions for 3D drawing operations. Pyvista has been used for the implementation
 #
 # Author:      Luis Miguel Sanchez Brea
 #
@@ -12,15 +12,12 @@
 # ----------------------------------------------------------------------
 
 # -*- coding: utf-8 -*-
-""" Functions for drawing with pyvista """
 
 
 import numpy as np
-import collections
 
 import pyvista
 import pyvista as pv
-from pyvista.core import _vtk_core as _vtk
 from pyvista.core.utilities.helpers import wrap
 
 from .config import CONF_DRAWING, Draw_XYZ_Options, Draw_pyvista_Options
