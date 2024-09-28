@@ -28,7 +28,7 @@ def list_python_files_and_line_counts(directory: str, ext: str) -> list[tuple[st
 directory_path = "../diffractio"
 python_files, num_lines = list_python_files_and_line_counts(directory_path, ".py")
 
-with open("files_python.rst", 'w') as f:
+with open("docs/files_python.rst", 'w') as f:
     
     text = f"Python files"
     print(text)
@@ -52,7 +52,7 @@ python_files, num_lines = list_python_files_and_line_counts(directory_path, ".ip
 
 
 
-with open("files_jupyter.rst", 'w') as f:
+with open("docs/files_jupyter.rst", 'w') as f:
     text = f"Jupyter files"
     print(text)
     f.write(text+"\n")

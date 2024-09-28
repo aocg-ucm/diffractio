@@ -1,5 +1,5 @@
-examples_scalar
-==========================
+Examples for scalar propagation
+====================================================
 
 .. toctree::
    :maxdepth: 4

@@ -1,5 +1,5 @@
-examples_vector
-==========================
+Examples for vector propagation
+====================================================
 
 .. toctree::
    :maxdepth: 4

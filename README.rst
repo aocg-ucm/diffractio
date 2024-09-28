@@ -271,7 +271,7 @@ Scalar algorithms
 * Schmidt S. et al. "Rotationally symmetric formulation of the wave propagation method-application to the straylight analysis of diffractive lenses" Opt. Lett. 42, 1612 (2017).
 
 
-Scalar algorithms
+Vector algorithms
 ---------------------------
 
 **VFFT** 

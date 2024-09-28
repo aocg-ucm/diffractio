@@ -57,15 +57,13 @@ Solves the major limitations of the beam propagation method (BPM). The wave prop
    :glob:
 
 
-   FFT.ipynb
-   RS.ipynb
-   CZT.ipynb
-   BPM.ipynb
-   WPM.ipynb
+   source/tutorial_scalar/algorithms/tutorial.rst
+   source/tutorial_scalar/comparison/tutorial.rst
+   source/tutorial_scalar/scalar_X/tutorial.rst
+   source/tutorial_scalar/scalar_XY/tutorial.rst
+   source/tutorial_scalar/scalar_XYZ/tutorial.rst
+   source/tutorial_scalar/scalar_XZ/tutorial.rst
+   source/tutorial_scalar/scalar_Z/tutorial.rst
+   source/tutorial_scalar/drawing/tutorial.rst
+   source/tutorial_scalar/other/tutorial.rst
 
-
-**Some comparisons between algorithms**
-
-   comparison/RS_vs_WPM.ipynb
-   comparison/WPM_vs_BPM.ipynb
-   comparison/CZT_vs_RS.ipynb

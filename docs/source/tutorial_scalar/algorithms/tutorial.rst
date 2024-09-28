@@ -62,10 +62,3 @@ Solves the major limitations of the beam propagation method (BPM). The wave prop
    CZT.ipynb
    BPM.ipynb
    WPM.ipynb
-
-
-**Some comparisons between algorithms**
-
-   comparison/RS_vs_WPM.ipynb
-   comparison/WPM_vs_BPM.ipynb
-   comparison/CZT_vs_RS.ipynb

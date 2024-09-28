@@ -1,4 +1,4 @@
-Python files in the directory:
+Functions:
 ================================
 
 __init__.py
@@ -1684,60 +1684,28 @@ __________________________________________________
 
 
 
-Python files and lines
+Summary
 ============================
 
 
-File: vector_sources_XY.py
+File: vector_fields_XY.py
 _____________________________________________________________________
 
-  Number of lines: 410
+  Number of lines: 1923
 
   Number of classes: 1
 
-    Class: Vector_source_XY, Number of functions: 12
+    Class: Vector_field_XY, Number of functions: 32
 
 
-File: scalar_masks_XY.py
+File: vector_fields_XZ.py
 _____________________________________________________________________
 
-  Number of lines: 2593
+  Number of lines: 1834
 
   Number of classes: 1
 
-    Class: Scalar_mask_XY, Number of functions: 75
-
-
-File: scalar_fields_XYZ.py
-_____________________________________________________________________
-
-  Number of lines: 1510
-
-  Number of classes: 3
-
-    Class: Scalar_field_XYZ, Number of functions: 27
-
-    Class: , Number of functions: 0
-
-    Class: , Number of functions: 0
-
-
-File: utils_common.py
-_____________________________________________________________________
-
-  Number of lines: 224
-
-  Number of classes: 0
-
-
-File: scalar_fields_Z.py
-_____________________________________________________________________
-
-  Number of lines: 460
-
-  Number of classes: 1
-
-    Class: Scalar_field_Z, Number of functions: 16
+    Class: Vector_field_XZ, Number of functions: 39
 
 
 File: vector_fields_Z.py
@@ -1750,6 +1718,16 @@ _____________________________________________________________________
     Class: Vector_field_Z, Number of functions: 21
 
 
+File: utils_math.py
+_____________________________________________________________________
+
+  Number of lines: 982
+
+  Number of classes: 1
+
+    Class: , Number of functions: 0
+
+
 File: scalar_sources_X.py
 _____________________________________________________________________
 
@@ -1760,34 +1738,6 @@ _____________________________________________________________________
     Class: Scalar_source_X, Number of functions: 8
 
 
-File: scalar_sources_XY.py
-_____________________________________________________________________
-
-  Number of lines: 537
-
-  Number of classes: 1
-
-    Class: Scalar_source_XY, Number of functions: 13
-
-
-File: vector_fields_X.py
-_____________________________________________________________________
-
-  Number of lines: 787
-
-  Number of classes: 1
-
-    Class: Vector_field_X, Number of functions: 21
-
-
-File: utils_drawing3D.py
-_____________________________________________________________________
-
-  Number of lines: 620
-
-  Number of classes: 0
-
-
 File: __init__.py
 _____________________________________________________________________
 
@@ -1796,10 +1746,10 @@ _____________________________________________________________________
   Number of classes: 0
 
 
-File: utils_typing.py
+File: config.py
 _____________________________________________________________________
 
-  Number of lines: 59
+  Number of lines: 51
 
   Number of classes: 0
 
@@ -1814,22 +1764,76 @@ _____________________________________________________________________
     Class: Scalar_field_X, Number of functions: 42
 
 
-File: config.py
+File: scalar_masks_X.py
 _____________________________________________________________________
 
-  Number of lines: 51
+  Number of lines: 975
+
+  Number of classes: 1
+
+    Class: Scalar_mask_X, Number of functions: 28
+
+
+File: utils_optics.py
+_____________________________________________________________________
+
+  Number of lines: 1218
 
   Number of classes: 0
 
 
-File: utils_multiprocessing.py
+File: vector_masks_XY.py
 _____________________________________________________________________
 
-  Number of lines: 169
+  Number of lines: 622
 
   Number of classes: 1
 
-    Class: auxiliar_multiprocessing, Number of functions: 6
+    Class: Vector_mask_XY, Number of functions: 18
+
+
+File: vector_fields_X.py
+_____________________________________________________________________
+
+  Number of lines: 787
+
+  Number of classes: 1
+
+    Class: Vector_field_X, Number of functions: 21
+
+
+File: vector_sources_XY.py
+_____________________________________________________________________
+
+  Number of lines: 410
+
+  Number of classes: 1
+
+    Class: Vector_source_XY, Number of functions: 12
+
+
+File: utils_tests.py
+_____________________________________________________________________
+
+  Number of lines: 206
+
+  Number of classes: 0
+
+
+File: utils_drawing3D.py
+_____________________________________________________________________
+
+  Number of lines: 620
+
+  Number of classes: 0
+
+
+File: utils_drawing.py
+_____________________________________________________________________
+
+  Number of lines: 454
+
+  Number of classes: 0
 
 
 File: scalar_masks_XYZ.py
@@ -1842,70 +1846,6 @@ _____________________________________________________________________
     Class: Scalar_mask_XYZ, Number of functions: 6
 
 
-File: utils_optics.py
-_____________________________________________________________________
-
-  Number of lines: 1218
-
-  Number of classes: 0
-
-
-File: vector_fields_XY.py
-_____________________________________________________________________
-
-  Number of lines: 1923
-
-  Number of classes: 1
-
-    Class: Vector_field_XY, Number of functions: 32
-
-
-File: utils_dxf.py
-_____________________________________________________________________
-
-  Number of lines: 187
-
-  Number of classes: 0
-
-
-File: vector_fields_XZ.py
-_____________________________________________________________________
-
-  Number of lines: 1834
-
-  Number of classes: 1
-
-    Class: Vector_field_XZ, Number of functions: 39
-
-
-File: utils_tests.py
-_____________________________________________________________________
-
-  Number of lines: 206
-
-  Number of classes: 0
-
-
-File: utils_math.py
-_____________________________________________________________________
-
-  Number of lines: 982
-
-  Number of classes: 1
-
-    Class: , Number of functions: 0
-
-
-File: scalar_fields_XY.py
-_____________________________________________________________________
-
-  Number of lines: 2827
-
-  Number of classes: 1
-
-    Class: Scalar_field_XY, Number of functions: 58
-
-
 File: scalar_fields_XZ.py
 _____________________________________________________________________
 
@@ -1914,6 +1854,14 @@ _____________________________________________________________________
   Number of classes: 1
 
     Class: Scalar_field_XZ, Number of functions: 49
+
+
+File: utils_dxf.py
+_____________________________________________________________________
+
+  Number of lines: 187
+
+  Number of classes: 0
 
 
 File: vector_fields_XYZ.py
@@ -1932,6 +1880,44 @@ _____________________________________________________________________
     Class: , Number of functions: 0
 
 
+File: scalar_sources_XY.py
+_____________________________________________________________________
+
+  Number of lines: 537
+
+  Number of classes: 1
+
+    Class: Scalar_source_XY, Number of functions: 13
+
+
+File: scalar_fields_Z.py
+_____________________________________________________________________
+
+  Number of lines: 460
+
+  Number of classes: 1
+
+    Class: Scalar_field_Z, Number of functions: 16
+
+
+File: utils_typing.py
+_____________________________________________________________________
+
+  Number of lines: 59
+
+  Number of classes: 0
+
+
+File: utils_multiprocessing.py
+_____________________________________________________________________
+
+  Number of lines: 169
+
+  Number of classes: 1
+
+    Class: auxiliar_multiprocessing, Number of functions: 6
+
+
 File: scalar_masks_XZ.py
 _____________________________________________________________________
 
@@ -1942,32 +1928,46 @@ _____________________________________________________________________
     Class: Scalar_mask_XZ, Number of functions: 31
 
 
-File: vector_masks_XY.py
+File: scalar_masks_XY.py
 _____________________________________________________________________
 
-  Number of lines: 622
+  Number of lines: 2593
 
   Number of classes: 1
 
-    Class: Vector_mask_XY, Number of functions: 18
+    Class: Scalar_mask_XY, Number of functions: 75
 
 
-File: scalar_masks_X.py
+File: utils_common.py
 _____________________________________________________________________
 
-  Number of lines: 975
-
-  Number of classes: 1
-
-    Class: Scalar_mask_X, Number of functions: 28
-
-
-File: utils_drawing.py
-_____________________________________________________________________
-
-  Number of lines: 454
+  Number of lines: 224
 
   Number of classes: 0
+
+
+File: scalar_fields_XY.py
+_____________________________________________________________________
+
+  Number of lines: 2827
+
+  Number of classes: 1
+
+    Class: Scalar_field_XY, Number of functions: 58
+
+
+File: scalar_fields_XYZ.py
+_____________________________________________________________________
+
+  Number of lines: 1510
+
+  Number of classes: 3
+
+    Class: Scalar_field_XYZ, Number of functions: 27
+
+    Class: , Number of functions: 0
+
+    Class: , Number of functions: 0
 
 Total
 ============================
