@@ -3,7 +3,7 @@ Statistics: files, classes and functions
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :numbered:
    :glob:
 

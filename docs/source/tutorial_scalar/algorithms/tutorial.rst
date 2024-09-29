@@ -52,7 +52,7 @@ Solves the major limitations of the beam propagation method (BPM). The wave prop
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :numbered:
    :glob:
 

@@ -228,3 +228,44 @@ XY Vector fields
     :width: 600
 .. figure:: usage14.png
     :width: 600
+
+
+
+XZ Vector fields
+==================================
+
+.. code-block:: python
+
+  from diffractio import np
+  from diffractio import degrees, um
+
+
+  from diffractio.scalar_sources_X import Scalar_source_X
+  from diffractio.vector_fields_XZ import Vector_field_XZ
+
+  from py_pol.jones_vector import Jones_vector
+
+  x0 = np.linspace(-10 * um, 10 * um, 1024)
+  z0 = np.linspace(0 * um, 30 * um, 512)
+  wavelength = 2 * um
+
+  u0 = Scalar_source_X(x=x0, wavelength=wavelength)
+  u0.gauss_beam(A=1, x0=0, w0=2*um, z0=15*um, theta=0)
+
+  j0 = Jones_vector().general_azimuth_ellipticity(azimuth=0*degrees, ellipticity=0*degrees)
+
+  EH_xz = Vector_field_XZ(x0,z0, wavelength)
+  EH_xz.incident_field(u0=u0, j0=j0)
+
+  EH_xz.FP_WPM(has_edges=False)
+
+  EH_xz.draw('EH', draw_z = True, draw_borders=True, scale='scaled')
+
+  Sx, Sy, Sz = EH_xz.Poynting_vector_averaged(has_draw=True, draw_borders=True, scale='scaled')
+
+.. figure:: usage12.png
+    :width: 600
+.. figure:: usage13.png
+    :width: 600
+.. figure:: usage14.png
+    :width: 600

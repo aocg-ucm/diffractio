@@ -5,21 +5,11 @@ __init__.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 config.py
 __________________________________________________
-
-
- Standalone functions:
-
-   Number of functions: 0
 
 
 
@@ -28,9 +18,7 @@ __________________________________________________
 scalar_fields_X.py
 __________________________________________________
 
- Class: **Scalar_field_X**
-   Number of functions: 42
-
+ Class: **Scalar_field_X**. (42 functions)
     - CZT
 
     - MTF
@@ -116,20 +104,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_fields_XY.py
 __________________________________________________
 
- Class: **Scalar_field_XY**
-   Number of functions: 58
-
+ Class: **Scalar_field_XY**. (58 functions)
     - CZT
 
     - MTF
@@ -247,20 +228,13 @@ __________________________________________________
     - video
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_fields_XYZ.py
 __________________________________________________
 
- Class: **Scalar_field_XYZ**
-   Number of functions: 27
-
+ Class: **Scalar_field_XYZ**. (27 functions)
     - BPM
 
     - PWD
@@ -316,9 +290,7 @@ __________________________________________________
     - xy_2_xyz
 
 
- Standalone functions:
-
-   Number of functions: 13
+ Standalone functions: (13 functions)
 
   - average_intensity
 
@@ -353,9 +325,7 @@ __________________________________________________
 scalar_fields_XZ.py
 __________________________________________________
 
- Class: **Scalar_field_XZ**
-   Number of functions: 49
-
+ Class: **Scalar_field_XZ**. (49 functions)
     - BPM
 
     - BPM_back_propagation
@@ -455,20 +425,13 @@ __________________________________________________
     - video
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_fields_Z.py
 __________________________________________________
 
- Class: **Scalar_field_Z**
-   Number of functions: 16
-
+ Class: **Scalar_field_Z**. (16 functions)
     - DOF
 
     - FWHM1D
@@ -502,20 +465,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_masks_X.py
 __________________________________________________
 
- Class: **Scalar_mask_X**
-   Number of functions: 28
-
+ Class: **Scalar_mask_X**. (28 functions)
     - __init__
 
     - aspheric
@@ -573,20 +529,13 @@ __________________________________________________
     - two_levels
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_masks_XY.py
 __________________________________________________
 
- Class: **Scalar_mask_XY**
-   Number of functions: 75
-
+ Class: **Scalar_mask_XY**. (75 functions)
     - __init__
 
     - angular_aperture
@@ -738,20 +687,13 @@ __________________________________________________
     - widen
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_masks_XYZ.py
 __________________________________________________
 
- Class: **Scalar_mask_XYZ**
-   Number of functions: 6
-
+ Class: **Scalar_mask_XYZ**. (6 functions)
     - __init__
 
     - cylinder
@@ -765,20 +707,13 @@ __________________________________________________
     - stl
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_masks_XZ.py
 __________________________________________________
 
- Class: **Scalar_mask_XZ**
-   Number of functions: 31
-
+ Class: **Scalar_mask_XZ**. (31 functions)
     - __init__
 
     - _discretize_
@@ -842,20 +777,13 @@ __________________________________________________
     - wedge
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_sources_X.py
 __________________________________________________
 
- Class: **Scalar_source_X**
-   Number of functions: 8
-
+ Class: **Scalar_source_X**. (8 functions)
     - __init__
 
     - gauss_beam
@@ -873,20 +801,13 @@ __________________________________________________
     - spherical_wave
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 scalar_sources_XY.py
 __________________________________________________
 
- Class: **Scalar_source_XY**
-   Number of functions: 13
-
+ Class: **Scalar_source_XY**. (13 functions)
     - __init__
 
     - bessel_beam
@@ -914,11 +835,6 @@ __________________________________________________
     - zernike_beam
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
@@ -926,9 +842,7 @@ utils_common.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 9
+ Standalone functions: (9 functions)
 
   - clear_all
 
@@ -956,9 +870,7 @@ utils_drawing.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 11
+ Standalone functions: (11 functions)
 
   - change_image_size
 
@@ -990,9 +902,7 @@ utils_drawing3D.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 6
+ Standalone functions: (6 functions)
 
   - draw
 
@@ -1014,9 +924,7 @@ utils_dxf.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 4
+ Standalone functions: (4 functions)
 
   - binarize
 
@@ -1034,9 +942,7 @@ utils_math.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 36
+ Standalone functions: (36 functions)
 
   - Bluestein_dft_x
 
@@ -1117,9 +1023,7 @@ __________________________________________________
 utils_multiprocessing.py
 __________________________________________________
 
- Class: **auxiliar_multiprocessing**
-   Number of functions: 6
-
+ Class: **auxiliar_multiprocessing**. (6 functions)
     - __function_process__
 
     - __init__
@@ -1133,9 +1037,7 @@ __________________________________________________
     - method_single_proc
 
 
- Standalone functions:
-
-   Number of functions: 3
+ Standalone functions: (3 functions)
 
   - _pickle_method
 
@@ -1151,9 +1053,7 @@ utils_optics.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 24
+ Standalone functions: (24 functions)
 
   - DOF
 
@@ -1211,9 +1111,7 @@ utils_tests.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 9
+ Standalone functions: (9 functions)
 
   - _test_slit_RS_XY
 
@@ -1241,9 +1139,7 @@ utils_typing.py
 __________________________________________________
 
 
- Standalone functions:
-
-   Number of functions: 2
+ Standalone functions: (2 functions)
 
   - make_new_user
 
@@ -1256,9 +1152,7 @@ __________________________________________________
 vector_fields_X.py
 __________________________________________________
 
- Class: **Vector_field_X**
-   Number of functions: 21
-
+ Class: **Vector_field_X**. (21 functions)
     - __add__
 
     - __draw1__
@@ -1302,20 +1196,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 vector_fields_XY.py
 __________________________________________________
 
- Class: **Vector_field_XY**
-   Number of functions: 32
-
+ Class: **Vector_field_XY**. (32 functions)
     - CZT
 
     - IVFFT
@@ -1381,20 +1268,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 vector_fields_XYZ.py
 __________________________________________________
 
- Class: **Vector_field_XYZ**
-   Number of functions: 13
-
+ Class: **Vector_field_XYZ**. (13 functions)
     - __add__
 
     - __init__
@@ -1422,9 +1302,7 @@ __________________________________________________
     - to_Vector_field_XY
 
 
- Standalone functions:
-
-   Number of functions: 7
+ Standalone functions: (7 functions)
 
   - _compute1Elipse__
 
@@ -1447,9 +1325,7 @@ __________________________________________________
 vector_fields_XZ.py
 __________________________________________________
 
- Class: **Vector_field_XZ**
-   Number of functions: 39
-
+ Class: **Vector_field_XZ**. (39 functions)
     - FP_PWD_kernel_simple
 
     - FP_WPM
@@ -1529,20 +1405,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 vector_fields_Z.py
 __________________________________________________
 
- Class: **Vector_field_Z**
-   Number of functions: 21
-
+ Class: **Vector_field_Z**. (21 functions)
     - __add__
 
     - __draw1__
@@ -1586,20 +1455,13 @@ __________________________________________________
     - save_data
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 vector_masks_XY.py
 __________________________________________________
 
- Class: **Vector_mask_XY**
-   Number of functions: 18
-
+ Class: **Vector_mask_XY**. (18 functions)
     - __add__
 
     - __init__
@@ -1637,20 +1499,13 @@ __________________________________________________
     - to_py_pol
 
 
- Standalone functions:
-
-   Number of functions: 0
-
-
 
 
 
 vector_sources_XY.py
 __________________________________________________
 
- Class: **Vector_source_XY**
-   Number of functions: 12
-
+ Class: **Vector_source_XY**. (12 functions)
     - __init__
 
     - azimuthal_inverse_wave
@@ -1676,20 +1531,14 @@ __________________________________________________
     - to_py_pol
 
 
- Standalone functions:
-
-   Number of functions: 0
 
 
 
-
-
-Python files and lines
+Summary
 ============================
 
 
-File: vector_sources_XY.py
-_____________________________________________________________________
+**vector_sources_XY.py**
 
   Number of lines: 410
 
@@ -1698,8 +1547,7 @@ _____________________________________________________________________
     Class: Vector_source_XY, Number of functions: 12
 
 
-File: scalar_masks_XY.py
-_____________________________________________________________________
+**scalar_masks_XY.py**
 
   Number of lines: 2593
 
@@ -1708,8 +1556,7 @@ _____________________________________________________________________
     Class: Scalar_mask_XY, Number of functions: 75
 
 
-File: scalar_fields_XYZ.py
-_____________________________________________________________________
+**scalar_fields_XYZ.py**
 
   Number of lines: 1510
 
@@ -1722,16 +1569,12 @@ _____________________________________________________________________
     Class: , Number of functions: 0
 
 
-File: utils_common.py
-_____________________________________________________________________
+**utils_common.py**
 
   Number of lines: 224
 
-  Number of classes: 0
 
-
-File: scalar_fields_Z.py
-_____________________________________________________________________
+**scalar_fields_Z.py**
 
   Number of lines: 460
 
@@ -1740,8 +1583,7 @@ _____________________________________________________________________
     Class: Scalar_field_Z, Number of functions: 16
 
 
-File: vector_fields_Z.py
-_____________________________________________________________________
+**vector_fields_Z.py**
 
   Number of lines: 774
 
@@ -1750,8 +1592,7 @@ _____________________________________________________________________
     Class: Vector_field_Z, Number of functions: 21
 
 
-File: scalar_sources_X.py
-_____________________________________________________________________
+**scalar_sources_X.py**
 
   Number of lines: 211
 
@@ -1760,8 +1601,7 @@ _____________________________________________________________________
     Class: Scalar_source_X, Number of functions: 8
 
 
-File: scalar_sources_XY.py
-_____________________________________________________________________
+**scalar_sources_XY.py**
 
   Number of lines: 537
 
@@ -1770,8 +1610,7 @@ _____________________________________________________________________
     Class: Scalar_source_XY, Number of functions: 13
 
 
-File: vector_fields_X.py
-_____________________________________________________________________
+**vector_fields_X.py**
 
   Number of lines: 787
 
@@ -1780,32 +1619,22 @@ _____________________________________________________________________
     Class: Vector_field_X, Number of functions: 21
 
 
-File: utils_drawing3D.py
-_____________________________________________________________________
+**utils_drawing3D.py**
 
   Number of lines: 620
 
-  Number of classes: 0
 
-
-File: __init__.py
-_____________________________________________________________________
+**__init__.py**
 
   Number of lines: 84
 
-  Number of classes: 0
 
-
-File: utils_typing.py
-_____________________________________________________________________
+**utils_typing.py**
 
   Number of lines: 59
 
-  Number of classes: 0
 
-
-File: scalar_fields_X.py
-_____________________________________________________________________
+**scalar_fields_X.py**
 
   Number of lines: 1733
 
@@ -1814,16 +1643,12 @@ _____________________________________________________________________
     Class: Scalar_field_X, Number of functions: 42
 
 
-File: config.py
-_____________________________________________________________________
+**config.py**
 
   Number of lines: 51
 
-  Number of classes: 0
 
-
-File: utils_multiprocessing.py
-_____________________________________________________________________
+**utils_multiprocessing.py**
 
   Number of lines: 169
 
@@ -1832,8 +1657,7 @@ _____________________________________________________________________
     Class: auxiliar_multiprocessing, Number of functions: 6
 
 
-File: scalar_masks_XYZ.py
-_____________________________________________________________________
+**scalar_masks_XYZ.py**
 
   Number of lines: 279
 
@@ -1842,16 +1666,12 @@ _____________________________________________________________________
     Class: Scalar_mask_XYZ, Number of functions: 6
 
 
-File: utils_optics.py
-_____________________________________________________________________
+**utils_optics.py**
 
   Number of lines: 1218
 
-  Number of classes: 0
 
-
-File: vector_fields_XY.py
-_____________________________________________________________________
+**vector_fields_XY.py**
 
   Number of lines: 1923
 
@@ -1860,16 +1680,12 @@ _____________________________________________________________________
     Class: Vector_field_XY, Number of functions: 32
 
 
-File: utils_dxf.py
-_____________________________________________________________________
+**utils_dxf.py**
 
   Number of lines: 187
 
-  Number of classes: 0
 
-
-File: vector_fields_XZ.py
-_____________________________________________________________________
+**vector_fields_XZ.py**
 
   Number of lines: 1834
 
@@ -1878,16 +1694,12 @@ _____________________________________________________________________
     Class: Vector_field_XZ, Number of functions: 39
 
 
-File: utils_tests.py
-_____________________________________________________________________
+**utils_tests.py**
 
   Number of lines: 206
 
-  Number of classes: 0
 
-
-File: utils_math.py
-_____________________________________________________________________
+**utils_math.py**
 
   Number of lines: 982
 
@@ -1896,8 +1708,7 @@ _____________________________________________________________________
     Class: , Number of functions: 0
 
 
-File: scalar_fields_XY.py
-_____________________________________________________________________
+**scalar_fields_XY.py**
 
   Number of lines: 2827
 
@@ -1906,8 +1717,7 @@ _____________________________________________________________________
     Class: Scalar_field_XY, Number of functions: 58
 
 
-File: scalar_fields_XZ.py
-_____________________________________________________________________
+**scalar_fields_XZ.py**
 
   Number of lines: 2054
 
@@ -1916,8 +1726,7 @@ _____________________________________________________________________
     Class: Scalar_field_XZ, Number of functions: 49
 
 
-File: vector_fields_XYZ.py
-_____________________________________________________________________
+**vector_fields_XYZ.py**
 
   Number of lines: 661
 
@@ -1932,8 +1741,7 @@ _____________________________________________________________________
     Class: , Number of functions: 0
 
 
-File: scalar_masks_XZ.py
-_____________________________________________________________________
+**scalar_masks_XZ.py**
 
   Number of lines: 1582
 
@@ -1942,8 +1750,7 @@ _____________________________________________________________________
     Class: Scalar_mask_XZ, Number of functions: 31
 
 
-File: vector_masks_XY.py
-_____________________________________________________________________
+**vector_masks_XY.py**
 
   Number of lines: 622
 
@@ -1952,8 +1759,7 @@ _____________________________________________________________________
     Class: Vector_mask_XY, Number of functions: 18
 
 
-File: scalar_masks_X.py
-_____________________________________________________________________
+**scalar_masks_X.py**
 
   Number of lines: 975
 
@@ -1962,12 +1768,9 @@ _____________________________________________________________________
     Class: Scalar_mask_X, Number of functions: 28
 
 
-File: utils_drawing.py
-_____________________________________________________________________
+**utils_drawing.py**
 
   Number of lines: 454
-
-  Number of classes: 0
 
 Total
 ============================

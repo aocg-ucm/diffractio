@@ -131,9 +131,7 @@ class Scalar_field_X():
     def __str__(self):
         """Represents main data of the atributes."""
 
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         Imin = (np.abs(self.u) ** 2).min()
         Imax = (np.abs(self.u) ** 2).max()
@@ -172,9 +170,7 @@ class Scalar_field_X():
 
         TODO: improve to have better usage
         """
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         u3 = Scalar_field_X(self.x, self.wavelength)
 
@@ -225,9 +221,7 @@ class Scalar_field_X():
     def conjugate(self, new_field: bool = True):
         """Conjugates the field"""
 
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
 
         if new_field is True:
             u_new = self.duplicate()
@@ -317,13 +311,9 @@ class Scalar_field_X():
             (Scalar_field_X): if new_field is True
         """
         
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
         
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
 
         if x_limits is None:
             # used only for resampling
@@ -395,9 +385,7 @@ class Scalar_field_X():
         """
         from diffractio.scalar_masks_X import Scalar_mask_X
 
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
 
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
@@ -421,9 +409,7 @@ class Scalar_field_X():
         Returns:
             Scalar_mask_X:  If new_field is True, it returns a Scalar_mask_X object.
         """
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
         
         amplitude = np.abs(self.u)
         phase = np.angle(self.u)
@@ -447,9 +433,7 @@ class Scalar_field_X():
 
         from .scalar_masks_X import Scalar_mask_X  # Do not write up
 
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
 
         slit = Scalar_mask_X(self.x, self.wavelength)
         slit.slit(x0=0, size=size)
@@ -534,13 +518,9 @@ class Scalar_field_X():
             new_field (bool): If True, a new mask is produced, else, the mask is modified.
 
         """
-        if self.u is None:
-            print("function not available: self.u = None")
-            return -1
+
         
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
         
         u0 = self.u
         x0 = self.x
@@ -589,9 +569,7 @@ class Scalar_field_X():
             (array or Scalar_field_X or None): FFT of the input field
         """
         
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         ttf1 = fft(self.u)
         if remove0 is True:
@@ -645,9 +623,7 @@ class Scalar_field_X():
         Returns:
             (array or Scalar_field_X or None): FFT of the input field
         """
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         ttf1 = ifft(self.u)
         if remove0 is True:
@@ -715,9 +691,7 @@ class Scalar_field_X():
                 F. Shen and A. Wang, “Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula,” Appl. Opt., vol. 45, no. 6, pp. 1102–1110, 2006.
         """
 
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         if xout is None:
             xout = self.x[0]
@@ -814,9 +788,7 @@ class Scalar_field_X():
             This approach a quality parameter: If self.quality>1, propagation is right.
         """
 
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         width_x = self.x[-1] - self.x[0]
         num_pixels = len(self.x)
@@ -886,9 +858,7 @@ class Scalar_field_X():
         References:
             [Light: Science and Applications, 9(1), (2020)]
         """
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
         
         if xout is None:
             xout = self.x
@@ -1039,9 +1009,7 @@ class Scalar_field_X():
         """
         from diffractio.scalar_masks_XZ import Scalar_mask_XZ
         
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
         
         k0 = 2 * np.pi / self.wavelength
         dx = self.x[1] - self.x[0]
@@ -1202,9 +1170,7 @@ class Scalar_field_X():
             (numpy.array) mtf_norm: normalizd MTF
         """
         
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         tmp_field = self.u
         x = self.x
@@ -1281,9 +1247,7 @@ class Scalar_field_X():
             falling: positions of falling
         """
 
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         pos_transitions, type_transitions, raising, falling = get_edges(
             self.x, self.u, kind_transition, min_step, verbose, filename
@@ -1303,9 +1267,7 @@ class Scalar_field_X():
             z_min (float): z_min for quality_factor>quality
         """
 
-        if self.x is None:
-            print("function not available: self.x = None")
-            return -1
+
 
         range_x = self.x[-1] - self.x[0]
         num_x = len(self.x)

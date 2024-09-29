@@ -1601,7 +1601,7 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         E  list(Ex, Ey, Ez): Field E(z+dz) at at distance dz from the incident field.
         H  list(Ex, Ey, Ez): Field H(z+dz) at at distance dz from the incident field.
         
-    TODO: The kernel is not complete. It is necessary to solve the Gamma parameter.
+    TODO: The kernel is not complete. It is necessary to solve the Gamma parameter and check with comsol
     """
 
     # amplitude of waveplanes

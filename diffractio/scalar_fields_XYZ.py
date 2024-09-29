@@ -64,7 +64,6 @@ import sys
 import time
 import types
 from multiprocessing import Pool
-from typing import Literal
 
 import matplotlib.animation as anim
 from numpy import cos, diff, gradient, sin
@@ -75,7 +74,7 @@ from diffractio.config import Draw_XYZ_Options
 
 from .__init__ import degrees, mm, np, plt, num_max_processors
 from .config import CONF_DRAWING
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
 from .utils_common import get_date, load_data_common, save_data_common
@@ -1323,7 +1322,7 @@ class Scalar_field_XYZ():
         h1.set_cmap(cmap)  # OrRd # Reds_r gist_heat
         plt.colorbar()
         
-    def draw_XYZ(self, kind: Draw_XYZ_Options = 'intensity', drawing: str = 'volume',  has_grid: bool=False,  filename: str = '', **kwargs):
+    def draw_XYZ(self, kind: Draw_XYZ_Options = 'intensity', drawing: Draw_pyvista_Options = 'volume',  has_grid: bool=False,  filename: str = '', **kwargs):
         """Draws the intensity distribution or the refractive index. There are serveral procedures:
 
         Args:
@@ -1332,7 +1331,8 @@ class Scalar_field_XYZ():
             has_grid (bool, optional): add grid. Defaults to False.
             filename (str, optional): saves images: html, png or svg. Defaults to ''.
         """        
-        draw(self, kind, drawing, has_grid,  filename, **kwargs)
+        pl = draw(self, kind, drawing, has_grid,  filename, **kwargs)
+        return pl
 
 
     def video_isovalue(self,  filename: str, kind: str = 'refractive_index',   **kwargs):

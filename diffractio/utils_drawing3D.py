@@ -235,7 +235,7 @@ def draw(
     if 'cmap' in kwargs.keys():
         cmap = kwargs["cmap"]
     else:
-        cmap = 'coolwarm'
+        cmap = 'gist_heat'
 
     if 'spacing' in kwargs.keys():
         spacing = kwargs["spacing"]
@@ -257,7 +257,7 @@ def draw(
     if 'camera_position' in kwargs.keys():
         camera_position = kwargs["camera_position"]
     else:
-        camera_position = "xy"
+        camera_position = 'xy'
 
                        
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
@@ -290,10 +290,8 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True)
-        #vol.prop.interpolation_type = "linear"
-        pl.reset_camera()
-        pl.camera_position = camera_position
-        pl.camera_position = cpos
+        pl.set_position((1,1,1))
+        pl.reset_camera(self)
 
 
 
@@ -472,7 +470,7 @@ def draw(
         elif filename[-3:] == "png":
             pl.screenshot(filename)
             
-    
+    return pl
 
 
 def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs):

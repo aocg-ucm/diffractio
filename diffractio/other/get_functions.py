@@ -187,41 +187,41 @@ with open('functions.rst', 'w') as rst_file:
         classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
         for cl in classes:
             if cl not in ('', [], None):
-                rst_file.write(f" Class: **{cl}**\n")
-                rst_file.write(f"   Number of functions: {len(class_functions[cl])}\n\n")
+                rst_file.write(f" Class: **{cl}**. ({len(class_functions[cl])} functions)\n")
                 num_functions += len(class_functions[cl])
 
             for function in sorted(class_functions[cl]):
                 rst_file.write(f"    - {function}\n\n")
                 
-        rst_file.write("\n Standalone functions:\n\n")
-        rst_file.write(f"   Number of functions: {len(standalone_functions)}\n\n")
-        num_functions += len(standalone_functions)
+        if len(standalone_functions) > 0:
+            rst_file.write(f"\n Standalone functions: ({len(standalone_functions)} functions)\n\n")
+            num_functions += len(standalone_functions)
 
         for function in sorted(standalone_functions):
             rst_file.write(f"  - {function}\n\n")
         rst_file.write("\n\n\n\n")
         
         
-    rst_file.write(f"Python files and lines\n")
+    rst_file.write(f"Summary\n")
     rst_file.write(f"============================\n\n")
-  
+
     
     ## Number of lines in each file
 
     for file in python_files:
         file_path = os.path.join(directory, file)
         classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
-        rst_file.write(f"\nFile: {file}\n")
-        rst_file.write(f"_____________________________________________________________________\n\n")
+        rst_file.write(f"\n**{file}**\n\n")
 
         with open(file_path, 'r') as f:
             lines = f.readlines()
             num_lines = len(lines)
             rst_file.write(f"  Number of lines: {num_lines}\n\n")
-        rst_file.write(f"  Number of classes: {len(classes)}\n\n")
-        for cl in classes:
-            rst_file.write(f"    Class: {cl}, Number of functions: {len(class_functions[cl])}\n\n")
+            
+        if len(classes)>0:
+            rst_file.write(f"  Number of classes: {len(classes)}\n\n")
+            for cl in classes:
+                rst_file.write(f"    Class: {cl}, Number of functions: {len(class_functions[cl])}\n\n")
             
 
     total_lines = sum(len(open(os.path.join(directory, file), 'r').readlines()) for file in python_files)
