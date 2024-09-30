@@ -24,6 +24,38 @@ from scipy.io import loadmat, savemat
 
 
 
+# def check_none(*variables):
+#     """
+#     check_none Decorator to check whether some variables are None before executing the method.
+#     If the variable is None, the method is not executed and a message is printed.
+
+#     _extended_summary_
+#     """
+#     def decorator(func):
+#         def wrapper(self, *args, **kwargs):
+#             for variable in variables:
+#                 if getattr(self, variable) is None:
+#                     print(f"{variable} is None: the method is not executed")
+#                     return  # Return immediately, do not execute the method
+#             return func(self, *args, **kwargs)
+#         return wrapper
+#     return decorator
+
+def check_none(*variables, raise_exception=False):
+    def decorator(func):
+        def wrapper(self, *args, **kwargs):
+            for variable in variables:
+                if getattr(self, variable) is None:
+                    if raise_exception:
+                        raise ValueError(f"{variable} is None")
+                    else:
+                        print(f"{variable} is None")
+                    return  # Return immediately, do not execute the method
+            return func(self, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
 def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:
     """Determine several computer Args:
         - number of processors
