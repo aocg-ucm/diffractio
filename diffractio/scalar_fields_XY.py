@@ -75,12 +75,10 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-from diffractio.config import Draw_XY_Options
-
 from .__init__ import np, plt
 from .__init__ import degrees, mm, seconds, um
 
-from .config import CONF_DRAWING, Save_mask_Options
+from .config import CONF_DRAWING, Draw_XY_Options, Save_mask_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,

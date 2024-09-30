@@ -70,10 +70,8 @@ from numpy import cos, diff, gradient, sin
 from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RegularGridInterpolator
 
-from diffractio.config import Draw_XYZ_Options
-
 from .__init__ import degrees, mm, np, plt, num_max_processors
-from .config import CONF_DRAWING
+from .config import CONF_DRAWING, Draw_pyvista_Options, Draw_XYZ_Options
 from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
