@@ -672,7 +672,7 @@ class Scalar_mask_X(Scalar_field_X):
             period (float): period of the grating
             phase_max (float): maximum_phase_differences
 
-        returns:
+        Returns:
             phase (np.array): phase for each position
         """
 

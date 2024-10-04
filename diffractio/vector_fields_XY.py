@@ -146,9 +146,8 @@ class Vector_field_XY():
 
         EM = Vector_field_XY(self.x, self.y, self.wavelength)
 
-        if kind == 'standard':
-            EM.Ex = self.Ex + other.Ex
-            EM.Ey = self.Ey + other.Ey
+        EM.Ex = self.Ex + other.Ex
+        EM.Ey = self.Ey + other.Ey
 
         return EM
 

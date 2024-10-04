@@ -115,7 +115,7 @@ class Vector_field_X():
         return ""
 
     @check_none('x','Ex','Ey','Ez',raise_exception=False)
-    def __add__(self, other, kind: str = 'standard'):
+    def __add__(self, other):
         """adds two Vector_field_X. For example two light sources or two masks
 
         Args:
@@ -128,10 +128,9 @@ class Vector_field_X():
 
         EM = Vector_field_X(self.x, self.wavelength)
 
-        if kind == 'standard':
-            EM.Ex = self.Ex + other.Ex
-            EM.Ey = self.Ey + other.Ey
-            EM.Ez = self.Ez + other.Ez
+        EM.Ex = self.Ex + other.Ex
+        EM.Ey = self.Ey + other.Ey
+        EM.Ez = self.Ez + other.Ez
 
         return EM
 
@@ -286,9 +285,9 @@ class Vector_field_X():
 
     @check_none('x','Ex','Ey','Ez',raise_exception=False)
     def intensity(self):
-        """"Returns intensity.
+        """Returns intensity.
 
-        returns: 
+        Returns: 
             intensity (ndarray). Intensity
         """
         intensity = np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(
@@ -299,7 +298,7 @@ class Vector_field_X():
 
     @check_none('x','Ex','Ey',raise_exception=False)
     def polarization_states(self, matrix: bool = False):
-    """returns the Stokes parameters.
+        """Returns the Stokes parameters.
 
         Args:
             Matrix (bool): if True returns Matrix, else Scalar_field_X

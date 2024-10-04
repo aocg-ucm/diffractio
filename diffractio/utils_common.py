@@ -21,25 +21,11 @@ import multiprocessing
 import numpy as np
 import psutil
 from scipy.io import loadmat, savemat
+from scipy.ndimage import center_of_mass
+
+from .config import Options_add
 
 
-
-# def check_none(*variables):
-#     """
-#     check_none Decorator to check whether some variables are None before executing the method.
-#     If the variable is None, the method is not executed and a message is printed.
-
-#     _extended_summary_
-#     """
-#     def decorator(func):
-#         def wrapper(self, *args, **kwargs):
-#             for variable in variables:
-#                 if getattr(self, variable) is None:
-#                     print(f"{variable} is None: the method is not executed")
-#                     return  # Return immediately, do not execute the method
-#             return func(self, *args, **kwargs)
-#         return wrapper
-#     return decorator
 
 def check_none(*variables, raise_exception=False):
     def decorator(func):
@@ -54,6 +40,217 @@ def check_none(*variables, raise_exception=False):
             return func(self, *args, **kwargs)
         return wrapper
     return decorator
+
+
+def oversample(self, kind: str, factor_rate: int | tuple = (2,2)):
+    """_summary_
+
+    Args:
+        factor_rate (tuple, optional): _description_. Defaults to (2,2).
+    """
+
+
+    if kind = 'scalar_x':
+
+        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
+        self.u =  new_matrix.repeat(factor_rate[0])
+
+
+    elif kind = 'scalar_xy':
+
+        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
+        self.y = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
+        self.X, self.Y = np.meshgrid(self.x, self.y)
+
+        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
+        self.u =  new_matrix.repeat(factor_rate[0],axis=1)
+
+    elif kind = 'scalar_xyz':
+
+        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
+        self.y = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
+        self.z = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
+        self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
+
+        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
+        new_matrix =  new_matrix(factor_rate[1],axis=1)
+        self.u =  new_matrix.repeat(factor_rate[2],axis=2)
+
+
+        new_matrix =  self.n.repeat(factor_rate[0],axis=0)
+        new_matrix =  new_matrix(factor_rate[1],axis=1)
+        self.n =  new_matrix.repeat(factor_rate[2],axis=2)
+
+
+    elif kind = 'scalar_xz':
+
+        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
+        self.z = np.linspace(self.z[0], self.z[-1], factor_rate[0]*len(self.z))
+        self.X, self.Y = np.meshgrid(self.x, self.y)
+
+        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
+        self.u =  new_matrix.repeat(factor_rate[0],axis=1)
+
+        new_matrix =  self.n.repeat(factor_rate[0],axis=0)
+        self.n =  new_matrix.repeat(factor_rate[0],axis=1)
+
+
+    return self
+
+
+def add(self, other, kind: Options_add  = 'source'):
+    """adds two fields. For example two light sources or two masks. The fields are added as complex numbers and then normalized so that the maximum amplitude is 1.
+    
+    Args:
+        other (Vector_field_X): 2nd field to add
+        kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'distances'].
+            - 'source': adds the fields as they are
+            - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+            - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+            - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+            - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
+
+    Returns:
+        sum of the two fields.
+    """
+
+    
+    from diffractio.scalar_sources_X import Scalar_source_X
+    from diffractio.scalar_sources_XY import Scalar_source_XY
+    from diffractio.scalar_masks_X import Scalar_mask_X
+    from diffractio.scalar_masks_XY import Scalar_mask_XY
+    
+
+    if isinstance(self, Scalar_mask_XY):
+        t = Scalar_mask_XY(self.x, self.y, self.wavelength)
+    elif isinstance(self, Scalar_source_XY):
+        t = Scalar_source_XY(self.x, self.y, self.wavelength)
+    elif isinstance(self, Scalar_mask_X):
+        t = Scalar_mask_X(self.x, self.wavelength)
+    elif isinstance(self, Scalar_source_X):
+        t = Scalar_source_X(self.x,  self.wavelength)
+
+
+    if kind == 'source':
+        if isinstance(other, tuple):
+            t.u = self.u
+            for o in other:
+                t.u += o.u
+        else:        
+            t.u = self.u + other.u
+    
+    elif kind == 'mask':
+        t1 = np.abs(self.u)
+        f1 = np.angle(self.u)
+        if isinstance(other, tuple):
+
+            t.u = self.u
+            for o in other:
+                t2 = np.abs(o.u)
+                f2 = np.angle(o.u)
+                t.u += o.u
+                i_change = t1+t2>1
+                t.u[i_change]=(np.exp(1j*f1[i_change])+np.exp(1j*f2[i_change])).astype(np.complex128)
+                t.u[i_change]= t.u[i_change]/np.abs( t.u[i_change])
+        else:
+            t2 = np.abs(other.u)
+            f2 = np.angle(other.u)
+
+            t.u = self.u + other.u
+            i_change = t1+t2>1
+            t.u[i_change]=(np.exp(1j*f1[i_change])+np.exp(1j*f2[i_change])).astype(np.complex128)
+            t.u[i_change]= t.u[i_change]/np.abs( t.u[i_change])
+    
+    elif kind == 'phases':
+        t1 = np.abs(self.u)
+        f1 = np.angle(self.u)
+        
+        if isinstance(other, tuple):
+            t.u = self.u
+            for o in other:
+                t2 = np.abs(o.u)
+                f2 = np.angle(o.u)
+                t.u += o.u
+                t.u = t1 * np.exp(1j * (f1 + f2))
+        else:
+            t2 = np.abs(other.u)
+            f2 = np.angle(other.u)
+        
+            ts = t1 + t2
+            ts[ts > 0] = 1.
+            t.u = ts * np.exp(1j * (f1 + f2))
+
+    elif kind == 'no_overlap':
+        
+        if isinstance(other, tuple):
+            t.u = self.u
+            for i, o in enumerate(other):
+                i_pos1 = np.abs(t.u)>0
+                i_pos2 = np.abs(o.u)>0
+                print((i_pos1*i_pos2).sum())
+                if (i_pos1 & i_pos2).any():
+                    raise ValueError('The field {i} overlap with a previous one')
+                t.u += o.u
+        else:
+            t1 = np.abs(self.u)
+            t2 = np.abs(other.u)
+            i_pos1 = t1>0
+            i_pos2 = t2>0
+            if (i_pos1 & i_pos2).any():
+                raise ValueError('The two fields overlap')
+            
+    elif kind == 'distances':
+        if isinstance(other, tuple): #todo: with simultaneous control of distances, not with for loop.
+            pass
+            
+            """t.u = self.u
+
+            for o in other:
+                t.u = t.u + o.u
+                com3 = center_of_mass(np.abs(t.u)>0)
+                com4 = center_of_mass(np.abs(o.u)>0)
+                
+                t_max =  np.abs(t.u)>0
+                o_max =  np.abs(o.u)>0
+                overlap = t_max * o_max
+                
+                x3_center = t.x[int(com3[0])]
+                x4_center = o.x[int(com4[0])]
+                
+                dist_t = np.abs(t.x-x3_center) * (np.abs(t.u)>0)
+                dist_o = np.abs(o.x-x4_center) * (np.abs(o.u)>0)
+
+                t.u = t.u+o.u
+                i_menor = dist_t<dist_o
+                i_mayor = dist_t>=dist_o
+
+                t.u[i_menor*overlap] = t.u[i_menor*overlap]
+                t.u[i_mayor*overlap] = o.u[i_mayor*overlap]"""
+        else:  #only for 1D    
+            print("not valid for 2D")
+            t.u = self.u + other.u
+            com3 = center_of_mass(np.abs(self.u)>0)
+            com4 = center_of_mass(np.abs(other.u)>0)
+            
+            self_max =  np.abs(self.u)>0
+            other_max =  np.abs(other.u)>0
+            overlap = self_max * other_max
+            
+            x3_center = self.x[int(com3[0])]
+            x4_center = other.x[int(com4[0])]
+            
+            dist_self = np.abs(self.x-x3_center) * (np.abs(self.u)>0)
+            dist_other = np.abs(other.x-x4_center) * (np.abs(other.u)>0)
+
+            t.u = self.u+other.u
+            i_menor = dist_self<dist_other
+            i_mayor = dist_self>=dist_other
+
+            t.u[i_menor*overlap] = self.u[i_menor*overlap]
+            t.u[i_mayor*overlap] = other.u[i_mayor*overlap]
+        
+    return t
+
 
 
 def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:

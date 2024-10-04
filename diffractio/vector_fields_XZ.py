@@ -147,7 +147,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
-    def __add__(self, other, kind="standard"):
+    def __add__(self, other):
         """adds two Vector_field_X. For example two light sources or two masks
 
         Args:
@@ -160,10 +160,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         EM = Vector_field_XZ(self.x, self.z, self.wavelength)
 
-        if kind == "standard":
-            EM.Ex = self.Ex + other.Ex
-            EM.Ey = self.Ey + other.Ey
-            EM.Ez = self.Ez + other.Ez
+        EM.Ex = self.Ex + other.Ex
+        EM.Ey = self.Ey + other.Ey
+        EM.Ez = self.Ez + other.Ez
 
         return EM
 
@@ -391,7 +390,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             E_new.Ez = self.Ez * u.u
             return E_new
 
-    @check_none('x','z','raise_exception=False)
+    @check_none('x','z',raise_exception=False)
     def FP_WPM(
         self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False
     ):

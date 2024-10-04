@@ -115,7 +115,7 @@ class Vector_field_Z():
 
         return ""
 
-    def __add__(self, other, kind: str = 'standard'):
+    def __add__(self, other):
         """adds two Vector_field_Z. For example two light sources or two masks
 
         Args:
@@ -128,10 +128,9 @@ class Vector_field_Z():
 
         EM = Vector_field_Z(self.z, self.wavelength)
 
-        if kind == 'standard':
-            EM.Ex = self.Ex + other.Ex
-            EM.Ey = self.Ey + other.Ey
-            EM.Ez = self.Ez + other.Ez
+        EM.Ex = self.Ex + other.Ex
+        EM.Ey = self.Ey + other.Ey
+        EM.Ez = self.Ez + other.Ez
 
         return EM
 

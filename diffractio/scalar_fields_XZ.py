@@ -1292,7 +1292,7 @@ class Scalar_field_XZ():
             has_draw (bool): Draws the intensity
             normalized (bool): Draws it normalized
 
-        returns:
+        Returns:
             (np.array): array with intensity I(z)
         """
 

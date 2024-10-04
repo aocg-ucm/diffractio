@@ -80,7 +80,7 @@ from .__init__ import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING, Draw_XY_Options, Save_mask_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, add, check_none, oversample
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
 from .utils_math import (get_edges, get_k, nearest, nearest2,
@@ -167,19 +167,44 @@ class Scalar_field_XY():
             print(" - info:       {}".format(self.info))
         return ("")
 
-    @check_none('x','y','u',raise_exception=False)
+    @check_none('x','u',raise_exception=False)
     def __add__(self, other):
-        """Adds two Scalar_field_X. For example two light sources or two masks
+        """Adds two Scalar_field_x. For example two light sources or two masks.
 
-        Args:
-            other (Scalar_field_X): 2 field to add
-
+         Args:
+            other (Scalar_field_X): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
+           
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
         """
-        u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-        u3.u = self.u + other.u
-        return u3
+
+        if self.type == 'Scalar_mask_XY':
+            t = add(self, other, kind='mask')
+        elif self.type == 'Scalar_source_XY' or 'Scalar_field_XY':
+            t = add(self, other, kind='source')
+            
+        return t
+
+    def add(self, other, kind):
+        """Adds two Scalar_field_xy. For example two light sources or two masks.
+
+         Args:
+            other (Scalar_field_XY): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
+            - 'source': adds the fields as they are
+            - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+            - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+            - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+            - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
+
+
+        Returns:
+            Scalar_field_XY: `u3 = u1 + u2`
+        """
+
+        t = add(self, other, kind)
+        return t
 
     @check_none('x','y','u',raise_exception=False)
     def __sub__(self, other):
@@ -262,32 +287,6 @@ class Scalar_field_XY():
 
         self = reduce_to_1(self)
 
-    @check_none('x','y','u',raise_exception=False)
-    def add(self, other, kind: str = 'standard'):
-        """adds two Scalar_field_xy. For example two light sources or two masks
-
-        Args:
-            other (Scalar_field_X): 2 field to add
-            kind (str): instruction how to add the fields: - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1. - 'standard': add fields u3=u1+u2 and does nothing.
-
-        Returns:
-            Scalar_field_X: `u3 = u1 + u2`
-        """
-        
-        if kind == 'standard':
-            u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-            u3.u = self.u + other.u
-        elif kind == 'maximum1':
-            u3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-            t1 = np.abs(self.u)
-            t2 = np.abs(other.u)
-            f1 = np.angle(self.u)
-            f2 = np.angle(other.u)
-            t3 = t1 + t2
-            t3[t3 > 0] = 1.
-            u3.u = t3 * np.exp(1j * (f1 + f2))
-
-        return u3
 
     @check_none('x','y',raise_exception=False)
     def rotate(self, angle: float, position: tuple[float, float] | None = None,
@@ -307,10 +306,8 @@ class Scalar_field_XY():
 
         center_rotation = y0, x0
 
-        u_real_rotate = rotate_image(self.x, self.y, np.real(self.u),
-                                     -angle * 180 / np.pi, center_rotation)
-        u_imag_rotate = rotate_image(self.x, self.y, np.imag(self.u),
-                                     -angle * 180 / np.pi, center_rotation)
+        u_real_rotate = rotate_image(self.x, self.y, np.real(self.u), -angle * 180 / np.pi, center_rotation)
+        u_imag_rotate = rotate_image(self.x, self.y, np.imag(self.u), -angle * 180 / np.pi, center_rotation)
         u_rotate = u_real_rotate + 1j * u_imag_rotate
 
         if new_field is True:
@@ -319,6 +316,8 @@ class Scalar_field_XY():
             return u_new
         else:
             self.u = u_rotate
+
+
 
     @check_none('x','y','X','Y',raise_exception=False)
     def apodization(self, power: int = 10):
@@ -512,18 +511,8 @@ class Scalar_field_XY():
             y_new = np.linspace(y0, y1, num_points_y)
             X_new, Y_new = np.meshgrid(x_new, y_new)
 
-            f_interp_abs = RectBivariateSpline(self.y,
-                                               self.x,
-                                               np.abs(self.u),
-                                               kx=kxu,
-                                               ky=kxu,
-                                               s=0)
-            f_interp_phase = RectBivariateSpline(self.y,
-                                                 self.x,
-                                                 np.angle(self.u),
-                                                 kx=kxu,
-                                                 ky=kxu,
-                                                 s=0)
+            f_interp_abs = RectBivariateSpline(self.y, self.x,np.abs(self.u),kx=kxu,ky=kxu,s=0)
+            f_interp_phase = RectBivariateSpline(self.y,  self.x,  np.angle(self.u),  kx=kxu,  ky=kxu,  s=0)
             u_new_abs = f_interp_abs(y_new, x_new)
             u_new_phase = f_interp_phase(y_new, x_new)
             u_new = u_new_abs * np.exp(1j * u_new_phase)
@@ -1237,8 +1226,7 @@ class Scalar_field_XY():
             indexes_y_roi, _, _ = nearest2(y, yout_roi)
             indexes_z_roi, _, _ = nearest2(zs, zout_roi)
 
-            indexes_X_roi, indexes_Y_roi = np.meshgrid(indexes_x_roi,
-                                                       indexes_y_roi)
+            indexes_X_roi, indexes_Y_roi = np.meshgrid(indexes_x_roi,        indexes_y_roi)
             # indexes_x_roi = np.unique(indexes_x_roi)
             # indexes_y_roi = np.unique(indexes_y_roi)
             # indexes_z_roi = np.unique(indexes_z_roi)
@@ -1277,18 +1265,15 @@ class Scalar_field_XY():
 
             if num_sampling is not None:
                 if j in indexes_z_gv:
-                    u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_Y_gv,
-                                                           indexes_X_gv]
+                    u_out_gv.u[:, :, iz_out_gv] = u_iter.u[indexes_Y_gv,            indexes_X_gv]
                     u_out_gv.n[:, :, iz_out_gv] = refractive_index[indexes_Y_gv, indexes_X_gv]                   
                     iz_out_gv = iz_out_gv + 1
 
             if ROI is not None:
                 if j in indexes_z_roi:
-                    u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_Y_roi,
-                                                             indexes_X_roi]
+                    u_out_roi.u[:, :, iz_out_roi] = u_iter.u[indexes_Y_roi,              indexes_X_roi]
                     
-                    u_out_roi.n[:, :, iz_out_roi] = refractive_index[indexes_Y_roi,
-                                                             indexes_X_roi]                 
+                    u_out_roi.n[:, :, iz_out_roi] = refractive_index[indexes_Y_roi,              indexes_X_roi]                 
                     
                     iz_out_roi = iz_out_roi + 1
 
@@ -1648,9 +1633,7 @@ class Scalar_field_XY():
         h = np.linspace(0, np.sqrt((y2 - y1)**2 + (x2 - x1)**2), npixels)
         h = h - h[-1] / 2
 
-        z_profile = scipy.ndimage.map_coordinates(image.transpose(),
-                                                  np.vstack((x, y)),
-                                                  order=order)
+        z_profile = scipy.ndimage.map_coordinates(image.transpose(),   np.vstack((x, y)),   order=order)
         z_profile[-1] = z_profile[-2]
 
         return h, z_profile, point1, point2
@@ -1832,10 +1815,7 @@ class Scalar_field_XY():
         """
             
         dx, dy, principal_axis, (x_mean, y_mean, x2_mean, y2_mean,
-                                 xy_mean) = beam_width_2D(self.x,
-                                                          self.y,
-                                                          np.abs(self.u)**2,
-                                                          has_draw=False)
+                                 xy_mean) = beam_width_2D(self.x,           self.y,           np.abs(self.u)**2,           has_draw=False)
 
         if has_draw is True:
             from matplotlib.patches import Ellipse
@@ -2326,8 +2306,7 @@ class Scalar_field_XY():
             cut_value (float): if provided, maximum value to show
         """
         
-        amplitude, intensity, phase = field_parameters(self.u,
-                                                       has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,        has_amplitude_sign=True)
         if colormap_kind in ['', None, []]:
             colormap_kind = self.CONF_DRAWING["color_intensity"]
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
@@ -2342,8 +2321,8 @@ class Scalar_field_XY():
                                        **kwargs)
         plt.tight_layout()
 
-        if self.type == 'Scalar_mask_XY':
-            plt.clim(0, 1)
+        # if self.type == 'Scalar_mask_XY':
+        #     plt.clim(0, 1)
 
         return id_fig, IDax, IDimage
 
@@ -2393,8 +2372,7 @@ class Scalar_field_XY():
             title (str): title for the drawing
         """
                 
-        amplitude, intensity, phase = field_parameters(self.u,
-                                                       has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u,        has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase / degrees
 
@@ -2471,8 +2449,8 @@ class Scalar_field_XY():
         plt.axis(extension)
         plt.title("$intensity$")
         h1.set_cmap(self.CONF_DRAWING["color_intensity"])
-        if self.type == 'Scalar_mask_XY':
-            plt.clim(0, 1)
+        # if self.type == 'Scalar_mask_XY':
+        #     plt.clim(0, 1)
 
         plt.subplot(1, 2, 2)
         phase = phase / degrees

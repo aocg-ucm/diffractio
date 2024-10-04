@@ -47,5 +47,4 @@ Draw_Vector_XZ_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 
 number_types = (int, float, complex, np.int32, np.float64)
 empty_types = ([], '', None)
 Save_mask_Options = Literal['amplitude', 'phase', 'intensity']
-
-
+Options_add = Literal['source', 'mask', 'phases', 'no_overlap', 'distances']

@@ -145,7 +145,7 @@ class Vector_field_XYZ():
 
 
     @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
-    def __add__(self, other, kind: str = 'standard'):
+    def __add__(self, other):
         """adds two Vector_field_XY. For example two light sources or two masks
 
         Args:
@@ -158,10 +158,9 @@ class Vector_field_XYZ():
 
         EM = Vector_field_XYZ(self.x, self.y, self.z, self.wavelength)
 
-        if kind == 'standard':
-            EM.Ex = self.Ex + other.Ex
-            EM.Ey = self.Ey + other.Ey
-            EM.Ez = self.Ez + other.Ez
+        EM.Ex = self.Ex + other.Ex
+        EM.Ey = self.Ey + other.Ey
+        EM.Ez = self.Ez + other.Ez
 
         return EM
 

@@ -124,7 +124,7 @@ class Scalar_field_Z():
 
 
     @check_none('z','u', raise_exception=False)
-    def __add__(self, other, kind: str = 'standard'):
+    def __add__(self, other):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Args:
@@ -135,24 +135,10 @@ class Scalar_field_Z():
 
         Returns:
             Scalar_field_Z: `u3 = u1 + u2`
-
-        TODO: improve
         """
 
         u3 = Scalar_field_Z(self.z, self.wavelength)
-
-        if kind == 'standard':
-            u3.u = self.u + other.u
-
-        elif kind == 'maximum1':
-            t1 = np.abs(self.u)
-            t2 = np.abs(other.u)
-            f1 = angle(self.u)
-            f2 = angle(other.u)
-            t3 = t1 + t2
-            t3[t3 > 0] = 1.
-            u3.u = t3 * exp(1j * (f1 + f2))
-
+        u3.u = self.u + other.u
         return u3
 
 
@@ -166,7 +152,6 @@ class Scalar_field_Z():
         Returns:
             Scalar_field_X: `u3 = u1 - u2`
 
-        TODO: It can be improved for maks (not having less than 1)
         """
 
         u3 = Scalar_field_Z(self.z, self.wavelength)
@@ -177,10 +162,6 @@ class Scalar_field_Z():
     @check_none('z','u', raise_exception=False)
     def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
-        # new_field = Scalar_field_X(self.z, self.wavelength)
-        # if clear is False:
-        #     new_field.u = self.u
-        # return new_field
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()

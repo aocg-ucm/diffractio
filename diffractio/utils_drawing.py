@@ -348,7 +348,7 @@ def prepare_drawing(u, kind: str = "intensity", logarithm: float | bool = False,
         normalize: False, 'maximum', 'intensity', 'area'
 
     Returns:
-        returns (numpy.array): I_drawing for direct plotting
+        Returns (numpy.array): I_drawing for direct plotting
     """
     amplitude, intensity, phase = field_parameters(u)
 

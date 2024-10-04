@@ -15,6 +15,12 @@ Beta state
   
   - Pyvista has been implemented for 3D visualization. 
 
+  - check_none function has been implemented to check if a variable is None.
+
+  - add function has been modified to take into consideration different procedures for adding sources or masks.
+
+  - oversample function has been implemented to increase the resolution of the masks. This is also performed with the cut_resample function. However, this function oversamples with integer factors.
+
 
 * Fix bugs:
 

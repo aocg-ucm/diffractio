@@ -191,7 +191,7 @@ class Scalar_field_XYZ():
         return ("")
 
     @check_none('x','y','z','u',raise_exception=False)
-    def __add__(self, other, kind: str = 'standard'):
+    def __add__(self, other,):
         """Adds two Scalar_field_XYZ. For example two light sources or two masks.
 
         Args:
@@ -205,19 +205,11 @@ class Scalar_field_XYZ():
         u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength, self.n_background)
         u3.n = self.n
 
-        if kind == 'standard':
-            u3.u = self.u + other.u
-
-        elif kind == 'maximum1':
-            t1 = np.abs(self.u)
-            t2 = np.abs(other.u)
-            f1 = np.angle(self.u)
-            f2 = np.angle(other.u)
-            t3 = t1 + t2
-            t3[t3 > 0] = 1.
-            u3.u = t3 * np.exp(1j * (f1 + f2))
+        u3.u = self.u + other.u
 
         return u3
+
+   
 
     @check_none('x','y','z','u',raise_exception=False)
     def __sub__(self, other):

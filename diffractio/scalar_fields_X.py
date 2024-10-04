@@ -81,7 +81,7 @@ from .__init__ import degrees, mm, np, plt
 
 from .config import Draw_X_Options, empty_types
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, add
 from .utils_drawing import normalize_draw
 from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x, get_k, nearest2)
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
@@ -158,7 +158,32 @@ class Scalar_field_X():
         return ""
 
     @check_none('x','u',raise_exception=False)
-    def __add__(self, other, kind: str = "standard"):
+    def __add__(self, other):
+        """Adds two Scalar_field_x. For example two light sources or two masks.
+
+        Args:
+            other (Scalar_field_X): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
+            - 'source': adds the fields as they are
+            - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+            - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+            - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+            - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
+
+        Returns:
+            Scalar_field_X:
+        """
+
+        if self.type == 'Scalar_mask_X':
+            t = add(self, other, kind='mask')
+        elif self.type == 'Scalar_source_X' or 'Scalar_field_X':
+            t = add(self, other, kind='source')
+            
+        return t
+
+
+    @check_none('x','u',raise_exception=False)
+    def add(self, other, kind):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Args:
@@ -169,26 +194,11 @@ class Scalar_field_X():
 
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
-
-        TODO: improve to have better usage
         """
 
-
-        u3 = Scalar_field_X(self.x, self.wavelength)
-
-        if kind == "standard":
-            u3.u = self.u + other.u
-
-        elif kind == "maximum1":
-            t1 = np.abs(self.u)
-            t2 = np.abs(other.u)
-            f1 = np.angle(self.u)
-            f2 = np.angle(other.u)
-            t3 = t1 + t2
-            t3[t3 > 0] = 1.0
-            u3.u = t3 * exp(1j * (f1 + f2))
-
-        return u3
+        t = add(self, other, kind)
+           
+        return t
 
     @check_none('x','u',raise_exception=False)
     def __sub__(self, other):
