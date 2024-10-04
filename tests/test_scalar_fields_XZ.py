@@ -530,6 +530,8 @@ class Test_Scalar_fields_XZ():
         save_figure_test(newpath, func_name, add_name='_diff')
         assert True
 
+    
+    @pytest.mark.skip(reason="test_draw_profiles: mp4 generation not working at github")
     def test_draw_profiles(self):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
