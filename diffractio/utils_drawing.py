@@ -178,7 +178,7 @@ def draw_several_fields(
         titles (list): list with titles
         title (str): suptitle
         kinds (list): list with kinds of figures (amplitude', 'intensity', 'phase', 'real_field', 'contour')
-        logarithm (bool): If True, intensity is scaled in logarithm
+        logarithm (float): If >0, intensity is scaled in logarithm
         normalize (bool): If True, max(intensity)=1
     """
 

@@ -37,10 +37,10 @@ The magnitude is related to microns: `micron = 1.`
 # flake8: noqa
 
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-
-
 from .__init__ import degrees, np, um
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import check_none
+
 from .scalar_fields_XYZ import Scalar_field_XYZ
 from .utils_drawing3D import load_stl, voxelize_volume_diffractio
 
@@ -52,6 +52,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         super().__init__(x, y, z, wavelength, n_background, info)
         self.type = 'Scalar_mask_XYZ'
 
+
+    @check_none('X','Y','Z',raise_exception=False)
     def object_by_surfaces(self,
                            r0: list[float],
                            refractive_index: float,
@@ -91,7 +93,6 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
             result_condition = eval(fi, v_globals, v_locals)
             conditions.append(result_condition)
 
-        # Transmitancia de los points interiores
         ipasa = conditions[0]
         for cond in conditions:
             ipasa = ipasa & cond
@@ -99,6 +100,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.n[ipasa] = refractive_index
         return ipasa
 
+
+    @check_none('X','Y','Z',raise_exception=False)
     def sphere(self, r0: list[float], radius: list[float], refractive_index: float, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
@@ -119,6 +122,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         return ipasa
 
+
+    @check_none('X','Y','Z',raise_exception=False)
     def square(self,
                r0: list[float],
                length: list[float],
@@ -157,6 +162,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         return ipasa
 
+
+    @check_none('X','Y','Z',raise_exception=False)
     def cylinder(self, r0: list[float], radius: list[float], length: float,
                  refractive_index: float, axis: list[float], angle: float):
         """ Insert a cylinder in background. If something previous, is removed.
@@ -204,14 +211,13 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
 
-
-
+    @check_none('x','y','z',raise_exception=False)
     def stl(self, filename: str, refractive_index: float, Dx: float | None = None, Dy: float | None = None, 
             Dz: float | None = None, has_draw: bool = False, verbose: bool = False):
         """
-        stl _summary_
+        stl file
 
-        _extended_summary_
+        Include a stl part 
 
         Args:
             filename (str): _description_
@@ -250,30 +256,6 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.z = z
         
         self.X, self.Y, self.Z = np.meshgrid(x, y, z)
-
-        # x_center = (x[-1]+x[0])/2
-        # y_center = (y[-1]+y[0])/2
-        # z_center = (z[-1]+z[0])/2
-
-        # len_x = len(x)
-        # len_y = len(y)
-        # len_z = len(z)
-
         self, voi= voxelize_volume_diffractio(self, mesh, refractive_index = refractive_index)
-
-        # params_pyvista = {
-        # 'opacity': [0,0.2,0.5, 1], #'sigmoid',
-        # 'dimensions': (len(y),len(x), len(z)) ,
-        # 'scale': (1, 1, 1),
-        # 'cmap': 'hot',
-        # 'spacing' : np.array((y[1]-y[0],x[1]-x[0],z[1]-z[0])),
-        # 'pos_slices': np.array([(x_center, z_center),(x_center, y_center), (y_center, z_center)]), #xz, xy, yz, z0
-        # 'pos_centers': np.array([y_center, x_center, z_center]),
-        
-        # 'cpos': [(540, -617, 180),
-        #         (128, 126., 111.),
-        #         (-0, 0 ,0)],
-        
-        # }
 
         return voi, mesh, bounds

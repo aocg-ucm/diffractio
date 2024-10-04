@@ -6,7 +6,6 @@ References
 Scalar algorithms
 ---------------------------
 
-
 **RS**
 
 * Shen, F. & Wang, A. "Fast-Fourier-transform based numerical integration method for the Rayleigh-Sommerfeld diffraction formula," Appl. Opt. 45, 1102–1110 (2006).
@@ -53,6 +52,32 @@ Kornél J. and Bokor N., 2010. “Intensity Control of the Focal Spot by Vectori
 
 * Wende M,et al. "Fast algorithm for the simulation of 3D-printed microoptics based on the vector wave propagation method". Opt Express. 30(22) 40161-40173 (2022)
 
+
+sources
+--------------------------
+
+* beam_width_1d (X): https://en.wikipedia.org/wiki/Beam_diameter
+
+* beam_width_4s (XY): https://en.wikipedia.org/wiki/Beam_diameter
+                      http://www.auniontech.com/ueditor/file/20170921/1505982360689799.pdf
+     
+* vector fields (XY): Qwien Zhan 'Vectorial Optical Fields' 
+
+Masks
+---------------------------
+* Aspheric (X): https://www.edmundoptics.com/knowledge-center/application-notes/optics/all-about-aspheric-lenses/
+
+* Superellipse (XY):   https://en.wikipedia.org/wiki/Superellipse
+
+* Superformula (XY):   Gielis, J. "A Generic Geometric Transformation that Unifies a Wide Range of Natural and Abstract Shapes." Amer. J. Botany 90, 333-338, 2003.
+
+* Roughness_1D (X), Roughness_2D (XY): JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
+
+
+Util_optics
+--------------------------
+
+* MTF: https://www.edmundoptics.com/resources/application-notes/optics/introduction-to-modulation-transfer-function/strehl_ratio
 
 Other References
 ---------------------------

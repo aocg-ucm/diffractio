@@ -56,19 +56,19 @@ The magnitude is related to microns: `micron = 1.`
 """
 import copy
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import load_data_common, save_data_common, get_date, check_none
+from .utils_math import nearest
+from .utils_optics import normalize_field
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
 from .vector_fields_XZ import Vector_field_XZ
-from .utils_common import load_data_common, save_data_common, get_date
-from .utils_math import nearest
-from .utils_optics import normalize_field
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -113,6 +113,8 @@ class Vector_field_XYZ():
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def __str__(self):
         """Represents data from class."""
 
@@ -141,6 +143,8 @@ class Vector_field_XYZ():
 
         return ""
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
@@ -161,11 +165,11 @@ class Vector_field_XYZ():
 
         return EM
 
+
     def save_data(self, filename: str, add_name: str = "",
                   description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
-
 
         Args:
             filename (str): filename
@@ -176,12 +180,14 @@ class Vector_field_XYZ():
         Returns:
             (str): filename. If False, file could not be saved.
         """
+
         try:
             final_filename = save_data_common(self, filename, add_name,
                                               description, verbose)
             return final_filename
         except:
             return False
+
 
     def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_XY.
@@ -202,12 +208,15 @@ class Vector_field_XYZ():
         if verbose is True:
             print(dict0.keys())
 
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def clear_field(self):
         """simple - removes the field: self.E=0 """
 
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
         self.Ez = np.zeros_like(self.Ex, dtype=complex)
+
+
 
     def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
@@ -216,6 +225,8 @@ class Vector_field_XYZ():
             new_field.clear_field()
         return new_field
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XYZ
 
@@ -233,7 +244,6 @@ class Vector_field_XYZ():
         if kind == 'fields':
             if is_matrix:
                 return self.Ex, self.Ey, self.Ez
-
             else:
                 Ex = Scalar_field_XYZ(x=self.x,
                                       y=self.y,
@@ -257,7 +267,6 @@ class Vector_field_XYZ():
 
             if is_matrix:
                 return intensity
-
             else:
                 Intensity = Scalar_field_XYZ(x=self.x,
                                              y=self.y,
@@ -309,6 +318,8 @@ class Vector_field_XYZ():
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
+
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def intensity(self):
         """"Returns intensity.
         """
@@ -317,6 +328,8 @@ class Vector_field_XYZ():
 
         return intensity
 
+    
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -360,6 +373,8 @@ class Vector_field_XYZ():
 
             return CI, CQ, CU, CV
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -414,16 +429,22 @@ class Vector_field_XYZ():
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field: bool = False):
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+            kind (str): 'amplitude', or 'intensity'
+
         Returns
             u (numpy.array): normalized optical field
         """
-        return normalize_field(self, new_field)
+        return normalize_field(self, kind, new_field)
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def to_Vector_field_XY(self,
                            iz0: int | None = None,
                            z0: float | None = None):
@@ -447,6 +468,8 @@ class Vector_field_XYZ():
         field_output.Ez = np.squeeze(self.Ez[:, :, iz])
         return field_output
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def to_Vector_field_XZ(self,
                            iy0: int | None = None,
                            y0: float | None = None):
@@ -471,6 +494,8 @@ class Vector_field_XYZ():
         field_output.Ez = np.squeeze(self.Ez[iy, :, :]).transpose()
         return field_output
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def to_Vector_field_YZ(self,
                            ix0: int | None = None,
                            x0: float | None = None):
@@ -495,6 +520,8 @@ class Vector_field_XYZ():
         field_output.Ez = np.squeeze(self.Ez[:, ix, :]).transpose()
         return field_output
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def to_Vector_field_Z(self, kind: str = 'amplitude', x0: int | None = None,
                           y0: int | None = None, has_draw: bool = True,
                           z_scale: str = 'um'):
@@ -546,6 +573,8 @@ class Vector_field_XYZ():
 
         return (field_x, field_y, field_z)
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def draw_XY(self,
                 z0: float,
                 kind: Draw_Vector_XY_Options = 'intensity',
@@ -561,7 +590,7 @@ class Vector_field_XYZ():
         Args:
             z0 (float): value of z for interpolation
             kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
             title (str): title for the drawing
             filename (str): if not '' stores drawing in file,
@@ -580,6 +609,8 @@ class Vector_field_XYZ():
                     has_colorbar=has_colorbar,
                     reduce_matrix=reduce_matrix)
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def draw_XZ(self,
                 kind: Draw_Vector_XZ_Options = 'intensity',
                 y0: float = 0 * mm,
@@ -592,7 +623,7 @@ class Vector_field_XYZ():
 
         Args:
             y0 (float): value of y for interpolation
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
             draw_borders (bool): check
             filename (str): filename to save
@@ -605,6 +636,8 @@ class Vector_field_XYZ():
 
         return h1
 
+
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
     def draw_YZ(self,
                 kind: Draw_Vector_XZ_Options = 'intensity',
                 x0: float = 0 * mm,
@@ -617,7 +650,7 @@ class Vector_field_XYZ():
 
         Args:
             x0 (float): value of x0 for interpolation
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'intensity', 'area'
             draw_borders (bool): check
             filename (str): filename to save

@@ -513,7 +513,7 @@ def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage:
         intensity (np.array): Intensity of the 1D beam
         percentage (float): value 0-1 representing the percentage of intensity between area
         has_draw (bool): if True draws the field an the range
-        logarithm (bool): when has_draw, draws logarithm or normal intensity
+        logarithm (float): when has_draw, draws logarithm or normal intensity
 
     Returns:
         (float, float): positions (x_min, right) where intensity beam is enclosed at %.
@@ -748,40 +748,49 @@ def uniform_spectrum(wavelengths: NDArrayFloat, normalize: bool = True):
     return weights
 
 
-def normalize_field(self, new_field: bool = False):
+def normalize_field(self, kind='amplitude', new_field: bool = False):
     """Normalize the field to maximum intensity.
 
     Args:
-        (Scalar_field): field_*
+        kind (str): 'amplitude', or 'intensity'
         new_field (bool): If True returns a field, else returns a matrix
+
     Returns:
         (np.array): normalized field.
     """
 
     if self.type[0:6] == "Scalar":
-        max_amplitude = np.sqrt(np.abs(self.u) ** 2).max()
+
+        if kind == 'amplitude':
+                maximum = np.sqrt(np.abs(self.u) ** 2).max()
+        elif kind == 'intensity':
+                maximum = (np.abs(self.u) ** 2).max()
+
 
         if new_field is False:
-            self.u = self.u / max_amplitude
+            self.u = self.u / maximum
         else:
             field_new = self.duplicate()
-            field_new.u = self.u / max_amplitude
+            field_new.u = self.u / maximum
             return field_new
 
     elif self.type[0:6] == "Vector":
-        max_amplitude = np.sqrt(
-            np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
-        ).max()
+
+        if kind == 'amplitude':
+                maximum  = np.sqrt(np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2).max()
+        elif kind == 'intensity':
+                maximum  = (np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2).max()
+
 
         if new_field is False:
-            self.Ex = self.Ex / max_amplitude
-            self.Ey = self.Ey / max_amplitude
-            self.Ez = self.Ez / max_amplitude
+            self.Ex = self.Ex / maximum
+            self.Ey = self.Ey / maximum
+            self.Ez = self.Ez / maximum
         else:
             field_new = self.duplicate()
-            field_new.Ex = self.Ex / max_amplitude
-            field_new.Ey = self.Ey / max_amplitude
-            field_new.Ez = self.Ez / max_amplitude
+            field_new.Ex = self.Ex / maximum
+            field_new.Ey = self.Ey / maximum
+            field_new.Ez = self.Ez / maximum
             return field_new
 
 

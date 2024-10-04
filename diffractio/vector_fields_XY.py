@@ -58,18 +58,17 @@ from matplotlib import rcParams
 import copy
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
-
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-
 import diffractio
+
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING, Draw_Vector_XY_Options
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import load_data_common, save_data_common, get_date, check_none
+from .utils_drawing import normalize_draw, reduce_matrix_size
+from .utils_math import get_edges, get_k, nearest, rotate_image, Bluestein_dft_xy
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
-from .utils_common import load_data_common, save_data_common, get_date
-from .utils_drawing import normalize_draw, reduce_matrix_size
-from .utils_math import get_edges, get_k, nearest, rotate_image, Bluestein_dft_xy
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -108,6 +107,7 @@ class Vector_field_XY():
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
 
+
     def __str__(self):
         """Represents data from class."""
 
@@ -132,6 +132,7 @@ class Vector_field_XY():
 
         return ""
 
+    @check_none('x','y','Ex','Ey',raise_exception=False)
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
@@ -151,6 +152,7 @@ class Vector_field_XY():
 
         return EM
 
+    @check_none('x','y','X','Y',raise_exception=False)
     def __rotate__(self, angle, position=None):
         """Rotation of X,Y with respect to position
 
@@ -169,11 +171,11 @@ class Vector_field_XY():
         Yrot = -(self.X - x0) * np.sin(angle) + (self.Y - y0) * np.cos(angle)
         return Xrot, Yrot
 
+
     def save_data(self, filename: str, add_name: str = "",
                   description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
-
 
         Args:
             filename (str): filename
@@ -190,6 +192,8 @@ class Vector_field_XY():
             return final_filename
         except:
             return False
+
+
 
     def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_XY.
@@ -210,20 +214,24 @@ class Vector_field_XY():
         if verbose is True:
             print(dict0.keys())
 
+
+    @check_none('x','y','Ex','Ey',raise_exception=False)
     def clear(self):
-        """simple - removes the field: self.E=0 """
+        """simple - removes the field:"""
 
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
+        self.Ez = np.zeros_like(self.Ex, dtype=complex)
+
 
     def duplicate(self, clear: bool = False):
-        """Duplicates the instance
+        """Duplicates the instance,
 
         Args:
             clear (bool, optional): Clear the data. Defaults to False.
 
         Returns:
-            _type_: New instance
+            Vector_field_XY: New instance
         """
 
         new_field = copy.deepcopy(self)
@@ -231,15 +239,17 @@ class Vector_field_XY():
             new_field.clear_field()
         return new_field
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def get(self, kind: str = 'fields', is_matrix=True):
-        """Takes the vector field and divide in Scalar_field_XY
+        """Returns the value of the field, depending of the kind parameter.
 
         Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
             is_matrx (bool): If True, returns matrix instead of instance.
 
         Returns:
-            Scalar_field_XY: (Ex, Ey),
+            Matrices or Vector_field_XY
         """
 
         Ex_r = self.Ex
@@ -251,17 +261,11 @@ class Vector_field_XY():
                 return self.Ex, self.Ey, self.Ez
 
             else:
-                Ex = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ex = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ex.u = Ex_r
-                Ey = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ey = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ey.u = Ey_r
-                Ez = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ez = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ez.u = Ez_r
                 return Ex, Ey, Ez
 
@@ -272,9 +276,7 @@ class Vector_field_XY():
                 return intensity
 
             else:
-                Intensity = Scalar_field_XY(x=self.x,
-                                            y=self.y,
-                                            wavelength=self.wavelength)
+                Intensity = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Intensity.u = np.sqrt(intensity)
 
                 return Intensity
@@ -293,17 +295,11 @@ class Vector_field_XY():
             if is_matrix:
                 return phase_x, phase_y, phase_z
             else:
-                Ex = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ex = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ex.u = np.exp(1j * phase_x)
-                Ey = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ey = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ey.u = np.exp(1j * phase_y)
-                Ez = Scalar_field_XY(x=self.x,
-                                     y=self.y,
-                                     wavelength=self.wavelength)
+                Ez = Scalar_field_XY(self.x, self.y, self.wavelength)
                 Ez.u = np.exp(1j * phase_z)
                 return Ex, Ey, Ez
 
@@ -318,6 +314,8 @@ class Vector_field_XY():
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def pupil(self, r0: tuple[float, float] | None = None, radius: tuple[float, float] | None = None,
               angle: float = 0.):
         """place a pupil in the field. If r0 or radius are None, they are computed using the x,y parameters.
@@ -362,12 +360,13 @@ class Vector_field_XY():
         self.Ey = self.Ey * pupil0
         self.Ez = self.Ez * pupil0
 
+
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
         Args:
            u (Scalar_mask_XY): mask
-
 
          """
 
@@ -382,6 +381,8 @@ class Vector_field_XY():
             E_new.Ez = self.Ez * u.u
             return E_new
 
+
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def intensity(self):
         """"Returns intensity.
         """
@@ -390,6 +391,8 @@ class Vector_field_XY():
 
         return intensity
 
+
+    @check_none('x','y',raise_exception=False)
     def RS(self,
            z=10 * mm,
            n: float = 1.,
@@ -412,7 +415,6 @@ class Vector_field_XY():
         Returns:
             if New_field is True: Scalar_field_X
             else None
-
 
         Note:
             One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
@@ -452,6 +454,8 @@ class Vector_field_XY():
             self.x = Ex.x
             self.y = Ex.y
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def VFFT(self,
              radius: float,
              focal: float,
@@ -592,6 +596,8 @@ class Vector_field_XY():
             if has_draw:
                 self.draw(kind='intensities')
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def IVFFT(self,
               radius: float,
               focal: float,
@@ -730,6 +736,8 @@ class Vector_field_XY():
             if has_draw:
                 self.draw(kind='intensities')
 
+
+    @check_none('x','y',raise_exception=False)
     def VRS(self, z: float, n: float = 1., new_field: bool = True, verbose: bool = False,
             amplification: tuple[int, int] = (1, 1)):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
@@ -754,7 +762,7 @@ class Vector_field_XY():
 
         e0x, e0y, _ = self.get(is_matrix=False)
 
-        e0z = Scalar_field_XY(x=self.x, y=self.y, wavelength=self.wavelength)
+        e0z = Scalar_field_XY(self.x, self.y, self.wavelength)
         e0z.u = 0
 
         # estas son las components justo en la posicion pedida
@@ -795,6 +803,8 @@ class Vector_field_XY():
             self.Ey = Ey.u
             self.Ez = Ez.u
 
+
+    @check_none('x','y',raise_exception=False)
     def CZT(self, z, xout=None, yout=None, verbose: bool = False):
         """Vector Z Chirped Transform algorithm (VCZT)
 
@@ -956,6 +966,8 @@ class Vector_field_XY():
                 E_out.Ez = e0z_zs.u
                 return E_out
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -987,6 +999,8 @@ class Vector_field_XY():
 
             return C_S0, C_S1, C_S2, C_S3
 
+
+    @check_none('x','y',raise_exception=False)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -1029,16 +1043,28 @@ class Vector_field_XY():
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self):
-        """Normalizes the field"""
-        max_amplitude = np.sqrt(
-            np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
-            np.abs(self.Ez)**2).max()
 
-        self.Ex = self.Ex / max_amplitude
-        self.Ey = self.Ey / max_amplitude
-        self.Ez = self.Ez / max_amplitude
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    def normalize(self, kind:str = 'amplitude'):
+        """Normalizes the field, to the maximum intensity.
+        
+        Args:
+            kind (str): 'amplitude' or 'intensity'.
+        """
 
+        if kind =='amplitude':
+            maximum = np.sqrt(np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
+                np.abs(self.Ez)**2).max()
+        elif kind == 'intensity':
+            maximum = (np.abs(self.Ex)**2 + np.abs(self.Ey)**2 +
+                np.abs(self.Ez)**2).max()
+
+        self.Ex = self.Ex / maximum
+        self.Ey = self.Ey / maximum
+        self.Ez = self.Ez / maximum
+
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def cut_resample(self,
                      x_limits: tuple[float, float] | None = None,
                      y_limits: tuple[float, float] | None = None,
@@ -1055,14 +1081,12 @@ class Vector_field_XY():
             interp_kind (int): numbers between 1 and 5
         """
         if x_limits is None:
-            # used only for resampling
             x0 = self.x[0]
             x1 = self.x[-1]
         else:
             x0, x1 = x_limits
 
         if y_limits is None:
-            # used only for resampling
             y0 = self.y[0]
             y1 = self.y[-1]
         else:
@@ -1080,7 +1104,6 @@ class Vector_field_XY():
 
         i_x0, _, _ = nearest(self.x, x0)
         i_x1, _, _ = nearest(self.x, x1)
-        # new_num_points = i_x1 - i_x0
         i_y0, _, _ = nearest(self.y, y0)
         i_y1, _, _ = nearest(self.y, y1)
 
@@ -1170,6 +1193,8 @@ class Vector_field_XY():
             field.Ez = Ez_new
             return field
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def draw(self,
              kind: Draw_Vector_XY_Options = 'intensity',
              logarithm: float = 0,
@@ -1237,6 +1262,8 @@ class Vector_field_XY():
 
             return id_fig
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_intensity__(self,
                            logarithm: float,
                            normalize: bool,
@@ -1246,7 +1273,7 @@ class Vector_field_XY():
         """Draws the intensity
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -1270,11 +1297,13 @@ class Vector_field_XY():
         plt.tight_layout()
         return h1
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_phases__(self, color_phase: str = CONF_DRAWING['color_phase']):
         """internal funcion: draws intensity X,Y.
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -1377,6 +1406,8 @@ class Vector_field_XY():
 
             return h1, h2, h3
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_intensities__(self,
                              logarithm: float,
                              normalize: bool,
@@ -1385,7 +1416,7 @@ class Vector_field_XY():
         """internal funcion: draws phase X,Y, Z.
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -1474,6 +1505,8 @@ class Vector_field_XY():
 
             return h1, h2, h3
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_intensities_rz__(
             self,
             logarithm: float,
@@ -1483,7 +1516,7 @@ class Vector_field_XY():
         """internal funcion: draws intensity X,Y.
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -1526,6 +1559,8 @@ class Vector_field_XY():
 
         return h1, h2
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_fields__(self,
                         logarithm: float,
                         normalize: bool,
@@ -1535,7 +1570,7 @@ class Vector_field_XY():
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -1664,6 +1699,8 @@ class Vector_field_XY():
             plt.tight_layout()
             return h1, h2, h3, h4, h5, h6
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_stokes__(self,
                         logarithm: float,
                         normalize: bool,
@@ -1710,6 +1747,8 @@ class Vector_field_XY():
 
         return (h1, h2, h3, h4)
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_param_ellipse__(self,
                                color_intensity: str = CONF_DRAWING['color_intensity'],
                                color_phase: str = CONF_DRAWING['color_phase']):
@@ -1743,6 +1782,8 @@ class Vector_field_XY():
         plt.tight_layout()
         return (h1, h2, h3, h4)
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_ellipses__(self,
                           logarithm: float = 0.,
                           normalize: bool = False,
@@ -1833,6 +1874,8 @@ class Vector_field_XY():
                 #     print(max_r, intensity_max,
                 #           percentage_intensity * intensity_max)
 
+
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw1__(self,
                   image: NDArrayFloat,
                   colormap: str,
@@ -1892,6 +1935,7 @@ class Vector_field_XY():
         plt.subplots_adjust(0.01, 0.01, 0.99, 0.95, 0.05, 0.05)
 
         return h
+
 
 
 def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,

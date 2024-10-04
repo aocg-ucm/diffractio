@@ -13,8 +13,6 @@
 # ----------------------------------------------------------------------
 
 
-
-
 """
 This module generates Scalar_source_XY class for defining sources.
 Its parent is Scalar_field_XY.
@@ -50,18 +48,16 @@ The magnitude is related to microns: `micron = 1.`
 """
 # flake8: noqa
 
+import os
 from math import factorial
-
 from scipy.special import eval_hermite, j0, j1, jv
 
 
 from .__init__ import np
 from .utils_typing import NDArrayFloat
+from .utils_common import check_none
 from .scalar_fields_XY import Scalar_field_XY
 from .utils_math import fZernike, laguerre_polynomial_nk
-import os
-
-# from scipy.special.orthogonal import hermite
 
 
 class Scalar_source_XY(Scalar_field_XY):
@@ -88,6 +84,8 @@ class Scalar_source_XY(Scalar_field_XY):
         self.n_background = n_background
         self.type = 'Scalar_source_XY'
 
+
+    @check_none('X','Y',raise_exception=False)
     def plane_wave(self, A: float = 1, theta: float = 0., phi: float = 0., z0: float = 0.):
         """Plane wave. self.u = A * np.exp(1.j * k *
                          (self.X * np.sin(theta) * np.cos(phi) +
@@ -106,6 +104,8 @@ class Scalar_source_XY(Scalar_field_XY):
                             (self.X * np.sin(theta) * np.cos(phi) +
                              self.Y * np.sin(theta) * np.sin(phi) + z0 * np.cos(theta)))
 
+
+    @check_none('X','Y',raise_exception=False)
     def gauss_beam(self,
                    r0: tuple[float, float],
                    w0: tuple[float, float] | float,
@@ -126,7 +126,6 @@ class Scalar_source_XY(Scalar_field_XY):
             A (float): maximum amplitude
             theta (float): angle in radians (angle of k with respect to z))
 
-        References:
         """
 
         if isinstance(w0, (float, int, complex)):
@@ -150,7 +149,6 @@ class Scalar_source_XY(Scalar_field_XY):
 
         wx = w0x * np.sqrt(1 + (z0x / z_rayleigh_x)**2)
         wy = w0y * np.sqrt(1 + (z0y / z_rayleigh_y)**2)
-        # w = np.sqrt(wx * wy)
 
         if z0x == 0:
             R_x = 1e10
@@ -174,7 +172,10 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = amplitude * phase1 * phase2
 
-    def spherical_wave(self, r0: tuple[float, float], z0: tuple[float, float] | float, A: float = 1, radius: float = 0., normalize: bool = False):
+
+    @check_none('X','Y',raise_exception=False)
+    def spherical_wave(self, r0: tuple[float, float], z0: tuple[float, float] | float, A: float = 1, 
+                        radius: float =0., normalize: bool = False):
         """Spherical wave.
 
         Args:
@@ -192,7 +193,7 @@ class Scalar_source_XY(Scalar_field_XY):
         z0x, z0y = z0
 
         R2 = (self.X - x0)**2 + (self.Y - y0)**2
-        # Rz = np.sqrt((self.X - x0)**2 + (self.Y - y0)**2 + z0**2)
+
         if z0x == 0:
             R_x = 1e10
         else:
@@ -213,6 +214,8 @@ class Scalar_source_XY(Scalar_field_XY):
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
 
+
+    @check_none('X','Y',raise_exception=False)
     def vortex_beam(self, A: float, r0: tuple[float, float], w0: tuple[float, float] | float, m: int):
         """Vortex beam.
 
@@ -239,6 +242,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * amplitude / np.abs(amplitude).max()
 
+
+    @check_none('X','Y',raise_exception=False)
     def hermite_gauss_beam(self, r0: tuple[float, float], A: float,
                            w0: tuple[float, float] | float, n: int, m: int, z: float,
                            z0: tuple[float, float] | float):
@@ -306,6 +311,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Ex * Ey * Ef
 
+
+    @check_none('X','Y',raise_exception=False)
     def laguerre_beam(self, r0: tuple[float, float], A: float,
                       w0: tuple[float, float] | float, n: int, l: int,
                       z: float, z0: float):
@@ -354,6 +361,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * Er * Ef
 
+
+    @check_none('X','Y',raise_exception=False)
     def zernike_beam(self, A: float, r0: tuple[float, float], radius: float,
                      n: list[int], m: list[int], c_nm: list[float]):
         """Zernike beam.
@@ -381,6 +390,8 @@ class Scalar_source_XY(Scalar_field_XY):
 
         self.u = A * np.exp(1.j * np.real(phase))
 
+
+    @check_none('X','Y',raise_exception=False)
     def bessel_beam(self,
                     A: float,
                     r0: tuple[float, float],
@@ -422,6 +433,8 @@ class Scalar_source_XY(Scalar_field_XY):
             (self.X * np.sin(theta) * np.cos(phi) + self.Y * np.sin(theta) * np.sin(phi)) +
             z0 * np.cos(theta))
 
+
+    @check_none('X','Y','u',raise_exception=False)
     def plane_waves_dict(self, params: dict):
         """Several plane waves with parameters defined in dictionary
 
@@ -442,9 +455,11 @@ class Scalar_source_XY(Scalar_field_XY):
                 (self.X * np.sin(p['theta']) * np.cos(p['phi']) + self.Y *
                  np.sin(p['theta']) * np.sin(p['phi']) + p['z0'] * np.cos(p['theta'])))
 
+
+    @check_none('X','Y','u',raise_exception=False)
     def plane_waves_several_inclined(self, A: float, num_beams: tuple[int, int],
                                      max_angle: tuple[float, float], z0: float = 0):
-        """Several paralel plane waves
+        """Several paralel plane waves.
 
         Args:
                 A (float): maximum amplitude
@@ -455,17 +470,22 @@ class Scalar_source_XY(Scalar_field_XY):
 
         num_beams_x, num_beams_y = num_beams
         max_angle_x, max_angle_y = max_angle
+
         t = np.zeros_like(self.u, dtype=complex)
         anglex = max_angle_x / num_beams_x
         angley = max_angle_y / num_beams_y
+
         for i in range(num_beams_x):
             for j in range(num_beams_y):
                 theta = np.pi / 2 - max_angle_x / 2 + anglex * (i + 0.5)
                 phi = np.pi / 2 - max_angle_y / 2 + angley * (j + 0.5)
                 self.plane_wave(A, theta, phi, z0)
                 t = t + self.u
+
         self.u = t
 
+
+    @check_none('X','Y','u',raise_exception=False)
     def gauss_beams_several_parallel(self,
                                      r0: tuple[float, float],
                                      A: float,
@@ -491,9 +511,11 @@ class Scalar_source_XY(Scalar_field_XY):
         x_range, y_range = r_range
         x_central, y_central = r0
         num_beams_x, num_beams_y = num_beams
-        t = np.zeros_like(self.u, dtype=complex)
+
         dist_x = x_range / num_beams_x
         dist_y = y_range / num_beams_y
+
+        t = np.zeros_like(self.u, dtype=complex)
         for i in range(num_beams_x):
             xi = x_central - x_range / 2 + dist_x * (i + 0.5)
             for j in range(num_beams_y):
@@ -505,8 +527,11 @@ class Scalar_source_XY(Scalar_field_XY):
                                 theta=theta,
                                 phi=phi)
                 t = t + self.u
+
         self.u = t
 
+
+    @check_none('u',raise_exception=False)
     def gauss_beams_several_inclined(self, A: float, num_beams, w0: tuple[float, float] | float, r0: tuple[float, float], z0: tuple[float, float] | float, max_angle: tuple[float, float]):
         """Several inclined gauss beams
 
@@ -521,9 +546,10 @@ class Scalar_source_XY(Scalar_field_XY):
 
         num_beams_x, num_beams_y = num_beams
         max_angle_x, max_angle_y = max_angle
-        t = np.zeros_like(self.u, dtype=complex)
         angle_x = max_angle_x / num_beams_x
         angle_y = max_angle_y / num_beams_y
+
+        t = np.zeros_like(self.u, dtype=complex)
         for i in range(num_beams_x):
             thetai = np.pi / 2 - max_angle_x / 2 + angle_x * (i + 0.5)
             for j in range(num_beams_y):

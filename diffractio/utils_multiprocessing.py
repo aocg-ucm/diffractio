@@ -28,8 +28,6 @@ from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 def _pickle_method(method):
     """function for multiprocessing in class
 
-    References:
-        method (class): Method
     """
     func_name = method.im_func.__name__
     obj = method.im_self

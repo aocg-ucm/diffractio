@@ -49,18 +49,18 @@ from matplotlib import rcParams
 import time
 from scipy.interpolate import RectBivariateSpline
 
-from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import CONF_DRAWING, Draw_Vector_XZ_Options
-from .scalar_fields_XZ import Scalar_field_XZ
-from .scalar_masks_XZ import Scalar_mask_XZ
-from .utils_common import get_date, load_data_common, save_data_common
+from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
+from .utils_common import get_date, load_data_common, save_data_common, check_none
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_k, nearest
 from .utils_optics import normalize_field, fresnel_equations_kx
-from .vector_fields_X import Vector_field_X
 from .scalar_fields_X import Scalar_field_X
+from .scalar_fields_XZ import Scalar_field_XZ
+from .scalar_masks_XZ import Scalar_mask_XZ
+from .vector_fields_X import Vector_field_X
 
 from py_pol.jones_vector import Jones_vector
 
@@ -72,7 +72,6 @@ percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 class Vector_field_XZ(Scalar_mask_XZ):
     """Class for vectorial fields.
-
 
     Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
@@ -116,6 +115,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.date = get_date()
         self.CONF_DRAWING = CONF_DRAWING
 
+
+    @check_none('x','z','Ex','Ey',raise_exception=False)
     def __str__(self):
         """Represents data from class."""
 
@@ -144,6 +145,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return ""
 
+
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
     def __add__(self, other, kind="standard"):
         """adds two Vector_field_X. For example two light sources or two masks
 
@@ -163,6 +166,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             EM.Ez = self.Ez + other.Ez
 
         return EM
+
 
     def save_data(self, filename: str, add_name: str = "",
                   description: str = "", verbose: bool = False):
@@ -187,6 +191,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         except:
             return False
 
+
     def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Vector_field_X.
             The methods included are: npz, matlab
@@ -206,12 +211,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if verbose is True:
             print(dict0.keys())
 
+
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def clear_field(self):
         """Removes the fields Ex, Ey, Ez"""
 
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
         self.Ey = np.zeros_like(self.Ey, dtype=complex)
         self.Ez = np.zeros_like(self.Ez, dtype=complex)
+
 
     def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
@@ -220,6 +228,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             new_field.clear_field()
         return new_field
 
+
+    @check_none('x','Ex','Ey','Ez',raise_exception=False)
     def incident_field(self, E0: Vector_field_X  | None = None, u0: Scalar_field_X  | None = None, 
                        j0: Jones_vector  | None = None, z0: float | None = None):
         """Includes the incident field in Vector_field_XZ. 
@@ -249,6 +259,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             self.Ex[iz, :] = self.Ex[iz, :] + E0.Ex
             self.Ey[iz, :] = self.Ey[iz, :] + E0.Ey
 
+
+    @check_none('x','Ex','Ey','Ez',raise_exception=False)
     def final_field(self):
         """Returns the final field as a Vector_field_X."""
 
@@ -284,6 +296,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return edges
         
 
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
     def get(self, kind: str = "fields", is_matrix: bool =True):
         """Takes the vector field and divide in Scalar_field_X.
 
@@ -360,6 +373,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
@@ -377,6 +391,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             E_new.Ez = self.Ez * u.u
             return E_new
 
+    @check_none('x','z','raise_exception=False)
     def FP_WPM(
         self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False
     ):
@@ -477,12 +492,16 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if matrix is True:
             return (self.Ex, self.Ey, self.Ez), (self.Hx, self.Hy, self.Hz)
 
+
+    @check_none('Ex','Ey','Ez',raise_exception=False)
     def intensity(self):
         """ "Returns intensity."""
         intensity = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
 
         return intensity
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def Poynting_vector(self, has_draw: bool = True, draw_borders: bool = True,  scale: str = ''):
         "Instantaneous Poynting Vector"
 
@@ -547,6 +566,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return Sx, Sy, Sz
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
         "Averaged Poynting Vector"
 
@@ -618,6 +639,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return Sx, Sy, Sz
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
@@ -642,6 +665,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return S
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
 
         epsilon = self.n ** 2
@@ -667,6 +692,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return U
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def irradiance(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
         """
         irradiance in plane z
@@ -688,14 +715,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
-        # if kind == 'Sz':
-        #     S_total = Sz
-
-        # elif kind == 'Ssum':
-        #     S_total = Sx+Sy+Sz
-
-        # elif kind == 'S2': #más bien descartada, la normalización >1
-        #     S_total = np.sqrt(Sx**2+Sy**2+Sz**2)
 
         if has_draw:
             dims = np.shape(Sz)
@@ -714,6 +733,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             plt.title("Irradiance")
 
         return Sz
+
+
 
     def check_energy(self, has_draw : bool = True):
         """
@@ -749,6 +770,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return energy_z
 
+
+    @check_none('x','z','Ex','Ey',raise_exception=False)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -780,6 +803,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return CI, CQ, CU, CV
 
+
+    @check_none('x','z',raise_exception=False)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -822,16 +847,21 @@ class Vector_field_XZ(Scalar_mask_XZ):
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field: bool = False):
+
+    def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+            kind (str): 'amplitude', or 'intensity'
+
         Returns
             u (numpy.array): normalized optical field
         """
 
-        return normalize_field(self, new_field)
+        return normalize_field(self, kind, new_field)
+
+
 
     def draw(
         self,
@@ -898,6 +928,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return id_fig
 
+
     def __draw_intensity__(
         self,
         logarithm,
@@ -911,7 +942,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """Draws the intensity
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -933,6 +964,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         # plt.tight_layout()
         return h1
 
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def __draw_intensities__(
         self,
         logarithm,
@@ -947,7 +979,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """internal funcion: draws phase
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -1010,6 +1042,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return h1, h2, h3
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def __draw_phases__(
         self,
         logarithm,
@@ -1025,7 +1059,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """internal funcion: draws phase
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
             percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
@@ -1109,6 +1143,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return h1, h2, h3
 
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def __draw_fields__(
         self,
         logarithm,
@@ -1122,7 +1158,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         draw_z = True, ):
         """
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -1175,7 +1211,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return h1, h2, h3, h4
 
 
-
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
     def __draw_EH__(
         self,
         logarithm,
@@ -1189,8 +1225,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
             cut_value (float): If not None, cuts the maximum intensity to this value
@@ -1343,7 +1379,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
     ):
-        """__internal__: computes and draws polariations ellipses"""
+        """__internal__: computes and draws polariations ellipses.
+        Args:
+            color_intensity (_type_, optional): _description_. Defaults to CONF_DRAWING["color_intensity"].
+            color_phase (_type_, optional): _description_. Defaults to CONF_DRAWING["color_phase"].
+
+        Returns:
+            _type_: _description_
+        """
+
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
 
         A = reduce_matrix_size(self.reduce_matrix, self.x, self.z, A)
@@ -1386,10 +1430,20 @@ class Vector_field_XZ(Scalar_mask_XZ):
         ax=False,
         color_intensity=CONF_DRAWING["color_intensity"],
     ):
-        """__internal__: draw ellipses
+        """
 
         Args:
-            num_ellipses (int): number of ellipses for parameters_ellipse
+            logarithm (float, optional): _description_. Defaults to 0..
+            normalize (bool, optional): _description_. Defaults to False.
+            cut_value (str, optional): _description_. Defaults to "".
+            num_ellipses (tuple, optional): _description_. Defaults to (21, 21).
+            amplification (float, optional): _description_. Defaults to 0.75.
+            color_line (str, optional): _description_. Defaults to "w".
+            line_width (int, optional): _description_. Defaults to 1.
+            draw_arrow (bool, optional): _description_. Defaults to True.
+            head_width (int, optional): _description_. Defaults to 2.
+            ax (bool, optional): _description_. Defaults to False.
+            color_intensity (_type_, optional): _description_. Defaults to CONF_DRAWING["color_intensity"].
         """
 
         percentage_intensity = CONF_DRAWING["percentage_intensity"]
@@ -1463,12 +1517,17 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 #           percentage_intensity * intensity_max)
 
     def __draw1__(self, image, colormap, title: str = "", has_max=False, only_image=False):
-        """Draws image
+        """_summary_
 
         Args:
-            image (numpy.array): array with drawing
-            colormap (str): colormap
-            title (str): title of drawing
+            image (_type_): _description_
+            colormap (_type_): _description_
+            title (str, optional): _description_. Defaults to "".
+            has_max (bool, optional): _description_. Defaults to False.
+            only_image (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
         """
         extension = [self.z[0], self.z[-1], self.x[0], self.x[-1]]
 
@@ -1665,6 +1724,7 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
 
 
+
 def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     """
     Kernel for fast propagation of WPM method
@@ -1749,7 +1809,7 @@ def draw2D_proposal(
         verbose=False):
     """makes a drawing of XY
 
-    Parameters:
+    Args:
         image (numpy.array): image to draw
         x (numpy.array): positions x
         y (numpy.array): positions y

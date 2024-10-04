@@ -36,13 +36,13 @@ The main atributes are:
 
 from scipy.interpolate import interp1d
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-
 
 from .__init__ import degrees, np, plt, um
-from .scalar_fields_X import Scalar_field_X
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_math import cut_function, fft_convolution1d, nearest, nearest2
 from .utils_optics import roughness_1D
+from .utils_common import check_none
+from .scalar_fields_X import Scalar_field_X
 
 
 class Scalar_mask_X(Scalar_field_X):
@@ -72,6 +72,8 @@ class Scalar_mask_X(Scalar_field_X):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_mask_X'
 
+
+    @check_none('u', raise_exception=False)
     def filter(self, mask, new_field: bool = True,
                binarize: bool = False, normalize: bool = False):
         """Widens a field using a mask.
@@ -99,6 +101,8 @@ class Scalar_mask_X(Scalar_field_X):
             return new
         else:
             self.u = covolved_image
+
+
 
     def mask_from_function(self,
                            index: float = 1.5,
@@ -133,6 +137,7 @@ class Scalar_mask_X(Scalar_field_X):
         F1 = eval(f1, v_globals, v_locals)
         self.u = t * np.exp(1.j * k * (index - 1) * (F2 - F1))
         self.u[t == 0] = 0
+
 
     def mask_from_array(self,
                         index: float = 1.5,

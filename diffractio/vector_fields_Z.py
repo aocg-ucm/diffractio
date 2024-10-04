@@ -362,15 +362,17 @@ class Vector_field_Z():
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
 
-    def normalize(self, new_field: bool = False):
+    def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Args:
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+            kind (str): 'amplitude', or 'intensity'
+
         Returns
             u (numpy.array): normalized optical field
         """
-        return normalize_field(self, new_field)
+        return normalize_field(self, kind, new_field)
 
     def draw(self,
              kind: str = 'intensity',
@@ -430,7 +432,7 @@ class Vector_field_Z():
         """Draws the intensity
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -452,7 +454,7 @@ class Vector_field_Z():
         """internal funcion: draws phase
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -526,7 +528,7 @@ class Vector_field_Z():
         """internal funcion: draws phase
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
         """
@@ -630,7 +632,7 @@ class Vector_field_Z():
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Args:
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             title (str): title of figure
             cut_value (float): If not None, cuts the maximum intensity to this value

@@ -40,9 +40,10 @@ The magnitude is related to microns: `mifcron = 1.`
 # flake8: noqa
 
 
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, np, um
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import check_none
 from .scalar_fields_X import Scalar_field_X
 
 
@@ -70,6 +71,7 @@ class Scalar_source_X(Scalar_field_X):
         super().__init__(x, wavelength, n_background, info)
         self.type = 'Scalar_source_X'
 
+    @check_none('x',raise_exception=False)
     def plane_wave(self, A: float = 1., theta: float = 0., z0: float = 0.):
         """Plane wave. 
 
@@ -82,6 +84,8 @@ class Scalar_source_X(Scalar_field_X):
         k = 2 * np.pi / self.wavelength
         self.u = A * np.exp(1.j * k * (self.x * np.sin(theta) + z0 * np.cos(theta)))
 
+
+    @check_none('x',raise_exception=False)
     def gauss_beam(self, x0: float, w0: float, z0: float, A: float = 1, theta: float = 0.):
         """Gauss Beam.
 
@@ -110,6 +114,8 @@ class Scalar_source_X(Scalar_field_X):
 
         self.u = amplitude * phase1 * phase2
 
+
+    @check_none('x',raise_exception=False)
     def spherical_wave(self, A: float, x0: float, z0: float, normalize: bool = False):
         """Spherical wave. self.u = amplitude * A * np.exp(-1.j * np.sign(z0) * k * Rz) / Rz
 
@@ -130,6 +136,8 @@ class Scalar_source_X(Scalar_field_X):
         if normalize is True:
             self.u = self.u / np.abs(self.u.max() + 1.012034e-12)
 
+
+    @check_none('x',raise_exception=False)
     def plane_waves_dict(self, params: dict):
         """Several plane waves with parameters defined in dictionary
 
@@ -142,12 +150,14 @@ class Scalar_source_X(Scalar_field_X):
         # Definicion del vector de onda
         k = 2 * np.pi / self.wavelength
 
-        self.u = np.zeros_like(self.u, dtype=complex)
+        self.u = np.zeros_like(self.x, dtype=complex)
         for p in params:
             self.u = self.u + p['A'] * np.exp(
                 1.j * k *
                 (self.x * np.sin(p['theta']) + p['z0'] * np.cos(p['theta'])))
 
+
+    @check_none('x',raise_exception=False)
     def plane_waves_several_inclined(self, A: float, num_beams: int, max_angle: float):
         """Several paralel plane waves.
 
@@ -156,9 +166,8 @@ class Scalar_source_X(Scalar_field_X):
             num_beams (int): number of ints
             max_angle (float): maximum angle for beams
         """
-        # Definicion del vector de onda
 
-        t = np.zeros_like(self.u, dtype=complex)
+        t = np.zeros_like(self.x, dtype=complex)
         angle = max_angle / num_beams
         for i in range(num_beams):
             theta = -max_angle / 2 + angle * (i + 0.5)
@@ -166,6 +175,8 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
+
+    @check_none('x',raise_exception=False)
     def gauss_beams_several_parallel(self, A: float, num_beams: int, w0: float, z0: float, x_central: float, x_range: float, theta: float = 0.):
         """Several parallel gauss beams
 
@@ -179,7 +190,7 @@ class Scalar_source_X(Scalar_field_X):
             theta (float): angle of the parallel beams
         """
 
-        t = np.zeros_like(self.u, dtype=complex)
+        t = np.zeros_like(self.x, dtype=complex)
         distancia = x_range / num_beams
         for i in range(num_beams):
             xi = x_central - x_range / 2 + distancia * (i + 0.5)
@@ -187,6 +198,7 @@ class Scalar_source_X(Scalar_field_X):
             t = t + self.u
         self.u = t
 
+    @check_none('x',raise_exception=False)
     def gauss_beams_several_inclined(self, A: float, num_beams: int, w0: float, x0: float, z0: float, max_angle: float):
         """Several inclined gauss beams
 
@@ -200,9 +212,8 @@ class Scalar_source_X(Scalar_field_X):
             z0 (float): constant value for phase shift
             max_angle (float): maximum angle for beams
         """
-        # Definicion del vector de onda
 
-        t = np.zeros_like(self.u, dtype=complex)
+        t = np.zeros_like(self.x, dtype=complex)
         angle = max_angle / num_beams
         for i in range(num_beams):
             thetai = -max_angle / 2 + angle * (i + 0.5)

@@ -50,13 +50,11 @@ import multiprocessing
 from numpy import (angle, exp, linspace, pi, shape, zeros)
 from scipy.interpolate import interp1d
 
-from .config import Draw_Z_Options
-
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-
 
 from .__init__ import degrees, mm, np, plt
-from .utils_common import get_date, load_data_common, save_data_common
+from .config import Draw_Z_Options
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import get_date, load_data_common, save_data_common, check_none
 from .utils_drawing import normalize_draw
 from .utils_math import nearest
 
@@ -99,6 +97,8 @@ class Scalar_field_Z():
         self.type = 'Scalar_field_Z'
         self.date = get_date()
 
+
+    @check_none('z','u', raise_exception=False)
     def __str__(self):
         """Represents main data of the atributes."""
 
@@ -122,6 +122,8 @@ class Scalar_field_Z():
             print(" - info:       {}".format(self.info))
         return ("")
 
+
+    @check_none('z','u', raise_exception=False)
     def __add__(self, other, kind: str = 'standard'):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
@@ -153,6 +155,8 @@ class Scalar_field_Z():
 
         return u3
 
+
+    @check_none('z','u', raise_exception=False)
     def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
@@ -169,6 +173,8 @@ class Scalar_field_Z():
         u3.u = self.u - other.u
         return u3
 
+
+    @check_none('z','u', raise_exception=False)
     def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         # new_field = Scalar_field_X(self.z, self.wavelength)
@@ -180,6 +186,8 @@ class Scalar_field_Z():
             new_field.clear_field()
         return new_field
 
+
+    @check_none('u', raise_exception=False)
     def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
@@ -191,15 +199,17 @@ class Scalar_field_Z():
         else:
             self.u = np.conj(self.u)
 
+
+    @check_none('u', raise_exception=False)
     def clear_field(self):
         """Removes the field so that self.u = 0. """
         self.u = np.zeros_like(self.u, dtype=complex)
+
 
     def save_data(self, filename: str, add_name: str = "",
                   description: str = "", verbose: bool = False):
         """Common save data function to be used in all the modules.
         The methods included are: npz, matlab
-
 
         Args:
             filename (str): filename
@@ -216,6 +226,7 @@ class Scalar_field_Z():
             return final_filename
         except:
             return False
+
 
     def load_data(self, filename: str, verbose: bool = False):
         """Load data from a file to a Scalar_field_X.
@@ -236,6 +247,8 @@ class Scalar_field_Z():
         if verbose is True:
             print(dict0.keys())
 
+
+    @check_none('z','u', raise_exception=False)
     def cut_resample(self,
                      z_limits: NDArrayFloat | None = None,
                      num_points: int | None = None,
@@ -300,16 +313,22 @@ class Scalar_field_Z():
             field.u = u_new
             return field
 
-    def normalize(self, new_field: bool = False):
+
+    @check_none('u', raise_exception=False)
+    def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Args:
+            kind (str): 'amplitude', or 'intensity'
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+
         Returns
             u (numpy.array): normalized optical field
         """
-        return normalize_field(self, new_field)
+        return normalize_field(self, kind, new_field)
 
+
+    @check_none('u', raise_exception=False)
     def intensity(self):
         """Intensity.
 
@@ -320,6 +339,8 @@ class Scalar_field_Z():
         intensity = (np.abs(self.u)**2)
         return intensity
 
+
+    @check_none('u', raise_exception=False)
     def average_intensity(self, verbose: bool = False):
         """Returns the average intensity as: (np.abs(self.u)**2).sum() / num_data
 
@@ -335,6 +356,8 @@ class Scalar_field_Z():
 
         return average_intensity
 
+
+    @check_none('z','u', raise_exception=False)
     def FWHM1D(self, percentage: float = 0.5, remove_background: bool = None,
                has_draw: bool = False):
         """
@@ -357,6 +380,8 @@ class Scalar_field_Z():
 
         return np.squeeze(width)
 
+
+    @check_none('z','u', raise_exception=False)
     def DOF(self, percentage: float = 0.5, remove_background: str | None = None,
             has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
@@ -394,7 +419,7 @@ class Scalar_field_Z():
 
         Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'field', 'phase'
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
             unwrap (bool): If True, unwraps the phase.

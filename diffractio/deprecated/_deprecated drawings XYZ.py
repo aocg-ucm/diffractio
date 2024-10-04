@@ -5,9 +5,9 @@
                  pixel_size=(128, 128, 128)):
         """Draws  XZ field.
 
-        Parameters:
+        Args:
             kind (str): type of drawing: 'intensity', 'phase', 'real_field'
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             pixel_size (float, float, float): pixels for drawing
             """
@@ -44,8 +44,8 @@
     def draw_volume_deprecated(self, logarithm=0, normalize='', maxintensity=None):
         """Draws  XYZ field with mlab
 
-        Parameters:
-            logarithm (bool): If True, intensity is scaled in logarithm
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             maxintensity (float): maximum value of intensity
 
@@ -97,7 +97,7 @@
     def draw_refractive_index_deprecated(self, kind='real'):
         """Draws XYZ refraction index with slicer
 
-        Parameters:
+        Args:
             kind (str): 'real', 'imag', 'abs'
         """
         try:

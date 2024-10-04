@@ -1154,15 +1154,17 @@ class Scalar_field_X():
 
         return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
-    def normalize(self, new_field: bool = False):
+    def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
         Args:
+            kind (str): 'amplitude', or 'intensity'
             new_field (bool): If False the computation goes to self.u. If True a new instance is produced.
+        
         Returns
             u (numpy.array): normalized optical field
         """
-        return normalize_field(self, new_field)
+        return normalize_field(self, kind, new_field)
 
 
     @check_none('x', 'u',raise_exception=False)
@@ -1178,8 +1180,6 @@ class Scalar_field_X():
             (numpy.array) mtf_norm: normalizd MTF
         """
         
-
-
         tmp_field = self.u
         x = self.x
         self.u = np.abs(self.u) ** 2
@@ -1264,6 +1264,7 @@ class Scalar_field_X():
         )
         return pos_transitions, type_transitions, raising, falling
 
+
     @check_none('x',raise_exception=False)
     def get_RS_minimum_z(self, n: float = 1., quality: int = 1, verbose: bool = True):
         """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter
@@ -1276,8 +1277,6 @@ class Scalar_field_X():
         Returns:
             z_min (float): z_min for quality_factor>quality
         """
-
-
 
         range_x = self.x[-1] - self.x[0]
         num_x = len(self.x)
@@ -1314,7 +1313,7 @@ class Scalar_field_X():
 
         Args:
             kind (str): type of drawing: 'amplitude', 'intensity', 'field', 'phase', 'fill', 'fft'
-            logarithm (bool): If True, intensity is scaled in logarithm
+            logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
             filename (str): if not '' stores drawing in file,
