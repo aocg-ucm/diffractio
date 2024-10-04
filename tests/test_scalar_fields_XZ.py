@@ -5,6 +5,7 @@ import datetime
 import os
 import sys
 import time
+import pytest
 
 from diffractio import (degrees, eps, mm, no_date, np, num_max_processors, plt,
                         um)
