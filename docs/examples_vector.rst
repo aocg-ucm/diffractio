@@ -14,3 +14,4 @@ Examples for vector propagation
    source/examples_vector/lens.ipynb
    source/examples_vector/VRS_paper.ipynb
    source/examples_vector/vector_double_slit_experiment.ipynb
+   source/examples_vector/SLM.ipynb

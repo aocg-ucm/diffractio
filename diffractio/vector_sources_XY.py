@@ -394,15 +394,15 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
-    @check_none('Ex','Ey',raise_exception=False)
-    def to_py_pol(self):
-        """Pass Ex, Ey field to py_pol package for software analysis
-        """
+    # @check_none('Ex','Ey',raise_exception=False)
+    # def to_py_pol(self):
+    #     """Pass Ex, Ey field to py_pol package for software analysis
+    #     """
 
-        j0 = Jones_vector(name="from Diffractio")
-        j0.from_components(Ex=self.Ex, Ey=self.Ey)
+    #     j0 = Jones_vector(name="from Diffractio")
+    #     j0.from_components(Ex=self.Ex, Ey=self.Ey)
 
-        return j0
+    #     return j0
 
 
 def define_initial_field(EM, u=None):

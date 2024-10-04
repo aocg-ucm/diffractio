@@ -135,6 +135,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             self.u = np.exp(1.j * (phase_min +
                                    (phase_max - phase_min) * amplitude))
 
+
     @check_none('x','y','u',raise_exception=False)
     def area(self, percentage: float):
         """Computes area where mask is not 0
@@ -233,6 +234,7 @@ class Scalar_mask_XY(Scalar_field_XY):
             return new
         else:
             self.u = covolved_image
+
 
     @check_none('x','y','u',raise_exception=False)
     def widen(self, radius: float, new_field: bool = True, binarize=True):

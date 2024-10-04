@@ -58,6 +58,9 @@ from matplotlib import rcParams
 import copy
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
+from py_pol.jones_matrix import Jones_matrix
+from py_pol.jones_vector import Jones_vector
+
 import diffractio
 
 from .__init__ import degrees, eps, mm, np, plt
@@ -222,6 +225,24 @@ class Vector_field_XY():
         self.Ey = np.zeros_like(self.Ex, dtype=complex)
         self.Ez = np.zeros_like(self.Ex, dtype=complex)
 
+
+    def to_py_pol(self):
+        """Pass diffractio vector field or mask to py_pol package for software analysis.
+        Returns:
+            py_pol.jones_matrix or py_pol.jones_vector
+
+        """
+        
+        if self.type == 'Vector_mask_XY':
+            m0 = Jones_matrix(name="from Diffractio")
+            m0.from_components((self.M00, self.M01, self.M10, self.M11))
+            m0.shape = self.M00.shape
+            return m0
+
+        elif self.type in ('Vector_field_XY', 'Vector_source_XY'):
+            j0 = Jones_vector(name="from Diffractio")
+            j0.from_components(Ex=self.Ex, Ey=self.Ey)
+            return j0
 
     def duplicate(self, clear: bool = False):
         """Duplicates the instance,
