@@ -75,7 +75,7 @@ from .config import CONF_DRAWING, Draw_pyvista_Options, Draw_XYZ_Options
 from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling
 from .utils_drawing import normalize_draw
 from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
@@ -405,6 +405,17 @@ class Scalar_field_XYZ():
         intensity = (np.abs(self.u)**2)
         return intensity
 
+
+    @check_none('x','y','z','u', raise_exception=False)
+    def oversampling(self, factor_rate: int | tuple):
+        """Overfample function has been implemented in scalar X, XY, XZ, and XYZ frames reduce the pixel size of the masks and fields. 
+        This is also performed with the cut_resample function. However, this function oversamples with integer factors.
+        
+        Args:
+            factor_rate (int | tuple, optional): factor rate. Defaults to 2.
+        """
+
+        self = oversampling(self, factor_rate)
 
     @check_none('x','y','z','u',raise_exception=False)
     def cut_resample(self,

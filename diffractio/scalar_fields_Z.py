@@ -54,7 +54,7 @@ from scipy.interpolate import interp1d
 from .__init__ import degrees, mm, np, plt
 from .config import Draw_Z_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling
 from .utils_drawing import normalize_draw
 from .utils_math import nearest
 
@@ -228,6 +228,17 @@ class Scalar_field_Z():
         if verbose is True:
             print(dict0.keys())
 
+
+    @check_none('z','u', raise_exception=False)
+    def oversampling(self, factor_rate: int | tuple):
+        """Overfample function has been implemented in scalar X, XY, XZ, and XYZ frames reduce the pixel size of the masks and fields. 
+        This is also performed with the cut_resample function. However, this function oversamples with integer factors.
+        
+        Args:
+            factor_rate (int | tuple, optional): factor rate. Defaults to 2.
+        """
+
+        self = oversampling(self, factor_rate)
 
     @check_none('z','u', raise_exception=False)
     def cut_resample(self,

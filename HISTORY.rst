@@ -15,11 +15,11 @@ Beta state
   
   - Pyvista has been implemented for 3D visualization. 
 
-  - check_none function has been implemented to check if a variable is None.
+  - 'check_none' function (utils_common) has been implemented to check if a variable is None.
 
-  - add function has been modified to take into consideration different procedures for adding sources or masks.
+  - 'add function' (utils_common, and scalar_fields) has been modified to take into consideration different procedures for adding sources or masks.
 
-  - oversample function has been implemented to increase the resolution of the masks. This is also performed with the cut_resample function. However, this function oversamples with integer factors.
+  - 'oversampling function' has been implemented to increase the resolution of the masks (utils_common, and Scalar X, XY, XYZ, XZ, Z). This is also performed with the cut_resample function. However, this function oversamples with integer factors.
 
 
 * Fix bugs:
@@ -50,6 +50,7 @@ Beta state
 
   - has_edges parameters in WPM and BPM methods can be an array masking in desired z positions.
 
+  - vector XY mask: SLM (spatial light modulator) to simulate the behaviou of a SLM.
 
 * Documentation:
 

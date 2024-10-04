@@ -80,7 +80,7 @@ from .__init__ import degrees, mm, seconds, um
 
 from .config import CONF_DRAWING, Draw_XY_Options, Save_mask_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, add, check_none, oversample
+from .utils_common import get_date, load_data_common, save_data_common, add, check_none, oversampling
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
 from .utils_math import (get_edges, get_k, nearest, nearest2,
@@ -455,6 +455,18 @@ class Scalar_field_XY():
         ofile.close()
 
         return mask
+
+
+    @check_none('x','y','u', raise_exception=False)
+    def oversampling(self, factor_rate: int | tuple):
+        """Overfample function has been implemented in scalar X, XY, XZ, and XYZ frames reduce the pixel size of the masks and fields. 
+        This is also performed with the cut_resample function. However, this function oversamples with integer factors.
+        
+        Args:
+            factor_rate (int | tuple, optional): factor rate. Defaults to 2.
+        """
+
+        self = oversampling(self, factor_rate)
 
     @check_none('x','y','u',raise_exception=False)
     def cut_resample(self,

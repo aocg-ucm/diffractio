@@ -42,60 +42,75 @@ def check_none(*variables, raise_exception=False):
     return decorator
 
 
-def oversample(self, kind: str, factor_rate: int | tuple = (2,2)):
-    """_summary_
+def oversampling(cls, factor_rate: int | tuple):# -> Any:
+    """Function to oversampling the field
 
     Args:
-        factor_rate (tuple, optional): _description_. Defaults to (2,2).
+        factor_rate (int | tuple, optional): factor rate. Defaults to 2.
     """
 
 
-    if kind = 'scalar_x':
+    if cls.type in ('Scalar_mask_X', 'Scalar_field_X', 'Scalar_source_X') :
 
-        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
-        self.u =  new_matrix.repeat(factor_rate[0])
+        cls.x = np.linspace(cls.x[0], cls.x[-1], factor_rate*len(cls.x))
+        cls.u =  cls.u.repeat(factor_rate[0],axis=0)
 
 
-    elif kind = 'scalar_xy':
+    if cls.type in ('Scalar_field_Z') :
 
-        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
-        self.y = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
-        self.X, self.Y = np.meshgrid(self.x, self.y)
+        cls.z = np.linspace(cls.z[0], cls.z[-1], factor_rate*len(cls.x))
+        cls.u =  cls.u.repeat(factor_rate[0],axis=0)
 
-        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
-        self.u =  new_matrix.repeat(factor_rate[0],axis=1)
 
-    elif kind = 'scalar_xyz':
+    elif cls.type in ('Scalar_mask_XY', 'Scalar_field_XY', 'Scalar_source_XY') :
+        
+        if isinstance(factor_rate, int):
+            factor_rate = (factor_rate, factor_rate)    
 
-        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
-        self.y = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
-        self.z = np.linspace(self.y[0], self.y[-1], factor_rate[0]*len(self.y))
-        self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
+        cls.x = np.linspace(cls.x[0], cls.x[-1], factor_rate[0]*len(cls.x))
+        cls.y = np.linspace(cls.y[0], cls.y[-1], factor_rate[1]*len(cls.y))
+        cls.X, cls.Y = np.meshgrid(cls.x, cls.y)
 
-        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
+        new_matrix =  cls.u.repeat(factor_rate[0],axis=0)
+        cls.u =  new_matrix.repeat(factor_rate[1],axis=1)
+
+    elif cls.type in ('Scalar_mask_XYZ', 'Scalar_field_XYZ') :
+
+        if isinstance(factor_rate, int):
+            factor_rate = (factor_rate, factor_rate, factor_rate)
+
+        cls.x = np.linspace(cls.x[0], cls.x[-1], factor_rate[0]*len(cls.x))
+        cls.y = np.linspace(cls.y[0], cls.y[-1], factor_rate[1]*len(cls.y))
+        cls.z = np.linspace(cls.z[0], cls.z[-1], factor_rate[2]*len(cls.z))
+        cls.X, cls.Y, cls.Z = np.meshgrid(cls.x, cls.y, cls.z)
+
+        new_matrix =  cls.u.repeat(factor_rate[0],axis=0)
         new_matrix =  new_matrix(factor_rate[1],axis=1)
-        self.u =  new_matrix.repeat(factor_rate[2],axis=2)
+        cls.u =  new_matrix.repeat(factor_rate[2],axis=2)
 
 
-        new_matrix =  self.n.repeat(factor_rate[0],axis=0)
+        new_matrix =  cls.n.repeat(factor_rate[0],axis=0)
         new_matrix =  new_matrix(factor_rate[1],axis=1)
-        self.n =  new_matrix.repeat(factor_rate[2],axis=2)
+        cls.n =  new_matrix.repeat(factor_rate[2],axis=2)
 
 
-    elif kind = 'scalar_xz':
+    elif cls.type in ('Scalar_mask_XZ', 'Scalar_field_XZ') :
+        
+        if isinstance(factor_rate, int):
+            factor_rate = (factor_rate, factor_rate)
 
-        self.x = np.linspace(self.x[0], self.x[-1], factor_rate[0]*len(self.x))
-        self.z = np.linspace(self.z[0], self.z[-1], factor_rate[0]*len(self.z))
-        self.X, self.Y = np.meshgrid(self.x, self.y)
+        cls.x = np.linspace(cls.x[0], cls.x[-1], factor_rate[0]*len(cls.x))
+        cls.z = np.linspace(cls.z[0], cls.z[-1], factor_rate[1]*len(cls.z))
+        cls.X, cls.Z = np.meshgrid(cls.x, cls.z)
 
-        new_matrix =  self.u.repeat(factor_rate[0],axis=0)
-        self.u =  new_matrix.repeat(factor_rate[0],axis=1)
+        new_matrix =  cls.u.repeat(factor_rate[0],axis=0)
+        cls.u =  new_matrix.repeat(factor_rate[1],axis=1)
 
-        new_matrix =  self.n.repeat(factor_rate[0],axis=0)
-        self.n =  new_matrix.repeat(factor_rate[0],axis=1)
+        new_matrix =  cls.n.repeat(factor_rate[0],axis=0)
+        cls.n =  new_matrix.repeat(factor_rate[1],axis=1)
 
 
-    return self
+    return cls
 
 
 def add(self, other, kind: Options_add  = 'source'):

@@ -285,7 +285,6 @@ class Test_Scalar_fields_XY():
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
-    @pytest.mark.skip(reason="test_profile: manual click")
     def test_profile(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
@@ -309,6 +308,7 @@ class Test_Scalar_fields_XY():
         save_figure_test(newpath, func_name, add_name='')
         assert True
 
+    @pytest.mark.skip(reason="test_profile: manual click")
     def test_profile_manual(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)

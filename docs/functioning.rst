@@ -19,3 +19,4 @@ About functiong
    source/functioning/dxf_XY.ipynb
    source/functioning/dxf_XZ.ipynb
    source/functioning/add_fields.ipynb
+   source/functioning/oversampling_xy.ipynb
