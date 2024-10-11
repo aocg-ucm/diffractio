@@ -735,71 +735,71 @@ class Scalar_field_XY():
             self.y = y_new
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-    @check_none('x','y','u',raise_exception=False)
-    def ifft_proposal(self, z: float = 0 * mm, shift: bool = True, remove0: bool = True,
-                      matrix: bool = False, new_field: bool = False):
-        """Fast Fourier Transform (fft) of the field.
+    
+    # @check_none('x','y','u',raise_exception=False)
+    # def ifft_proposal(self, z: float = 0 * mm, shift: bool = True, remove0: bool = True,
+    #                   matrix: bool = False, new_field: bool = False):
+    #     """Fast Fourier Transform (fft) of the field.
 
-        Args:
-            z (float): distance to the observation plane or focal of lens
-            shift (bool): if True, fftshift is performed
-            remove0 (bool): if True, central point is removed
-            matrix (bool):  if True only matrix is returned. If False, returns Scalar_field_X
-            new_field (bool): if True returns Scalar_field_X, else puts in self
+    #     Args:
+    #         z (float): distance to the observation plane or focal of lens
+    #         shift (bool): if True, fftshift is performed
+    #         remove0 (bool): if True, central point is removed
+    #         matrix (bool):  if True only matrix is returned. If False, returns Scalar_field_X
+    #         new_field (bool): if True returns Scalar_field_X, else puts in self
 
-        Returns:
-            (np.array or Scalar_field_X or None): FFT of the input field
-        """
+    #     Returns:
+    #         (np.array or Scalar_field_X or None): FFT of the input field
+    #     """
         
-        k = 2 * np.pi / self.wavelength
-        num_x = self.x.size
-        num_y = self.y.size
-        u_field = self.u
+    #     k = 2 * np.pi / self.wavelength
+    #     num_x = self.x.size
+    #     num_y = self.y.size
+    #     u_field = self.u
 
-        range_x = self.x[1] - self.x[0]
-        range_y = self.y[1] - self.y[0]
+    #     range_x = self.x[1] - self.x[0]
+    #     range_y = self.y[1] - self.y[0]
 
-        ttf1 = np.fft.ifft2(u_field)
+    #     ttf1 = np.fft.ifft2(u_field)
 
-        delta_x = self.x[1] - self.x[0]
-        freq_nyquist_x = 1 / (2 * delta_x)
-        kx = np.linspace(-freq_nyquist_x, freq_nyquist_x,
-                         num_x) * self.wavelength
+    #     delta_x = self.x[1] - self.x[0]
+    #     freq_nyquist_x = 1 / (2 * delta_x)
+    #     kx = np.linspace(-freq_nyquist_x, freq_nyquist_x,
+    #                      num_x) * self.wavelength
 
-        delta_y = self.y[1] - self.y[0]
-        freq_nyquist_y = 1 / (2 * delta_y)
-        ky = np.linspace(-freq_nyquist_y, freq_nyquist_y,
-                         num_y) * self.wavelength
+    #     delta_y = self.y[1] - self.y[0]
+    #     freq_nyquist_y = 1 / (2 * delta_y)
+    #     ky = np.linspace(-freq_nyquist_y, freq_nyquist_y,
+    #                      num_y) * self.wavelength
 
-        if remove0 is True:
-            ttf1[0, 0] = 0
+    #     if remove0 is True:
+    #         ttf1[0, 0] = 0
 
-        if shift is True:
-            ttf1 = np.fft.fftshift(ttf1)
+    #     if shift is True:
+    #         ttf1 = np.fft.fftshift(ttf1)
 
-        if matrix is True:
-            return ttf1
+    #     if matrix is True:
+    #         return ttf1
 
-        if z is None:
-            x_new = kx  # exit in angles (radians)
-            y_new = ky  # exit in angles (radians)
-        elif z == 0:
-            x_new = self.y
-            y_new = self.x * num_x / num_y
-        else:
-            x_new = kx * z  # exit distances at a observation plane z
-            y_new = ky * z  # exit distances at a observation plane z
+    #     if z is None:
+    #         x_new = kx  # exit in angles (radians)
+    #         y_new = ky  # exit in angles (radians)
+    #     elif z == 0:
+    #         x_new = self.y
+    #         y_new = self.x * num_x / num_y
+    #     else:
+    #         x_new = kx * z  # exit distances at a observation plane z
+    #         y_new = ky * z  # exit distances at a observation plane z
 
-        if new_field is True:
-            field_output = Scalar_field_XY(x_new, y_new, self.wavelength)
-            field_output.u = ttf1
-            return field_output
-        else:
-            self.u = ttf1
-            self.x = x_new
-            self.y = y_new
-            self.X, self.Y = np.meshgrid(self.x, self.y)
-
+    #     if new_field is True:
+    #         field_output = Scalar_field_XY(x_new, y_new, self.wavelength)
+    #         field_output.u = ttf1
+    #         return field_output
+    #     else:
+    #         self.u = ttf1
+    #         self.x = x_new
+    #         self.y = y_new
+    #         self.X, self.Y = np.meshgrid(self.x, self.y)
 
     @check_none('x','y','u',raise_exception=False)
     def ifft(self, z: float = 0 * mm, shift: bool = True, remove0: bool = True,
