@@ -47,8 +47,8 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-50 * um, 50 * um, 128)
-        wavelength = 1 * um
+        x = np.linspace(-50*um, 50*um, 128)
+        wavelength = 1*um
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.ones_like(x, dtype=complex)
 
@@ -66,8 +66,8 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}.'.format(newpath, func_name)
 
-        x = np.linspace(-500 * um, 500 * um, 512)
-        wavelength = .5 * um
+        x = np.linspace(-500*um, 500*um, 512)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(x**2 / 5000)
@@ -87,17 +87,17 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-1 * mm, 1 * mm, 1024)
-        wavelength = 0.6328 * um
+        x = np.linspace(-1*mm, 1*mm, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_mask_X(x, wavelength)
-        u0.slit(x0=0, size=1 * mm)
+        u0.slit(x0=0, size=1*mm)
         u0.inverse_amplitude()
         u0.draw()
         save_figure_test(newpath, func_name, add_name='_1')
 
         u1 = Scalar_mask_X(x, wavelength)
-        u1.lens(x0=0, focal=100 * mm)
+        u1.lens(x0=0, focal=100*mm)
         u1.inverse_phase()
         u1.draw('phase')
         save_figure_test(newpath, func_name, add_name='_2')
@@ -108,8 +108,8 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x1 = np.linspace(-500 * um, 500 * um, 512)
-        wavelength = .5 * um
+        x1 = np.linspace(-500*um, 500*um, 512)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x1, wavelength)
         t1.u = np.sin(2 * np.pi * x1 / 50)
@@ -118,7 +118,7 @@ class Test_Scalar_fields_X():
         t1.save_data(filename=filename)
         save_figure_test(newpath, func_name, add_name='_1')
 
-        t2 = t1.cut_resample(x_limits=(-250 * um, 250 * um),
+        t2 = t1.cut_resample(x_limits=(-250*um, 250*um),
                              num_points=1024,
                              new_field=True,
                              interp_kind='quadratic')
@@ -134,22 +134,22 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x1 = np.linspace(-500 * um, 500 * um, 512)
-        wavelength = .5 * um
+        x1 = np.linspace(-500*um, 500*um, 512)
+        wavelength = .5*um
         t1 = Scalar_field_X(x1, wavelength)
         t1.clear_field()
 
-        x2 = np.linspace(-50 * um, 50 * um, 512)
-        wavelength = .5 * um
+        x2 = np.linspace(-50*um, 50*um, 512)
+        wavelength = .5*um
         t2 = Scalar_field_X(x2, wavelength)
         t2.u = np.sin(2 * np.pi * x2 / 50)
 
         t1.insert_mask(t2,
-                       x0_mask1=-100 * um,
+                       x0_mask1=-100*um,
                        clean=False,
                        kind_position='center')
         t1.insert_mask(t2,
-                       x0_mask1=100 * um,
+                       x0_mask1=100*um,
                        clean=False,
                        kind_position='center')
         t1.draw()
@@ -162,12 +162,12 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-1 * mm, 1 * mm, 1024)
-        wavelength = 0.6328 * um
+        x = np.linspace(-1*mm, 1*mm, 1024)
+        wavelength = 0.6328*um
 
         t1 = Scalar_mask_X(x, wavelength)
-        t1.lens(x0=0, focal=100 * mm)
-        t1.pupil(x0=0, radius=750 * um)
+        t1.lens(x0=0, focal=100*mm)
+        t1.pupil(x0=0, radius=750*um)
         t1.draw('field')
 
         t1.save_data(filename=filename + '.npz')
@@ -178,14 +178,14 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x1 = np.linspace(-750 * um, 750 * um, 512)
-        wavelength = .5 * um
+        x1 = np.linspace(-750*um, 750*um, 512)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x1, wavelength)
         t1.clear_field()
 
-        x2 = np.linspace(-50 * um, 50 * um, 512)
-        wavelength = .5 * um
+        x2 = np.linspace(-50*um, 50*um, 512)
+        wavelength = .5*um
         t2 = Scalar_field_X(x2, wavelength)
         t2.u = np.sin(2 * np.pi * x2 / 50)
 
@@ -207,10 +207,10 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x1 = np.linspace(-750 * um, 750 * um, 4096)
+        x1 = np.linspace(-750*um, 750*um, 4096)
 
-        x2 = np.linspace(-50 * um, 50 * um, 4096)
-        wavelength = .5 * um
+        x2 = np.linspace(-50*um, 50*um, 4096)
+        wavelength = .5*um
 
         t2 = Scalar_field_X(x2, wavelength)
         t2.u = np.ones_like(x2, dtype=complex)
@@ -230,7 +230,7 @@ class Test_Scalar_fields_X():
         t1.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)
 
-        solution = np.linspace(-450 * um, 450 * um, 10)
+        solution = np.linspace(-450*um, 450*um, 10)
         proposal = pos_transitions
         assert comparison(proposal, solution, 1), func_name
 
@@ -240,11 +240,11 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-500 * um, 500 * um, 256)
-        wavelength = 1 * um
+        x = np.linspace(-500*um, 500*um, 256)
+        wavelength = 1*um
 
-        x = np.linspace(-500 * um, 500 * um, 128)
-        wavelength = .5 * um
+        x = np.linspace(-500*um, 500*um, 128)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100)
@@ -264,11 +264,11 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-500 * um, 500 * um, 256)
-        wavelength = 1 * um
+        x = np.linspace(-500*um, 500*um, 256)
+        wavelength = 1*um
 
-        x = np.linspace(-500 * um, 500 * um, 128)
-        wavelength = .5 * um
+        x = np.linspace(-500*um, 500*um, 128)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100)
@@ -301,15 +301,15 @@ class Test_Scalar_fields_X():
 
         num_data = 4096
 
-        x = np.linspace(-500 * um, 500 * um, num_data)
-        wavelength = 1 * um
+        x = np.linspace(-500*um, 500*um, num_data)
+        wavelength = 1*um
 
         t1 = Scalar_field_X(x, wavelength)
-        t1.u[np.bitwise_and(x > -200 * um, x < 200 * um)] = 1
+        t1.u[np.bitwise_and(x > -200*um, x < 200*um)] = 1
         t1.draw()
         save_figure_test(newpath, func_name, add_name='_mask')
 
-        u1 = t1.RS(z=2000 * um, new_field=True)
+        u1 = t1.RS(z=2000*um, new_field=True)
         u1.draw(kind='intensity')
         u1.save_data(filename=filename + '2' + '.npz')
 
@@ -323,15 +323,15 @@ class Test_Scalar_fields_X():
 
         num_data = 4096
 
-        x = np.linspace(-500 * um, 500 * um, num_data)
-        wavelength = 1 * um
+        x = np.linspace(-500*um, 500*um, num_data)
+        wavelength = 1*um
 
         t1 = Scalar_field_X(x, wavelength)
-        t1.u[np.bitwise_and(x > -200 * um, x < 200 * um)] = 1
+        t1.u[np.bitwise_and(x > -200*um, x < 200*um)] = 1
         t1.draw()
         save_figure_test(newpath, func_name, add_name='_mask')
 
-        u1 = t1.RS(z=2000 * um, new_field=True, amplification=3)
+        u1 = t1.RS(z=2000*um, new_field=True, amplification=3)
         u1.draw(kind='intensity')
         t1.save_data(filename=filename + '2' + '.npz')
 
@@ -347,12 +347,12 @@ class Test_Scalar_fields_X():
         filename = '{}{}'.format(newpath, func_name)
 
         num_data = 1024 * 8
-        x = np.linspace(-50 * um, 50 * um, num_data)
-        wavelength = 0.6328 * um
+        x = np.linspace(-50*um, 50*um, num_data)
+        wavelength = 0.6328*um
 
         # intensidad de una onda plana
         u0 = Scalar_field_X(x, wavelength)
-        u0.u[np.bitwise_and(x > -4 * um, x < 4 * um)] = 1
+        u0.u[np.bitwise_and(x > -4*um, x < 4*um)] = 1
         u0.draw(kind='intensity')
         save_figure_test(newpath, func_name, add_name='_mask')
         u0.save_data(filename=filename + '_mask' + '.npz')
@@ -372,8 +372,8 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x = np.linspace(-500 * um, 500 * um, 4096)
-        wavelength = .5 * um
+        x = np.linspace(-500*um, 500*um, 4096)
+        wavelength = .5*um
 
         t1 = Scalar_field_X(x, wavelength)
         t1.u = np.sin(2 * np.pi * x / 100) * np.exp(1j * 2 * np.pi * x / 100)

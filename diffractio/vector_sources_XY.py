@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -44,6 +43,7 @@ from py_pol.jones_vector import Jones_vector
 from .__init__ import degrees, eps, np, um
 from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 from .utils_common import check_none
+from .config import bool_raise_exception
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
@@ -74,7 +74,7 @@ class Vector_source_XY(Vector_field_XY):
         self.type = 'Vector_source_XY'
 
 
-    @check_none('x','y','Ex','Ey',raise_exception=False)
+    @check_none('x','y','Ex','Ey',raise_exception=bool_raise_exception)
     def constant_polarization(self,
                               u=1,
                               v=(1, 0),
@@ -106,7 +106,7 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
@@ -134,7 +134,7 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
@@ -162,7 +162,7 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
@@ -190,7 +190,7 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
@@ -218,7 +218,7 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave(self,
                                     u=1,
                                     r0=(0., 0.),
@@ -258,10 +258,10 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave_radial(self,
                                            u=1,
-                                           r0=(0 * um, 0 * um),
+                                           r0=(0*um, 0*um),
                                            m=1,
                                            fi0=0,
                                            radius=0.):
@@ -285,8 +285,8 @@ class Vector_source_XY(Vector_field_XY):
         radius = (radiusx, radiusy)
 
         if radius == 0:
-            radius_x = (self.x[-1] - self.x[0]) / 2
-            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius_x = (self.x[-1] - self.x[0])/2
+            radius_y = (self.y[-1] - self.y[0])/2
             radius = (radius_x, radius_y)
 
         elif isinstance(radius, (float, int, complex)):
@@ -306,10 +306,10 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave_hybrid(self,
                                            u=1,
-                                           r0=(0 * um, 0 * um),
+                                           r0=(0*um, 0*um),
                                            m=1,
                                            n: float = 1.,
                                            fi0=0,
@@ -333,8 +333,8 @@ class Vector_source_XY(Vector_field_XY):
         radius = (radiusx, radiusy)
 
         if radiusx * radiusy == 0:
-            radius_x = (self.x[-1] - self.x[0]) / 2
-            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius_x = (self.x[-1] - self.x[0])/2
+            radius_y = (self.y[-1] - self.y[0])/2
             radius = (radius_x, radius_y)
 
         elif isinstance(radius, (float, int, complex)):
@@ -356,10 +356,10 @@ class Vector_source_XY(Vector_field_XY):
             self.pupil(r0=r0, radius=radius)
 
 
-    @check_none('X','Y','Ex','Ey',raise_exception=False)
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def spiral_polarized_beam(self,
                               u=1,
-                              r0=(0 * um, 0 * um),
+                              r0=(0*um, 0*um),
                               alpha=0,
                               radius=(0, 0)):
         """Define spiral polarized beams:
@@ -394,7 +394,7 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
-    # @check_none('Ex','Ey',raise_exception=False)
+    # @check_none('Ex','Ey',raise_exception=bool_raise_exception)
     # def to_py_pol(self):
     #     """Pass Ex, Ey field to py_pol package for software analysis
     #     """

@@ -108,14 +108,14 @@ def get_k_deprecated(x, flavour='-'):
     if flavour == '-':
         size_x = x[-1] - x[0]
 
-        kx1 = np.linspace(0, num_x / 2 + 1, int(num_x / 2))
-        kx2 = np.linspace(-num_x / 2, -1, int(num_x / 2))
+        kx1 = np.linspace(0, num_x/2 + 1, int(num_x/2))
+        kx2 = np.linspace(-num_x/2, -1, int(num_x/2))
         kx = (2 * np.pi / size_x) * np.concatenate((kx1, kx2))
 
     elif flavour == '+':
         dx = x[1] - x[0]
-        kx = 2 * np.pi / (num_x * dx) * (range(-int(num_x / 2), int(
-            num_x / 2)))
+        kx = 2 * np.pi / (num_x * dx) * (range(-int(num_x/2), int(
+            num_x/2)))
 
     return kx
 
@@ -171,8 +171,8 @@ def get_k_deprecated(x, flavour='-'):
     #     radius = (radiusx, radiusy)
 
     #     if radiusx * radiusy > 0:
-    #         radius_x = (self.x[-1] - self.x[0]) / 2
-    #         radius_y = (self.y[-1] - self.y[0]) / 2
+    #         radius_x = (self.x[-1] - self.x[0])/2
+    #         radius_y = (self.y[-1] - self.y[0])/2
     #         radius = (radius_x, radius_y)
 
     #     elif radius in (None, '', []):
@@ -182,13 +182,13 @@ def get_k_deprecated(x, flavour='-'):
     #         radius = (radius, radius)
 
     #     if r0 in (0, None, '', []):
-    #         r0_x = (self.x[-1] + self.x[0]) / 2
-    #         r0_y = (self.y[-1] + self.y[0]) / 2
+    #         r0_x = (self.x[-1] + self.x[0])/2
+    #         r0_y = (self.y[-1] + self.y[0])/2
     #         r0 = (r0_x, r0_y)
 
     #     if radiusx * radiusy > 0:
     #         t1 = Scalar_mask_XY(x=self.x, y=self.y, wavelength=self.wavelength)
-    #         t1.circle(r0=r0, radius=radius, angle=0 * degrees)
+    #         t1.circle(r0=r0, radius=radius, angle=0*degrees)
     #         self.Ex = t1.u * self.Ex
     #         self.Ey = t1.u * self.Ey
     #         self.Ez = t1.u * self.Ez

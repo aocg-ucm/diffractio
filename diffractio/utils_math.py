@@ -6,8 +6,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -73,7 +72,7 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
     w = np.exp(-1j * 2 * np.pi * (f22 - f11) / (mout * fs))
     h = np.arange(-m + 1, max(mout, m))
     mp = m + mout - 1
-    h = w**((h**2) / 2)
+    h = w**((h**2)/2)
     ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
     b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
     tmp = b.T
@@ -92,8 +91,8 @@ def Bluestein_dft_x(x, f1, f2, fs, mout):
     # print("b = {}".format(b))
     # print("l = {}".format(l))
 
-    Mshift = -m / 2
-    Mshift = np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs)
+    Mshift = -m/2
+    Mshift = np.exp(-1j * 2 * np.pi * l * (Mshift + 1/2) / fs)
     # print("Mshift = {}".format(Mshift))
 
     b = b * Mshift
@@ -120,7 +119,7 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
     w = np.exp(-1j * 2 * np.pi * (f22 - f11) / (mout * fs))
     h = np.arange(-m + 1, max(mout, m))
     mp = m + mout - 1
-    h = w**((h**2) / 2)
+    h = w**((h**2)/2)
     ft = fft(1 / h[0:mp + 1], 2**nextpow2(mp))
     b = a**(-(np.arange(0, m))) * h[np.arange(m - 1, 2 * m - 1)]
     tmp = np.tile(b, (n, 1)).T
@@ -142,8 +141,8 @@ def Bluestein_dft_xy(x, f1, f2, fs, mout):
         print("b = {}".format(b))
         print("l = {}".format(l))
 
-    Mshift = -m / 2
-    Mshift = np.tile(np.exp(-1j * 2 * np.pi * l * (Mshift + 1 / 2) / fs), (n, 1))
+    Mshift = -m/2
+    Mshift = np.tile(np.exp(-1j * 2 * np.pi * l * (Mshift + 1/2) / fs), (n, 1))
     b = b * Mshift
 
     return b
@@ -407,7 +406,7 @@ def binarize(vector: NDArrayFloat, min_value: float = 0., max_value: float = 1.)
         (numpy.np.array): binarized vector.
     """
 
-    central_value = (min_value + max_value) / 2
+    central_value = (min_value + max_value)/2
 
     vector2 = deepcopy(vector)
     vector2[vector2 <= central_value] = min_value
@@ -449,11 +448,11 @@ def discretize(u: NDArrayComplex,
         dist = factor * posX
 
         for i in range(num_levels):
-            centro = posX / 2 + i * posX
-            abajo = amplitude * 256 > centro - dist / 2
-            arriba = amplitude * 256 <= centro + dist / 2
+            centro = posX/2 + i * posX
+            abajo = amplitude * 256 > centro - dist/2
+            arriba = amplitude * 256 <= centro + dist/2
             Trues = abajo * arriba
-            discretized_image[Trues] = centro / 256
+            discretized_image[Trues] = centro/256
 
         fieldDiscretizado = discretized_image * phase
 
@@ -470,12 +469,12 @@ def discretize(u: NDArrayComplex,
 
         for i in range(num_levels + 1):
             centro = heights[i]
-            abajo = (ang) > (centro - dist / 2)
-            arriba = (ang) <= (centro + dist / 2)
+            abajo = (ang) > (centro - dist/2)
+            arriba = (ang) <= (centro + dist/2)
             Trues = abajo * arriba
             discretized_image[Trues] = np.exp(1j * centro)  # - np.pi
 
-        Trues = (ang) > (centro + dist / 2)
+        Trues = (ang) > (centro + dist/2)
         discretized_image[Trues] = np.exp(1j * heights[0])  # - np.pi
 
         # esto no haría falta, pero es para tener tantos levels
@@ -655,9 +654,9 @@ def cut_function(x: NDArrayFloat, y: NDArrayFloat, length: float, x_center: floa
     """
 
     if x_center in ('', None, []):
-        x_center = (x[0] + x[-1]) / 2
+        x_center = (x[0] + x[-1])/2
 
-    incr = length / 2
+    incr = length/2
     left = x_center - incr
     right = x_center + incr
 
@@ -860,7 +859,7 @@ def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: float):
     N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
 
     Z = np.zeros(R.shape, dtype=float)
-    s_max = int(((n - np.abs(m)) / 2 + 1))
+    s_max = int(((n - np.abs(m))/2 + 1))
     for s in np.arange(0, s_max):
         Z = Z + (-1)**s * R**(n - 2 * s) * factorial(np.abs(n - s)) / (
             factorial(np.abs(s)) * factorial(np.abs(round(0.5 * (n + np.abs(m)) - s))) *
@@ -930,8 +929,8 @@ def get_k(x: NDArrayComplex, flavour: str = '-'):
     """
 
     num_x = x.size
-    integerFrom = int(np.floor((1-num_x) / 2))
-    integerTo = int(np.floor((num_x-1) / 2))
+    integerFrom = int(np.floor((1-num_x)/2))
+    integerTo = int(np.floor((num_x-1)/2))
     intRange = np.linspace(integerFrom, integerTo, num_x)  # ordered k axis, DC is at int(np.floor(num_x/2))
     if flavour == '-':
         intRange = np.fft.ifftshift(intRange)  # leading zero (DC) frequency
@@ -952,7 +951,7 @@ def filter_edge_1D(x: NDArrayFloat, size: float = 1.1, exponent: float = 32):
     """
 
     # num_x = len(x)
-    x_center = (x[-1] + x[0]) / 2
+    x_center = (x[-1] + x[0])/2
     Dx = size * (x[-1] - x[0])
     return np.exp(-(2 * (x - x_center) / (Dx))**np.abs(exponent))
 
@@ -969,8 +968,8 @@ def filter_edge_2D(x: NDArrayFloat, y: NDArrayFloat, size: float = 1.1, exponent
         np.array: function for filtering
     """
 
-    x_center = (x[-1] + x[0]) / 2
-    y_center = (y[-1] + y[0]) / 2
+    x_center = (x[-1] + x[0])/2
+    y_center = (y[-1] + y[0])/2
     Dx = size * (x[-1] - x[0])
     Dy = size * (y[-1] - y[0])
 

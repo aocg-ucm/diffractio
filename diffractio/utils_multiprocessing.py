@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 # flake8: noqa

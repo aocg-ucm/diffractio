@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2017
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 """ Common functions to classes """
@@ -23,11 +22,11 @@ import psutil
 from scipy.io import loadmat, savemat
 from scipy.ndimage import center_of_mass
 
-from .config import Options_add
+from .config import bool_raise_exception, Options_add
 
 
 
-def check_none(*variables, raise_exception=False):
+def check_none(*variables, raise_exception = bool_raise_exception):
     def decorator(func):
         def wrapper(self, *args, **kwargs):
             for variable in variables:
@@ -88,11 +87,9 @@ def oversampling(cls, factor_rate: int | tuple):# -> Any:
         new_matrix =  new_matrix(factor_rate[1],axis=1)
         cls.u =  new_matrix.repeat(factor_rate[2],axis=2)
 
-
         new_matrix =  cls.n.repeat(factor_rate[0],axis=0)
         new_matrix =  new_matrix(factor_rate[1],axis=1)
         cls.n =  new_matrix.repeat(factor_rate[2],axis=2)
-
 
     elif cls.type in ('Scalar_mask_XZ', 'Scalar_field_XZ') :
         
@@ -109,7 +106,6 @@ def oversampling(cls, factor_rate: int | tuple):# -> Any:
         new_matrix =  cls.n.repeat(factor_rate[0],axis=0)
         cls.n =  new_matrix.repeat(factor_rate[1],axis=1)
 
-
     return cls
 
 
@@ -117,7 +113,7 @@ def add(self, other, kind: Options_add  = 'source'):
     """adds two fields. For example two light sources or two masks. The fields are added as complex numbers and then normalized so that the maximum amplitude is 1.
     
     Args:
-        other (Vector_field_X): 2nd field to add
+        other (Other field): 2nd field to add
         kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'distances'].
             - 'source': adds the fields as they are
             - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
@@ -128,12 +124,13 @@ def add(self, other, kind: Options_add  = 'source'):
     Returns:
         sum of the two fields.
     """
-
     
     from diffractio.scalar_sources_X import Scalar_source_X
     from diffractio.scalar_sources_XY import Scalar_source_XY
     from diffractio.scalar_masks_X import Scalar_mask_X
     from diffractio.scalar_masks_XY import Scalar_mask_XY
+    from diffractio.scalar_fields_XZ import Scalar_field_XZ
+    from diffractio.scalar_fields_Z import Scalar_field_Z
     
 
     if isinstance(self, Scalar_mask_XY):
@@ -144,7 +141,10 @@ def add(self, other, kind: Options_add  = 'source'):
         t = Scalar_mask_X(self.x, self.wavelength)
     elif isinstance(self, Scalar_source_X):
         t = Scalar_source_X(self.x,  self.wavelength)
-
+    elif isinstance(self, Scalar_field_XZ):
+        t = Scalar_field_XZ(self.x, self.z, self.wavelength)
+    elif isinstance(self, Scalar_field_Z):
+        t = Scalar_field_Z(self.z, self.wavelength)
 
     if kind == 'source':
         if isinstance(other, tuple):
@@ -173,8 +173,8 @@ def add(self, other, kind: Options_add  = 'source'):
 
             t.u = self.u + other.u
             i_change = t1+t2>1
-            t.u[i_change]=(np.exp(1j*f1[i_change])+np.exp(1j*f2[i_change])).astype(np.complex128)
-            t.u[i_change]= t.u[i_change]/np.abs( t.u[i_change])
+            t.u[i_change]=np.exp(1j*f1[i_change])+np.exp(1j*f2[i_change])
+            t.u[i_change]= t.u[i_change]/np.abs(t.u[i_change])
     
     elif kind == 'phases':
         t1 = np.abs(self.u)
@@ -215,7 +215,8 @@ def add(self, other, kind: Options_add  = 'source'):
                 raise ValueError('The two fields overlap')
             
     elif kind == 'distances':
-        if isinstance(other, tuple): #todo: with simultaneous control of distances, not with for loop.
+        #todo: with simultaneous control of distances, not with for loop.
+        if isinstance(other, tuple):
             pass
             
             """t.u = self.u
@@ -308,13 +309,13 @@ def clear_all():
         del globals()[var]
 
 
-def several_propagations(source, masks, distances: list[float]):
+def several_propagations(source, masks, distances: tuple[float]):
     '''performs RS propagation through several masks
 
     Args:
         source (Scalar_source_XY): illumination
-        masks (list): list with several (Scalar_masks_XY)
-        distances (list): list with seera distances
+        masks (tuple): list with several (Scalar_masks_XY)
+        distances (tuple): list with seera distances
 
 
     Returns:

@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -57,7 +56,7 @@ from matplotlib import cm, rcParams
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-from .config import CONF_DRAWING
+from .config import bool_raise_exception, CONF_DRAWING
 
 __author__ = """Luis Miguel Sanchez Brea"""
 __email__ = 'optbrea@ucm.es'
@@ -65,7 +64,7 @@ __version__ = '0.3.1'
 name = 'diffractio'
 
 um = 1.
-mm = 1000. * um
+mm = 1000.*um
 nm = um / 1000.
 degrees = np.pi / 180.
 s = 1.

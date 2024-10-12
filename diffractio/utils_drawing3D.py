@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 # -*- coding: utf-8 -*-
@@ -20,9 +19,10 @@ import pyvista
 import pyvista as pv
 from pyvista.core.utilities.helpers import wrap
 
-from .config import CONF_DRAWING, Draw_XYZ_Options, Draw_pyvista_Options
+from .config import CONF_DRAWING, Draw_XYZ_Options, Draw_pyvista_Options, video_isovalue_Options
 
-def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):# -> tuple[MultiBlock | UnstructuredGrid | DataSet | pyvista_n...:
+
+def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):  # -> tuple[MultiBlock | UnstructuredGrid | DataSet | pyvista_n...:
     """
     load_stl _summary_
 
@@ -36,12 +36,12 @@ def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):# -> 
     Returns:
         _type_: mesh
     """
-    
+
     mesh = pv.read(filename)
-    
+
     if has_draw:
         mesh.plot()
-        
+
     if verbose:
         print(filename)
         print("bounds")
@@ -52,7 +52,8 @@ def load_stl(filename: str, has_draw: bool = False, verbose: bool = False):# -> 
         print(mesh.center)
     return mesh
 
-def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True):
+
+def voxelize_volume_diffractio(self, mesh, refractive_index, check_surface=True):
     """Voxelize mesh to create a RectilinearGrid voxel volume.
 
     Creates a voxel volume that encloses the input mesh and discretizes the cells
@@ -94,7 +95,6 @@ def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True
         # reduce chance for artifacts, see gh-1743
         surface.triangulate(inplace=True)
 
-
     # Create a RectilinearGrid
     voi = pyvista.RectilinearGrid(self.y, self.x, self.z)
 
@@ -103,8 +103,7 @@ def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True
     mask_vol = selection.point_data['SelectedPoints'].view(np.bool_)
 
     data = np.array(mask_vol.tolist())
-    data = data.reshape(len(self.z),len(self.y),len(self.x))
-
+    data = data.reshape(len(self.z), len(self.y), len(self.x))
 
     # Get voxels that fall within input mesh boundaries
     cell_ids = np.unique(voi.extract_points(np.argwhere(mask_vol))["vtkOriginalCellIds"])
@@ -116,10 +115,9 @@ def voxelize_volume_diffractio(self, mesh, refractive_index,  check_surface=True
     volume_n = self.n_background + (refractive_index-self.n_background)*data
     self.n = volume_n.reshape(len(self.z), len(self.x), len(self.y))
 
-    self.n = np.transpose(self.n, axes=(2,1,0))
-    
-    return self, voi #, selection, mask_vol, cell_ids, volume_n
+    self.n = np.transpose(self.n, axes=(2, 1, 0))
 
+    return self, voi  # , selection, mask_vol, cell_ids, volume_n
 
 
 def draw(
@@ -139,7 +137,6 @@ def draw(
         filename (str, optional): saves images: html, png or svg. Defaults to ''.
     """
 
-        
     x_center = (self.x[-1]+self.x[0])/2
     y_center = (self.y[-1]+self.y[0])/2
     z_center = (self.z[-1]+self.z[0])/2
@@ -147,11 +144,10 @@ def draw(
     len_x = len(self.x)
     len_y = len(self.y)
     len_z = len(self.z)
-    
+
     delta_x = self.x[1]-self.x[0]
     delta_y = self.y[1]-self.y[0]
     delta_z = self.z[1]-self.z[0]
-    
 
     if 'opacity' in kwargs.keys():
         opacity = kwargs["opacity"]
@@ -167,7 +163,7 @@ def draw(
         scale = kwargs["scale"]
     else:
         scale = (len_y, len_z, len_x)
-        
+
     if 'cmap' in kwargs.keys():
         cmap = kwargs["cmap"]
     else:
@@ -183,19 +179,18 @@ def draw(
     else:
         cpos = [(540, -617, 180),
                 (128, 126., 111.),
-                (-0, 0 ,0)]
-        
+                (-0, 0, 0)]
+
     if 'background_color' in kwargs.keys():
         background_color = kwargs["background_color"]
     else:
-        background_color = (1.,1.,1.)
+        background_color = (1., 1., 1.)
 
     if 'camera_position' in kwargs.keys():
         camera_position = kwargs["camera_position"]
     else:
         camera_position = 'xy'
 
-                       
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
     if kind == "intensity":
@@ -206,17 +201,16 @@ def draw(
     elif kind == "refractive_index":
         data = np.abs(self.n)
         cmap = CONF_DRAWING['color_n']
-        
+
     else:
         print("bad kind in draw_XYZ")
-        
+
     data = data.reshape((len(self.y), len(self.x), len(self.z)))
 
     if drawing == "volume":
-        data = np.transpose(data, axes=(2,0,1))
-                
+        data = np.transpose(data, axes=(2, 0, 1))
+
         pl = pyvista.Plotter()
-        
 
         vol = pl.add_volume(data, cmap=cmap, opacity=opacity, shade=False)
 
@@ -226,15 +220,13 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True)
-        pl.set_position((1,1,1))
+        pl.set_position((1, 1, 1))
         pl.reset_camera(self)
-
-
 
     elif drawing == "clip":
 
-        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
-        
+        grid["scalars"] = np.transpose(data, axes=(2, 0, 1)).flatten()
+
         pl = pyvista.Plotter()
         pl.add_volume_clip_plane(grid, normal="y", opacity=opacity, cmap=cmap)
         pl.add_volume_clip_plane(grid, normal="z", opacity=opacity, cmap=cmap)
@@ -248,8 +240,8 @@ def draw(
         pl.camera_position = camera_position
 
     elif drawing == "slices":
-        
-        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+
+        grid["scalars"] = np.transpose(data, axes=(2, 0, 1)).flatten()
 
         pl = pyvista.Plotter()
         slice = grid.slice_orthogonal()
@@ -265,10 +257,10 @@ def draw(
         # pl.camera_position = camera_position
 
     elif drawing == "projections":
-        data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
-        #data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
+        data = np.transpose(data, axes=(0, 1, 2))  # prueba y error - bien en volume
+        # data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
 
-        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+        grid["scalars"] = np.transpose(data, axes=(2, 0, 1)).flatten()
 
         pl = pyvista.Plotter(shape=(2, 2))
         dargs = dict(cmap=cmap)
@@ -286,7 +278,7 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True,
-            )
+        )
         # XY
         pl.subplot(0, 0)
         pl.add_mesh(slice1, **dargs)
@@ -296,7 +288,7 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True,
-            )
+        )
 
         if has_grid is True:
             pl.show_grid()
@@ -311,7 +303,7 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True,
-            )
+        )
         if has_grid is True:
             pl.show_grid()
         pl.camera_position = "zx"
@@ -325,16 +317,16 @@ def draw(
             zscale=1/scale[1],
             reset_camera=True,
             render=True,
-            )
+        )
         if has_grid is True:
             pl.show_grid()
         pl.camera_position = "zy"
         pl.enable_parallel_projection()
-        
-    elif drawing == 'video_isovalue':
-        #data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
 
-        grid["scalars"] =  np.transpose(data, axes=(2,0,1)).flatten()
+    elif drawing == 'video_isovalue':
+        # data = np.transpose(data, axes=(0,1,2)) # prueba y error - bien en volume
+
+        grid["scalars"] = np.transpose(data, axes=(2, 0, 1)).flatten()
 
         pl = pv.Plotter()
         pl.set_scale(
@@ -387,7 +379,6 @@ def draw(
         # Be sure to close the plotter when finished
         plotter.close()
 
-
     # pl.view_isometric()
     # pl.show_axes()
     # pl.show_bounds()
@@ -405,15 +396,15 @@ def draw(
             pl.export_html(filename)
         elif filename[-3:] == "png":
             pl.screenshot(filename)
-            
+
     return pl
 
 
-def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs):
+def video_isovalue(self, filename: str, kind: video_isovalue_Options = "refractive_index", **kwargs):
     """_summary_
 
     Args:
-        filename (str): _description_. Defaults to ''.
+        filename (str): filename. Defaults to ''.
         kind (str, optional): "intensity" or "refractive_index". Defaults to 'refractive_index'.
     """
 
@@ -424,12 +415,10 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     len_x = len(self.x)
     len_y = len(self.y)
     len_z = len(self.z)
-    
+
     delta_x = self.x[1]-self.x[0]
     delta_y = self.y[1]-self.y[0]
     delta_z = self.z[1]-self.z[0]
-    
-
 
     if 'opacity' in kwargs.keys():
         opacity = kwargs["opacity"]
@@ -445,7 +434,7 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
         scale = kwargs["scale"]
     else:
         scale = (len_y, len_z, len_x)
-        
+
     if 'cmap' in kwargs.keys():
         cmap = kwargs["cmap"]
     else:
@@ -461,19 +450,17 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     else:
         cpos = [(540, -617, 180),
                 (128, 126., 111.),
-                (-0, 0 ,0)]
-        
+                (-0, 0, 0)]
+
     if 'background_color' in kwargs.keys():
         background_color = kwargs["background_color"]
     else:
-        background_color = (1.,1.,1.)
+        background_color = (1., 1., 1.)
 
     if 'camera_position' in kwargs.keys():
         camera_position = kwargs["camera_position"]
     else:
         camera_position = "xy"
-
-
 
     grid = pv.ImageData(dimensions=dimensions, spacing=spacing)
 
@@ -495,13 +482,7 @@ def video_isovalue(self, filename: str, kind: str = "refractive_index", **kwargs
     grid["scalars"] = data.flatten()
 
     pl = pv.Plotter()
-    pl.set_scale(
-        xscale=scale[1],
-        yscale=scale[0],
-        zscale=scale[2],
-        reset_camera=True,
-        render=True,
-    )
+    pl.set_scale(xscale=scale[1], yscale=scale[0], zscale=scale[2], reset_camera=True, render=True)
 
     vol = pl.add_volume(grid, opacity=opacity, cmap=cmap)
     vol.prop.interpolation_type = "linear"

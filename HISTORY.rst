@@ -34,6 +34,7 @@ Beta state
   - refraction_index -> refractive_index ... in all words.
 
   - XZ masks: sphere -> cylinder.
+              semi-sphere -> semi-cylinder.
 
 
 * New features:
@@ -169,7 +170,7 @@ Beta state
   - VFFT (vector FFT and inverse FFT)
   - VRS (vector Rayleigh-Sommerfeld propagation, with Ez field)
   - Chirped z-transform (CZT) for scalar fields
-  - Chirped z-transform (CZT) for vector fields
+  - Chirped z-transform (VCZT) for vector fields
 
 
 * Other:

@@ -25,16 +25,16 @@ if not os.path.exists(newpath):
 v_lineal = (1, 0)
 v_circular = (1, 1j) / np.sqrt(2)
 
-length = 500 * um
+length = 500*um
 num_data = 256
-wavelength = 0.6328 * um
+wavelength = 0.6328*um
 
-x0 = np.linspace(-length / 2, length / 2, num_data)
-y0 = np.linspace(-length / 2, length / 2, num_data)
+x0 = np.linspace(-length/2, length/2, num_data)
+y0 = np.linspace(-length/2, length/2, num_data)
 
 EM = Vector_source_XY(x0, y0, wavelength)
-EM.azimuthal_wave(u=1, r0=(0 * um, 0 * um), radius=(length / 5, length / 5))
-EM.VRS(z=30 * mm, new_field=False)
+EM.azimuthal_wave(u=1, r0=(0*um, 0*um), radius=(length / 5, length / 5))
+EM.VRS(z=30*mm, new_field=False)
 
 Ex, Ey, _ = EM.get()
 

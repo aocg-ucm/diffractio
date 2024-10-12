@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -63,8 +62,8 @@ from py_pol.jones_vector import Jones_vector
 
 import diffractio
 
-from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING, Draw_Vector_XY_Options
+from .__init__ import degrees, eps, mm, np, plt, um
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import load_data_common, save_data_common, get_date, check_none
 from .utils_drawing import normalize_draw, reduce_matrix_size
@@ -135,7 +134,7 @@ class Vector_field_XY():
 
         return ""
 
-    @check_none('x','y','Ex','Ey',raise_exception=False)
+    @check_none('x','y','Ex','Ey',raise_exception=bool_raise_exception)
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_field_XY. For example two light sources or two masks
 
@@ -154,7 +153,7 @@ class Vector_field_XY():
 
         return EM
 
-    @check_none('x','y','X','Y',raise_exception=False)
+    @check_none('x','y','X','Y',raise_exception=bool_raise_exception)
     def __rotate__(self, angle, position=None):
         """Rotation of X,Y with respect to position
 
@@ -164,8 +163,8 @@ class Vector_field_XY():
         """
 
         if position is None:
-            x0 = (self.x[-1] + self.x[0]) / 2
-            y0 = (self.y[-1] + self.y[0]) / 2
+            x0 = (self.x[-1] + self.x[0])/2
+            y0 = (self.y[-1] + self.y[0])/2
         else:
             x0, y0 = position
 
@@ -217,7 +216,7 @@ class Vector_field_XY():
             print(dict0.keys())
 
 
-    @check_none('x','y','Ex','Ey',raise_exception=False)
+    @check_none('x','y','Ex','Ey',raise_exception=bool_raise_exception)
     def clear(self):
         """simple - removes the field:"""
 
@@ -260,7 +259,7 @@ class Vector_field_XY():
         return new_field
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def get(self, kind: str = 'fields', is_matrix=True):
         """Returns the value of the field, depending of the kind parameter.
 
@@ -335,9 +334,9 @@ class Vector_field_XY():
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def pupil(self, r0: tuple[float, float] | None = None, radius: tuple[float, float] | None = None,
-              angle: float = 0.):
+              angle: float = 0*degrees):
         """place a pupil in the field. If r0 or radius are None, they are computed using the x,y parameters.
 
         Args:
@@ -347,17 +346,17 @@ class Vector_field_XY():
 
         Example:
 
-            pupil(r0=(0 * um, 0 * um), radius=(250 * um, 125 * um), angle=0 * degrees)
+            pupil(r0=(0*um, 0*um), radius=(250*um, 125*um), angle=0*degrees)
         """
 
         if r0 in (0, None, '', []):
-            x0 = (self.x[-1] + self.x[0]) / 2
-            y0 = (self.y[-1] + self.y[0]) / 2
+            x0 = (self.x[-1] + self.x[0])/2
+            y0 = (self.y[-1] + self.y[0])/2
             r0 = (x0, y0)
 
         if radius is None:
-            radiusx = (self.x[-1] - self.x[0]) / 2
-            radiusy = (self.y[-1] - self.y[0]) / 2
+            radiusx = (self.x[-1] - self.x[0])/2
+            radiusy = (self.y[-1] - self.y[0])/2
             radius = (radiusx, radiusy)
 
         if isinstance(radius, (float, int, complex)):
@@ -381,7 +380,7 @@ class Vector_field_XY():
         self.Ez = self.Ez * pupil0
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
@@ -402,7 +401,7 @@ class Vector_field_XY():
             return E_new
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
         """
@@ -412,9 +411,9 @@ class Vector_field_XY():
         return intensity
 
 
-    @check_none('x','y',raise_exception=False)
+    @check_none('x','y',raise_exception=bool_raise_exception)
     def RS(self,
-           z=10 * mm,
+           z=10*mm,
            n: float = 1.,
            new_field: bool = True,
            amplification=(1, 1),
@@ -475,18 +474,17 @@ class Vector_field_XY():
             self.y = Ex.y
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def VFFT(self,
              radius: float,
              focal: float,
              n: float = 1.,
              new_field: bool = False,
              shift: bool = True,
-             remove0: bool = True,
+             remove0: bool = False,
              matrix: bool = False,
              has_draw: bool = False):
         """Vector Fast Fourier Transform (FFT) of the field.
-
 
         Ei = (Eix, Eiy, Eiz) is the local electric field vector.
 
@@ -525,7 +523,7 @@ class Vector_field_XY():
         v = self.Y / radius
 
         circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        circle_mask.circle(r0=(0, 0), radius=radius)
+        circle_mask.circle(r0=(0*um, 0*um), radius=radius)
 
         cos_theta = np.cos(theta)
         sin_theta = np.sin(theta)
@@ -617,7 +615,7 @@ class Vector_field_XY():
                 self.draw(kind='intensities')
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def IVFFT(self,
               radius: float,
               focal: float,
@@ -668,7 +666,7 @@ class Vector_field_XY():
         # Y_obs = sin_theta_max * self.Y / self.wavelength
 
         circle_mask = Scalar_mask_XY(self.x, self.y, self.wavelength)
-        circle_mask.circle(r0=(0, 0), radius=radius)
+        circle_mask.circle(r0=(0*um, 0*um), radius=radius)
 
         self.pupil(r0=(0., 0.), radius=radius)
 
@@ -757,7 +755,7 @@ class Vector_field_XY():
                 self.draw(kind='intensities')
 
 
-    @check_none('x','y',raise_exception=False)
+    @check_none('x','y',raise_exception=bool_raise_exception)
     def VRS(self, z: float, n: float = 1., new_field: bool = True, verbose: bool = False,
             amplification: tuple[int, int] = (1, 1)):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
@@ -824,8 +822,8 @@ class Vector_field_XY():
             self.Ez = Ez.u
 
 
-    @check_none('x','y',raise_exception=False)
-    def CZT(self, z, xout=None, yout=None, verbose: bool = False):
+    @check_none('x','y',raise_exception=bool_raise_exception)
+    def VCZT(self, z, xout=None, yout=None, verbose: bool = False):
         """Vector Z Chirped Transform algorithm (VCZT)
 
         The code for this algoritm is based on "Hu, Yanlei, et al. "Efficient full-path optical calculation of scalar and 
@@ -987,7 +985,7 @@ class Vector_field_XY():
                 return E_out
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -1020,7 +1018,7 @@ class Vector_field_XY():
             return C_S0, C_S1, C_S2, C_S3
 
 
-    @check_none('x','y',raise_exception=False)
+    @check_none('x','y',raise_exception=bool_raise_exception)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -1064,7 +1062,7 @@ class Vector_field_XY():
             return (CA, CB, Ctheta, Ch)
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def normalize(self, kind:str = 'amplitude'):
         """Normalizes the field, to the maximum intensity.
         
@@ -1084,7 +1082,7 @@ class Vector_field_XY():
         self.Ez = self.Ez / maximum
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def cut_resample(self,
                      x_limits: tuple[float, float] | None = None,
                      y_limits: tuple[float, float] | None = None,
@@ -1214,7 +1212,7 @@ class Vector_field_XY():
             return field
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw(self,
              kind: Draw_Vector_XY_Options = 'intensity',
              logarithm: float = 0,
@@ -1283,7 +1281,7 @@ class Vector_field_XY():
             return id_fig
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensity__(self,
                            logarithm: float,
                            normalize: bool,
@@ -1318,7 +1316,7 @@ class Vector_field_XY():
         return h1
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_phases__(self, color_phase: str = CONF_DRAWING['color_phase']):
         """internal funcion: draws intensity X,Y.
 
@@ -1427,7 +1425,7 @@ class Vector_field_XY():
             return h1, h2, h3
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities__(self,
                              logarithm: float,
                              normalize: bool,
@@ -1526,7 +1524,7 @@ class Vector_field_XY():
             return h1, h2, h3
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities_rz__(
             self,
             logarithm: float,
@@ -1580,7 +1578,7 @@ class Vector_field_XY():
         return h1, h2
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_fields__(self,
                         logarithm: float,
                         normalize: bool,
@@ -1720,7 +1718,7 @@ class Vector_field_XY():
             return h1, h2, h3, h4, h5, h6
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_stokes__(self,
                         logarithm: float,
                         normalize: bool,
@@ -1768,7 +1766,7 @@ class Vector_field_XY():
         return (h1, h2, h3, h4)
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_param_ellipse__(self,
                                color_intensity: str = CONF_DRAWING['color_intensity'],
                                color_phase: str = CONF_DRAWING['color_phase']):
@@ -1803,7 +1801,7 @@ class Vector_field_XY():
         return (h1, h2, h3, h4)
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_ellipses__(self,
                           logarithm: float = 0.,
                           normalize: bool = False,
@@ -1816,12 +1814,26 @@ class Vector_field_XY():
                           head_width: float = .25,
                           ax: bool = False,
                           color_intensity: str = CONF_DRAWING['color_intensity']):
-        """__internal__: draw ellipses
+        """
+        __draw_ellipses: Draw ellipses
 
         Args:
-            num_ellipses (int): number of ellipses for parameters_ellipse
-        """
+            logarithm (float, optional): _description_. Defaults to 0..
+            normalize (bool, optional): _description_. Defaults to False.
+            cut_value (float, optional): _description_. Defaults to ''.
+            num_ellipses (tuple[int, int], optional): number of ellipses for parameters_ellipse. Defaults to (21, 21).
+            amplification (float, optional): _description_. Defaults to 0.75.
+            color_line (str, optional): _description_. Defaults to 'w'.
+            line_width (float, optional): _description_. Defaults to 0.5.
+            draw_arrow (bool, optional): _description_. Defaults to True.
+            head_width (float, optional): _description_. Defaults to .25.
+            ax (bool, optional): _description_. Defaults to False.
+            color_intensity (str, optional): _description_. Defaults to CONF_DRAWING['color_intensity'].
 
+            TODO: change color_line to two colors, one for right and another for left
+
+        """
+        
         percentage_intensity = CONF_DRAWING['percentage_intensity']
         intensity_max = (np.abs(self.Ex)**2 + np.abs(self.Ey)**2).max()
 
@@ -1829,22 +1841,21 @@ class Vector_field_XY():
         Dy = self.y[-1] - self.y[0]
         size_x = Dx / (num_ellipses[0])
         size_y = Dy / (num_ellipses[1])
-        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
+        x_centers = size_x/2 + size_x * np.array(range(0, num_ellipses[0]))
+        y_centers = size_y/2 + size_y * np.array(range(0, num_ellipses[1]))
 
         num_x, num_y = len(self.x), len(self.y)
         ix_centers = num_x / (num_ellipses[0])
         iy_centers = num_y / (num_ellipses[1])
 
         ix_centers = (np.round(
-            ix_centers / 2 +
+            ix_centers/2 +
             ix_centers * np.array(range(0, num_ellipses[0])))).astype('int')
         iy_centers = (np.round(
-            iy_centers / 2 +
+            iy_centers/2 +
             iy_centers * np.array(range(0, num_ellipses[1])))).astype('int')
 
-        Ix_centers, Iy_centers = np.meshgrid(ix_centers.astype('int'),
-                                             iy_centers.astype('int'))
+        Ix_centers, Iy_centers = np.meshgrid(ix_centers.astype('int'), iy_centers.astype('int'))
 
         verbose = False
         if verbose is True:
@@ -1856,7 +1867,7 @@ class Vector_field_XY():
         E0x = self.Ex[Iy_centers, Ix_centers]
         E0y = self.Ey[Iy_centers, Ix_centers]
 
-        angles = np.linspace(0, 360 * degrees, 64)
+        angles = np.linspace(0, 360*degrees, 64)
 
         if ax is False:
             self.draw('intensity',
@@ -1874,11 +1885,9 @@ class Vector_field_XY():
 
                 if max_r > 0 and max_r**2 > percentage_intensity * intensity_max:
 
-                    Ex = Ex / max_r * size_dim * amplification / 2 + (
-                        +self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.y[
-                        int(yj)]
-
+                    Ex = Ex / max_r * size_dim * amplification/2 + self.x[int(xi)]
+                    Ey = Ey / max_r * size_dim * amplification/2 + self.y[int(yj)]
+    
                     ax.plot(Ex, Ey, color_line, lw=line_width)
                     if draw_arrow:
                         ax.arrow(Ex[0],
@@ -1895,7 +1904,7 @@ class Vector_field_XY():
                 #           percentage_intensity * intensity_max)
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw1__(self,
                   image: NDArrayFloat,
                   colormap: str,

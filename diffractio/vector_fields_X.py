@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -49,7 +48,7 @@ from matplotlib import rcParams
 
 from .__init__ import degrees, eps, mm, np, plt
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .config import CONF_DRAWING, Draw_Vector_X_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_X_Options
 from .scalar_fields_X import Scalar_field_X
 from .utils_common import get_date, load_data_common, save_data_common, check_none
 from .utils_drawing import normalize_draw
@@ -114,7 +113,7 @@ class Vector_field_X():
 
         return ""
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __add__(self, other):
         """adds two Vector_field_X. For example two light sources or two masks
 
@@ -178,7 +177,7 @@ class Vector_field_X():
             print(dict0.keys())
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def clear_field(self):
         """Removes the fields Ex, Ey, Ez"""
         self.Ex = np.zeros_like(self.Ex, dtype=complex)
@@ -194,7 +193,7 @@ class Vector_field_X():
         return new_field
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def get(self, kind: str = 'fields', is_matrix: bool = True):
         """Takes the vector field and divide in Scalar_field_X.
 
@@ -264,7 +263,7 @@ class Vector_field_X():
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
@@ -283,7 +282,7 @@ class Vector_field_X():
             return E_new
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """Returns intensity.
 
@@ -296,7 +295,7 @@ class Vector_field_X():
         return intensity
 
 
-    @check_none('x','Ex','Ey',raise_exception=False)
+    @check_none('x','Ex','Ey',raise_exception=bool_raise_exception)
     def polarization_states(self, matrix: bool = False):
         """Returns the Stokes parameters.
 
@@ -329,7 +328,7 @@ class Vector_field_X():
             return CI, CQ, CU, CV
 
 
-    @check_none('x',raise_exception=False)
+    @check_none('x',raise_exception=bool_raise_exception)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -373,7 +372,7 @@ class Vector_field_X():
             return (CA, CB, Ctheta, Ch)
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def normalize(self, kind:str = 'amplitude'):
         """Normalizes the field, to the maximum intensity.
         
@@ -393,7 +392,7 @@ class Vector_field_X():
         self.Ez = self.Ez / maximum
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw(self,
              kind: Draw_Vector_X_Options = 'intensity',
              logarithm: float = 0,
@@ -443,7 +442,7 @@ class Vector_field_X():
 
             return id_fig
 
-    @check_none('x',raise_exception=False)
+    @check_none('x',raise_exception=bool_raise_exception)
     def __draw_intensity__(self, logarithm: float, normalize: bool, cut_value: float):
         """Draws the intensity.
 
@@ -467,7 +466,7 @@ class Vector_field_X():
         return h1
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities__(self, logarithm: float, normalize: bool, cut_value: float):
         """internal funcion: draws phase
 
@@ -543,7 +542,7 @@ class Vector_field_X():
             return h1, h2, h3
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_phases__(self):
         """internal funcion: draws phase
 
@@ -641,7 +640,7 @@ class Vector_field_X():
             return h1, h2, h3
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_fields__(self,
                         logarithm: float,
                         normalize: bool,

@@ -6,8 +6,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -43,7 +42,7 @@ from py_pol.jones_matrix import Jones_matrix
 
 
 from .__init__ import degrees, np, plt
-from .config import CONF_DRAWING, number_types
+from .config import bool_raise_exception, CONF_DRAWING, number_types
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import check_none
 from .scalar_masks_XY import Scalar_mask_XY
@@ -68,7 +67,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         del self.Ex, self.Ey, self.Ez
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_mask_XY. For example two  masks
 
@@ -90,7 +89,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def __mul__(self, other):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
@@ -123,7 +122,7 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def __rmul__(self, other):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
@@ -158,7 +157,7 @@ class Vector_mask_XY(Vector_field_XY):
         return new_field
 
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def apply_circle(self, r0: tuple[float, float] | None = None,
                      radius: tuple[float, float] | None = None):
         """The same circular mask is applied to all the Jones Matrix.
@@ -171,12 +170,12 @@ class Vector_mask_XY(Vector_field_XY):
             x_min, x_max = self.x[0], self.x[-1]
             y_min, y_max = self.y[0], self.y[-1]
 
-            x_radius, y_radius = (x_max - x_min) / 2, (y_max - y_min) / 2
+            x_radius, y_radius = (x_max - x_min)/2, (y_max - y_min)/2
 
             radius = (x_radius, y_radius)
 
         if r0 is None:
-            x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
+            x_center, y_center = (x_min + x_max)/2, (y_min + y_max)/2
             r0 = (x_center, y_center)
 
         u_pupil = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -188,9 +187,9 @@ class Vector_mask_XY(Vector_field_XY):
         self.M11 = self.M11 * u_pupil.u
 
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def pupil(self, r0: tuple[float, float] | None = None,
-              radius: tuple[float, float] | None = None, angle: float = 0.):
+              radius: tuple[float, float] | None = None, angle: float = 0*degrees):
         """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.
 
         Args:
@@ -200,17 +199,17 @@ class Vector_mask_XY(Vector_field_XY):
 
         Example:
 
-            pupil(r0=(0 * um, 0 * um), radius=(250*um, 125*um), angle=0*degrees)
+            pupil(r0=(0*um, 0*um), radius=(250*um, 125*um), angle=0*degrees)
         """
 
         if r0 is None:
-            x0 = (self.x[-1] + self.x[0]) / 2
-            y0 = (self.y[-1] + self.y[0]) / 2
+            x0 = (self.x[-1] + self.x[0])/2
+            y0 = (self.y[-1] + self.y[0])/2
             r0 = (x0, y0)
 
         if radius is None:
-            radiusx = (self.x[-1] - self.x[0]) / 2
-            radiusy = (self.y[-1] - self.y[0]) / 2
+            radiusx = (self.x[-1] - self.x[0])/2
+            radiusy = (self.y[-1] - self.y[0])/2
             radius = (radiusx, radiusy)
 
         x0, y0 = r0
@@ -263,7 +262,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.M11.real = np.where(np.real(self.M11) == -0, 0, np.real(self.M11))
 
 
-    @check_none('x','y', raise_exception=False)
+    @check_none('x','y')
     def complementary_masks(self, mask: Scalar_mask_XY, pol_state_0: Jones_matrix, pol_state_1: Jones_matrix,           is_binarized: bool=True):
         """Creates a vector mask from a scalar mask. It assign an pol_state_0 to 0 values and a pol_state_1 to 1 values..
         For generality, ik mask is a decimal number between 0 and 1, it takes the linear interpolation.
@@ -351,7 +350,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.M11 = uno * M[1, 1]
 
 
-    def polarizer_linear(self, azimuth: float=0 * degrees):
+    def polarizer_linear(self, azimuth: float=0*degrees):
         """Generates an XY linear polarizer.
 
         Args:
@@ -362,7 +361,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.from_py_pol(PL)
 
 
-    def quarter_waveplate(self, azimuth: float=0 * degrees):
+    def quarter_waveplate(self, azimuth: float=0*degrees):
         """Generates an XY quarter wave plate.
 
         Args:
@@ -373,7 +372,7 @@ class Vector_mask_XY(Vector_field_XY):
         self.from_py_pol(PL)
 
 
-    def half_waveplate(self, azimuth:float=0 * degrees):
+    def half_waveplate(self, azimuth:float=0*degrees):
         """Generates an XY half wave plate.
 
         Args:
@@ -384,10 +383,10 @@ class Vector_mask_XY(Vector_field_XY):
         self.from_py_pol(PL)
 
     def polarizer_retarder(self,
-                           R: float=0 * degrees,
+                           R: float=0*degrees,
                            p1: float=1,
                            p2: float=1,
-                           azimuth: float=0 * degrees):
+                           azimuth: float=0*degrees):
         """Generates an XY retarder.
 
         Args:

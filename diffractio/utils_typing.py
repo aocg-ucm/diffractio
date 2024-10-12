@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -34,7 +33,7 @@ integer = np.integer
 
 # some temporal helps
 """
-type Vector = list[float]
+type Vector = tuple[float]
 type ConnectionOptions = dict[str, str]
 type Address = tuple[str, int]
 type Server = tuple[Address, ConnectionOptions]

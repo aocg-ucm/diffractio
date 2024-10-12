@@ -51,7 +51,7 @@ setup(
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'BPM', 'WPM', 'CZT', 'RS', 'VRS'
+        'BPM', 'WPM', 'CZT', 'RS', 'VRS', 'VCZT', 'FPWPM'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),

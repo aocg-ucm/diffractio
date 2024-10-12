@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -52,7 +51,7 @@ from matplotlib import rcParams
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING, Draw_Z_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Z_Options
 from .scalar_fields_Z import Scalar_field_Z
 from .utils_common import get_date, load_data_common, save_data_common
 from .utils_drawing import normalize_draw

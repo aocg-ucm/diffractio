@@ -833,7 +833,7 @@ __________________________________________________
 
     - semi_plane
 
-    - semi_sphere
+    - semi_cylinder
 
     - sine_grating
 

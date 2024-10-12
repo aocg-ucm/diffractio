@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -51,7 +50,7 @@ from scipy.interpolate import RectBivariateSpline
 
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING, Draw_Vector_XZ_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XZ_Options
 from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common, check_none
 from .utils_drawing import normalize_draw, reduce_matrix_size
@@ -116,7 +115,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.CONF_DRAWING = CONF_DRAWING
 
 
-    @check_none('x','z','Ex','Ey',raise_exception=False)
+    @check_none('x','z','Ex','Ey',raise_exception=bool_raise_exception)
     def __str__(self):
         """Represents data from class."""
 
@@ -146,7 +145,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return ""
 
 
-    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __add__(self, other):
         """adds two Vector_field_X. For example two light sources or two masks
 
@@ -211,7 +210,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             print(dict0.keys())
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def clear_field(self):
         """Removes the fields Ex, Ey, Ez"""
 
@@ -228,7 +227,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return new_field
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def incident_field(self, E0: Vector_field_X  | None = None, u0: Scalar_field_X  | None = None, 
                        j0: Jones_vector  | None = None, z0: float | None = None):
         """Includes the incident field in Vector_field_XZ. 
@@ -259,7 +258,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             self.Ey[iz, :] = self.Ey[iz, :] + E0.Ey
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def final_field(self):
         """Returns the final field as a Vector_field_X."""
 
@@ -295,7 +294,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return edges
         
 
-    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def get(self, kind: str = "fields", is_matrix: bool =True):
         """Takes the vector field and divide in Scalar_field_X.
 
@@ -372,7 +371,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
-    @check_none('x','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
 
@@ -390,7 +389,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             E_new.Ez = self.Ez * u.u
             return E_new
 
-    @check_none('x','z',raise_exception=False)
+    @check_none('x','z',raise_exception=bool_raise_exception)
     def FP_WPM(
         self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False
     ):
@@ -443,7 +442,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             has_filter = has_edges
 
         width_edge = 0.95*(self.x[-1]-self.x[0])/2
-        x_center = (self.x[-1] + self.x[0]) / 2
+        x_center = (self.x[-1] + self.x[0])/2
 
         filter_function = np.exp(
             -((np.abs(self.x - x_center) / width_edge) ** pow_edge)
@@ -492,7 +491,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             return (self.Ex, self.Ey, self.Ez), (self.Hx, self.Hy, self.Hz)
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """ "Returns intensity."""
         intensity = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
@@ -500,7 +499,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return intensity
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def Poynting_vector(self, has_draw: bool = True, draw_borders: bool = True,  scale: str = ''):
         "Instantaneous Poynting Vector"
 
@@ -566,7 +565,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return Sx, Sy, Sz
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
         "Averaged Poynting Vector"
 
@@ -639,7 +638,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return Sx, Sy, Sz
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
@@ -665,7 +664,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return S
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
 
         epsilon = self.n ** 2
@@ -692,7 +691,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return U
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def irradiance(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
         """
         irradiance in plane z
@@ -770,7 +769,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return energy_z
 
 
-    @check_none('x','z','Ex','Ey',raise_exception=False)
+    @check_none('x','z','Ex','Ey',raise_exception=bool_raise_exception)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -803,7 +802,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             return CI, CQ, CU, CV
 
 
-    @check_none('x','z',raise_exception=False)
+    @check_none('x','z',raise_exception=bool_raise_exception)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -963,7 +962,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         # plt.tight_layout()
         return h1
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities__(
         self,
         logarithm,
@@ -1042,7 +1041,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             return h1, h2, h3
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def __draw_phases__(
         self,
         logarithm,
@@ -1143,7 +1142,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             return h1, h2, h3
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def __draw_fields__(
         self,
         logarithm,
@@ -1210,7 +1209,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return h1, h2, h3, h4
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=False)
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def __draw_EH__(
         self,
         logarithm,
@@ -1452,18 +1451,18 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Dy = self.z[-1] - self.z[0]
         size_x = Dx / (num_ellipses[0])
         size_y = Dy / (num_ellipses[1])
-        x_centers = size_x / 2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y / 2 + size_y * np.array(range(0, num_ellipses[1]))
+        x_centers = size_x/2 + size_x * np.array(range(0, num_ellipses[0]))
+        y_centers = size_y/2 + size_y * np.array(range(0, num_ellipses[1]))
 
         num_x, num_y = len(self.x), len(self.z)
         ix_centers = num_x / (num_ellipses[0])
         iy_centers = num_y / (num_ellipses[1])
 
         ix_centers = (
-            np.round(ix_centers / 2 + ix_centers * np.array(range(0, num_ellipses[0])))
+            np.round(ix_centers/2 + ix_centers * np.array(range(0, num_ellipses[0])))
         ).astype("int")
         iy_centers = (
-            np.round(iy_centers / 2 + iy_centers * np.array(range(0, num_ellipses[1])))
+            np.round(iy_centers/2 + iy_centers * np.array(range(0, num_ellipses[1])))
         ).astype("int")
 
         Ix_centers, Iy_centers = np.meshgrid(
@@ -1480,7 +1479,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         E0x = self.Ex[Iy_centers, Ix_centers]
         E0y = self.Ey[Iy_centers, Ix_centers]
 
-        angles = np.linspace(0, 360 * degrees, 64)
+        angles = np.linspace(0, 360*degrees, 64)
 
         if ax is False:
             self.draw("intensity", logarithm=logarithm, color_intensity=color_intensity)
@@ -1495,8 +1494,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 size_dim = min(size_x, size_y)
 
                 if max_r > 0 and max_r**2 > percentage_intensity * intensity_max:
-                    Ex = Ex / max_r * size_dim * amplification / 2 + (+self.x[int(xi)])
-                    Ey = Ey / max_r * size_dim * amplification / 2 + self.z[int(yj)]
+                    Ex = Ex / max_r * size_dim * amplification/2 + (+self.x[int(xi)])
+                    Ey = Ey / max_r * size_dim * amplification/2 + self.z[int(yj)]
 
                     ax.plot(Ex, Ey, color_line, lw=line_width)
                     if draw_arrow:

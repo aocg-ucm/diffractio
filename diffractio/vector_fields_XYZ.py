@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 # flake8: noqa
@@ -58,7 +57,7 @@ import copy
 
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import load_data_common, save_data_common, get_date, check_none
 from .utils_math import nearest
@@ -114,7 +113,7 @@ class Vector_field_XYZ():
         self.CONF_DRAWING = CONF_DRAWING
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __str__(self):
         """Represents data from class."""
 
@@ -144,7 +143,7 @@ class Vector_field_XYZ():
         return ""
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __add__(self, other):
         """adds two Vector_field_XY. For example two light sources or two masks
 
@@ -207,7 +206,7 @@ class Vector_field_XYZ():
         if verbose is True:
             print(dict0.keys())
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def clear_field(self):
         """simple - removes the field: self.E=0 """
 
@@ -225,7 +224,7 @@ class Vector_field_XYZ():
         return new_field
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def get(self, kind: str = 'fields', is_matrix=True):
         """Takes the vector field and divide in Scalar_field_XYZ
 
@@ -318,7 +317,7 @@ class Vector_field_XYZ():
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
 
-    @check_none('Ex','Ey','Ez',raise_exception=False)
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
         """
@@ -328,7 +327,7 @@ class Vector_field_XYZ():
         return intensity
 
     
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def polarization_states(self, matrix: bool = False):
         """returns the Stokes parameters
 
@@ -373,7 +372,7 @@ class Vector_field_XYZ():
             return CI, CQ, CU, CV
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         """returns A, B, theta, h polarization parameter of elipses
 
@@ -429,7 +428,7 @@ class Vector_field_XYZ():
             return (CA, CB, Ctheta, Ch)
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
@@ -443,7 +442,7 @@ class Vector_field_XYZ():
         return normalize_field(self, kind, new_field)
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def to_Vector_field_XY(self,
                            iz0: int | None = None,
                            z0: float | None = None):
@@ -468,7 +467,7 @@ class Vector_field_XYZ():
         return field_output
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def to_Vector_field_XZ(self,
                            iy0: int | None = None,
                            y0: float | None = None):
@@ -494,7 +493,7 @@ class Vector_field_XYZ():
         return field_output
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def to_Vector_field_YZ(self,
                            ix0: int | None = None,
                            x0: float | None = None):
@@ -520,7 +519,7 @@ class Vector_field_XYZ():
         return field_output
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def to_Vector_field_Z(self, kind: str = 'amplitude', x0: int | None = None,
                           y0: int | None = None, has_draw: bool = True,
                           z_scale: str = 'um'):
@@ -573,7 +572,7 @@ class Vector_field_XYZ():
         return (field_x, field_y, field_z)
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw_XY(self,
                 z0: float,
                 kind: Draw_Vector_XY_Options = 'intensity',
@@ -609,10 +608,10 @@ class Vector_field_XYZ():
                     reduce_matrix=reduce_matrix)
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw_XZ(self,
                 kind: Draw_Vector_XZ_Options = 'intensity',
-                y0: float = 0 * mm,
+                y0: float = 0*mm,
                 logarithm: float = 0,
                 normalize: bool = False,
                 draw_borders: bool = False,
@@ -636,10 +635,10 @@ class Vector_field_XYZ():
         return h1
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=False)
+    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw_YZ(self,
                 kind: Draw_Vector_XZ_Options = 'intensity',
-                x0: float = 0 * mm,
+                x0: float = 0*mm,
                 logarithm: float = 0,
                 normalize: bool = False,
                 draw_borders: bool = False,

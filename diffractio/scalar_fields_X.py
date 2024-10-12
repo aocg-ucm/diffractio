@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -79,7 +78,7 @@ from scipy.special import hankel1
 
 from .__init__ import degrees, mm, np, plt
 
-from .config import Draw_X_Options, empty_types
+from .config import bool_raise_exception, Draw_X_Options, empty_types
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common, check_none, add, oversampling
 from .utils_drawing import normalize_draw
@@ -128,7 +127,7 @@ class Scalar_field_X():
         self.type = "Scalar_field_X"
         self.date = get_date()
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def __str__(self):
         """Represents main data of the atributes."""
 
@@ -157,7 +156,7 @@ class Scalar_field_X():
             print(" - info:       {}".format(self.info))
         return ""
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def __add__(self, other):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
@@ -182,15 +181,18 @@ class Scalar_field_X():
         return t
 
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def add(self, other, kind):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
         Args:
-            other (Scalar_field_X): 2nd field to add
-            kind (str): instruction how to add the fields:
-                - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
-                - 'standard': add fields u3=u1+u2 and does nothing.
+            other (Vector_field_X): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'distances'].
+                - 'source': adds the fields as they are
+                - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+                - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+                - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+                - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
 
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
@@ -200,7 +202,7 @@ class Scalar_field_X():
            
         return t
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
@@ -217,7 +219,7 @@ class Scalar_field_X():
         u3.u = self.u - other.u
         return u3
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def __mul__(self, other):
         """Multiply two fields. For example  :math: `u_1(x)= u_0(x)*t(x)`
 
@@ -232,7 +234,7 @@ class Scalar_field_X():
         new_field.u = self.u * other.u
         return new_field
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def conjugate(self, new_field: bool = True):
         """Conjugates the field"""
 
@@ -245,7 +247,7 @@ class Scalar_field_X():
         else:
             self.u = np.conj(self.u)
 
-    @check_none('x','u', raise_exception=False)
+    @check_none('x','u')
     def oversampling(self, factor_rate: int | tuple):
         """Overfample function has been implemented in scalar X, XY, XZ, and XYZ frames reduce the pixel size of the masks and fields. 
         This is also performed with the cut_resample function. However, this function oversamples with integer factors.
@@ -277,7 +279,7 @@ class Scalar_field_X():
 
         self = reduce_to_1(self)
 
-    @check_none('u',raise_exception=False)
+    @check_none('u',raise_exception=bool_raise_exception)
     def clear_field(self):
         """Removes the field so that self.u = 0."""
         self.u = np.zeros_like(self.u, dtype=complex)
@@ -323,7 +325,7 @@ class Scalar_field_X():
                 raise Exception("no dictionary in load_data")
 
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def cut_resample(
             self, x_limits: NDArrayFloat | None = None, num_points: int | None = None,
             new_field: bool = False, interp_kind: str = "linear"):
@@ -399,7 +401,7 @@ class Scalar_field_X():
         """
         self.u = u0.u
 
-    @check_none('u',raise_exception=False)
+    @check_none('u',raise_exception=bool_raise_exception)
     def inverse_amplitude(self, new_field: bool = False):
         """Inverts the amplitude of the mask, phase is equal as initial
 
@@ -426,7 +428,7 @@ class Scalar_field_X():
             new.u = new_amplitude
             return new
 
-    @check_none('x','u',raise_exception=False)
+    @check_none('x','u',raise_exception=bool_raise_exception)
     def inverse_phase(self, new_field: bool = False):
         """Inverts the phase of the mask, amplitude is equal as initial
 
@@ -452,7 +454,7 @@ class Scalar_field_X():
             new.u = new_amplitude
             return new
 
-    @check_none('u',raise_exception=False)
+    @check_none('u',raise_exception=bool_raise_exception)
     def filter(self, size: float):
         """ Filters the field with a slit of a certain size.
 
@@ -466,7 +468,7 @@ class Scalar_field_X():
         slit.slit(x0=0, size=size)
         self.u = fft_filter(self.u, slit.u)
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def insert_mask(self, t1, x0_mask1: float, clean: bool = True, kind_position: str = "left"):
         """Insert mask t1 in mask self. It is performed using interpolation.
 
@@ -481,7 +483,7 @@ class Scalar_field_X():
         if kind_position == "left":
             t1.x = t1.x - t1.x[0] + x0_mask1
         elif kind_position == "center":
-            t1.x = t1.x - (t1.x[0] + t1.x[-1]) / 2 + x0_mask1
+            t1.x = t1.x - (t1.x[0] + t1.x[-1])/2 + x0_mask1
 
         # interpolation is different for real and imag
         f_interp_real = interp1d(
@@ -504,7 +506,7 @@ class Scalar_field_X():
             i_pos = (self.x > t1.x[0]) * (self.x < t1.x[-1])
             self.u[i_pos] = u_new[i_pos]
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def pupil(self, x0, radius):
         """Place a pupil in the field.
 
@@ -562,7 +564,7 @@ class Scalar_field_X():
         )
 
         if position == "center":
-            center_x = (x_new[-1] + x_new[0]) / 2
+            center_x = (x_new[-1] + x_new[0])/2
             x_new = x_new - center_x
         elif position == "previous":
             x_new = x_new - x_new[0] + x0[0]
@@ -578,7 +580,7 @@ class Scalar_field_X():
             self.u = u_new
             self.x = x_new
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def fft(self, z: float | None = None, shift: bool = True,
             remove0: bool = False, matrix: bool = False,
             new_field: bool = False, verbose: bool = False):
@@ -634,7 +636,7 @@ class Scalar_field_X():
             self.u = ttf1
             self.x = x_new
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def ifft(self, z: float | None = None, shift: bool = True,
              remove0: bool = False, matrix: bool = False,
              new_field: bool = False, verbose: bool = False):
@@ -689,7 +691,7 @@ class Scalar_field_X():
             if verbose is True:
                 print("x0={},x1={}".format(x_new[0], x_new[-1]))
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def _RS_(self, z: float, n: float, matrix: bool = False,
              new_field: bool = True, fast: bool = False, kind: str = "z",
              xout: None | NDArrayFloat = None, verbose: bool = True):
@@ -738,7 +740,7 @@ class Scalar_field_X():
             ) -
             rmax
         )
-        self.quality = dr_ideal / dr_real / 2
+        self.quality = dr_ideal / dr_real/2
 
         if verbose is True:
             if self.quality.min() > 1:
@@ -751,12 +753,12 @@ class Scalar_field_X():
         if precise:
             # matrix W para integracion simpson
             a = [2, 4]
-            num_rep = int(round((nx) / 2) - 1)
+            num_rep = int(round((nx)/2) - 1)
 
             b = array(a * num_rep)
             W = concatenate(((1,), b, (2, 1))) / 3.0
 
-            if float(nx) / 2 == round(nx / 2):  # es par
+            if float(nx)/2 == round(nx/2):  # es par
                 i_central = num_rep + 1
                 W = concatenate((W[:i_central], W[i_central + 1:]))
         else:
@@ -790,7 +792,7 @@ class Scalar_field_X():
         else:
             self.u = Usalida
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def RS(self, z: float, amplification: int = 1, n: float = 1.,
            new_field: bool = True, matrix: bool = False, xout: None | NDArrayFloat = None,
            fast: bool = False, kind: str = "z", verbose: bool = True):
@@ -820,18 +822,18 @@ class Scalar_field_X():
         num_pixels = len(self.x)
 
         positions_x = (
-            -amplification * width_x / 2 + array(list(range(amplification))) * width_x
+            -amplification * width_x/2 + array(list(range(amplification))) * width_x
         )
 
         x0 = linspace(
-            -amplification * width_x / 2,
-            amplification * width_x / 2,
+            -amplification * width_x/2,
+            amplification * width_x/2,
             num_pixels * amplification,
         )
 
         if xout is not None:
             positions_x = positions_x + xout
-            x0 = x0 + xout - width_x / 2
+            x0 = x0 + xout - width_x/2
 
         u_field = np.zeros_like(x0, dtype=complex)
         qualities = np.zeros((amplification))
@@ -863,7 +865,7 @@ class Scalar_field_X():
             self.u = u_field
             self.quality = qualities
 
-    @check_none('x', raise_exception=False)
+    @check_none('x')
     def CZT(self, z: float | NDArrayFloat, xout: float | NDArrayFloat | None,
             verbose: float = False):
         """Chirped z-transform.
@@ -928,13 +930,13 @@ class Scalar_field_X():
             F = (0.5j * k * z / R) * hankel1(1, k * R)
 
             # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-            #     1j * k / 2 / z * (xout**2))
-            # F = np.exp(1j * k / 2 / z * (self.x**2))
+            #     1j * k/2 / z * (xout**2))
+            # F = np.exp(1j * k/2 / z * (self.x**2))
             u0 = self.u * F
 
             fs = self.wavelength * z / dx  # dimension of the imaging plane
-            fx1 = xstart + fs / 2
-            fx2 = xend + fs / 2
+            fx1 = xstart + fs/2
+            fx2 = xend + fs/2
             u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
             k_factor = np.sqrt(z * self.wavelength) * dx
@@ -966,14 +968,14 @@ class Scalar_field_X():
                 F = (0.5j * k * z_now / R) * hankel1(1, k * R)
 
                 # F0 = np.exp(1j * k * z_now) / (
-                #     1j * self.wavelength * z_now) * np.exp(1j * k / 2 / z_now *
+                #     1j * self.wavelength * z_now) * np.exp(1j * k/2 / z_now *
                 #                                            (xout**2))
-                # F = np.exp(1j * k / 2 / z_now * (self.x**2))
+                # F = np.exp(1j * k/2 / z_now * (self.x**2))
                 u0 = self.u * F
 
                 fs = self.wavelength * z_now / dx  # dimension of the imaging plane
-                fx1 = xstart + fs / 2
-                fx2 = xend + fs / 2
+                fx1 = xstart + fs/2
+                fx2 = xend + fs/2
                 u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
                 u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
@@ -997,9 +999,9 @@ class Scalar_field_X():
         return u_out
 
 
-    @check_none('x', raise_exception=False)
-    def WPM(self, fn, zs: NDArrayFloat, num_sampling: list[int] | None = None,
-            ROI: list[NDArray] | None = None, x_pos: float | None = None,
+    @check_none('x')
+    def WPM(self, fn, zs: NDArrayFloat, num_sampling: tuple[int] | None = None,
+            ROI: tuple[NDArray] | None = None, x_pos: float | None = None,
             z_pos: float | None = None, get_u_max: bool = False,
             has_edges: bool = True, pow_edge: int = 80, verbose: bool = False):
         """WPM method used for very dense sampling. It does not storages the intensity distribution at propagation, but only selected areas. The areas to be stored are:
@@ -1054,8 +1056,8 @@ class Scalar_field_X():
         else:
             has_filter = has_edges
 
-        width_edge = 0.95 * (self.x[-1] - self.x[0]) / 2
-        x_center = (self.x[-1] + self.x[0]) / 2
+        width_edge = 0.95 * (self.x[-1] - self.x[0])/2
+        x_center = (self.x[-1] + self.x[0])/2
 
         filter_function = np.exp(
             -((np.abs(self.x - x_center) / width_edge) ** pow_edge)
@@ -1189,7 +1191,7 @@ class Scalar_field_X():
         return normalize_field(self, kind, new_field)
 
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def MTF(self, kind: str = "mm", has_draw: bool = True):
         """Computes the MTF of a field,.
 
@@ -1207,7 +1209,7 @@ class Scalar_field_X():
         self.u = np.abs(self.u) ** 2
         MTF_field = self.fft(new_field=True, shift=True)
 
-        i_center = int(len(MTF_field.x) / 2)
+        i_center = int(len(MTF_field.x)/2)
 
         mtf_norm = np.abs(MTF_field.u) / np.abs(MTF_field.u[i_center])
 
@@ -1237,7 +1239,7 @@ class Scalar_field_X():
         return fx, mtf_norm
 
 
-    @check_none('u',raise_exception=False)
+    @check_none('u',raise_exception=bool_raise_exception)
     def intensity(self):
         """Intensity.
 
@@ -1264,7 +1266,7 @@ class Scalar_field_X():
         return average_intensity
 
 
-    @check_none('u',raise_exception=False)
+    @check_none('u',raise_exception=bool_raise_exception)
     def get_edges(self, kind_transition: str = "amplitude", min_step: int = 0,
                   verbose: bool = False, filename: str = ""):
         """Determine locations of edges for a binary mask.
@@ -1287,7 +1289,7 @@ class Scalar_field_X():
         return pos_transitions, type_transitions, raising, falling
 
 
-    @check_none('x',raise_exception=False)
+    @check_none('x',raise_exception=bool_raise_exception)
     def get_RS_minimum_z(self, n: float = 1., quality: int = 1, verbose: bool = True):
         """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter
 
@@ -1327,7 +1329,7 @@ class Scalar_field_X():
 
         return z_min
 
-    @check_none('x', 'u',raise_exception=False)
+    @check_none('x', 'u',raise_exception=bool_raise_exception)
     def draw(self, kind: Draw_X_Options = "intensity", logarithm: float = 0.,
         normalize: bool = False, cut_value: float | None = None, filename: str = "",
         scale: str = ""):

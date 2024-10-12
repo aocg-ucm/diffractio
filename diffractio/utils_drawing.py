@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -28,7 +27,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .__init__ import degrees, eps, mm
-from .config import CONF_DRAWING
+from .config import bool_raise_exception, CONF_DRAWING
 from .utils_optics import field_parameters
 
 percentage_intensity = CONF_DRAWING["percentage_intensity"]
@@ -165,29 +164,29 @@ def draw2D(
 
 def draw_several_fields(
         fields: list,
-        titles: list[str] = "",
+        titles: tuple[str] = "",
         title: str = "",
         figsize: tuple[float, float] | None = None,
-        kinds: list[str] = "",
-        logarithm: list[float] | float = False,
+        kinds: tuple[str] = "",
+        logarithm: tuple[float] | float = False,
         normalize: bool = False):
     """Draws several fields in subplots
 
     Args:
-        fields (list): list with several scalar_fields_XY
-        titles (list): list with titles
+        fields (tuple): list with several scalar_fields_XY
+        titles (tuple): list with titles
         title (str): suptitle
-        kinds (list): list with kinds of figures (amplitude', 'intensity', 'phase', 'real_field', 'contour')
+        kinds (tuple): list with kinds of figures (amplitude', 'intensity', 'phase', 'real_field', 'contour')
         logarithm (float): If >0, intensity is scaled in logarithm
         normalize (bool): If True, max(intensity)=1
     """
 
-    orden = [[1, 1], [2, 1], [3, 1], [2, 2], [3, 2], [3, 2]]
+    order = [[1, 1], [2, 1], [3, 1], [2, 2], [3, 2], [3, 2]]
     length = [(10, 8), (10, 5), (11, 5), (9, 7), (12, 9), (12, 9)]
 
     num_dibujos = len(fields)
-    fil = orden[num_dibujos - 1][0]
-    col = orden[num_dibujos - 1][1]
+    fil = order[num_dibujos - 1][0]
+    col = order[num_dibujos - 1][1]
 
     if figsize == None:
         figsize = length[num_dibujos - 1]
@@ -218,7 +217,6 @@ def draw_several_fields(
         elif kind == "phase":
             phase = phase / degrees
             phase[intensity < percentage_intensity * (intensity.max())] = 0
-
             colormap = CONF_DRAWING["color_phase"]
             image = phase
         elif kind == "amplitude":
@@ -391,7 +389,7 @@ def make_video_from_file(self, files: list, filename: str = ""):
     """make a video from file
 
     Args:
-        files (list): files to add
+        files (tuple): files to add
         filename (bool, optional): final filename. Defaults to "".
     """
     print("Start", files)
@@ -412,7 +410,7 @@ def make_video_from_file(self, files: list, filename: str = ""):
     print("exit", files)
 
 
-def reduce_matrix_size(reduce_matrix: str | list[int], x: NDArrayFloat,
+def reduce_matrix_size(reduce_matrix: str | tuple[int], x: NDArrayFloat,
                        y: NDArrayFloat, image: NDArrayFloat,
                        verbose: bool = False):
     """Reduces the size of matrix for drawing purposes. If the matrix is very big, the drawing process is slow.

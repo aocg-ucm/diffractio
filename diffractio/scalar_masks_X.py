@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -73,7 +72,7 @@ class Scalar_mask_X(Scalar_field_X):
         self.type = 'Scalar_mask_X'
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def filter(self, mask, new_field: bool = True,
                binarize: bool = False, normalize: bool = False):
         """Widens a field using a mask.
@@ -109,8 +108,8 @@ class Scalar_mask_X(Scalar_field_X):
                            f1: float = 0,
                            f2: float = 0,
                            v_globals: dict = {},
-                           x0: float = 0 * um,
-                           radius: float = 0 * um):
+                           x0: float = 0*um,
+                           radius: float = 0*um):
         """Phase mask defined between two surfaces :math:`f_1` and :math:`f_2`: :math:`h(x,y)=f_2(x,y)-f_1(x,y)`, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(f_{2}-f_{1})}`
 
         Args:
@@ -144,8 +143,8 @@ class Scalar_mask_X(Scalar_field_X):
                         array1: NDArrayFloat | None = None,
                         array2: NDArrayFloat | None = None,
                         interp_kind: str = 'quadratic',
-                        radius: float = 0 * um,
-                        x0: float = 0 * um):
+                        radius: float = 0*um,
+                        x0: float = 0*um):
         """Phase mask defined between two surfaces defined by arrays: array1 and array2, :math:`t(x)=mask(x)e^{i\,k\,(n-1)(array2(x,z)-array1(x,z))}`
 
         Args:
@@ -209,8 +208,8 @@ class Scalar_mask_X(Scalar_field_X):
             x0 (float): center of slit
             size (float): size of slit
         """
-        xmin = x0 - size / 2
-        xmax = x0 + size / 2
+        xmin = x0 - size/2
+        xmax = x0 + size/2
 
         u = np.zeros_like(self.x)
         ix = (self.x < xmax) & (self.x > xmin)
@@ -232,8 +231,8 @@ class Scalar_mask_X(Scalar_field_X):
         slit2 = Scalar_mask_X(self.x, self.wavelength)
 
         # Definicion de las dos slits
-        slit1.slit(x0=x0 - separation / 2, size=size)
-        slit2.slit(x0=x0 + separation / 2, size=size)
+        slit1.slit(x0=x0 - separation/2, size=size)
+        slit2.slit(x0=x0 + separation/2, size=size)
         self.u = slit1.u + slit2.u
 
         return self.u
@@ -419,7 +418,7 @@ class Scalar_mask_X(Scalar_field_X):
             x0 (float): position of center
             c (float): base curvature at vertex, inverse of radius
             k (float): conic constant
-            a (list): order aspheric coefficients: A4, A6, A8, ...
+            a (tuple): order aspheric coefficients: A4, A6, A8, ...
             n0 (float): refractive index of first medium
             n1 (float): refractive index of second medium
             radius (float): radius of aspheric surface
@@ -457,7 +456,7 @@ class Scalar_mask_X(Scalar_field_X):
         return t
 
     def fresnel_lens(self, x0: float, focal: float, kind: str = 'phase', binary: bool = False,
-                     phase: float = np.pi, radius: float = 0 * um):
+                     phase: float = np.pi, radius: float = 0*um):
         """Fresnel lens. Amplitude phase, continuous or binary.
 
         Args:
@@ -499,7 +498,6 @@ class Scalar_mask_X(Scalar_field_X):
         elif kind == 'phase':
             u_fresnel = np.exp(1j*(h+np.pi))
             if binary is True:
-                print(h.max(), h.min())
                 u_fresnel[h > np.pi] = np.exp(1j*phase)
                 u_fresnel[h <= np.pi] = 1
                 h = np.angle(u_fresnel)*phase/np.pi
@@ -517,7 +515,7 @@ class Scalar_mask_X(Scalar_field_X):
         very good in time for long arrays
 
         Args:
-            t (float): correlation lens
+            t (float): correlation length
             s (float): std of roughness
 
         Returns:
@@ -588,7 +586,7 @@ class Scalar_mask_X(Scalar_field_X):
 
         total_length = self.x[-1] - self.x[0]
         dx = self.x[1] - self.x[0]
-        i_center = int(len(self.x) / 2)
+        i_center = int(len(self.x)/2)
         num_particles = int(percentage * total_length / size)
         if percentage > 0.5:
             num_particles = int(num_particles * (1 + np.sqrt(percentage)))
@@ -624,7 +622,7 @@ class Scalar_mask_X(Scalar_field_X):
         # Definicion de la sinusoidal
         self.u = amp_min + (amp_max -
                             amp_min) * (1 + np.cos(2 * np.pi *
-                                                   (self.x - x0) / period)) / 2
+                                                   (self.x - x0) / period))/2
 
         return self.u
 
@@ -745,7 +743,7 @@ class Scalar_mask_X(Scalar_field_X):
         pa = (p1 - p0) / size
 
         px = 2. * np.pi * np.log(p0 + pa * (self.x - x0)) / pa
-        t = amp_min + (amp_max - amp_min) * (1 + np.cos(px)) / 2
+        t = amp_min + (amp_max - amp_min) * (1 + np.cos(px))/2
 
         if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
@@ -832,7 +830,7 @@ class Scalar_mask_X(Scalar_field_X):
         qx = q0 + 0.5 * qa * (self.x - x0)
 
         t = amp_min + (amp_max - amp_min) * (1 + np.cos(qx *
-                                                        (self.x - x0))) / 2
+                                                        (self.x - x0)))/2
 
         if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
@@ -884,7 +882,7 @@ class Scalar_mask_X(Scalar_field_X):
         period = eval(p_x)
         q_x = 2 * np.pi / period
         t = amp_min + (amp_max -
-                       amp_min) * (1 + np.cos(q_x * (self.x - delta_x))) / 2
+                       amp_min) * (1 + np.cos(q_x * (self.x - delta_x)))/2
 
         if kind in ('amplitude_binary', 'phase_binary'):
             levels = [0, 1]
@@ -946,8 +944,8 @@ class Scalar_mask_X(Scalar_field_X):
 
         return t
 
-    def binary_code(self, x0: float = 0 * um, kind: str = 'standard',
-                    code: list[int] = [1, 1, 0, 0, 1, 0, 1], bit_width: float = 20 * um):
+    def binary_code(self, x0: float = 0*um, kind: str = 'standard',
+                    code: tuple[int] = [1, 1, 0, 0, 1, 0, 1], bit_width: float = 20*um):
         """Binary code in form of 1's and 0's.
 
         Args:
@@ -964,7 +962,7 @@ class Scalar_mask_X(Scalar_field_X):
             i0_zeros = np.zeros_like(code)
             code = np.vstack((i0_zeros, i0_ones, code, i0_ones)).reshape(
                 (-1, ), order='F')
-            bit_width = bit_width / 2
+            bit_width = bit_width/2
 
         t = Scalar_mask_X(self.x, self.wavelength)
         t2 = Scalar_mask_X(self.x, self.wavelength)

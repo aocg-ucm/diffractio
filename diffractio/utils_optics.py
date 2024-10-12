@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 # flake8: noqa
@@ -81,7 +80,7 @@ def roughness_2D(x: NDArrayFloat, y: tuple[float, float], t: float, s: float):
         (numpy.array) Topography of roughnness in microns.
 
     Example:
-        roughness(t=(50 * um, 25 * um), s=1 * um)
+        roughness(t=(50*um, 25*um), s=1*um)
 
     References:
         JA Oglivy "Theory of wave scattering from random surfaces" Adam Hilger p.224.
@@ -156,8 +155,8 @@ def width_percentage(x: NDArrayFloat, y: NDArrayFloat, percentage: float = 0.5, 
 
     Returns:
         (float): width, width of at given %
-        (list): x_list: (x[i_left], x[i_max], x[i_right])
-        (list): x_list: (i_left, i_max, i_right)
+        (tuple): x_list: (x[i_left], x[i_max], x[i_right])
+        (tuple): x_list: (i_left, i_max, i_right)
 
     Notes:
         y=np.exp(-x**2/(s**2))  percentage=1/e -> width = 2*s
@@ -389,7 +388,7 @@ def FWHM1D(x: NDArrayFloat, intensity: NDArrayFloat, percentage: float = 0.5,
 
 
 def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage: float = 0.5,
-           remove_background: bool = False, has_draw: bool = False, xlim: list[float] | None = None):
+           remove_background: bool = False, has_draw: bool = False, xlim: tuple[float] | None = None):
     """ Get FWHM2D  in x and i direction
 
 
@@ -400,13 +399,12 @@ def FWHM2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat, percentage
         percentage (float, optional): heigth of peak to measure. Defaults to 0.5.
         remove_background (bool, optional): 'min', 'mean', None. Defaults to False.
         has_draw (bool, optional): if True it draws. Defaults to False.
-        xlim (list[float] | None, optional): xlim in drawing. Defaults to None.
+        xlim (tuple[float] | None, optional): xlim in drawing. Defaults to None.
 
     Returns:
         FWHM_x (float): width in x direction
         FWHM_y (float): width in y direction
-    TODO: 
-        perform profiles at several angles and fit to a ellipse.
+    TODO: perform profiles at several angles and fit to a ellipse.
     """
 
     i_pos, _, I_max = find_extrema(intensity.transpose(), x, y, kind="max")
@@ -521,7 +519,7 @@ def detect_intensity_range(x: NDArrayFloat, intensity: NDArrayFloat, percentage:
 
     I_cum = intensity.cumsum()
 
-    pc = percentage + (1 - percentage) / 2
+    pc = percentage + (1 - percentage)/2
     Icum_min = (1 - pc) * I_cum.max()
     Icum_max = I_cum.max() * pc
 
@@ -722,7 +720,7 @@ def lorentz_spectrum(wavelengths: NDArrayFloat, w_central: float, Dw: float, nor
         weights (float): Lorentz spectrum
     """
 
-    weigths = 1 / (1 + ((wavelengths - w_central) / (Dw / 2)) ** 2)
+    weigths = 1 / (1 + ((wavelengths - w_central) / (Dw/2)) ** 2)
 
     if normalize is True:
         weights = weigths / weigths.sum()
@@ -867,7 +865,8 @@ def convert_amplitude2heigths(amplitude: NDArrayComplex, wavelength: float,
 
 
 def fresnel_equations_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: float,
-                         outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
+                         outputs: tuple[bool, bool, bool, bool] = [True, True, True, True], 
+                         has_draw: bool = True,
                          kind: str = "amplitude_phase"):
     """Fresnel_equations where input are kx part of wavevector.
 
@@ -984,7 +983,7 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: f
 
 
 def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: float,
-                                  outputs: list[bool] = [True, True, True, True], has_draw: bool = True):
+                                  outputs: tuple[bool, bool, bool, bool] = [True, True, True, True], has_draw: bool = True):
     """Transmitances and reflectances, where input are kx part of wavevector.
 
     Args:
@@ -992,6 +991,7 @@ def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: float, n1: flo
         wavelength (float): wavelength
         n1 (float): refractive index of first materia
         n2 (float): refractive index of second materia
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
         has_draw (bool, optional): if True, it draw. Defaults to False.
         outputs (bool,bool,bool,bool): Selects the outputs to compute
 
@@ -1049,15 +1049,16 @@ def transmitances_reflectances_kx(kx: NDArrayComplex, wavelength: float, n1: flo
 
 
 def fresnel_equations(theta: NDArrayFloat, wavelength: float, n1: float, n2: float,
-                      outputs: list[bool] = [True, True, True, True], has_draw: bool = True,
+                      outputs: tuple[bool, bool, bool, bool] = [True, True, True, True], has_draw: bool = True,
                       kind="amplitude_phase"):
     """Fresnel equations and reflectances, where input are angles of incidence.
 
     Args:
         theta (np.array): kx
         wavelength (float): wavelength
-        n1 (float): refractive index of first materia
-        n2 (float): refractive index of second materia
+        n1 (float): refractive index of first material
+        n2 (float): refractive index of second material
+        outputs (bool,bool,bool,bool): Selects the outputs to compute
         kind (str): It draw 'amplitude_phase' or 'real_imag'
         has_draw (bool, optional): if True, it draw. Defaults to False.
         kind (str): It draw 'amplitude_phase' or 'real_imag'
@@ -1185,7 +1186,7 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: float, n1: float, n2: flo
 
 
 def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float, n2: float,
-                               outputs: list[bool] = [True, True, True, True], has_draw: bool = False):
+                               outputs: tuple[bool] = [True, True, True, True], has_draw: bool = False):
     """Transmitances and reflectances, where input are angles of incidence.
 
     Args:
@@ -1193,8 +1194,8 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float
         wavelength (float): wavelength
         n1 (float): refractive index of first materia
         n2 (float): refractive index of second materia
+        outputs(bool,bool,bool,bool): Selects the outputs to compute
         has_draw (bool, optional): if True, it draw. Defaults to False.
-        outputs (bool,bool,bool,bool): Selects the outputs to compute
 
     Returns:
         _type_: T_TM, T_TE, R_TM, R_TE  (TM is parallel and TE is perpendicular)

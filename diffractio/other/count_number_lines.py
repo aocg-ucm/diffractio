@@ -1,14 +1,14 @@
 
 import os
 
-def list_python_files_and_line_counts(directory: str, ext: str) -> list[tuple[str, int]]:
+def list_python_files_and_line_counts(directory: str, ext: str) -> tuple[tuple[str, int]]:
     """List Python files and their line counts in a given directory.
 
     Args:
         directory (str): The directory to search for Python files.
 
     Returns:
-        list[tuple[str, int]]: A list of tuples containing the file name and line count.
+        tuple[tuple[str, int]]: A list of tuples containing the file name and line count.
     """
 
     num_lines = 0

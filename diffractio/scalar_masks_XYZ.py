@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -38,6 +37,7 @@ The magnitude is related to microns: `micron = 1.`
 
 
 from .__init__ import degrees, np, um
+from .config import bool_raise_exception
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import check_none
 
@@ -53,9 +53,9 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self.type = 'Scalar_mask_XYZ'
 
 
-    @check_none('X','Y','Z',raise_exception=False)
+    @check_none('X','Y','Z',raise_exception=bool_raise_exception)
     def object_by_surfaces(self,
-                           r0: list[float],
+                           r0: tuple[float],
                            refractive_index: float,
                            Fs,
                            angles,
@@ -67,7 +67,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         Args:
             rotation_point (float, float, float): location of the mask
             refractive_index (float, str): can be a number or a function n(x, y,z)
-            Fs (list): condtions as str that will be computed using eval
+            Fs (tuple): condtions as str that will be computed using eval
             array1 (numpy.array): array (x,y,z) that delimits the second surface
             angle (float): angle of rotation (radians)
             v_globals (dict): dict with global variables
@@ -101,12 +101,12 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
 
-    @check_none('X','Y','Z',raise_exception=False)
-    def sphere(self, r0: list[float], radius: list[float], refractive_index: float, angles):
+    @check_none('X','Y','Z',raise_exception=bool_raise_exception)
+    def sphere(self, r0: tuple[float, float, float], radius: tuple[float, float, float] | float, refractive_index: float, angles):
         """ Insert a sphere in background. If it is something else previous, it is removed.
 
             Args:
-                r0:(x0, y0, z0) Location of sphere, for example (0 * um, 0*um, 0 * um)
+                r0:(x0, y0, z0) Location of sphere, for example (0*um, 0*um, 0*um)
                 radius: (rx, ry, rz) Radius of sphere. It can be a ellipsoid. If radius is a number, then it is a sphere
                 refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
         """
@@ -123,13 +123,13 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
 
-    @check_none('X','Y','Z',raise_exception=False)
+    @check_none('X','Y','Z',raise_exception=bool_raise_exception)
     def square(self,
-               r0: list[float],
-               length: list[float],
+               r0: tuple[float],
+               length: tuple[float],
                refractive_index: float,
                angles=None,
-               rotation_point: list[float] = None):
+               rotation_point: tuple[float] = None):
         """ Insert a rectangle in background. If something previous, is removed.
 
         Args:
@@ -151,21 +151,21 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         x0, y0, z0 = r0
         lengthx, lengthy, lengthz = length
 
-        ipasax1 = self.X >= x0 - lengthx / 2
-        ipasax2 = self.X <= x0 + lengthx / 2
-        ipasay1 = self.Y >= y0 - lengthy / 2
-        ipasay2 = self.Y <= y0 + lengthy / 2
-        ipasaz1 = self.Z >= z0 - lengthz / 2
-        ipasaz2 = self.Z <= z0 + lengthz / 2
+        ipasax1 = self.X >= x0 - lengthx/2
+        ipasax2 = self.X <= x0 + lengthx/2
+        ipasay1 = self.Y >= y0 - lengthy/2
+        ipasay2 = self.Y <= y0 + lengthy/2
+        ipasaz1 = self.Z >= z0 - lengthz/2
+        ipasaz2 = self.Z <= z0 + lengthz/2
         ipasa = ipasax1 * ipasax2 * ipasay1 * ipasay2 * ipasaz1 * ipasaz2
         self.n[ipasa] = refractive_index
 
         return ipasa
 
 
-    @check_none('X','Y','Z',raise_exception=False)
-    def cylinder(self, r0: list[float], radius: list[float], length: float,
-                 refractive_index: float, axis: list[float], angle: float):
+    @check_none('X','Y','Z',raise_exception=bool_raise_exception)
+    def cylinder(self, r0: tuple[float], radius: tuple[float], length: float,
+                 refractive_index: float, axis: tuple[float], angle: float):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Args:
@@ -188,8 +188,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
         ipasar = (self.X - x0)**2 / radiusx**2 + (self.Y -
                                                   y0)**2 / radiusy**2 <= 1
-        ipasaz1 = self.Z >= z0 - length / 2
-        ipasaz2 = self.Z <= z0 + length / 2
+        ipasaz1 = self.Z >= z0 - length/2
+        ipasaz2 = self.Z <= z0 + length/2
         ipasa = ipasar * ipasaz1 * ipasaz2
         """
         FIXME: not working
@@ -211,7 +211,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         return ipasa
 
 
-    @check_none('x','y','z',raise_exception=False)
+    @check_none('x','y','z',raise_exception=bool_raise_exception)
     def stl(self, filename: str, refractive_index: float, Dx: float | None = None, Dy: float | None = None, 
             Dz: float | None = None, has_draw: bool = False, verbose: bool = False):
         """

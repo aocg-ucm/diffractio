@@ -7,8 +7,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 
@@ -56,14 +55,14 @@ def _test_slit_RS_XY(num_pixels: int):
     Returns:
         u: field
     """
-    length = 512 * um
-    x = np.linspace(-length / 2, length / 2, num_pixels)
-    y = np.linspace(-length / 2, length / 2, num_pixels)
-    wavelength = 0.6328 * um
+    length = 512*um
+    x = np.linspace(-length/2, length/2, num_pixels)
+    y = np.linspace(-length/2, length/2, num_pixels)
+    wavelength = 0.6328*um
 
     u1 = Scalar_mask_XY(x, y, wavelength)
-    u1.slit(x0=0, size=25 * um)
-    u1.RS(z=1 * mm, new_field=False, verbose=False)
+    u1.slit(x0=0, size=25*um)
+    u1.RS(z=1*mm, new_field=False, verbose=False)
     return u1
 
 

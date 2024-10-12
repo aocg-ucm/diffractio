@@ -38,11 +38,11 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 25 * um
+        length = 25*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 1 * um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 1*um
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.constant_polarization(u=1, v=(1, 1j))
@@ -57,17 +57,17 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 100 * um
+        length = 100*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 0.6328
 
         u0 = Scalar_source_XY(x0, y0, wavelength)
-        u0.plane_wave(A=1, theta=-1 * degrees, phi=0 * degrees)
+        u0.plane_wave(A=1, theta=-1*degrees, phi=0*degrees)
 
         u1 = Scalar_source_XY(x0, y0, wavelength)
-        u1.plane_wave(A=1, theta=1 * degrees, phi=0 * degrees)
+        u1.plane_wave(A=1, theta=1*degrees, phi=0*degrees)
 
         EM1 = Vector_source_XY(x0, y0, wavelength)
         EM1.constant_polarization(u=u0, v=[1, 0])
@@ -89,16 +89,16 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 250 * um
+        length = 250*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.azimuthal_wave(u=1,
-                          r0=(0 * um, 0 * um),
-                          radius=(length / 2, length / 2))
+                          r0=(0*um, 0*um),
+                          radius=(length/2, length/2))
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
@@ -112,16 +112,16 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 250 * um
+        length = 250*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.radial_wave(u=1,
-                       r0=(0 * um, 0 * um),
-                       radius=(length / 2, length / 2))
+                       r0=(0*um, 0*um),
+                       radius=(length/2, length/2))
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
@@ -135,18 +135,18 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 75 * um
+        length = 75*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
         u = Scalar_source_XY(x0, y0, wavelength)
         u.gauss_beam(A=1,
-                     r0=(0 * um, 0 * um),
+                     r0=(0*um, 0*um),
                      z0=0,
-                     w0=(15 * um, 15 * um),
-                     theta=0. * degrees,
-                     phi=0 * degrees)
+                     w0=(15*um, 15*um),
+                     theta=0*degrees,
+                     phi=0*degrees)
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.constant_polarization(u, v=(1, 1))
 
@@ -162,18 +162,18 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 75 * um
+        length = 75*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
         u = Scalar_source_XY(x0, y0, wavelength)
         u.gauss_beam(A=1,
-                     r0=(0 * um, 0 * um),
-                     w0=(15 * um, 15 * um),
+                     r0=(0*um, 0*um),
+                     w0=(15*um, 15*um),
                      z0=0,
-                     theta=0. * degrees,
-                     phi=0 * degrees)
+                     theta=0*degrees,
+                     phi=0*degrees)
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.azimuthal_wave(u)
 
@@ -189,15 +189,15 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 500 * um
+        length = 500*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 2
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.local_polarized_vector_wave(u=1,
-                                       r0=(0 * um, 0 * um),
+                                       r0=(0*um, 0*um),
                                        m=1.5,
                                        fi0=0 * np.pi)
 
@@ -213,17 +213,17 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 500 * um
+        length = 500*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 2
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.local_polarized_vector_wave_radial(u=1,
-                                              r0=(0 * um, 0 * um),
+                                              r0=(0*um, 0*um),
                                               m=0.5,
-                                              fi0=np.pi / 2)
+                                              fi0=np.pi/2)
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')
@@ -237,18 +237,18 @@ class Test_vector_sources_XY():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 500 * um
+        length = 500*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 2
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.local_polarized_vector_wave_hybrid(u=1,
-                                              r0=(0 * um, 0 * um),
+                                              r0=(0*um, 0*um),
                                               m=1,
                                               n=3,
-                                              fi0=np.pi / 2)
+                                              fi0=np.pi/2)
 
         EM.draw(kind='fields')
         save_figure_test(newpath, func_name, add_name='_fields')

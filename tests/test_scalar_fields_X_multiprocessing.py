@@ -41,17 +41,17 @@ if not os.path.exists(newpath):
 
 def __experiment_extended_source__(x0):
 
-    x = np.linspace(-500 * um, 500 * um, 1024)
-    wavelength = 0.850 * um
-    z0 = -500 * mm
-    period = 50 * um
-    focal = 5 * mm
+    x = np.linspace(-500*um, 500*um, 1024)
+    wavelength = 0.850*um
+    z0 = -500*mm
+    period = 50*um
+    focal = 5*mm
 
     red = Scalar_mask_X(x, wavelength)
-    red.ronchi_grating(x0=0 * um, period=period, fill_factor=0.5)
+    red.ronchi_grating(x0=0*um, period=period, fill_factor=0.5)
 
     lens = Scalar_mask_X(x, wavelength)
-    lens.lens(x0=0, focal=focal, radius=30 * mm)
+    lens.lens(x0=0, focal=focal, radius=30*mm)
 
     u1 = Scalar_source_X(x, wavelength)
 
@@ -63,16 +63,16 @@ def __experiment_extended_source__(x0):
 
 
 def __function_polychromatic__(wavelength):
-    x0 = np.linspace(-75 * um, 75 * um, 1024 * 8)
+    x0 = np.linspace(-75*um, 75*um, 1024 * 8)
 
     t1 = Scalar_mask_X(x0, wavelength)
-    t1.slit(x0=0, size=100 * um)
+    t1.slit(x0=0, size=100*um)
 
     f1 = Scalar_source_X(x0, wavelength)
-    f1.gauss_beam(x0=0 * um, w0=200 * um, z0=0 * um, A=1, theta=0. * degrees)
+    f1.gauss_beam(x0=0*um, w0=200*um, z0=0*um, A=1, theta=0*degrees)
 
     u1 = f1 * t1
-    u1.RS(z=10 * um, new_field=False, verbose=False)
+    u1.RS(z=10*um, new_field=False, verbose=False)
 
     return u1
 
@@ -99,24 +99,24 @@ class Test_Scalar_fields_X():
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         # definiciones
-        x = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.850 * um
+        x = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.850*um
         num_fuentes = 101
-        S = 3000 * um
-        z0 = -500 * mm
-        period = 50 * um
-        focal = 5 * mm
+        S = 3000*um
+        z0 = -500*mm
+        period = 50*um
+        focal = 5*mm
 
         red = Scalar_mask_X(x, wavelength)
-        red.ronchi_grating(x0=0 * um, period=period, fill_factor=0.5)
+        red.ronchi_grating(x0=0*um, period=period, fill_factor=0.5)
 
         lens = Scalar_mask_X(x, wavelength)
-        lens.lens(x0=0, focal=focal, radius=30 * mm)
+        lens.lens(x0=0, focal=focal, radius=30*mm)
 
         u1 = Scalar_source_X(x, wavelength)
 
         # posiciones de la fuente
-        x0s = np.linspace(-S / 2, S / 2, num_fuentes)
+        x0s = np.linspace(-S/2, S/2, num_fuentes)
         intensities = Scalar_field_X(x, wavelength)
 
         time1 = time.time()
@@ -139,7 +139,7 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        wavelengths = np.linspace(.3 * um, .9 * um, 101)
+        wavelengths = np.linspace(.3*um, .9*um, 101)
         w_central = wavelengths.mean()
         spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
                                         w_central=w_central,
@@ -175,8 +175,8 @@ class Test_Scalar_fields_X():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        x0s = np.linspace(-1500 * um, 1500 * um, 101)
-        x0_central = 0 * um
+        x0s = np.linspace(-1500*um, 1500*um, 101)
+        x0_central = 0*um
 
         intensity, u_s, time_proc = extended_source_multiprocessing(
             __experiment_extended_source__,
@@ -210,25 +210,25 @@ class Test_Scalar_fields_X():
                     dict(delta_x=delta_x, period=period, t1=t1, t2=t2))
             return dict_Parameters
 
-        x0 = np.linspace(-400 * um, 400 * um, 1024 * 8)
-        wavelength = 0.85 * um
-        period = 50 * um
+        x0 = np.linspace(-400*um, 400*um, 1024 * 8)
+        wavelength = 0.85*um
+        period = 50*um
         z_talbot = 2 * period**2 / wavelength
-        z0 = z_talbot / 2
+        z0 = z_talbot/2
         delay = 0.001
 
         t1 = Scalar_mask_X(x0,
                            wavelength,
                            info="__experiment_grating_movement__")
-        t1.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
+        t1.ronchi_grating(period=period, x0=0*um, fill_factor=0.5)
         t1.RS(z=z0, new_field=False)
 
         t2 = Scalar_mask_X(x0,
                            wavelength,
                            info="__experiment_grating_movement__")
-        t2.ronchi_grating(period=period, x0=0 * um, fill_factor=0.5)
+        t2.ronchi_grating(period=period, x0=0*um, fill_factor=0.5)
 
-        deltas_x = np.linspace(-60 * um, 60 * um, 51)  # 512
+        deltas_x = np.linspace(-60*um, 60*um, 51)  # 512
         num_processors = num_max_processors
 
         dict_Parameters = creation_dictionary(deltas_x=deltas_x,
@@ -282,11 +282,11 @@ def __experiment_double_slit_dictionary__(dict_params):
     slit_size = dict_params['slit_size']
     separation = dict_params['separation']
     t1 = Scalar_mask_X(x0, wavelength)
-    t1.slit(x0=0, size=20 * um)
+    t1.slit(x0=0, size=20*um)
     t1.double_slit(x0=0, size=slit_size, separation=separation)
 
     f1 = Scalar_source_X(x0, wavelength)
-    f1.gauss_beam(x0=0 * um, w0=200 * um, z0=0 * um, A=1, theta=0. * degrees)
+    f1.gauss_beam(x0=0*um, w0=200*um, z0=0*um, A=1, theta=0*degrees)
 
     u1 = f1 * t1
     u1.RS(z, new_field=False, verbose=False)
@@ -295,17 +295,17 @@ def __experiment_double_slit_dictionary__(dict_params):
 
 
 def __experiment_double_slit_array__(slit_size):
-    x0 = np.linspace(-75 * um, 75 * um, 1024 * 8)
-    wavelength = 0.6328 * um
-    separation = 50 * um
-    z = 100 * um
+    x0 = np.linspace(-75*um, 75*um, 1024 * 8)
+    wavelength = 0.6328*um
+    separation = 50*um
+    z = 100*um
 
     t1 = Scalar_mask_X(x0, wavelength)
-    t1.slit(x0=0, size=20 * um)
+    t1.slit(x0=0, size=20*um)
     t1.double_slit(x0=0, size=slit_size, separation=separation)
 
     f1 = Scalar_source_X(x0, wavelength)
-    f1.gauss_beam(x0=0 * um, w0=200 * um, z0=0 * um, A=1, theta=0. * degrees)
+    f1.gauss_beam(x0=0*um, w0=200*um, z0=0*um, A=1, theta=0*degrees)
 
     u1 = f1 * t1
     u1.RS(z, new_field=False, verbose=False)
@@ -317,13 +317,13 @@ def __experiment_extended_polychromatic_source__(dict_params):
     wavelength = dict_params['wavelength']
     x0 = dict_params['x0']
 
-    x = np.linspace(-1250 * um, 1250 * um, 1024 * 8)
-    periodo = 100 * um
-    z = 5 * periodo**2 / (0.6 * um)
-    z0 = -50 * mm
+    x = np.linspace(-1250*um, 1250*um, 1024 * 8)
+    periodo = 100*um
+    z = 5 * periodo**2 / (0.6*um)
+    z0 = -50*mm
 
     t1 = Scalar_mask_X(x, wavelength)
-    t1.ronchi_grating(period=periodo, x0=0 * um, fill_factor=0.5)
+    t1.ronchi_grating(period=periodo, x0=0*um, fill_factor=0.5)
 
     f1 = Scalar_source_X(x, wavelength)
     f1.spherical_wave(A=1, x0=x0, z0=z0, normalize=True)
@@ -353,8 +353,8 @@ class Test_Scalar_fields_X_multiprocessing():
                          separation=separation))
             return dict_Parameters
 
-        x0 = np.linspace(-100 * um, 100 * um, 1024)
-        wavelengths = np.linspace(0.3 * um, 0.8 * um, 101)
+        x0 = np.linspace(-100*um, 100*um, 1024)
+        wavelengths = np.linspace(0.3*um, 0.8*um, 101)
         spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
                                         w_central=0.6,
                                         Dw=0.1,
@@ -362,16 +362,16 @@ class Test_Scalar_fields_X_multiprocessing():
         num_processors = num_max_processors
 
         dict_Parameters0 = dict(x0=x0,
-                                wavelength=0.6 * um,
-                                z=.05 * mm,
-                                slit_size=50 * um,
-                                separation=75 * um)
+                                wavelength=0.6*um,
+                                z=.05*mm,
+                                slit_size=50*um,
+                                separation=75*um)
 
         dict_Parameters = creation_dictionary(wavelengths=wavelengths,
                                               x0=x0,
-                                              z=.05 * mm,
-                                              slit_size=50 * um,
-                                              separation=75 * um)
+                                              z=.05*mm,
+                                              slit_size=50*um,
+                                              separation=75*um)
 
         I0 = __experiment_double_slit_dictionary__(dict_Parameters0)
 
@@ -402,7 +402,7 @@ class Test_Scalar_fields_X_multiprocessing():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        slit_sizes = np.linspace(5 * um, 50 * um, 10)
+        slit_sizes = np.linspace(5*um, 50*um, 10)
         num_processors = num_max_processors
 
         u_s, time_proc = execute_multiprocessing(
@@ -434,8 +434,8 @@ class Test_Scalar_fields_X_multiprocessing():
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        x0s = np.linspace(-150 * um, 150 * um, 21)
-        wavelengths = np.linspace(.45 * um, .65 * um, 11)
+        x0s = np.linspace(-150*um, 150*um, 21)
+        wavelengths = np.linspace(.45*um, .65*um, 11)
         w_central = wavelengths.mean()
         spectrum_gauss = gauss_spectrum(wavelengths=wavelengths,
                                         w_central=w_central,

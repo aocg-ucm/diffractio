@@ -1,7 +1,6 @@
-# %%
+
 import os
 
-# %%
 
 def list_python_files(directory):
     try:
@@ -10,22 +9,11 @@ def list_python_files(directory):
     except FileNotFoundError:
         return f"The directory {directory} does not exist."
 
-directory = '/home/luismiguel/github/diffractio/diffractio/'
+directory = '/home/luismiguel/bitbucket/diffractio/diffractio/'
 python_files = list_python_files(directory)
 
 
 
-# print("Functions:")
-# for file in python_files:
-#     print(file)
-    
-    
-  
-
-
-# %%
-
- 
  
 def list_classes_and_functions(file_path):
     """
@@ -75,17 +63,16 @@ def list_classes_and_functions(file_path):
     
 
 
-# %%
-directory = '/home/luismiguel/github/diffractio/diffractio/'
-file = 'scalar_masks_XY.py'
 
-file_path = os.path.join(directory, file)
-classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
+# file = 'scalar_masks_XY.py'
+
+# file_path = os.path.join(directory, file)
+# classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
 
  
 
 
-# %%
+
 
 def print_data_from_file(file_path) -> None:
     classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
@@ -148,7 +135,8 @@ with open('docs/functions.rst', 'w') as rst_file:
         if len(classes)>0:
             rst_file.write(f"  Number of classes: {len(classes)}\n\n")
             for cl in classes:
-                rst_file.write(f"    Class: {cl}, Number of functions: {len(class_functions[cl])}\n\n")
+                if len(class_functions[cl]) > 0:
+                    rst_file.write(f"    Class: {cl}, Number of functions: {len(class_functions[cl])}\n\n")
             
 
     total_lines = sum(len(open(os.path.join(directory, file), 'r').readlines()) for file in python_files)

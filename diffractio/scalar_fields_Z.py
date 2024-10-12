@@ -8,8 +8,7 @@
 # Author:      Luis Miguel Sanchez Brea
 #
 # Created:     2024
-# Copyright:   AOCG / UCM
-# Licence:     GPL
+# Licence:     GPLv3
 # ----------------------------------------------------------------------
 
 """
@@ -52,16 +51,15 @@ from scipy.interpolate import interp1d
 
 
 from .__init__ import degrees, mm, np, plt
-from .config import Draw_Z_Options
+from .config import bool_raise_exception, Draw_Z_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling
+from .utils_common import add, get_date, load_data_common, save_data_common, check_none, oversampling
 from .utils_drawing import normalize_draw
 from .utils_math import nearest
 
 from .utils_optics import field_parameters, normalize_field, FWHM1D
 
 num_max_processors = multiprocessing.cpu_count()
-
 
 class Scalar_field_Z():
     """Class for unidimensional scalar fields in z axis.
@@ -98,7 +96,7 @@ class Scalar_field_Z():
         self.date = get_date()
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def __str__(self):
         """Represents main data of the atributes."""
 
@@ -123,26 +121,23 @@ class Scalar_field_Z():
         return ("")
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def __add__(self, other):
-        """Adds two Scalar_field_x. For example two light sources or two masks.
+        """Adds two Scalar_field_Z.
 
         Args:
-            other (Scalar_field_X): 2nd field to add
-            kind (str): instruction how to add the fields:
-                - 'maximum1': mainly for masks. If t3=t1+t2>1 then t3= 1.
-                - 'standard': add fields u3=u1+u2 and does nothing.
-
+            other (Scalar_field_Z): 2nd field to add
+ 
         Returns:
             Scalar_field_Z: `u3 = u1 + u2`
         """
 
-        u3 = Scalar_field_Z(self.z, self.wavelength)
-        u3.u = self.u + other.u
-        return u3
+        u = add(self, other, kind='source')
+
+        return u
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def __sub__(self, other):
         """Substract two Scalar_field_x. For example two light sources or two masks.
 
@@ -159,7 +154,7 @@ class Scalar_field_Z():
         return u3
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
@@ -168,7 +163,7 @@ class Scalar_field_Z():
         return new_field
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def conjugate(self, new_field: bool = True):
         """Conjugates the field
         """
@@ -181,7 +176,7 @@ class Scalar_field_Z():
             self.u = np.conj(self.u)
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def clear_field(self):
         """Removes the field so that self.u = 0. """
         self.u = np.zeros_like(self.u, dtype=complex)
@@ -229,7 +224,7 @@ class Scalar_field_Z():
             print(dict0.keys())
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def oversampling(self, factor_rate: int | tuple):
         """Overfample function has been implemented in scalar X, XY, XZ, and XYZ frames reduce the pixel size of the masks and fields. 
         This is also performed with the cut_resample function. However, this function oversamples with integer factors.
@@ -240,7 +235,7 @@ class Scalar_field_Z():
 
         self = oversampling(self, factor_rate)
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def cut_resample(self,
                      z_limits: NDArrayFloat | None = None,
                      num_points: int | None = None,
@@ -306,7 +301,7 @@ class Scalar_field_Z():
             return field
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
 
@@ -320,7 +315,7 @@ class Scalar_field_Z():
         return normalize_field(self, kind, new_field)
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def intensity(self):
         """Intensity.
 
@@ -332,7 +327,7 @@ class Scalar_field_Z():
         return intensity
 
 
-    @check_none('u', raise_exception=False)
+    @check_none('u')
     def average_intensity(self, verbose: bool = False):
         """Returns the average intensity as: (np.abs(self.u)**2).sum() / num_data
 
@@ -349,7 +344,7 @@ class Scalar_field_Z():
         return average_intensity
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def FWHM1D(self, percentage: float = 0.5, remove_background: bool = None,
                has_draw: bool = False):
         """
@@ -373,7 +368,7 @@ class Scalar_field_Z():
         return np.squeeze(width)
 
 
-    @check_none('z','u', raise_exception=False)
+    @check_none('z','u')
     def DOF(self, percentage: float = 0.5, remove_background: str | None = None,
             has_draw: bool = False):
         """Determines Depth-of_focus (DOF) in terms of the width at different distances
