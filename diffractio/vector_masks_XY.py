@@ -38,6 +38,7 @@ The main atributes are:
 import copy
 from typing import Literal
 
+from matplotlib import rcParams
 from py_pol.jones_matrix import Jones_matrix
 
 
@@ -219,10 +220,8 @@ class Vector_mask_XY(Vector_field_XY):
         else:
             radiusx, radiusy = radius
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
-        # Definicion de la transmitancia
         pupil0 = np.zeros(np.shape(self.X))
         ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
             (Yrot)**2 / (radiusy**2 + 1e-15) < 1
@@ -382,11 +381,7 @@ class Vector_mask_XY(Vector_field_XY):
         PL.half_waveplate(azimuth=azimuth)
         self.from_py_pol(PL)
 
-    def polarizer_retarder(self,
-                           R: float=0*degrees,
-                           p1: float=1,
-                           p2: float=1,
-                           azimuth: float=0*degrees):
+    def polarizer_retarder(self, R: float=0*degrees, p1: float=1, p2: float=1, azimuth: float=0*degrees):
         """Generates an XY retarder.
 
         Args:
@@ -445,36 +440,23 @@ class Vector_mask_XY(Vector_field_XY):
             'jones' is for real and imaginary parts.
             'jones_ap' is for amplitud and phase.
         """
-        from matplotlib import rcParams
-        # def draw_masks(self, kind='fields'):
         xsize, ysize = rcParams['figure.figsize']
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
         if range_scale == 'mm':
             extension = extension / 1000.
 
-        a00, int00, phase00 = field_parameters(self.M00,
-                                               has_amplitude_sign=False)
+        a00, int00, phase00 = field_parameters(self.M00, has_amplitude_sign=False)
 
-        a01, int01, phase01 = field_parameters(self.M01,
-                                               has_amplitude_sign=False)
-        a10, int10, phase10 = field_parameters(self.M10,
-                                               has_amplitude_sign=False)
-        a11, int11, phase11 = field_parameters(self.M11,
-                                               has_amplitude_sign=False)
+        a01, int01, phase01 = field_parameters(self.M01, has_amplitude_sign=False)
+        a10, int10, phase10 = field_parameters(self.M10, has_amplitude_sign=False)
+        a11, int11, phase11 = field_parameters(self.M11, has_amplitude_sign=False)
 
         a_max = np.abs((a00, a01, a10, a11)).max()
 
         if kind in ('amplitudes', 'jones_ap'):
             plt.set_cmap(CONF_DRAWING['color_intensity'])
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
@@ -508,37 +490,22 @@ class Vector_mask_XY(Vector_field_XY):
 
         if kind in ('phases', 'jones_ap'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
-            im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.angle(self.M00)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.angle(self.M01)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.angle(self.M10)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.angle(self.M11)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 1].set_title("J11")
 
@@ -557,38 +524,23 @@ class Vector_mask_XY(Vector_field_XY):
         if kind in ('jones'):
             plt.set_cmap(CONF_DRAWING['color_stokes'])
 
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
-            im1 = axs[0, 0].imshow(np.real(self.M00),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.real(self.M00), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.real(self.M01),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.real(self.M01), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.real(self.M10),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.real(self.M10), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.real(self.M11),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.real(self.M11), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
 
@@ -597,38 +549,23 @@ class Vector_mask_XY(Vector_field_XY):
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
-            im1 = axs[0, 0].imshow(np.imag(self.M00),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.imag(self.M00), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.imag(self.M01),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.imag(self.M01), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.imag(self.M10),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.imag(self.M10), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.imag(self.M11),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.imag(self.M11), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
 

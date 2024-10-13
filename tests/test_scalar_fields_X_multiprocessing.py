@@ -150,7 +150,7 @@ class Test_Scalar_fields_X():
             __function_polychromatic__,
             wavelengths,
             spectrum_gauss,
-            num_processors=num_max_processors,
+            num_processors=1,
             verbose=True)
         intensity0, u_s0, time_proc0 = polychromatic_multiprocessing(
             __function_polychromatic__,
@@ -181,7 +181,7 @@ class Test_Scalar_fields_X():
         intensity, u_s, time_proc = extended_source_multiprocessing(
             __experiment_extended_source__,
             x0s,
-            num_processors=num_max_processors,
+            num_processors=1,
             verbose=True)
         intensity0, u_s0, time_proc0 = extended_source_multiprocessing(
             __experiment_extended_source__,
@@ -229,7 +229,7 @@ class Test_Scalar_fields_X():
         t2.ronchi_grating(period=period, x0=0*um, fill_factor=0.5)
 
         deltas_x = np.linspace(-60*um, 60*um, 51)  # 512
-        num_processors = num_max_processors
+        num_processors = 1
 
         dict_Parameters = creation_dictionary(deltas_x=deltas_x,
                                               period=period,
@@ -359,7 +359,7 @@ class Test_Scalar_fields_X_multiprocessing():
                                         w_central=0.6,
                                         Dw=0.1,
                                         normalize=True)
-        num_processors = num_max_processors
+        num_processors = 1
 
         dict_Parameters0 = dict(x0=x0,
                                 wavelength=0.6*um,
@@ -403,7 +403,7 @@ class Test_Scalar_fields_X_multiprocessing():
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         slit_sizes = np.linspace(5*um, 50*um, 10)
-        num_processors = num_max_processors
+        num_processors = 1
 
         u_s, time_proc = execute_multiprocessing(
             __experiment_double_slit_array__,
@@ -450,7 +450,7 @@ class Test_Scalar_fields_X_multiprocessing():
             x0s,
             wavelengths,
             spectrum_gauss,
-            num_processors=num_max_processors,
+            num_processors=1,
             verbose=True)
 
         plt.figure()

@@ -156,7 +156,7 @@ XYZ fields
   uxyz = Scalar_mask_XYZ(x=x0, y=y0, z=z0, wavelength=wavelength)
   uxyz.incident_field(u0=t1)
 
-  uxyz.RS(verbose=True, num_processors=4)
+  uxyz.RS(verbose=True, num_processors=1)
 
   uxyz.draw_XYZ(y0=0*mm, logarithm=True, normalize='maximum',filename='xyz_RS.png')
 

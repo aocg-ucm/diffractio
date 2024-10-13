@@ -60,15 +60,12 @@ from scipy.interpolate import RectBivariateSpline
 from py_pol.jones_matrix import Jones_matrix
 from py_pol.jones_vector import Jones_vector
 
-import diffractio
-
 from .__init__ import degrees, eps, mm, np, plt, um
 from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options
-from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_typing import NDArrayFloat
 from .utils_common import load_data_common, save_data_common, get_date, check_none
 from .utils_drawing import normalize_draw, reduce_matrix_size
-from .utils_math import get_edges, get_k, nearest, rotate_image, Bluestein_dft_xy
-from .scalar_fields_X import Scalar_field_X
+from .utils_math import nearest
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 
@@ -367,10 +364,8 @@ class Vector_field_XY():
 
         x0, y0 = r0
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
-        # Definicion de la transmitancia
         pupil0 = np.zeros(np.shape(self.X))
         ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + (Yrot)**2 / (radiusy**2 +
                                                                 1e-15) < 1
@@ -1350,7 +1345,7 @@ class Vector_field_XY():
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 2, 2)
@@ -1360,7 +1355,7 @@ class Vector_field_XY():
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
 
             plt.subplots_adjust(left=0,
@@ -1386,7 +1381,7 @@ class Vector_field_XY():
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 3, 2)
@@ -1396,7 +1391,7 @@ class Vector_field_XY():
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
             plt.ylabel('')
             plt.gca().set_yticks([])
@@ -1408,7 +1403,7 @@ class Vector_field_XY():
 
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_z$")
             plt.clim(-180, 180)
             plt.ylabel('')
             plt.gca().set_yticks([])
@@ -1637,14 +1632,14 @@ class Vector_field_XY():
             phase = np.angle(self.Ex)
             phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h4 = plt.subplot(2, 2, 4)
             phase = np.angle(self.Ey)
             phase[amplitude2 < percentage_intensity * (amplitude2.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
             plt.ylabel('')
             plt.gca().set_yticks([])
@@ -1687,14 +1682,14 @@ class Vector_field_XY():
             phase = np.angle(self.Ex)
             phase[amplitude1 < percentage_intensity * (amplitude1.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
             plt.clim(-180, 180)
 
             h5 = plt.subplot(2, 3, 5)
             phase = np.angle(self.Ey)
             phase[amplitude2 < percentage_intensity * (amplitude2.max())] = 0
 
-            self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
             plt.clim(-180, 180)
             plt.ylabel('')
             plt.gca().set_yticks([])
@@ -1703,7 +1698,7 @@ class Vector_field_XY():
             h6 = plt.subplot(2, 3, 6)
             phase = np.angle(self.Ez)
             phase[amplitude3 < percentage_intensity * (amplitude3.max())] = 0
-            self.__draw1__(phase / degrees, color_phase, "$\phi_z$")
+            self.__draw1__(phase/degrees, color_phase, "$\phi_z$")
             plt.clim(-180, 180)
             plt.ylabel('')
             plt.gca().set_yticks([])
@@ -1793,7 +1788,7 @@ class Vector_field_XY():
         plt.clim(0, max_intensity)
 
         h3 = plt.subplot(2, 2, 3)
-        self.__draw1__(theta / degrees, color_phase, "$\phi$")
+        self.__draw1__(theta/degrees, color_phase, "$\phi$")
         plt.clim(-180, 180)
         h4 = plt.subplot(2, 2, 4)
         self.__draw1__(h, "gist_heat", "$h$")

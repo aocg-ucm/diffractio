@@ -166,8 +166,8 @@ class Scalar_field_XYZ():
 
         Imin = (np.abs(self.u)**2).min()
         Imax = (np.abs(self.u)**2).max()
-        phase_min = (np.angle(self.u)).min() / degrees
-        phase_max = (np.angle(self.u)).max() / degrees
+        phase_min = (np.angle(self.u)).min()/degrees
+        phase_max = (np.angle(self.u)).max()/degrees
         print("{}\n - x:  {},   y:  {},  z:  {},   u:  {}".format(
             self.type, self.x.shape, self.y.shape, self.z.shape, self.u.shape))
         print(
@@ -592,7 +592,7 @@ class Scalar_field_XYZ():
                                      verbose=False)
         return self.u[:, :, i]
 
-    def RS(self, verbose: bool = False, num_processors=num_max_processors - 2):
+    def RS(self, verbose: bool = False, num_processors = 1):
         """Rayleigh Sommerfeld propagation algorithm
 
         Args:
@@ -1338,7 +1338,7 @@ class Scalar_field_XYZ():
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
             cmap = CONF_DRAWING['color_amplitude']
         elif kind == 'phase':
-            phase = phase / degrees
+            phase = phase/degrees
             phase[I_drawing < percentage_intensity * (I_drawing.max())] = 0
             cmap = CONF_DRAWING['color_phase']
 

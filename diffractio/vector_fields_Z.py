@@ -563,7 +563,7 @@ class Vector_field_Z():
             intensity = np.abs(self.Ex)**2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, ylabel="$\phi_x$", title='')
+            self.__draw1__(phase/degrees, ylabel="$\phi_x$", title='')
             plt.ylim(-180, 180)
 
             h2 = plt.subplot(1, 2, 2)
@@ -571,7 +571,7 @@ class Vector_field_Z():
             intensity = np.abs(self.Ey)**2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, ylabel="$\phi_y$", title='')
+            self.__draw1__(phase/degrees, ylabel="$\phi_y$", title='')
             plt.ylim(-180, 180)
 
             plt.subplots_adjust(left=0,
@@ -592,7 +592,7 @@ class Vector_field_Z():
             intensity = np.abs(self.Ex)**2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, ylabel="$\phi_x$", title='')
+            self.__draw1__(phase/degrees, ylabel="$\phi_x$", title='')
             plt.ylim(-180, 180)
 
             h2 = plt.subplot(1, 3, 2)
@@ -600,7 +600,7 @@ class Vector_field_Z():
             intensity = np.abs(self.Ey)**2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, ylabel="$\phi_y$", title='')
+            self.__draw1__(phase/degrees, ylabel="$\phi_y$", title='')
             plt.ylim(-180, 180)
 
             h3 = plt.subplot(1, 3, 3)
@@ -608,7 +608,7 @@ class Vector_field_Z():
             intensity = np.abs(self.Ez)**2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, ylabel="$\phi_z$", title='')
+            self.__draw1__(phase/degrees, ylabel="$\phi_z$", title='')
             plt.ylim(-180, 180)
 
             plt.subplots_adjust(left=0,
@@ -663,14 +663,14 @@ class Vector_field_Z():
         phase = np.angle(self.Ex)
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+        self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
         plt.clim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)
         phase = np.angle(self.Ey)
         phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+        self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
         plt.clim(-180, 180)
         h4 = plt.gca()
         plt.subplots_adjust(left=0,
@@ -741,7 +741,7 @@ class Vector_field_Z():
         plt.ylim(0, max_intensity)
 
         h3 = plt.subplot(2, 2, 3)
-        self.__draw1__(theta / degrees, "$\phi$")
+        self.__draw1__(theta/degrees, "$\phi$")
         plt.ylim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)

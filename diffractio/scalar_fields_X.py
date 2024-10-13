@@ -135,8 +135,8 @@ class Scalar_field_X():
 
         Imin = (np.abs(self.u) ** 2).min()
         Imax = (np.abs(self.u) ** 2).max()
-        phase_min = (np.angle(self.u)).min() / degrees
-        phase_max = (np.angle(self.u)).max() / degrees
+        phase_min = (np.angle(self.u)).min()/degrees
+        phase_max = (np.angle(self.u)).max()/degrees
         print("{}\n - x:  {},   u:  {}".format(self.type, self.x.shape, self.u.shape))
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um".format(
@@ -1384,8 +1384,8 @@ class Scalar_field_X():
             plt.xlim(left=self.x[0], right=self.x[-1])
 
         elif kind == "fft":
-            plt.plot(self.x / degrees, y, "k", lw=0.5)
-            plt.xlim(left=self.x[0] / degrees, right=self.x[-1] / degrees)
+            plt.plot(self.x/degrees, y, "k", lw=0.5)
+            plt.xlim(left=self.x[0]/degrees, right=self.x[-1]/degrees)
             plt.xlabel("$\phi\,(degrees)$")
             plt.ylabel(kind)
 

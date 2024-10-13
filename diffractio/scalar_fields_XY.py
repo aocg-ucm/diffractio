@@ -145,8 +145,8 @@ class Scalar_field_XY():
 
         Imin = (np.abs(self.u)**2).min()
         Imax = (np.abs(self.u)**2).max()
-        phase_min = (np.angle(self.u)).min() / degrees
-        phase_max = (np.angle(self.u)).max() / degrees
+        phase_min = (np.angle(self.u)).min()/degrees
+        phase_max = (np.angle(self.u)).max()/degrees
         print("{}\n - x:  {},   y:  {},   u:  {}".format(
             self.type, self.x.shape, self.y.shape, self.u.shape))
         print(
@@ -586,10 +586,8 @@ class Scalar_field_XY():
         else:
             radiusx, radiusy = radius
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
-        # Definicion de la transmitancia
         pupil0 = np.zeros(np.shape(self.X))
         ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
             (Yrot)**2 / (radiusy**2 + 1e-15) < 1
@@ -1835,16 +1833,16 @@ class Scalar_field_XY():
             ellipse = Ellipse(xy=(x_mean, y_mean),
                               width=dy,
                               height=dx,
-                              angle=-principal_axis / degrees)
+                              angle=-principal_axis/degrees)
             ellipse2 = Ellipse(xy=(x_mean, y_mean),
                                width=dy/2,
                                height=dx/2,
-                               angle=-principal_axis / degrees)
+                               angle=-principal_axis/degrees)
 
             ellipse3 = Ellipse(xy=(x_mean, y_mean),
                                width=dy / 4,
                                height=dx / 4,
-                               angle=-principal_axis / degrees)
+                               angle=-principal_axis/degrees)
 
             ax = plt.gca()
             ax.add_artist(ellipse)
@@ -2385,7 +2383,7 @@ class Scalar_field_XY():
                 
         amplitude, intensity, phase = field_parameters(self.u,        has_amplitude_sign=True)
         phase[phase == 1] = -1
-        phase = phase / degrees
+        phase = phase/degrees
 
         if percentage_intensity is None:
             percentage_intensity = percentage_intensity_config
@@ -2464,7 +2462,7 @@ class Scalar_field_XY():
         #     plt.clim(0, 1)
 
         plt.subplot(1, 2, 2)
-        phase = phase / degrees
+        phase = phase/degrees
 
         # elimino la fase en la visualicion cuando no hay campo
         h2 = plt.imshow(phase,

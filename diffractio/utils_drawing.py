@@ -215,7 +215,7 @@ def draw_several_fields(
             image = intensity
             colormap = CONF_DRAWING["color_intensity"]
         elif kind == "phase":
-            phase = phase / degrees
+            phase = phase/degrees
             phase[intensity < percentage_intensity * (intensity.max())] = 0
             colormap = CONF_DRAWING["color_phase"]
             image = phase

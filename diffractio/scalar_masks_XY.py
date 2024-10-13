@@ -879,7 +879,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         x0, y0 = r0
 
-        # Definicion de la transmitancia
         u = np.zeros_like(self.X)
 
         asol = a_coef[1][0]/2
@@ -965,7 +964,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Rotacion de la slit
         Xrot, Yrot = self.__rotate__(angle, (x0, 0))
 
-        # Definicion de la transmitancia
         u = np.zeros(np.shape(self.X))
         ix = (Xrot < xmax) & (Xrot > xmin)
         u[ix] = 1
@@ -1227,7 +1225,6 @@ class Scalar_mask_XY(Scalar_field_XY):
         # Radios mayor y menor
         x0, y0 = r0
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
         R = np.sqrt(Xrot**2 + Yrot**2)
         self.u = np.exp(-R**power / (2 * radiusx**power))
@@ -1283,7 +1280,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Xrot, Yrot = self.__rotate__(angle)
 
-        # Definicion de la transmitancia
         u = np.zeros_like(self.X)
 
         r = np.sqrt(Xrot**2 + Yrot**2)

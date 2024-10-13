@@ -178,7 +178,7 @@ class Test_Scalar_fields_XYZ():
 
         uxyz.incident_field(u0=t1)
 
-        uxyz.RS(verbose=True, num_processors=4)
+        uxyz.RS(verbose=True, num_processors=1)
         uxyz.draw_XYZ(kind: str = 'intensity', logarithm=0., normalize='maximum')
         uxyz.save_data(filename=filename + '.npz')
         save_figure_test(newpath, func_name)

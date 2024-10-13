@@ -1091,7 +1091,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             intensity = np.abs(self.Ex) ** 2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_intensity, "", only_image=only_image)
+            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
             format_drawing(self, plt, scale, draw_borders)
             plt.clim(-180, 180)
 
@@ -1100,7 +1100,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             intensity = np.abs(self.Ey) ** 2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_intensity, "", only_image=only_image)
+            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
             format_drawing(self, plt, scale, draw_borders)
             plt.clim(-180, 180)
             plt.tight_layout()
@@ -1114,7 +1114,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             intensity = np.abs(self.Ex) ** 2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_intensity, "", only_image=only_image)
+            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
             format_drawing(self, plt, scale, draw_borders)
             plt.clim(-180, 180)
 
@@ -1123,7 +1123,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             intensity = np.abs(self.Ey) ** 2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_intensity, "", only_image=only_image)
+            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
             format_drawing(self, plt, scale, draw_borders)
             plt.clim(-180, 180)
 
@@ -1132,7 +1132,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             intensity = np.abs(self.Ez) ** 2
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase / degrees, color_intensity, "", only_image=only_image)
+            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
             format_drawing(self, plt, scale, draw_borders)
             plt.clim(-180, 180)
 
@@ -1192,7 +1192,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
         print(percentage_intensity)
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_x$")
+        self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
         format_drawing(self, plt, scale, draw_borders)
         plt.clim(-180, 180)
 
@@ -1200,7 +1200,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         phase = np.angle(self.Ey)
         phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
 
-        self.__draw1__(phase / degrees, color_phase, "$\phi_y$")
+        self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
         format_drawing(self, plt, scale, draw_borders)
         plt.clim(-180, 180)
         h4 = plt.gca()
@@ -1407,7 +1407,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.clim(0, max_intensity)
 
         h3 = plt.subplot(2, 2, 3)
-        self.__draw1__(theta / degrees, color_phase, "$\phi$")
+        self.__draw1__(theta/degrees, color_phase, "$\phi$")
         plt.clim(-180, 180)
         h4 = plt.subplot(2, 2, 4)
         self.__draw1__(h, "gist_heat", "$h$")

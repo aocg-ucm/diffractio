@@ -888,7 +888,7 @@ class Test_Scalar_fields_XZ():
                                      wavelengths,
                                      spectrum=spectrum,
                                      verbose=False,
-                                     num_processors=num_max_processors)
+                                     num_processors=1)
 
         u_poly.draw(logarithm=True, normalize='intensity', draw_borders=True)
 
@@ -912,7 +912,7 @@ class Test_Scalar_fields_XZ():
                                       wavelengths,
                                       spectrum,
                                       verbose=True,
-                                      num_processors=num_max_processors)
+                                      num_processors=1)
         u_poly.draw(logarithm=True, normalize='intensity', draw_borders=True)
         save_figure_test(newpath, func_name, add_name='_int')
 

@@ -156,8 +156,8 @@ class Scalar_field_XZ():
 
         Imin = (np.abs(self.u)**2).min()
         Imax = (np.abs(self.u)**2).max()
-        phase_min = (np.angle(self.u)).min() / degrees
-        phase_max = (np.angle(self.u)).max() / degrees
+        phase_min = (np.angle(self.u)).min()/degrees
+        phase_max = (np.angle(self.u)).max()/degrees
         print("{}\n - x:  {},   z:  {},   u:  {}".format(
             self.type, self.x.shape, self.z.shape, self.u.shape))
         print(
@@ -1522,7 +1522,7 @@ class Scalar_field_XZ():
             I_drawing = amplitude
             I_drawing = normalize_draw(I_drawing, logarithm, normalize)
         elif kind == 'phase':
-            phase = phase / degrees
+            phase = phase/degrees
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             I_drawing = phase

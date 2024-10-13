@@ -102,8 +102,8 @@ class Scalar_field_Z():
 
         Imin = (np.abs(self.u)**2).min()
         Imax = (np.abs(self.u)**2).max()
-        phase_min = (np.angle(self.u)).min() / degrees
-        phase_max = (np.angle(self.u)).max() / degrees
+        phase_min = (np.angle(self.u)).min()/degrees
+        phase_max = (np.angle(self.u)).max()/degrees
         print("{}\n - z:  {},   u:  {}".format(self.type, self.z.shape,
                                                self.u.shape))
         print(

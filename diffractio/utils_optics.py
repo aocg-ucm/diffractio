@@ -247,7 +247,7 @@ def beam_width_2D(x: NDArrayFloat, y: NDArrayFloat, intensity: NDArrayFloat,
         u0.u = np.sqrt(intensity)
         u0.draw()
         ellipse = Ellipse(
-            xy=(x_mean, y_mean), width=dy, height=dx, angle=-principal_axis / degrees
+            xy=(x_mean, y_mean), width=dy, height=dx, angle=-principal_axis/degrees
         )
 
         ax = plt.gca()
@@ -931,13 +931,13 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: f
             axs[0].set_title("amplitude")
 
             if outputs[0]:
-                axs[1].plot(kx, np.angle(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
+                axs[1].plot(kx, np.angle(t_TM)/degrees, "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[1].plot(kx, np.angle(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
+                axs[1].plot(kx, np.angle(t_TE)/degrees, "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[1].plot(kx, np.angle(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
+                axs[1].plot(kx, np.angle(r_TM)/degrees, "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[1].plot(kx, np.angle(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
+                axs[1].plot(kx, np.angle(r_TE)/degrees, "b-.", label="$r_{\perp, TE}$")
 
             axs[1].legend()
             axs[1].grid()
@@ -965,13 +965,13 @@ def fresnel_equations_kx(kx: NDArrayComplex, wavelength: float, n1: float, n2: f
             axs[0].set_title("real")
 
             if outputs[0]:
-                axs[1].plot(kx, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$")
+                axs[1].plot(kx, np.imag(t_TM)/degrees, "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[1].plot(kx, np.imag(t_TE) / degrees, "b", label="$t_{\perp, TE}$")
+                axs[1].plot(kx, np.imag(t_TE)/degrees, "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[1].plot(kx, np.imag(r_TM) / degrees, "r-.", label="$r_{\parallel, TM}$")
+                axs[1].plot(kx, np.imag(r_TM)/degrees, "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[1].plot(kx, np.imag(r_TE) / degrees, "b-.", label="$r_{\perp, TE}$")
+                axs[1].plot(kx, np.imag(r_TE)/degrees, "b-.", label="$r_{\perp, TE}$")
 
             axs[1].legend()
             axs[1].grid()
@@ -1078,53 +1078,53 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: float, n1: float, n2: flo
         fig, axs = plt.subplots(1, 2, figsize=(12, 4))
         if kind == "amplitude_phase":
             if outputs[0]:
-                axs[0].plot(theta / degrees, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
+                axs[0].plot(theta/degrees, np.abs(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(theta / degrees, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
+                axs[0].plot(theta/degrees, np.abs(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
-                axs[0].plot(theta / degrees, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
+                axs[0].plot(theta/degrees, np.abs(r_TM), "r-.", label="$r_{\parallel, TM}$")
             if outputs[3]:
-                axs[0].plot(theta / degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$")
+                axs[0].plot(theta/degrees, np.abs(r_TE), "b-.", label="$r_{\perp, TE}$")
 
             axs[0].legend()
             axs[0].grid()
 
-            axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[0].set_xlim(theta[0]/degrees, theta[-1]/degrees)
             axs[0].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[0].set_title("amplitude")
 
             if outputs[0]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.angle(t_TM) / degrees,
+                    theta/degrees,
+                    np.angle(t_TM)/degrees,
                     "r",
                     label="$t_{\parallel, TM}$",
                 )
             if outputs[1]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.angle(t_TE) / degrees,
+                    theta/degrees,
+                    np.angle(t_TE)/degrees,
                     "b",
                     label="$t_{\perp, TE}$",
                 )
             if outputs[2]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.angle(np.abs(r_TM)) / degrees,
+                    theta/degrees,
+                    np.angle(np.abs(r_TM))/degrees,
                     "r-.",
                     label="$r_{\parallel, TM}$",
                 )
             if outputs[3]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.angle(np.abs(r_TE)) / degrees,
+                    theta/degrees,
+                    np.angle(np.abs(r_TE))/degrees,
                     "b-.",
                     label="$r_{\perp, TE}$",
                 )
 
             axs[1].legend()
             axs[1].grid()
-            axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[1].set_xlim(theta[0]/degrees, theta[-1]/degrees)
             axs[1].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[1].set_title(r"phase $\, (^{\circ})$")
             axs[1].set_ylim(-190, 190)
@@ -1132,53 +1132,53 @@ def fresnel_equations(theta: NDArrayFloat, wavelength: float, n1: float, n2: flo
 
         elif kind == "real_imag":
             if outputs[0]:
-                axs[0].plot(theta / degrees, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
+                axs[0].plot(theta/degrees, np.real(t_TM), "r", label="$t_{\parallel, TM}$")
             if outputs[1]:
-                axs[0].plot(theta / degrees, np.real(t_TE), "b", label="$t_{\perp, TE}$")
+                axs[0].plot(theta/degrees, np.real(t_TE), "b", label="$t_{\perp, TE}$")
             if outputs[2]:
                 axs[0].plot(
-                    theta / degrees, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$"
+                    theta/degrees, np.real(r_TM), "r-.", label="$r_{\parallel, TM}$"
                 )
             if outputs[3]:
                 axs[0].plot(
-                    theta / degrees, np.real(r_TE), "b-.", label="$r_{\perp, TE}$"
+                    theta/degrees, np.real(r_TE), "b-.", label="$r_{\perp, TE}$"
                 )
 
             axs[0].legend()
             axs[0].grid()
             axs[0].set_xlabel(r"$\theta \, (^{\circ})$")
-            axs[0].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[0].set_xlim(theta[0]/degrees, theta[-1]/degrees)
             axs[0].set_title("real")
 
             if outputs[0]:
                 axs[1].plot(
-                    theta / degrees, np.imag(t_TM) / degrees, "r", label="$t_{\parallel, TM}$"
+                    theta/degrees, np.imag(t_TM)/degrees, "r", label="$t_{\parallel, TM}$"
                 )
             if outputs[1]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.imag(t_TE) / degrees,
+                    theta/degrees,
+                    np.imag(t_TE)/degrees,
                     "b",
                     label="$t_{\perp, TE}$",
                 )
             if outputs[2]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.imag(r_TM) / degrees,
+                    theta/degrees,
+                    np.imag(r_TM)/degrees,
                     "r-.",
                     label="$r_{\parallel, TM}$",
                 )
             if outputs[3]:
                 axs[1].plot(
-                    theta / degrees,
-                    np.imag(r_TE) / degrees,
+                    theta/degrees,
+                    np.imag(r_TE)/degrees,
                     "b-.",
                     label="$r_{\perp, TE}$",
                 )
 
             axs[1].legend()
             axs[1].grid()
-            axs[1].set_xlim(theta[0] / degrees, theta[-1] / degrees)
+            axs[1].set_xlim(theta[0]/degrees, theta[-1]/degrees)
             axs[1].set_xlabel(r"$\theta \, (^{\circ})$")
             axs[1].set_title(r"imag")
 
@@ -1212,15 +1212,15 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float
     if has_draw:
         plt.figure()
         if outputs[0]:
-            plt.plot(theta / degrees, T_TM, "r", label="$T_{\parallel, TM}$")
+            plt.plot(theta/degrees, T_TM, "r", label="$T_{\parallel, TM}$")
         if outputs[1]:
-            plt.plot(theta / degrees, T_TE, "b", label="$T_{\perp, TE}$")
+            plt.plot(theta/degrees, T_TE, "b", label="$T_{\perp, TE}$")
         if outputs[2]:
-            plt.plot(theta / degrees, R_TM, "r-.", label="$R_{\parallel, TM}$")
+            plt.plot(theta/degrees, R_TM, "r-.", label="$R_{\parallel, TM}$")
         if outputs[3]:
-            plt.plot(theta / degrees, R_TE, "b-.", label="$R_{\perp, TE}$")
+            plt.plot(theta/degrees, R_TE, "b-.", label="$R_{\perp, TE}$")
 
-        plt.xlim(theta[0] / degrees, theta[-1] / degrees)
+        plt.xlim(theta[0]/degrees, theta[-1]/degrees)
         plt.xlabel(r"$\theta \, (^{\circ})$")
         plt.legend()
         plt.grid()

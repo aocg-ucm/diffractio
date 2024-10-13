@@ -18,6 +18,8 @@ Python Diffraction-Interference module
 
 * Documentation: https://diffractio.readthedocs.io/en/latest/
 
+* Diffractio package has been moved to github: https://github.com/optbrea/diffractio/
+
 
 .. image:: logo.png
    :width: 75
@@ -70,8 +72,7 @@ The algorithms implemented are:
 * Fast Polarized Wave Propagation Method (FPWPM).
 
 
-For the vector analysis, we also use the py_pol module: https://pypi.org/project/py-pol/
-
+For the vector analysis, we take advantage of the py_pol module: https://pypi.org/project/py-pol/
 
 
 Scalar propagation
@@ -89,7 +90,8 @@ One main part of this software is the generation of optical fields such as:
 * Vortex beams.
 * Laguerre beams.
 * Hermite-Gauss beams.
-* Zernike beams...
+* Zernike beams
+* ...
 
 .. image:: readme1.png
    :width: 400
@@ -104,7 +106,8 @@ Another important part of Diffractio is the generation of masks and Diffractive 
 * Lenses, diffractive lenses, aspherical lenses...
 * Axicon, prisms, biprism, image, rough surface, gray scale ...
 * Gratings: Ronchi, phase, radial, angular, sine, forked, blazed, 2D, chess...
-* Others: Masks can also be loaded (.png, .dxf for 2D and .stl for 3D).
+* From files: Masks can also be loaded (.png, .dxf for 2D and .stl for 3D).
+* ...
 
 .. image:: readme2.png
    :height: 400
@@ -115,7 +118,6 @@ In the XZ scheme there is also a number of masks:
 * Additionally, any X_mask can be extruded to the XZ scheme.
 * Masks from functions.
 * Surfaces can be added to objects.
-* Others: Masks can also be loaded (.png, .dxf)
 
 .. image:: readme3.png
    :height: 400
@@ -170,20 +172,38 @@ Other features
    :width: 600
 
 
-
 Vector propagation
 ----------------------
 
 Sources
 =========================
 
+Vector sources as implemented in vector_sources_XY module.
+
+The can present any spatial distribution of the electric field, and can be defined in the XY plane.
+
+In addition, the polarization state is defined by the Jones vector, which can be constant (linear, circular, elliptical) or spatially varying, such as (azimuthal, radial, spiral, etc.).
+
+* constant_polarization.
+* azimuthal_wave, azimuthal_inverse_wave.
+* radial_wave, radial_inverse_wave.
+* local_polarized_vector_wave, local_polarized_vector_wave_radial, local_polarized_vector_wave_hybrid.
+* spiral_polarized_wave.
+
+
 
 Masks
 =========================
 
+Vector masks are defined in the vector_masks_XY module by Jones matrices.
 
-Vector beams
-=========================
+For example, a scalar mask is transformed to a vector mask by applying a Jones matrix to the scalar mask (scalar_to_vector_mask).
+
+There are also predefined vector masks for standard polarizers (linear, quarter-wave, half-wave). Arbitrary Jones matrices can be defined for any mask using from_pypol method. 
+
+Binary scalar masks can also be transformed to vector masks using two Jones matrices (complementary_masks).
+
+Also, arbitrary vector masks can be defined by defining the Jones matrix for each index level. This can be used for defining Spatial Light Modulators (SLM).
 
 
 Here, we implement new classes where the E_x, E_y, and E_z fields are generated and propagated using Rayleigh-Sommerfeld and Chirped z-transform algorithms.
@@ -214,17 +234,53 @@ The main algorithms for Vector propagation are:
 * **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
 
 
+Other features
+=========================
+
+Vector fields can be converted to py-pol objects for further analysis.
+
+
+
+Conventions
+-----------
+In this module we assume that the optical field is defined as:
+
+.. math::
+
+\[
+u(x,y,z)=Ae^{i(\overrightarrow{k}\overrightarrow{r}-\omega t)},
+\]
+
+where `A` is the amplitude, `k` is the wave vector, `r` is the position vector, `omega` is the angular frequency, and `t` is the time.
+
+For the vector case, the field is defined as:
+
+.. math::
+
+\[
+\overrightarrow{E}(x,y,z)=\left[\begin{array}{c}
+E_{x}(x,y)\\
+E_{y}(x,y)\\
+E_{z}(x,y)
+\end{array}\right]e^{i(kz-\omega t)},
+\]
+
+where :math:`E_x`, `E_y` and :math:`E_z` are the components of the electric field. 
+
+The spatial units are defined in micrometers: `\mu m = 1`.
+
+
 
 Authors
 ---------------------------
 
 * Luis Miguel Sanchez Brea <optbrea@ucm.es>
 
-
-   **Universidad Complutense de Madrid**,
-   Faculty of Physical Sciences,
-   Department of Optics
-   Plaza de las ciencias 1,
+   `Universidad Complutense de Madrid`_
+   `Faculty of Physical Sciences`_ 
+   `Department of Optics`_
+   `Applied Optics Complutense Group`_
+   Plaza de las ciencias 1
    ES-28040 Madrid (Spain)
 
 .. image:: logoUCM.png
@@ -233,8 +289,7 @@ Authors
 
 
 
-Collaborators
----------------------------
+**Collaborators**
 
 * Ángela Soria Garcia
 
@@ -276,9 +331,6 @@ BibTex:
 
 
 
-
-
-
 Credits
 ---------------------------
 
@@ -286,3 +338,7 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _`Universidad Complutense de Madrid`: https://www.ucm.es/
+.. _`Faculty of Physical Sciences`: https://fisicas.ucm.es/ 
+.. _`Department of Optics`: https://www.ucm.es/doptica
+.. _`Applied Optics Complutense Group`: https://www.ucm.es/aocg
