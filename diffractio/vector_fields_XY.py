@@ -70,6 +70,7 @@ from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
+percentage_Ez = CONF_DRAWING['percentage_Ez']
 
 
 class Vector_field_XY():
@@ -415,20 +416,17 @@ class Vector_field_XY():
            verbose: bool = False):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-
         Args:
             z (float): distance to observation plane.
                 if z<0 inverse propagation is executed
             n (float): refractive index
             new_field (bool): if False the computation goes to self.u
-                              if True a new instance is produced
+                            if True a new instance is produced
             amplification (int, int): number of frames in x and y direction
-
             verbose (bool): if True it writes to shell. Not implemented yet
 
         Returns:
-            if New_field is True: Scalar_field_X
-            else None
+            if New_field is True: Scalar_field_X, else None
 
         Note:
             One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
@@ -469,14 +467,14 @@ class Vector_field_XY():
             self.y = Ex.y
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def VFFT(self,
              radius: float,
              focal: float,
              n: float = 1.,
              new_field: bool = False,
              shift: bool = True,
-             remove0: bool = False,
+             remove0: bool = True,
              matrix: bool = False,
              has_draw: bool = False):
         """Vector Fast Fourier Transform (FFT) of the field.
@@ -491,14 +489,12 @@ class Vector_field_XY():
             new_field (bool): if True returns Vector_field_XY, else it puts in self.
             shift (bool):  if True, fftshift is performed.
             remove0 (bool): if True, central point is removed.
-            has_draw (bool): if True draw the field.
 
         Returns:
             (np.array or vector_fields_XY or None): FFT of the input field.
 
         Reference:
             Jahn, Kornél, and Nándor Bokor. 2010. “Intensity Control of the Focal Spot by Vectorial Beam Shaping.” Optics Communications 283 (24): 4859–65. https://doi.org/10.1016/j.optcom.2010.07.030.
-
 
         TODO: Some inconsistency in the radius of the circle lower than the size of the field.
         """
@@ -593,9 +589,6 @@ class Vector_field_XY():
             field_output.Ey = Esy
             field_output.Ez = Esz
 
-            if has_draw:
-                field_output.draw(kind='intensities')
-
             return field_output
 
         else:
@@ -606,11 +599,9 @@ class Vector_field_XY():
             self.y = ky
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-            if has_draw:
-                self.draw(kind='intensities')
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def IVFFT(self,
               radius: float,
               focal: float,
@@ -733,9 +724,6 @@ class Vector_field_XY():
             field_output.Ey = Esy
             field_output.Ez = Esz
 
-            if has_draw:
-                field_output.draw(kind='intensities')
-
             return field_output
 
         else:
@@ -746,11 +734,9 @@ class Vector_field_XY():
             self.y = ky
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
-            if has_draw:
-                self.draw(kind='intensities')
 
 
-    @check_none('x','y',raise_exception=bool_raise_exception)
+    @check_none('x','y',raise_exception=False)
     def VRS(self, z: float, n: float = 1., new_field: bool = True, verbose: bool = False,
             amplification: tuple[int, int] = (1, 1)):
         """Fast-Fourier-Transform  method for numerical integration of diffraction Vector Rayleigh-Sommerfeld formula.
@@ -1333,9 +1319,7 @@ class Vector_field_XY():
         intensity_max = np.max(
             (intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
-
-        if intensity3.max() < percentage_z * intensity_max:
+        if intensity3.max() < percentage_Ez * intensity_max:
             plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
@@ -1420,7 +1404,7 @@ class Vector_field_XY():
             return h1, h2, h3
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    @check_none('x','y','Ex','Ey','Ez',raise_exception=False)
     def __draw_intensities__(self,
                              logarithm: float,
                              normalize: bool,
@@ -1455,9 +1439,7 @@ class Vector_field_XY():
         intensity_max = np.max(
             (intensity1.max(), intensity2.max(), intensity3.max()))
 
-        percentage_z = 0.01
-
-        if intensity3.max() < percentage_z * intensity_max:
+        if intensity3.max() < percentage_Ez * intensity_max:
             plt.figure(figsize=(tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
@@ -1540,12 +1522,10 @@ class Vector_field_XY():
         tx, ty = rcParams['figure.figsize']
 
         intensity_r = np.abs(Ex_r)**2 + np.abs(Ey_r)**2
-        intensity_r = normalize_draw(intensity_r, logarithm, normalize,
-                                     cut_value)
+        intensity_r = normalize_draw(intensity_r, logarithm, normalize, cut_value)
 
         intensity_z = np.abs(Ez_r)**2
-        intensity_z = normalize_draw(intensity_z, logarithm, normalize,
-                                     cut_value)
+        intensity_z = normalize_draw(intensity_z, logarithm, normalize, cut_value)
         
         intensity_max = np.max((intensity_r, intensity_z))
 
@@ -1610,9 +1590,7 @@ class Vector_field_XY():
 
         tx, ty = rcParams['figure.figsize']
 
-        percentage_z = 0.01
-
-        if amplitude3.max() < percentage_z * amplitude_max:
+        if amplitude3.max() < percentage_Ez * amplitude_max:
             plt.figure(figsize=(1.1 * tx, 1.5 * ty))
 
             h1 = plt.subplot(2, 2, 1)

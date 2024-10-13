@@ -51,7 +51,7 @@ Beta state
 
   - has_edges parameters in WPM and BPM methods can be an array masking in desired z positions.
 
-  - vector XY mask: SLM (spatial light modulator) to simulate the behaviou of a SLM.
+  - vector XY mask: SLM (spatial light modulator) to simulate the behaviour of a SLM.
 
 * Documentation:
 

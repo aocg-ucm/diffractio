@@ -18,6 +18,7 @@ New Features
 
   - Typing variables in functions.
   
+  
 
 
 * Fix bugs:

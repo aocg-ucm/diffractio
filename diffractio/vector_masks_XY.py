@@ -395,36 +395,26 @@ class Vector_mask_XY(Vector_field_XY):
         self.from_py_pol(PL)
 
 
-    # def to_py_pol(self):
-    #     """Pass mask to py_pol.jones_matrix
-
-    #     Returns:
-    #         py_pol.jones_matrix
-
-    #     """
-    #     m0 = Jones_matrix(name="from Diffractio")
-    #     m0.from_components((self.M00, self.M01, self.M10, self.M11))
-    #     m0.shape = self.M00.shape
-
-    #     return m0
 
     def SLM(self, mask: Scalar_mask_XY, states_jones: Jones_matrix) -> None:
         """
-        Simulate_SLM. mask is a (0-1) Scalar_mask_XY to send to the SLM.
-        states_jones is a LUT Jones_matrix, normally with 255 levels, it is the calibration of the SLM.
-
+        Mask for an Spatial Light Modulator (SLM). 
+        
         Each pixel of the mask is converted to a Jones_matrix, according to its value
 
         Args:
-            mask (Scalar_mask_XY): Scalar amplitude mask to send to the SLM. It is a 2D array with values between 0 and 1. The function discretizes the values in the number of levels equal to the lenght of states_joens.
+            mask (Scalar_mask_XY): (0-1) Scalar_mask_XY to send to the SLM. It is a 2D array with values between 0 and 1. The function discretizes the values in the number of levels equal to the lenght of states_jones.
             states_jones (Jones_matrix): Jones matrix calibration of the SLM. It is a LUT with the Jones matrices of the SLM for each level of the mask.
 
+        Returns:
+                Vector_mask_XY: Vector simulation of the Spatial Light Modulator.
+ 
         """
         
-        mask_255 = np.int_(mask.u*(len(states_jones)-1))
+        mask_level = np.int_(mask.u*(len(states_jones)-1))
 
         for i, matrix in enumerate(states_jones):
-            index = np.where(mask_255 == i)
+            index = np.where(mask_level == i)
             self.M00[index] = matrix.M[0,0]
             self.M01[index] = matrix.M[0,1]
             self.M10[index] = matrix.M[1,0]

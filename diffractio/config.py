@@ -28,8 +28,11 @@ CONF_DRAWING['color_phase'] = cm.twilight  # twilight .twilight hsv
 CONF_DRAWING['color_real'] = cm.seismic
 CONF_DRAWING['color_stokes'] = cm.seismic
 CONF_DRAWING['color_n'] = cm.Blues
-CONF_DRAWING[
-    'percentage_intensity'] = 0.05  # percentage of intensity not shown in phase
+# percentage of intensity not shown in phase
+CONF_DRAWING['percentage_intensity'] = 0.05  
+# percentage of intensity to show Ez
+CONF_DRAWING['percentage_Ez'] = 0.0001  
+
 
 number_types = (int, float, complex, np.int32, np.float64)
 empty_types = ([], '', None)
