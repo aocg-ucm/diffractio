@@ -50,8 +50,9 @@ Kornél J. and Bokor N., 2010. “Intensity Control of the Focal Spot by Vectori
 
 **FPWPM** 
 
-* Wende M,et al. "Fast algorithm for the simulation of 3D-printed microoptics based on the vector wave propagation method". Opt Express. 30(22) 40161-40173 (2022)
+* Wende M. et al. "Fast algorithm for the simulation of 3D-printed microoptics based on the vector wave propagation method". Opt Express. 30(22) 40161-40173 (2022)
 
+* Wende M. et al. "Fast vector wave optical simulation methods for application on 3D-printed microoptics," Journal of Optical Microsystems 4(2), 024501 (2024). 
 
 sources
 --------------------------

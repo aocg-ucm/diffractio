@@ -1615,32 +1615,8 @@ def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         Ch.u = h
         return (CA, CB, Ctheta, Ch)
 
-    I = I.u
-    Q = Q.u
-    U = U.u
-    V = V.u
 
-    Ip = np.sqrt(Q**2 + U**2 + V**2)
-    L = Q + 1.0j * U
-    A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
-    B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
-    theta = 0.5 * np.angle(L)
-    h = np.sign(V)
-    if matrix is True:
-        return A, B, theta, h
-    else:
-        CA = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-        CB = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-        Ctheta = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-        Ch = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-        CA.u = A
-        CB.u = B
-        Ctheta.u = theta
-        Ch.u = h
-        return (CA, CB, Ctheta, Ch)
-
-
-def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
+def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, j1 : int, has_H=True):
     """Step for Plane wave decomposition (PWD) algorithm.
 
     Args:
@@ -1658,62 +1634,73 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         E  list(Ex, Ey, Ez): Field E(z+dz) at at distance dz from the incident field.
         H  list(Ex, Ey, Ez): Field H(z+dz) at at distance dz from the incident field.
         
-    TODO: The kernel is not complete. It is necessary to solve the Gamma parameter and check with comsol
     """
 
     # amplitude of waveplanes
     Exk = fftshift(fft(Ex))
     Eyk = fftshift(fft(Ey))
+    
 
-    kr = n1 * k0
-    ks = n2 * k0
+    kr = n1 * k0 # first layer
+    ks = n2 * k0 # second layer
+            
+    ky = np.zeros_like(kx) # we are in XZ frame
+    k_perp2 = kx**2 + ky**2
 
-    kz_r = csqrt(kr**2 - kx**2)
-    kz_s = csqrt(ks**2 - kx**2)
+    kz_r = csqrt(kr**2 - k_perp2) # first layer
+    kz_s = csqrt(ks**2 - k_perp2) # second layer
 
-    # TODO: Solve Gamma.
-    # Gamma = kz_r.conjugate()*kz_s + kz_s*kx**2 / kz_r
-    # Gamma = kz_r*kz_s + kz_s*kx**2 / kz_r
+    P = np.exp(1j * kz_s * dz)
+    Gamma = kz_r*kz_s + kz_s * k_perp2 / kz_r
+    
 
     # Fresnel coefficients
-    t_TM, t_TE, _, _ = fresnel_equations_kx(
-        kx, wavelength, n1, n2, [1, 1, 0, 0], has_draw=False
-    )
+    t_TM, t_TE, _, _ = fresnel_equations_kx(kx, wavelength, n1, n2, [1, 1, 0, 0], has_draw=False)
+        
+    T00 = P * (t_TM*kx**2*Gamma + t_TE*ky**2*kr*ks) / (k_perp2*kr*ks) 
+    T01 = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks) 
+    T10 = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks) 
+    T11 = P * (t_TM*ky**2*Gamma + t_TE*kx**2*kr*ks) / (k_perp2*kr*ks) 
+    nan_indices = np.where(np.isnan(T00))
+    T00[nan_indices]=T00[nan_indices[0]-1]
+    T01[nan_indices]=T01[nan_indices[0]-1]
+    T10[nan_indices]=T10[nan_indices[0]-1]
+    T11[nan_indices]=T11[nan_indices[0]-1] 
 
-    # y_symmetry. No interaction between TE and TM
-    T00 = t_TM
-    # T01 = 0
-    # T10 = 0
-    T11 = t_TE
-    # aquí ya está metido el divisor
 
-    P = np.exp(1j * dz * kz_s)
-
-    T2_00 = P * T00
-    # T2_01 = P * T01
-    # T2_10 = P * T10
-    T2_11 = P * T11
-
-    ex0 = T2_00 * Exk
-    ey0 = T2_11 * Eyk
-    # ez0 = -(kx / kz_s) * T2_00 * Exk
-    ez0 = (kx / ks )  * ex0  #this works "better" but I 
+    ex0 = T00 * Exk + T01 * Eyk
+    ey0 = T10 * Exk + T11 * Eyk 
+    ez0 = - (kx*ex0+ky*ey0) / (kz_r)
     
-    
+
     if has_H:
-        Z0 = 376.82  # ohms (proportional m**2)
+        
+        # thesis Fertig 2011 (3.40) pág 66
+        TM00 = kx * Gamma * ky 
+        TM01 = -(ky * kx * Gamma + kz_s**2)
+        TM10 = +(kx*kx*Gamma + kz_s**2)
+        TM11 = +kx*ky*Gamma
+        TM20 = -ky*kz_s
+        TM21 = +kx*kz_s
+        
+        Z0 = 376.82  # ohms (impedance of free space)
         H_factor = n2 / (ks * kz_s * Z0)
-        hx0 = -(kz_s**2) * ey0 * H_factor
-        hy0 = (
-            (kz_s**2) * ex0 * H_factor
-        )  # cuidado, ver (3.16) pág 60 y (3.40) pág 66 de tesis VWPM
-        hz0 = (kx * kz_s) * ey0 * H_factor
+        
+        hx0 = (TM00*ex0+TM01*ey0) * H_factor
+        hy0 = (TM10*ex0+TM11*ey0) * H_factor
+        hz0 = (TM20*ex0+TM21*ey0) * H_factor
+        
+        # hx0 = -(kz_s**2) * ey0 * H_factor
+        # hy0 =  (kz_s**2) * ex0 * H_factor  # cuidado, ver (3.16) pág 60 y (3.40) pág 66 de tesis VWPM
+        # hz0 =  (kx*kz_s) * ey0 * H_factor
+        
     else:
         Hx_final, Hy_final, Hz_final = 0.0, 0.0, 0.0
 
     Ex_final = ifft(ifftshift(ex0))
     Ey_final = ifft(ifftshift(ey0))
     Ez_final = ifft(ifftshift(ez0))
+
 
     Hx_final = ifft(ifftshift(hx0))
     Hy_final = ifft(ifftshift(hy0))
