@@ -479,6 +479,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 self.Hy[j, :] = H_step[1] * filter_edge
                 self.Hz[j, :] = H_step[2] * filter_edge
 
+
+        if has_H:
+            self.Hx[0,:] = self.Hx[1,:]
+            self.Hy[0,:] = self.Hx[1,:]
+            self.Hz[0,:] = self.Hx[1,:]
+
         t2 = time.time_ns()
         if verbose is True:
             print(
@@ -574,7 +580,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
 
         # if possible elliminate
-        Sz[0, :] = Sz[1, :]
+        # Sz[0, :] = Sz[1, :]
 
         S_max = np.max((Sx, Sy, Sz))
         S_min = np.min((Sx, Sy, Sz))
@@ -1616,7 +1622,7 @@ def polarization_ellipse(self, pol_state=None, matrix: bool = False):
         return (CA, CB, Ctheta, Ch)
 
 
-def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, j1 : int, has_H=True):
+def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     """Step for Plane wave decomposition (PWD) algorithm.
 
     Args:
@@ -1675,7 +1681,7 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, j1 : int, has_H
 
     if has_H:
         
-        # thesis Fertig 2011 (3.40) pág 66
+        # thesis Fertig 2011 (3.40) pág 66 I do not feel confident yet
         TM00 = kx * Gamma * ky 
         TM01 = -(ky * kx * Gamma + kz_s**2)
         TM10 = +(kx*kx*Gamma + kz_s**2)
