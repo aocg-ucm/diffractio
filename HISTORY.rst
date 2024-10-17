@@ -7,9 +7,10 @@ History
 --------------------------------
 Beta state
 
-* Improvements:
+  - Package has been moved to github: https://github.com/optbrea/diffractio/
 
-  - FPWPM algorithm has been implemented for vector propagation.
+
+* Improvements:
 
   - new fresnel_equations_kx, fresnel_equations, transmitances_reflectances_kx, transmitances_reflectances functions.
   
@@ -39,7 +40,7 @@ Beta state
 
 * New features:
 
-  - XY masks: edge_rough, slit_rough, double_slit_rough
+  - XY masks: edge_rough, slit_rough, double_slit_rough, squares_nxm
 
   - XY masks: .dxf method for loading masks from .dxf files.
 
@@ -51,12 +52,14 @@ Beta state
 
   - has_edges parameters in WPM and BPM methods can be an array masking in desired z positions.
 
+  - vector XZ fields:   FPWPM algorithm has been implemented for vector propagation.
+
+  - vector XYZ fields:   FPWPM algorithm has been implemented for vector propagation.
+
   - vector XY mask: SLM (spatial light modulator) to simulate the behaviour of a SLM.
 
 * Documentation:
-
-  - Package has been moved to github: https://github.com/optbrea/diffractio/
-  
+ 
   - Changed citing reference to SPIE article:  Luis Miguel Sanchez-Brea, Angela Soria-Garcia, Joaquin Andres-Porras, Veronica Pastor-Villarrubia, Mahmoud H. Elshorbagy, Jesus del Hoyo Muñoz, Francisco Jose Torcal-Milla, and Javier Alda "Diffractio: an open-source library for diffraction and interference calculations", Proc. SPIE 12997, Optics and Photonics for Advanced Dimensional Metrology III, 129971B (18 June 2024); https://doi.org/10.1117/12.3021879 
 
 

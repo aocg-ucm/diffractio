@@ -59,7 +59,7 @@ from .__init__ import degrees, np, plt, sp, um
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_math import (cart2pol, fft_convolution2d, laguerre_polynomial_nk,
                          nearest, nearest2)
-from .config import bool_raise_exception
+from .config import bool_raise_exception, Options_squares_nxm
 from .utils_common import check_none
 from .utils_optics import roughness_1D, roughness_2D
 from .utils_dxf import load_dxf
@@ -2259,6 +2259,50 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         self.u = a_min + (a_max - a_min) * t2_grating.u
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
+
+    @check_none('x','y',raise_exception=bool_raise_exception)
+    def squares_nxm(self, kind: Options_squares_nxm = 'amplitude', num_levels: int | tuple[int, int] = 256):
+        """Generates a matrix with nxm squares with a different value,
+
+        Args:
+            kind (str): "amplitude", "intensity", "gray_levels", 
+            num_levels (int | tuple[int, int], optional): _description_. Defaults to 256.
+
+        Returns:
+            _type_: _description_
+        """ 
+
+        if isinstance(num_levels, (int)):
+            num_rows = num_columns = np.sqrt(num_levels).astype(int)
+        else:
+            num_rows, num_columns = num_levels
+
+        size_x = (self.x[-1] - self.x[0])/num_rows
+        size_y = (self.y[-1] - self.y[0])/num_columns
+        
+        pos_x = np.linspace(self.x[0]+size_x/2, self.x[-1]-size_x/2, num_rows)
+        pos_y = np.linspace(self.y[0]+size_y/2, self.y[-1]-size_y/2, num_columns)
+
+
+
+        t1 = Scalar_mask_XY(self.x, self.y, self.wavelength)
+        
+        levels = range(num_rows*num_columns)
+        k = 0
+        for j in range(num_columns):
+            for i in range(num_rows):
+                #print(pos_x[i], pos_y[j])
+                t1.square(r0=(pos_x[i], pos_y[j]), size=(size_x, size_y), angle=0*degrees)
+                self.u = self.u + levels[k]*t1.u
+                k += 1
+        
+        if kind == 'intensity':
+            self.u = self.u/self.intensity()
+        elif kind == 'amplitude':
+            self.u = self.u/self.u.max()
+
+        return self
+
 
 
     @check_none('x','y',raise_exception=bool_raise_exception)
