@@ -771,7 +771,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif num_dims == 2:
                 id_fig, ax, IDimage = draw2D_xz(irradiance, self.z, self.x, title='irradiance', cmap=CONF_DRAWING["color_intensity"])
                 format_drawing(self, plt, scale, draw_borders, **kwargs)
-                IDimage.set_clim(0)
+                IDimage.set_clim(0, irradiance.max())
 
         plt.tight_layout()
         return irradiance
@@ -810,7 +810,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             if kind == 'all' or kind == 'Stot':
                 plt.plot(self.z, energy_z2, 'g', label='St')
             if kind == 'all' or kind == 'U':
-                plt.plot(self.z, energy_z3, 'b', label='u')
+                plt.plot(self.z, energy_z3, 'b', label='u/n')
 
             plt.xlim(self.z[0], self.z[-1])
             plt.grid('on')
@@ -1910,7 +1910,7 @@ def draw2D_xz(
 
 
 def format_drawing(vector_field_XZ, plt, scale: str='scaled', 
-                   draw_borders: bool=True, color: str='w.', ms: float=0.2) -> None:
+                   draw_borders: bool=True, color: str='w.', ms: float=0.1) -> None:
     """
     format_drawing _summary_
 

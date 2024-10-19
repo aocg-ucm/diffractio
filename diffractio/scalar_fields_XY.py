@@ -1850,21 +1850,21 @@ class Scalar_field_XY():
             ellipse.set_facecolor('none')
             ellipse.set_alpha(0.75)
             ellipse.set_edgecolor('yellow')
-            ellipse.set_linewidth(3)
+            ellipse.set_linewidth(1.5)
 
             ax.add_artist(ellipse2)
             ellipse2.set_clip_box(ax.bbox)
             ellipse2.set_facecolor('none')
             ellipse2.set_alpha(0.75)
             ellipse2.set_edgecolor('red')
-            ellipse2.set_linewidth(3)
+            ellipse2.set_linewidth(1.5)
 
             ax.add_artist(ellipse3)
             ellipse3.set_clip_box(ax.bbox)
             ellipse3.set_facecolor('none')
             ellipse3.set_alpha(0.75)
             ellipse3.set_edgecolor('black')
-            ellipse3.set_linewidth(3)
+            ellipse3.set_linewidth(1.5)
 
             x0 = self.x[0]
             y0 = self.y[0]

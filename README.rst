@@ -69,7 +69,7 @@ The algorithms implemented are:
 * Vector Fast Fourier Transform (VFFT).
 * Vector Rayleigh-Sommerfeld (VRS).
 * Vector Chirped Z-Transform (VCZT).
-* Fast Polarized Wave Propagation Method (FPWPM).
+* Fast Polarized Wave Propagation Method (F_PWPM).
 
 
 For the vector analysis, we take advantage of the py_pol module: https://pypi.org/project/py-pol/
