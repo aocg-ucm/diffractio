@@ -942,7 +942,7 @@ class Vector_field_XY():
                 return E_out
 
             elif num_x > 1 and num_y == 1:
-                from diffractio.vector_fields_XZ import vector_field_XY
+                from diffractio.vector_fields_XZ import Vector_field_XY
                 E_out = vector_field_XY(xout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
@@ -950,7 +950,7 @@ class Vector_field_XY():
                 return E_out
 
             elif num_x == 1 and num_y > 1:
-                from diffractio.vector_fields_XZ import vector_field_XY
+                from diffractio.vector_fields_XZ import Vector_field_XY
                 E_out = vector_field_XY(yout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
@@ -1745,7 +1745,7 @@ class Vector_field_XY():
 
             
             fig, axs = plt.subplots(
-                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.75 * tx, 2 * ty)
+                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(1.5 * tx, 1.5 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_XY(
@@ -1755,13 +1755,13 @@ class Vector_field_XY():
             IDimage.set_clim(-E_max,E_max)
 
             id_fig, ax, IDimage = draw2D_XY(
-                E_y, self.x, self.y, ax=axs[1, 0], xlabel="", ylabel="$y $(\mu m)$", color=cmap, title=r'E$_y$')
+                E_y, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'E$_y$')
             plt.axis(scale)
             #format_drawing(self, axs[1, 0], scale,  draw_borders, color='k.')
             IDimage.set_clim(-E_max,E_max)
 
             id_fig, ax, IDimage = draw2D_XY(
-                E_z, self.x, self.y, ax=axs[2, 0], xlabel="x $(\mu m)$", ylabel="$y $(\mu m)$", color=cmap, title=r'E$_z$')
+                E_z, self.x, self.y, ax=axs[0, 2], xlabel="", ylabel="", color=cmap, title=r'E$_z$')
             plt.axis(scale)
             #format_drawing(self, axs[2, 0], scale,  draw_borders, color='k.')
             IDimage.set_clim(-E_max,E_max)
@@ -1769,32 +1769,29 @@ class Vector_field_XY():
 
 
             id_fig, ax, IDimage = draw2D_XY(
-                H_x, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+                H_x, self.x, self.y, ax=axs[1, 0], xlabel="x $(\mu m)$", ylabel="y $(\mu m)$", color=cmap, title=r'H$_x$')
             plt.axis(scale)
             #format_drawing(self, axs[0, 1], scale,  draw_borders, color='k.')
             IDimage.set_clim(-H_max,H_max)
 
             id_fig, ax, IDimage = draw2D_XY(
-                H_y, self.x, self.y, ax=axs[1, 1], xlabel="", ylabel="", color=cmap, title=r'H$_y$')
+                H_y, self.x, self.y, ax=axs[1, 1], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
             plt.axis(scale)
             #format_drawing(self, axs[1, 1], scale,  draw_borders, color='k.')
             IDimage.set_clim(-H_max,H_max)
 
             id_fig, ax, IDimage = draw2D_XY(
-                H_z, self.x, self.y, ax=axs[2, 1], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
+                H_z, self.x, self.y, ax=axs[1,2], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
             # ax.colorbar()
             plt.axis(scale)
             #format_drawing(self, axs[2, 1], scale,  draw_borders, color='k.')
             IDimage.set_clim(-H_max,H_max)
 
-            fig.subplots_adjust(right=1.25)
-            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
-            fig.colorbar(IDimage, cax=cbar_ax)
-
+        
             plt.tight_layout()
         else: 
             fig, axs = plt.subplots(
-                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(2 * tx, 2 * ty)
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(1 * tx, 1.5 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_XY(
@@ -1802,13 +1799,13 @@ class Vector_field_XY():
             #format_drawing(self, plt, scale,  draw_borders, color='k.')
             IDimage.set_clim(-E_max,E_max)
             id_fig, ax, IDimage = draw2D_XY(
-                E_y, self.x, self.y, ax=axs[1, 0],  xlabel="x $(\mu m)$", ylabel="y $ (\mu m)$", color=cmap, title=r'E$_y$')
+                E_y, self.x, self.y, ax=axs[0, 1],  xlabel="x $(\mu m)$", ylabel="y $ (\mu m)$", color=cmap, title=r'E$_y$')
             #format_drawing(self, plt, scale,  draw_borders, color='k.')
             IDimage.set_clim(-E_max,E_max)
 
 
             id_fig, ax, IDimage = draw2D_XY(
-                H_x, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+                H_x, self.x, self.y, ax=axs[1, 0], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
             #format_drawing(self, plt, scale,  draw_borders, color='k.')
             IDimage.set_clim(-H_max,H_max)
             id_fig, ax, IDimage = draw2D_XY(
@@ -1816,11 +1813,11 @@ class Vector_field_XY():
             #format_drawing(self, plt, scale,  draw_borders, color='k.')
             IDimage.set_clim(-H_max,H_max)
 
-            fig.subplots_adjust(right=1.25)
-            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
-            fig.colorbar(IDimage, cax=cbar_ax)
-
-            plt.tight_layout()
+        fig.subplots_adjust(right=1.25)
+        cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+        cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+        plt.tight_layout()
+            
         return self
 
 

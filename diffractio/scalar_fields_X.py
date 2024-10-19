@@ -729,7 +729,7 @@ class Scalar_field_X():
         nx = len(xout)
         dx = xout[1] - xout[0]
 
-        # quality parameter
+        # parametro de quality
         dr_real = dx
         rmax = xout.max()
         dr_ideal = (

@@ -3,7 +3,7 @@
 
 # ----------------------------------------------------------------------
 # Name:        vector_fields_XYZ.py
-# Purpose:     Class adnd methods for handling 3D vector fields
+# Purpose:     Class and methods for handling 3D vector fields
 #
 # Author:      Luis Miguel Sanchez Brea
 #
@@ -62,6 +62,7 @@ from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import load_data_common, save_data_common, get_date, check_none
 from .utils_math import nearest
 from .utils_optics import normalize_field
+from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_fields_XYZ import Scalar_field_XYZ
@@ -107,13 +108,15 @@ class Vector_field_XYZ():
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
         self.Ez = np.zeros_like(self.X, dtype=complex)
+        self.Hx = None
+        self.Hy = None
+        self.Hz = None
 
         self.n = n_background*np.ones_like(self.X, dtype=complex)
 
         self.Ex0 = None
         self.Ey0 = None
         self.Ez0 = None
-
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.n_background = n_background

@@ -137,6 +137,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             )
         )
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(Imin, Imax))
+        
+        print(" - nmin:       {:2.2f},     nmax:      {:2.2f}".format(self.n.min(), self.n.max()))
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
@@ -227,6 +229,22 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return new_field
 
 
+
+    def normalize(self, kind='amplitude', new_field: bool = False):
+        """Normalizes the field so that intensity.max()=1.
+
+        Args:
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
+            kind (str): 'amplitude', or 'intensity'
+
+        Returns
+            u (numpy.array): normalized optical field
+        """
+
+        return normalize_field(self, kind, new_field)
+
+
+
     @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def incident_field(self, E0: Vector_field_X  | None = None, u0: Scalar_field_X  | None = None, 
                        j0: Jones_vector  | None = None, z0: float | None = None):
@@ -289,7 +307,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.n = u_xz.n
         
         edges = self.surface_detection( min_incr = 0.1, reduce_matrix = 'standard', has_draw = False)
-               
+
         self.borders = edges           
         return edges
         
@@ -323,17 +341,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 return Ex, Ey, Ez
 
         elif kind == "intensity":
-            intensity = (
-                np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
-            )
+            intensity = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
 
             if is_matrix:
                 return intensity
 
             else:
-                Intensity = Scalar_field_XZ(
-                    x=self.x, z=self.z, wavelength=self.wavelength
-                )
+                Intensity = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
                 Intensity.u = np.sqrt(intensity)
 
                 return Intensity
@@ -371,6 +385,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         else:
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
+
     @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def apply_mask(self, u, new_field: bool = False):
         """Multiply field by binary scalar mask: self.Ex = self.Ex * u.u
@@ -388,13 +403,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
             E_new.Ey = self.Ey * u.u
             E_new.Ez = self.Ez * u.u
             return E_new
+        
 
     @check_none('x','z',raise_exception=bool_raise_exception)
-    def FP_WPM(self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False
-    ):
+    def FP_WPM(self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, 
+               has_H=True, verbose: bool = False):
         """
         WPM Method. 'schmidt methodTrue is very fast, only needs discrete number of refractive indexes'
-
 
         Args:
             has_edges (bool): If True absorbing edges are used.
@@ -404,11 +419,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             verbose (bool): If True prints information
 
         References:
-
-            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
-
-            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
-
+            - 1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+            - 2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
         """
 
         k0 = 2 * np.pi / self.wavelength
@@ -443,9 +455,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         width_edge = 0.95*(self.x[-1]-self.x[0])/2
         x_center = (self.x[-1] + self.x[0])/2
 
-        filter_function = np.exp(
-            -((np.abs(self.x - x_center) / width_edge) ** pow_edge)
-        )
+        filter_function = np.exp(-((np.abs(self.x - x_center) / width_edge) ** pow_edge))
 
         t1 = time.time_ns()
 
@@ -457,6 +467,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 filter_edge = 1
             else:
                 filter_edge = filter_function
+
 
             E_step, H_step = FP_WPM_schmidt_kernel(
                 self.Ex[j - 1, :],
@@ -477,8 +488,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 self.Hx[j, :] = H_step[0] * filter_edge
                 self.Hy[j, :] = H_step[1] * filter_edge
                 self.Hz[j, :] = H_step[2] * filter_edge
-
-
 
         # at the initial point the Ez field is not computed.
         self.Ex[0,:] = self.Ex[1,:]
@@ -511,80 +520,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector(self, has_draw: bool = True, draw_borders: bool = True,  scale: str = '', **kwargs):
-        "Instantaneous Poynting Vector"
+    def Poynting_vector(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+        "Poynting Vector"
 
-        Sx = self.Ey * self.Hz - self.Ez * self.Hy
-        Sy = self.Ez * self.Hx - self.Ex * self.Hz
-        Sz = self.Ex * self.Hy - self.Ey * self.Hx
+        Sx = np.real(self.Ey * self.Hz - self.Ez * self.Hy)
+        Sy = np.real(self.Ez * self.Hx - self.Ex * self.Hz)
+        Sz = np.real(self.Ex * self.Hy - self.Ey * self.Hx)
 
-        S_max = np.real(np.max((Sx, Sy, Sz)))
-        S_min = np.real(np.min((Sx, Sy, Sz)))
-        S_lim = np.max((abs(S_max), np.abs(S_min)))
-
-        if has_draw:
-            tx, ty = rcParams["figure.figsize"]
-
-            dims = np.shape(self.Ex)
-            num_dims = len(dims)
-            if num_dims == 1:
-                z0 = self.z
-
-                plt.figure(figsize=(3 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.plot(z0, np.real(Sx))
-                plt.ylim(-S_lim, S_lim)
-                plt.title("$S_x$")
-
-                plt.subplot(1, 3, 2)
-                plt.plot(z0, np.real(Sy))
-                plt.ylim(-S_lim, S_lim)
-                plt.title("$S_y$")
-
-                plt.subplot(1, 3, 3)
-                plt.plot(z0, np.real(Sz))
-                plt.ylim(-S_lim, S_lim)
-                plt.title("$S_z$")
-
-            elif num_dims == 2:
-                fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True,
-                                         figsize=(1.5 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.title("$S_x$")
-                draw2D_xz(np.real(Sx), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale, draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
-                plt.xlabel('z ($\mu$m)')
-                plt.ylabel('x ($\mu$m)')
-
-                plt.subplot(1, 3, 2)
-                plt.title("$S_y$")
-                draw2D_xz(np.real(Sy), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
-
-                plt.subplot(1, 3, 3)
-                im3 = draw2D_xz(np.real(Sz), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
-                plt.title("$S_z$")
-
-                cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal', shrink=0.5)
-            
-            plt.tight_layout()
-            # plt.suptitle("Instantaneous Poynting vector")
-
-        return Sx, Sy, Sz
-
-
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
-        "Averaged Poynting Vector"
-
-        Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
-        Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
-        Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
+        cmap=CONF_DRAWING["color_amplitude_sign"]
 
         # if possible elliminate
         # Sz[0, :] = Sz[1, :]
@@ -602,17 +545,93 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 z0 = self.z
                 plt.figure(figsize=(3 * tx, 1 * ty))
                 plt.subplot(1, 3, 1)
-                plt.plot(z0, Sx)
+                plt.plot(self.z, Sx)
                 plt.ylim(-S_lim, S_lim)
                 plt.title("$S_x$")
 
                 plt.subplot(1, 3, 2)
-                plt.plot(z0, Sy)
+                plt.plot(self.z, Sy)
                 plt.title("$S_y$")
                 plt.ylim(-S_lim, S_lim)
 
                 plt.subplot(1, 3, 3)
-                plt.plot(z0, Sz)
+                plt.plot(self.z, Sz)
+                plt.title("$S_z$")
+                plt.ylim(-S_lim, S_lim)
+
+                plt.suptitle("Pointing vector")
+
+            elif num_dims == 2:
+                z0 = self.z
+                x0 = self.x
+
+                fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
+                plt.subplot(1, 3, 1)
+                plt.title("")
+                id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
+                format_drawing(self, plt, scale,  draw_borders,  **kwargs)
+                IDimage.set_clim(-S_lim, S_lim)
+                # axes[0].set_axis_off()
+
+                plt.subplot(1, 3, 2)
+                plt.title("$S_y$")
+                id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
+                IDimage.set_clim(-S_lim, S_lim)
+                # axes[1].set_axis_off()
+
+                plt.subplot(1, 3, 3)
+                id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+                plt.title("$S_z$")
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
+                IDimage.set_clim(-S_lim, S_lim)
+                # axes[2].set_axis_off()
+
+                cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+                cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+
+        plt.tight_layout()        
+        return Sx, Sy, Sz
+
+
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+        "Averaged Poynting Vector"
+
+        Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
+        Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
+        Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
+
+        cmap=CONF_DRAWING["color_amplitude_sign"]
+
+        # if possible elliminate
+        # Sz[0, :] = Sz[1, :]
+
+        S_max = np.max((Sx, Sy, Sz))
+        S_min = np.min((Sx, Sy, Sz))
+        S_lim = np.max((abs(S_max), np.abs(S_min)))
+        
+        if has_draw:
+            tx, ty = rcParams["figure.figsize"]
+
+            dims = np.shape(Sx)
+            num_dims = len(dims)
+            if num_dims == 1:
+                z0 = self.z
+                plt.figure(figsize=(3 * tx, 1 * ty))
+                plt.subplot(1, 3, 1)
+                plt.plot(self.z, Sx)
+                plt.ylim(-S_lim, S_lim)
+                plt.title("$S_x$")
+
+                plt.subplot(1, 3, 2)
+                plt.plot(self.z, Sy)
+                plt.title("$S_y$")
+                plt.ylim(-S_lim, S_lim)
+
+                plt.subplot(1, 3, 3)
+                plt.plot(self.z, Sz)
                 plt.title("$S_z$")
                 plt.ylim(-S_lim, S_lim)
 
@@ -622,32 +641,33 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 z0 = self.z
                 x0 = self.x
 
-                fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True,
+                fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,
                                          figsize=(2 * tx, 1 * ty))
                 plt.subplot(1, 3, 1)
-                plt.title("$S_x$")
-                im1 = draw2D_xz(Sx, x0, z0, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
+                plt.title("")
+                id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
+                format_drawing(self, plt, scale,  draw_borders,  **kwargs)
+                IDimage.set_clim(-S_lim, S_lim)
                 # axes[0].set_axis_off()
 
                 plt.subplot(1, 3, 2)
                 plt.title("$S_y$")
-                im2 = draw2D_xz(Sy, x0, z0, cmap='seismic')
+                id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 format_drawing(self, plt, scale,  draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
+                IDimage.set_clim(-S_lim, S_lim)
                 # axes[1].set_axis_off()
 
                 plt.subplot(1, 3, 3)
-                im3 = draw2D_xz(Sz, x0, z0, cmap='seismic')
+                id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 plt.title("$S_z$")
                 format_drawing(self, plt, scale,  draw_borders, **kwargs)
-                plt.clim(-S_lim, S_lim)
+                IDimage.set_clim(-S_lim, S_lim)
                 # axes[2].set_axis_off()
 
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal', shrink=0.5)
+                cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
+        plt.tight_layout()
         return Sx, Sy, Sz
 
 
@@ -679,6 +699,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
                 cbar = fig.colorbar(id_fig, cmap=CONF_DRAWING["color_intensity"], cax=cb_ax, orientation='horizontal', shrink=0.5)
                 plt.tight_layout()
+                
+        plt.tight_layout()
         return S
 
 
@@ -698,18 +720,16 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.plot(self.z, np.real(U))
 
             elif num_dims == 2:
-                draw2D_xz(np.real(U), self.x, self.z, cmap=CONF_DRAWING["color_intensity"])
-                plt.colorbar(orientation='horizontal', shrink=0.5)
+                id_fig, ax, IDimage = draw2D_xz(np.real(U), self.z, self.x, title='energy_density', cmap=CONF_DRAWING["color_intensity"])
                 format_drawing(self, plt, scale, draw_borders, **kwargs)
-                plt.clim(0)
+                IDimage.set_clim(0)
 
-            plt.title("energy_density")
-
+        plt.tight_layout()
         return U
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):# -> Any | Any:
         """Irradiance of the field.
         
         
@@ -747,19 +767,15 @@ class Vector_field_XZ(Scalar_mask_XZ):
             if num_dims == 1:
                 plt.figure()
                 plt.plot(self.z, irradiance)
-                plt.ylim(0, irradiance.max())
 
             elif num_dims == 2:
-                draw2D_xz(irradiance, self.x, self.z, cmap=CONF_DRAWING["color_intensity"])
-                plt.colorbar(orientation='horizontal', shrink=0.5)
+                id_fig, ax, IDimage = draw2D_xz(irradiance, self.z, self.x, title='irradiance', cmap=CONF_DRAWING["color_intensity"])
                 format_drawing(self, plt, scale, draw_borders, **kwargs)
-                plt.clim(0, irradiance.max())
+                IDimage.set_clim(0)
 
-            plt.title("Irradiance: {}".format(kind))
-
+        plt.tight_layout()
         return irradiance
-
-
+    
     def check_energy(self, kind = 'all', has_draw : bool = True):
         """
         check_energy. Integrates the Sz field and checks the energy conservation.
@@ -802,7 +818,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
             plt.ylabel("$Check$")
             plt.ylim(bottom=0)
             plt.legend()
-
 
         return energy_z1, energy_z2, energy_z3
 
@@ -882,22 +897,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
             Ctheta.u = theta
             Ch.u = h
             return (CA, CB, Ctheta, Ch)
-
-
-    def normalize(self, kind='amplitude', new_field: bool = False):
-        """Normalizes the field so that intensity.max()=1.
-
-        Args:
-            new_field (bool): If False the computation goes to self.u. If True a new instance is produced
-            kind (str): 'amplitude', or 'intensity'
-
-        Returns
-            u (numpy.array): normalized optical field
-        """
-
-        return normalize_field(self, kind, new_field)
-
-
 
     def draw(
         self,
@@ -1291,7 +1290,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if draw_z is True:
 
             fig, axs = plt.subplots(
-                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(1.5 * tx, 1.5 * ty)
+                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(2 * tx, 1.5 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_xz(
@@ -1334,12 +1333,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
             IDimage.set_clim(-E_max,E_max)
             
             id_fig, ax, IDimage = draw2D_xz(
-                E_y, self.z, self.x, ax=axs[1, 0],  xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_y$')
-            format_drawing(self, axs[1, 0], scale,  draw_borders, **kwargs)
+                E_y, self.z, self.x, ax=axs[0, 1],  xlabel="", ylabel="", cmap=cmap, title=r'E$_y$')
+            format_drawing(self, axs[0, 1], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
 
             id_fig, ax, IDimage = draw2D_xz(
-                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", cmap=cmap, title=r'H$_x$')
+                H_x, self.z, self.x, ax=axs[1, 0], xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'H$_x$')
             format_drawing(self, axs[1, 0], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
             
@@ -1349,10 +1348,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
             IDimage.set_clim(-H_max,H_max)
 
 
-
+        fig.subplots_adjust(right=1.25)
         cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
         cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
-
+        plt.tight_layout()
 
         return self
 
@@ -1704,7 +1703,7 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     
     nan_indices = np.where(np.isnan(T00)) 
     
-    option = 2 # TODO: fix better
+    option = 1 # TODO: fix better
     
     
     if option == 1:
@@ -1716,25 +1715,28 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         
     elif option == 2:
     
-        T00_b = P * (t_TM*kx**2*Gamma + t_TE*ky**2*kr*ks) / (k_perp2*kr*ks+1e-10) 
-        T01_b = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks+1e-10) 
-        T10_b = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks+1e-10) 
-        T11_b = P * (t_TM*ky**2*Gamma + t_TE*kx**2*kr*ks) / (k_perp2*kr*ks+1e-10) 
+        if len(nan_indices)>0:
+            T00_b = P * (t_TM*kx**2*Gamma + t_TE*ky**2*kr*ks) / (k_perp2*kr*ks+1e-10) 
+            T01_b = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks+1e-10) 
+            T10_b = P * (t_TM*kx*ky*Gamma - t_TE*kx*ky*kr*ks) / (k_perp2*kr*ks+1e-10) 
+            T11_b = P * (t_TM*ky**2*Gamma + t_TE*kx**2*kr*ks) / (k_perp2*kr*ks+1e-10) 
+        
+            T00[nan_indices]=T00_b[nan_indices]
+            T01[nan_indices]=T01_b[nan_indices]
+            T10[nan_indices]=T10_b[nan_indices]
+            T11[nan_indices]=T11_b[nan_indices] 
     
-        T00[nan_indices]=T00_b[nan_indices[0]]
-        T01[nan_indices]=T01_b[nan_indices[0]]
-        T10[nan_indices]=T10_b[nan_indices[0]]
-        T11[nan_indices]=T11_b[nan_indices[0]] 
-    
-
     ex0 = T00 * Exk + T01 * Eyk
     ey0 = T10 * Exk + T11 * Eyk 
     ez0 = - (kx*ex0+ky*ey0) / (kz_s)
     
+    # ex0 = T00 * Exk 
+    # ey0 = T11 * Eyk 
+    # ez0 = - (kx*ex0+ky*ey0) / (kz_r)
+    
 
     if has_H:
         
-        # thesis Fertig 2011 (3.40) pág 66 I do not feel confident yet
         TM00 = -kx*ky*Gamma 
         TM01 = -(ky*ky*Gamma + kz_s**2)
         TM10 = +(kx*kx*Gamma + kz_s**2)
@@ -1748,7 +1750,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         hx0 = (TM00*ex0+TM01*ey0) * H_factor
         hy0 = (TM10*ex0+TM11*ey0) * H_factor
         hz0 = (TM20*ex0+TM21*ey0) * H_factor
-        
         
     else:
         Hx_final, Hy_final, Hz_final = 0.0, 0.0, 0.0
@@ -1862,9 +1863,9 @@ def draw2D_xz(
         pass
     elif reduce_matrix == 'standard':
         num_x = len(x)
-        num_z = len(y)
+        num_y = len(y)
         reduction_x = int(num_x / 500)
-        reduction_y = int(num_z / 500)
+        reduction_y = int(num_x / 500)
 
         if reduction_x == 0:
             reduction_x = 1
@@ -1902,9 +1903,7 @@ def draw2D_xz(
     ax.set_title(title)
     if scale != '':
         ax.axis(scale)
-    # plt.axis(extension)
-    # if scale not in ('', None, []):
-    #     ax.set_axis(scale)
+
     IDimage.set_cmap(cmap)
 
     return id_fig, ax, IDimage
@@ -1929,8 +1928,9 @@ def format_drawing(vector_field_XZ, plt, scale: str='scaled',
     if scale != '':
         plt.axis(scale)
 
+    min_incr = 0.001
     if draw_borders is True:
-        #vector_field_XZ.surface_detection(1, min_incr, reduce_matrix=False)
+        vector_field_XZ.surface_detection(1, min_incr, reduce_matrix=False)
         border0 = vector_field_XZ.borders[0]
         border1 = vector_field_XZ.borders[1]
 
