@@ -511,7 +511,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector(self, has_draw: bool = True, draw_borders: bool = True,  scale: str = ''):
+    def Poynting_vector(self, has_draw: bool = True, draw_borders: bool = True,  scale: str = '', **kwargs):
         "Instantaneous Poynting Vector"
 
         Sx = self.Ey * self.Hz - self.Ez * self.Hy
@@ -530,7 +530,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             if num_dims == 1:
                 z0 = self.z
 
-                plt.figure(figsize=(1 * tx, 3 * ty))
+                plt.figure(figsize=(3 * tx, 1 * ty))
                 plt.subplot(1, 3, 1)
                 plt.plot(z0, np.real(Sx))
                 plt.ylim(-S_lim, S_lim)
@@ -547,37 +547,39 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.title("$S_z$")
 
             elif num_dims == 2:
-                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True,
-                                         figsize=(1 * tx, 2 * ty))
-                plt.subplot(3, 1, 1)
+                fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True,
+                                         figsize=(1.5 * tx, 1 * ty))
+                plt.subplot(1, 3, 1)
                 plt.title("$S_x$")
-                draw_field(np.real(Sx), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale, draw_borders, color='k.')
+                draw2D_xz(np.real(Sx), self.x, self.z, cmap='seismic')
+                format_drawing(self, plt, scale, draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
+                plt.xlabel('z ($\mu$m)')
+                plt.ylabel('x ($\mu$m)')
 
-                plt.subplot(3, 1, 2)
+                plt.subplot(1, 3, 2)
                 plt.title("$S_y$")
-                draw_field(np.real(Sy), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, color='k.')
+                draw2D_xz(np.real(Sy), self.x, self.z, cmap='seismic')
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
 
-                plt.subplot(3, 1, 3)
-                im3 = draw_field(np.real(Sz), self.x, self.z, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, color='k.')
+                plt.subplot(1, 3, 3)
+                im3 = draw2D_xz(np.real(Sz), self.x, self.z, cmap='seismic')
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
                 plt.title("$S_z$")
-                plt.xlabel('z ($\mu$m)')
 
                 cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
                 cbar = fig.colorbar(im3, cax=cb_ax, orientation='horizontal', shrink=0.5)
-
+            
+            plt.tight_layout()
             # plt.suptitle("Instantaneous Poynting vector")
 
         return Sx, Sy, Sz
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
+    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
         "Averaged Poynting Vector"
 
         Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
@@ -598,18 +600,18 @@ class Vector_field_XZ(Scalar_mask_XZ):
             num_dims = len(dims)
             if num_dims == 1:
                 z0 = self.z
-                plt.figure(figsize=(1 * tx, 3 * ty))
-                plt.subplot(3, 1, 1)
+                plt.figure(figsize=(3 * tx, 1 * ty))
+                plt.subplot(1, 3, 1)
                 plt.plot(z0, Sx)
                 plt.ylim(-S_lim, S_lim)
                 plt.title("$S_x$")
 
-                plt.subplot(3, 1, 2)
+                plt.subplot(1, 3, 2)
                 plt.plot(z0, Sy)
                 plt.title("$S_y$")
                 plt.ylim(-S_lim, S_lim)
 
-                plt.subplot(3, 1, 3)
+                plt.subplot(1, 3, 3)
                 plt.plot(z0, Sz)
                 plt.title("$S_z$")
                 plt.ylim(-S_lim, S_lim)
@@ -620,26 +622,26 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 z0 = self.z
                 x0 = self.x
 
-                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True,
-                                         figsize=(1 * tx, 2 * ty))
-                plt.subplot(3, 1, 1)
+                fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True,
+                                         figsize=(2 * tx, 1 * ty))
+                plt.subplot(1, 3, 1)
                 plt.title("$S_x$")
-                im1 = draw_field(Sx, x0, z0, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, color='k.')
+                im1 = draw2D_xz(Sx, x0, z0, cmap='seismic')
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
                 # axes[0].set_axis_off()
 
-                plt.subplot(3, 1, 2)
+                plt.subplot(1, 3, 2)
                 plt.title("$S_y$")
-                im2 = draw_field(Sy, x0, z0, cmap='seismic')
-                format_drawing(self, plt, scale,  draw_borders, color='k.')
+                im2 = draw2D_xz(Sy, x0, z0, cmap='seismic')
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
                 # axes[1].set_axis_off()
 
-                plt.subplot(3, 1, 3)
-                im3 = draw_field(Sz, x0, z0, cmap='seismic')
+                plt.subplot(1, 3, 3)
+                im3 = draw2D_xz(Sz, x0, z0, cmap='seismic')
                 plt.title("$S_z$")
-                format_drawing(self, plt, scale,  draw_borders, color='k.')
+                format_drawing(self, plt, scale,  draw_borders, **kwargs)
                 plt.clim(-S_lim, S_lim)
                 # axes[2].set_axis_off()
 
@@ -650,7 +652,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
+    def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
@@ -666,20 +668,25 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
                 plt.suptitle("$S_{total}$")
             elif num_dims == 2:
-                draw_field(S, self.x, self.z, cmap='hot')
-                plt.colorbar(orientation='horizontal', shrink=0.5)
-                format_drawing(self, plt, scale, draw_borders)
-                plt.suptitle("$S_{total}$")
-                plt.clim(vmin=0)
 
+                fig, axs = plt.subplots(nrows=1, ncols=1)
+                
+                id_fig, ax, IDimage = draw2D_xz(
+                    S, self.z, self.x, ax=axs, xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=CONF_DRAWING["color_intensity"], title=r'$S_{total}$')
+                format_drawing(self, plt, scale, draw_borders, **kwargs)
+                
+                IDimage.set_clim(vmin=0)                
+                cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+                cbar = fig.colorbar(id_fig, cmap=CONF_DRAWING["color_intensity"], cax=cb_ax, orientation='horizontal', shrink=0.5)
+                plt.tight_layout()
         return S
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
+    def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
 
-        epsilon = self.n ** 2
-        permeability = 4 * np.pi * 1e-7
+        epsilon = self.n**2
+        permeability = 4*np.pi*1e-7
 
         U = epsilon * (np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2) + permeability * (np.abs(self.Hx)**2 + np.abs(self.Hy)**2 + np.abs(self.Hz)**2)
 
@@ -691,10 +698,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.plot(self.z, np.real(U))
 
             elif num_dims == 2:
-
-                draw_field(np.real(U), self.x, self.z, cmap='hot')
+                draw2D_xz(np.real(U), self.x, self.z, cmap=CONF_DRAWING["color_intensity"])
                 plt.colorbar(orientation='horizontal', shrink=0.5)
-                format_drawing(self, plt, scale, draw_borders)
+                format_drawing(self, plt, scale, draw_borders, **kwargs)
                 plt.clim(0)
 
             plt.title("energy_density")
@@ -703,7 +709,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = ''):
+    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
         """Irradiance of the field.
         
         
@@ -744,9 +750,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.ylim(0, irradiance.max())
 
             elif num_dims == 2:
-                draw_field(irradiance, self.x, self.z, cmap='hot')
+                draw2D_xz(irradiance, self.x, self.z, cmap=CONF_DRAWING["color_intensity"])
                 plt.colorbar(orientation='horizontal', shrink=0.5)
-                format_drawing(self, plt, scale, draw_borders)
+                format_drawing(self, plt, scale, draw_borders, **kwargs)
                 plt.clim(0, irradiance.max())
 
             plt.title("Irradiance: {}".format(kind))
@@ -793,7 +799,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             plt.xlim(self.z[0], self.z[-1])
             plt.grid('on')
             plt.xlabel("$z\,(mm)$")
-            plt.ylabel("$Sz(z)$")
+            plt.ylabel("$Check$")
             plt.ylim(bottom=0)
             plt.legend()
 
@@ -985,11 +991,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
         self.__draw1__(intensity, color_intensity, "", only_image=only_image)
-        plt.colorbar(orientation='vertical', shrink=0.66)
-        format_drawing(self, plt, scale, draw_borders)
+        format_drawing(self, plt, scale, draw_borders, **kwargs)
             
-        # plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-        # plt.tight_layout()
+
         return h1
 
     @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -1029,17 +1033,17 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         # if intensity3.max() < percentage_z * intensity_max:
         if draw_z is False:
-            plt.figure(figsize=(2 * tx, ty))
+            plt.figure(figsize=(1.25 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
             self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
             
 
             h2 = plt.subplot(1, 2, 2)
             self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
             plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
@@ -1047,22 +1051,22 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             return h1, h2
         else:
-            plt.figure(figsize=(3 * tx, ty))
+            plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 3, 1)
             self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
 
             h2 = plt.subplot(1, 3, 2)
             self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
             h3 = plt.subplot(1, 3, 3)
             self.__draw1__(intensity3, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
             plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
@@ -1113,7 +1117,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             percentage_intensity = percentage_intensity_config
 
         if draw_z is False:
-            plt.figure(figsize=(2 * tx, ty))
+            plt.figure(figsize=(1.25 * tx, ty))
 
             h1 = plt.subplot(1, 2, 1)
             phase = np.angle(self.Ex)
@@ -1121,7 +1125,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 2, 2)
@@ -1130,13 +1134,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(-180, 180)
             plt.tight_layout()
 
             return h1, h2
         else:
-            plt.figure(figsize=(3 * tx, ty))
+            plt.figure(figsize=(2 * tx, ty))
 
             h1 = plt.subplot(1, 3, 1)
             phase = np.angle(self.Ex)
@@ -1144,7 +1148,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
             h2 = plt.subplot(1, 3, 2)
@@ -1153,7 +1157,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
             h3 = plt.subplot(1, 3, 3)
@@ -1162,7 +1166,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-            format_drawing(self, plt, scale, draw_borders)
+            format_drawing(self, plt, scale, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
             plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
@@ -1209,12 +1213,12 @@ class Vector_field_XZ(Scalar_mask_XZ):
         h1 = plt.subplot(2, 2, 1)
 
         self.__draw1__( intensity_x, color_intensity, "$I_x$")
-        format_drawing(self, plt, scale, draw_borders, color='k.', ms=0.1)
+        format_drawing(self, plt, scale, draw_borders, **kwargs)
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
         self.__draw1__(intensity_y, color_intensity,"$I_y$")
-        format_drawing(self, plt, scale, draw_borders)
+        format_drawing(self, plt, scale, draw_borders, **kwargs)
         plt.clim(0, intensity_max)
 
         h3 = plt.subplot(2, 2, 3)
@@ -1223,7 +1227,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         print(percentage_intensity)
 
         self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
-        format_drawing(self, plt, scale, draw_borders)
+        format_drawing(self, plt, scale, draw_borders, **kwargs)
         plt.clim(-180, 180)
 
         h4 = plt.subplot(2, 2, 4)
@@ -1231,7 +1235,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         phase[intensity_y < percentage_intensity * (intensity_y.max())] = 0
 
         self.__draw1__(phase/degrees, color_phase, "$\phi_y$")
-        format_drawing(self, plt, scale, draw_borders)
+        format_drawing(self, plt, scale, draw_borders, **kwargs)
         plt.clim(-180, 180)
         h4 = plt.gca()
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
@@ -1249,8 +1253,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         scale = '',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
-        draw_z = True,
-        **kwargs
+        draw_z = True, **kwargs
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
@@ -1288,72 +1291,69 @@ class Vector_field_XZ(Scalar_mask_XZ):
         if draw_z is True:
 
             fig, axs = plt.subplots(
-                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.75 * tx, 2 * ty)
+                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(1.5 * tx, 1.5 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_xz(
-                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_x$')
-            format_drawing(self, axs[0, 0], scale, draw_borders, color='k.')
+                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_x$')
+            format_drawing(self, axs[0, 0], scale, draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
             id_fig, ax, IDimage = draw2D_xz(
-                E_y, self.z, self.x, ax=axs[1, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_y$')
-            format_drawing(self, axs[1, 0], scale,  draw_borders, color='k.')
+                E_y, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", cmap=cmap, title=r'E$_y$')
+            format_drawing(self, axs[0, 1], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
             id_fig, ax, IDimage = draw2D_xz(
-                E_z, self.z, self.x, ax=axs[2, 0], xlabel="$z  (\mu m)$", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_z$')
-            format_drawing(self, axs[2, 0], scale,  draw_borders, color='k.')
+                E_z, self.z, self.x, ax=axs[0, 2], xlabel="", ylabel="", cmap=cmap, title=r'E$_z$')
+            format_drawing(self, axs[0, 2], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
             # ax.colorbar()
 
 
             id_fig, ax, IDimage = draw2D_xz(
-                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
-            format_drawing(self, axs[0, 1], scale,  draw_borders, color='k.')
+                H_x, self.z, self.x, ax=axs[1, 0], xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'H$_x$')
+            format_drawing(self, axs[1, 0], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
             id_fig, ax, IDimage = draw2D_xz(
-                H_y, self.z, self.x, ax=axs[1, 1], xlabel="", ylabel="", color=cmap, title=r'H$_y$')
-            format_drawing(self, axs[1, 1], scale,  draw_borders, color='k.')
+                H_y, self.z, self.x, ax=axs[1, 1], xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_y$')
+            format_drawing(self, axs[1, 1], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
             id_fig, ax, IDimage = draw2D_xz(
-                H_z, self.z, self.x, ax=axs[2, 1], xlabel="$z  (\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
+                H_z, self.z, self.x, ax=axs[1, 2], xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_z$')
             # ax.colorbar()
-            format_drawing(self, axs[2, 1], scale,  draw_borders, color='k.')
+            format_drawing(self, axs[1, 2], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
 
-            fig.subplots_adjust(right=1.25)
-            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
-            fig.colorbar(IDimage, cax=cbar_ax)
-
-            plt.tight_layout()
         else: 
             fig, axs = plt.subplots(
-                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(2 * tx, 2 * ty)
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(1 * tx, 1.5 * ty)
             )
 
             id_fig, ax, IDimage = draw2D_xz(
-                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_x$')
-            format_drawing(self, plt, scale,  draw_borders, color='k.')
+                E_x, self.z, self.x, ax=axs[0, 0], xlabel="", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_x$')
+            format_drawing(self, axs[0, 0], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
+            
             id_fig, ax, IDimage = draw2D_xz(
-                E_y, self.z, self.x, ax=axs[1, 0],  xlabel="$z  (\mu m)$", ylabel="$x  (\mu m)$", color=cmap, title=r'E$_y$')
-            format_drawing(self, plt, scale,  draw_borders, color='k.')
+                E_y, self.z, self.x, ax=axs[1, 0],  xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_y$')
+            format_drawing(self, axs[1, 0], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
 
-
             id_fig, ax, IDimage = draw2D_xz(
-                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
-            format_drawing(self, plt, scale,  draw_borders, color='k.')
+                H_x, self.z, self.x, ax=axs[0, 1], xlabel="", ylabel="", cmap=cmap, title=r'H$_x$')
+            format_drawing(self, axs[1, 0], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
+            
             id_fig, ax, IDimage = draw2D_xz(
-                H_y, self.z, self.x, ax=axs[1, 1],  xlabel="$z  (\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
-            format_drawing(self, plt, scale,  draw_borders, color='k.')
+                H_y, self.z, self.x, ax=axs[1, 1],  xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_y$')
+            format_drawing(self, axs[1, 1], scale,  draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
 
-            fig.subplots_adjust(right=1.25)
-            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
-            fig.colorbar(IDimage, cax=cbar_ax)
 
-            plt.tight_layout()
+
+        cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+        cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+
+
         return self
 
     def __draw_stokes__(
@@ -1364,8 +1364,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         draw_borders=False,
         scale = '',
         color_intensity=CONF_DRAWING["color_intensity"],
-        color_stokes=CONF_DRAWING["color_stokes"],
-        **kwargs
+        color_stokes=CONF_DRAWING["color_stokes"], **kwargs
     ):
         """__internal__: computes and draws CI, CQ, CU, CV parameters"""
 
@@ -1403,12 +1402,13 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
         return (h1, h2, h3, h4)
+    
+    
 
     def __draw_param_ellipse__(
         self,
         color_intensity=CONF_DRAWING["color_intensity"],
-        color_phase=CONF_DRAWING["color_phase"],
-        **kwargs
+        color_phase=CONF_DRAWING["color_phase"], **kwargs
     ):
         """__internal__: computes and draws polariations ellipses.
         Args:
@@ -1459,8 +1459,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         draw_arrow=True,
         head_width=2,
         ax=False,
-        color_intensity=CONF_DRAWING["color_intensity"],
-        **kwargs
+        color_intensity=CONF_DRAWING["color_intensity"], **kwargs
     ):
         """
 
@@ -1482,36 +1481,36 @@ class Vector_field_XZ(Scalar_mask_XZ):
         intensity_max = (np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2).max()
 
         Dx = self.x[-1] - self.x[0]
-        Dy = self.z[-1] - self.z[0]
+        Dz = self.z[-1] - self.z[0]
         size_x = Dx / (num_ellipses[0])
-        size_y = Dy / (num_ellipses[1])
+        size_z = Dz / (num_ellipses[1])
         x_centers = size_x/2 + size_x * np.array(range(0, num_ellipses[0]))
-        y_centers = size_y/2 + size_y * np.array(range(0, num_ellipses[1]))
+        z_centers = size_z/2 + size_z * np.array(range(0, num_ellipses[1]))
 
-        num_x, num_y = len(self.x), len(self.z)
+        num_x, num_z = len(self.x), len(self.z)
         ix_centers = num_x / (num_ellipses[0])
-        iy_centers = num_y / (num_ellipses[1])
+        iz_centers = num_z / (num_ellipses[1])
 
         ix_centers = (
             np.round(ix_centers/2 + ix_centers * np.array(range(0, num_ellipses[0])))
         ).astype("int")
-        iy_centers = (
-            np.round(iy_centers/2 + iy_centers * np.array(range(0, num_ellipses[1])))
+        iz_centers = (
+            np.round(iz_centers/2 + iz_centers * np.array(range(0, num_ellipses[1])))
         ).astype("int")
 
-        Ix_centers, Iy_centers = np.meshgrid(
-            ix_centers.astype("int"), iy_centers.astype("int")
+        Ix_centers, Iz_centers = np.meshgrid(
+            ix_centers.astype("int"), iz_centers.astype("int")
         )
 
         verbose = False
         if verbose is True:
-            print(num_x, num_y, ix_centers, iy_centers)
-            print(Dx, Dy, size_x, size_y)
-            print(x_centers, y_centers)
-            print(Ix_centers, Iy_centers)
+            print(num_x, num_z, ix_centers, iz_centers)
+            print(Dx, Dz, size_x, size_z)
+            print(x_centers, z_centers)
+            print(Ix_centers, Iz_centers)
 
-        E0x = self.Ex[Iy_centers, Ix_centers]
-        E0y = self.Ey[Iy_centers, Ix_centers]
+        E0x = self.Ex[Iz_centers, Ix_centers]
+        E0y = self.Ey[Iz_centers, Ix_centers]
 
         angles = np.linspace(0, 360*degrees, 64)
 
@@ -1520,18 +1519,18 @@ class Vector_field_XZ(Scalar_mask_XZ):
             ax = plt.gca()
 
         for i, xi in enumerate(ix_centers):
-            for j, yj in enumerate(iy_centers):
+            for j, yj in enumerate(iz_centers):
                 Ex = np.real(E0x[j, i] * np.exp(1j * angles))
                 Ey = np.real(E0y[j, i] * np.exp(1j * angles))
 
                 max_r = np.sqrt(np.abs(Ex) ** 2 + np.abs(Ey) ** 2).max()
-                size_dim = min(size_x, size_y)
+                size_dim = min(size_x, size_z)
 
                 if max_r > 0 and max_r**2 > percentage_intensity * intensity_max:
                     Ex = Ex / max_r * size_dim * amplification/2 + (+self.x[int(xi)])
                     Ey = Ey / max_r * size_dim * amplification/2 + self.z[int(yj)]
 
-                    ax.plot(Ex, Ey, color_line, lw=line_width)
+                    ax.plot(Ey, Ex, color_line, lw=line_width)
                     if draw_arrow:
                         ax.arrow(
                             Ex[0],
@@ -1598,8 +1597,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 bbox=dict(edgecolor="white", facecolor="white", alpha=0.75),
             )
 
-        plt.xlabel("$z  (\mu m)$")
-        plt.ylabel("$x  (\mu m)$")
+        plt.xlabel("z $(\mu m)$")
+        plt.ylabel("x $(\mu m)$")
         if colormap is not None:
             plt.colorbar(orientation="horizontal", fraction=0.046, shrink=0.5)
             h.set_clim(0, image.max())
@@ -1819,20 +1818,9 @@ def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
             Hx_final = Hx_final + Imz * H[0]
             Hy_final = Hy_final + Imz * H[1]
             Hz_final = Hz_final + Imz * H[2]
+            
     return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
 
-
-def draw_field(u, x_f, z_f, axis=None, interpolation='bilinear', cmap=None):
-    extent = [z_f[0], z_f[-1], x_f[0], x_f[-1]]
-    im = plt.imshow(u.transpose(),
-                    origin='lower',
-                    aspect='auto',
-                    interpolation=interpolation,
-                    extent=extent,
-                    cmap=cmap)
-    if axis is not None:
-        plt.axis(axis)
-    return im
 
 
 def draw2D_xz(
@@ -1840,10 +1828,10 @@ def draw2D_xz(
         x,
         y,
         ax=None,
-        xlabel="$x  (\mu m)$",
+        xlabel="x $(\mu m)$",
         ylabel="$y  (\mu m)$",
         title="",
-        color="YlGnBu",  # YlGnBu  seismic
+        cmap="YlGnBu",  # YlGnBu  seismic
         interpolation='bilinear',  # 'bilinear', 'nearest'
         scale='scaled',
         reduce_matrix='standard',
@@ -1874,9 +1862,9 @@ def draw2D_xz(
         pass
     elif reduce_matrix == 'standard':
         num_x = len(x)
-        num_y = len(y)
+        num_z = len(y)
         reduction_x = int(num_x / 500)
-        reduction_y = int(num_y / 500)
+        reduction_y = int(num_z / 500)
 
         if reduction_x == 0:
             reduction_x = 1
@@ -1917,20 +1905,33 @@ def draw2D_xz(
     # plt.axis(extension)
     # if scale not in ('', None, []):
     #     ax.set_axis(scale)
-    IDimage.set_cmap(color)
+    IDimage.set_cmap(cmap)
 
     return id_fig, ax, IDimage
 
 
-def format_drawing(vector_field_XZ, plt, scale, draw_borders, color='w.', ms=0.05) -> None:
-    
-        if scale != '':
-            plt.axis(scale)
+def format_drawing(vector_field_XZ, plt, scale: str='scaled', 
+                   draw_borders: bool=True, color: str='w.', ms: float=0.2) -> None:
+    """
+    format_drawing _summary_
 
-        if draw_borders is True:
-            min_incr: float = 0.0005,
-            vector_field_XZ.surface_detection(1, min_incr, reduce_matrix=False)
-            border0 = vector_field_XZ.borders[0]
-            border1 = vector_field_XZ.borders[1]
+    _extended_summary_
 
-            plt.plot(border1, border0, color, ms=ms)
+    Args:
+        vector_field_XZ (_type_): _description_
+        plt (_type_): _description_
+        scale (str, optional): _description_. Defaults to 'scaled'.
+        draw_borders (bool, optional): _description_. Defaults to True.
+        color (str, optional): _description_. Defaults to 'w.'.
+        ms (float, optional): _description_. Defaults to 0.05.
+    """
+    #min_incr: float = 0.0005
+    if scale != '':
+        plt.axis(scale)
+
+    if draw_borders is True:
+        #vector_field_XZ.surface_detection(1, min_incr, reduce_matrix=False)
+        border0 = vector_field_XZ.borders[0]
+        border1 = vector_field_XZ.borders[1]
+
+        plt.plot(border1, border0, color, ms=ms)
