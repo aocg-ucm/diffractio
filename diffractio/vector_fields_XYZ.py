@@ -3,7 +3,7 @@
 
 # ----------------------------------------------------------------------
 # Name:        vector_fields_XYZ.py
-# Purpose:     Class and methods for handling 3D vector fields
+# Purpose:     Class adnd methods for handling 3D vector fields
 #
 # Author:      Luis Miguel Sanchez Brea
 #
@@ -62,12 +62,15 @@ from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import load_data_common, save_data_common, get_date, check_none
 from .utils_math import nearest
 from .utils_optics import normalize_field
-from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_fields_XYZ import Scalar_field_XYZ
 from .scalar_masks_XY import Scalar_mask_XY
-from .vector_fields_XZ import Vector_field_XZ
+from .scalar_masks_XYZ import Scalar_mask_XYZ
+from .vector_fields_XY import Vector_field_XY
+from .vector_masks_XY import Vector_mask_XY
+
+from py_pol.jones_vector import Jones_vector
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -104,6 +107,13 @@ class Vector_field_XYZ():
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
         self.Ez = np.zeros_like(self.X, dtype=complex)
+
+        self.n = n_background*np.ones_like(self.X, dtype=complex)
+
+        self.Ex0 = None
+        self.Ey0 = None
+        self.Ez0 = None
+
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.n_background = n_background
@@ -317,6 +327,58 @@ class Vector_field_XYZ():
             print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
 
 
+
+
+    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    def incident_field(self, E0: Vector_field_XY  | None = None, u0: Scalar_field_XY  | None = None, 
+                       j0: Jones_vector  | None = None, z0: float | None = None):
+        """Includes the incident field in Vector_field_XZ. 
+        
+        It can be performed using a Vector_field_X E0 or a Scalar_field_X u0 + Jones_vector j0.
+
+        Args:
+            E0 (Vector_field_X | None): Vector field of the incident field.
+            u0 (Scalar_field_x | None): Scalar field of the incident field.
+            j0 (py_pol.Jones_vector | None): Jones vector of the incident field.
+            z0 (float | None): position of the incident field. if None, the field is at the beginning.
+        """
+
+        if np.logical_and.reduce((E0 is None, u0 is not None, j0 is not None)):
+            E0 = Vector_field_XY(self.x, self.y, self.wavelength, self.n_background)
+            E0.Ex = u0.u * j0.M[0]
+            E0.Ey = u0.u * j0.M[1]
+
+        if z0 in (None, '', []):
+            self.Ex0 = E0.Ex
+            self.Ey0 = E0.Ey
+
+            self.Ex[:,:,0] = self.Ex[:,:,0] + E0.Ex
+            self.Ey[:,:,0] = self.Ey[:,:,0] + E0.Ey
+        else:
+            self.Ex0 = None
+            self.Ey0 = None
+            iz, _, _ = nearest(self.z, z0)
+            self.Ex[:,:,iz] = self.Ex[:,:,iz] + E0.Ex
+            self.Ey[:,:,iz] = self.Ey[:,:,iz] + E0.Ey
+
+
+    def refractive_index_from_scalarXYZ(self, u_xyz: Scalar_mask_XYZ):
+        """
+        refractive_index_from_scalarXZ. Gets the refractive index from a Scalar field and passes to a vector field.
+        
+        Obviously, the refractive index is isotropic.
+
+        Args:
+            self (Vector_field_XZ): Vector_field_XZ
+            u_xz (Scalar_mask_XZ): Scalar_mask_XZ
+        """
+        self.n = u_xyz.n
+        
+        # edges = self.surface_detection( min_incr = 0.1, reduce_matrix = 'standard', has_draw = False)
+               
+        # self.borders = edges           
+        # return edges
+
     @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
@@ -454,16 +516,20 @@ class Vector_field_XYZ():
             class (bool): If True it returns a class
             matrix (bool): If True it returns a matrix
         """
-        field_output = Scalar_field_XY(x=self.x,
+        field_output = Vector_field_XY(x=self.x,
                                        y=self.y,
                                        wavelength=self.wavelength)
         if iz0 is None:
             iz, _, _ = nearest(self.z, z0)
         else:
             iz = iz0
+        print(iz, self.Ex[:,:,iz].max())
         field_output.Ex = np.squeeze(self.Ex[:, :, iz])
         field_output.Ey = np.squeeze(self.Ey[:, :, iz])
         field_output.Ez = np.squeeze(self.Ez[:, :, iz])
+        field_output.Hx = np.squeeze(self.Hx[:, :, iz])
+        field_output.Hy = np.squeeze(self.Hy[:, :, iz])
+        field_output.Hz = np.squeeze(self.Hz[:, :, iz])
         return field_output
 
 
@@ -480,6 +546,7 @@ class Vector_field_XYZ():
             matrix (bool): If True it returns a matrix
 
         """
+        from .vector_fields_XZ import Vector_field_XZ
         field_output = Vector_field_XZ(x=self.x,
                                        z=self.z,
                                        wavelength=self.wavelength)
@@ -490,6 +557,12 @@ class Vector_field_XYZ():
         field_output.Ex = np.squeeze(self.Ex[iy, :, :]).transpose()
         field_output.Ey = np.squeeze(self.Ey[iy, :, :]).transpose()
         field_output.Ez = np.squeeze(self.Ez[iy, :, :]).transpose()
+        field_output.Hx = np.squeeze(self.Hx[iy, :, :]).transpose()
+        field_output.Hy = np.squeeze(self.Hy[iy, :, :]).transpose()
+        field_output.Hz = np.squeeze(self.Hz[iy, :, :]).transpose()
+        field_output.n = np.squeeze(self.n[iy, :, :]).transpose()
+        
+        
         return field_output
 
 
@@ -506,6 +579,7 @@ class Vector_field_XYZ():
             matrix (bool): If True it returns a matrix
 
         """
+        from .vector_fields_XZ import Vector_field_XZ
         field_output = Vector_field_XZ(x=self.y,
                                        z=self.z,
                                        wavelength=self.wavelength)
@@ -516,8 +590,12 @@ class Vector_field_XYZ():
         field_output.Ex = np.squeeze(self.Ex[:, ix, :]).transpose()
         field_output.Ey = np.squeeze(self.Ey[:, ix, :]).transpose()
         field_output.Ez = np.squeeze(self.Ez[:, ix, :]).transpose()
-        return field_output
+        field_output.Hx = np.squeeze(self.Hx[:, ix, :]).transpose()
+        field_output.Hy = np.squeeze(self.Hy[:, ix, :]).transpose()
+        field_output.Hz = np.squeeze(self.Hz[:, ix, :]).transpose()
+        field_output.n = np.squeeze(self.n[:, ix, :]).transpose()
 
+        return field_output
 
     @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def to_Vector_field_Z(self, kind: str = 'amplitude', x0: int | None = None,

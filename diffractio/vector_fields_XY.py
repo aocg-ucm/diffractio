@@ -942,16 +942,16 @@ class Vector_field_XY():
                 return E_out
 
             elif num_x > 1 and num_y == 1:
-                from diffractio.vector_fields_XZ import Vector_field_XZ
-                E_out = Vector_field_XZ(xout, z, self.wavelength)
+                from diffractio.vector_fields_XZ import vector_field_XY
+                E_out = vector_field_XY(xout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
                 E_out.Ez = e0z_zs.u
                 return E_out
 
             elif num_x == 1 and num_y > 1:
-                from diffractio.vector_fields_XZ import Vector_field_XZ
-                E_out = Vector_field_XZ(yout, z, self.wavelength)
+                from diffractio.vector_fields_XZ import vector_field_XY
+                E_out = vector_field_XY(yout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
                 E_out.Ez = e0z_zs.u
@@ -1217,6 +1217,7 @@ class Vector_field_XY():
             filename (str): if not '' stores drawing in file,
         """
 
+        draw_borders = 0
         if draw is True:
             if kind == 'intensity':
                 id_fig = self.__draw_intensity__(logarithm, normalize,
@@ -1232,6 +1233,9 @@ class Vector_field_XY():
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
+
+            elif kind == 'EH':
+                id_fig = self.__draw_EH__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'fields':
                 id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
@@ -1691,6 +1695,136 @@ class Vector_field_XY():
             return h1, h2, h3, h4, h5, h6
 
 
+
+    @check_none('x','y','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    def __draw_EH__(
+        self,
+        logarithm,
+        normalize,
+        cut_value,
+        scale = 'scaled',
+        cmap=CONF_DRAWING["color_amplitude_sign"],
+        edge=None,
+        draw_z = True,
+        **kwargs
+    ):
+        """__internal__: draws amplitude and phase in 2x2 drawing
+
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
+            normalize (bool): If True, max(intensity)=1
+            title (str): title of figure
+            cut_value (float): If not None, cuts the maximum intensity to this value
+
+        """
+
+        E_x = self.Ex.transpose()
+        E_x = normalize_draw(E_x, logarithm, normalize, cut_value)
+
+        E_y = self.Ey.transpose()
+        E_y = normalize_draw(E_y, logarithm, normalize, cut_value)
+
+        E_z = self.Ez.transpose()
+        E_z = normalize_draw(E_z, logarithm, normalize, cut_value)
+
+        H_x = self.Hx.transpose()
+        H_x = normalize_draw(H_x, logarithm, normalize, cut_value)
+
+        H_y = self.Hy.transpose()
+        H_y = normalize_draw(H_y, logarithm, normalize, cut_value)
+
+        H_z = self.Hz.transpose()
+        H_z = normalize_draw(H_z, logarithm, normalize, cut_value)
+
+        tx, ty = rcParams["figure.figsize"]
+
+        E_max = np.max((E_x.max(), E_y.max(), E_z.max()))
+        H_max = np.max((H_x.max(), H_y.max(), H_z.max()))
+
+        if draw_z is True:
+
+            
+            fig, axs = plt.subplots(
+                nrows=3, ncols=2, sharex=True, sharey=True, figsize=(1.75 * tx, 2 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$_x$')
+            plt.axis(scale)
+            #format_drawing(self, axs[0, 0], scale, draw_borders, color='k.')
+            IDimage.set_clim(-E_max,E_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E_y, self.x, self.y, ax=axs[1, 0], xlabel="", ylabel="$y $(\mu m)$", color=cmap, title=r'E$_y$')
+            plt.axis(scale)
+            #format_drawing(self, axs[1, 0], scale,  draw_borders, color='k.')
+            IDimage.set_clim(-E_max,E_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E_z, self.x, self.y, ax=axs[2, 0], xlabel="x $(\mu m)$", ylabel="$y $(\mu m)$", color=cmap, title=r'E$_z$')
+            plt.axis(scale)
+            #format_drawing(self, axs[2, 0], scale,  draw_borders, color='k.')
+            IDimage.set_clim(-E_max,E_max)
+            # ax.colorbar()
+
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H_x, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+            plt.axis(scale)
+            #format_drawing(self, axs[0, 1], scale,  draw_borders, color='k.')
+            IDimage.set_clim(-H_max,H_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H_y, self.x, self.y, ax=axs[1, 1], xlabel="", ylabel="", color=cmap, title=r'H$_y$')
+            plt.axis(scale)
+            #format_drawing(self, axs[1, 1], scale,  draw_borders, color='k.')
+            IDimage.set_clim(-H_max,H_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H_z, self.x, self.y, ax=axs[2, 1], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
+            # ax.colorbar()
+            plt.axis(scale)
+            #format_drawing(self, axs[2, 1], scale,  draw_borders, color='k.')
+            IDimage.set_clim(-H_max,H_max)
+
+            fig.subplots_adjust(right=1.25)
+            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
+            fig.colorbar(IDimage, cax=cbar_ax)
+
+            plt.tight_layout()
+        else: 
+            fig, axs = plt.subplots(
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(2 * tx, 2 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$_x$')
+            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            IDimage.set_clim(-E_max,E_max)
+            id_fig, ax, IDimage = draw2D_XY(
+                E_y, self.x, self.y, ax=axs[1, 0],  xlabel="x $(\mu m)$", ylabel="y $ (\mu m)$", color=cmap, title=r'E$_y$')
+            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            IDimage.set_clim(-E_max,E_max)
+
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H_x, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            IDimage.set_clim(-H_max,H_max)
+            id_fig, ax, IDimage = draw2D_XY(
+                H_y, self.x, self.y, ax=axs[1, 1],  xlabel="x $ (\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
+            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            IDimage.set_clim(-H_max,H_max)
+
+            fig.subplots_adjust(right=1.25)
+            cbar_ax = fig.add_axes([0.85, 0.25, 0.025, 0.5])
+            fig.colorbar(IDimage, cax=cbar_ax)
+
+            plt.tight_layout()
+        return self
+
+
+
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_stokes__(self,
                         logarithm: float,
@@ -1967,3 +2101,90 @@ def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,
     y = r * np.sin(fi) + y0
 
     return x, y
+
+
+
+def draw2D_XY(
+        image,
+        x,
+        y,
+        ax=None,
+        xlabel="$x  (\mu m)$",
+        ylabel="$y  (\mu m)$",
+        title="",
+        color="YlGnBu",  # YlGnBu  seismic
+        interpolation='bilinear',  # 'bilinear', 'nearest'
+        scale='scaled',
+        reduce_matrix='standard',
+        range_scale='um',
+        verbose=False):
+    """makes a drawing of XY
+
+    Args:
+        image (numpy.array): image to draw
+        x (numpy.array): positions x
+        y (numpy.array): positions y
+        ax (): axis
+        xlabel (str): label for x
+        ylabel (str): label for y
+        title (str): title
+        color (str): color
+        interpolation (str): 'bilinear', 'nearest'
+        scale (str): kind of axis (None, 'equal', 'scaled', etc.)
+        range_scale (str): 'um' o 'mm'
+        verbose (bool): if True prints information
+
+    Returns:
+        id_fig: handle of figure
+        IDax: handle of axis
+        IDimage: handle of image
+    """
+    if reduce_matrix in (None, '', []):
+        pass
+    elif reduce_matrix == 'standard':
+        num_x = len(x)
+        num_y = len(y)
+        reduction_x = int(num_x / 500)
+        reduction_y = int(num_y / 500)
+
+        if reduction_x == 0:
+            reduction_x = 1
+        if reduction_y == 0:
+            reduction_y = 1
+
+        image = image[::reduction_x, ::reduction_y]
+    else:
+        image = image[::reduce_matrix[0], ::reduce_matrix[1]]
+
+    if verbose is True:
+        print(("image size {}".format(image.shape)))
+
+    if ax is None:
+        id_fig = plt.figure()
+        ax = id_fig.add_subplot(111)
+    else:
+        id_fig = None
+
+    if range_scale == 'um':
+        extension = (x[0], x[-1], y[0], y[-1])
+    else:
+        extension = (x[0] / mm, x[-1] / mm, y[0] / mm, y[-1] / mm)
+        xlabel = "x (mm)"
+        ylabel = "y (mm)"
+
+    IDimage = ax.imshow(image.transpose(),
+                        interpolation=interpolation,
+                        aspect='auto',
+                        origin='lower',
+                        extent=extension,
+                        )
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    if scale != '':
+        ax.axis(scale)
+
+    IDimage.set_cmap(color)
+
+    return id_fig, ax, IDimage
+

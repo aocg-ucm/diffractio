@@ -2261,13 +2261,14 @@ class Scalar_mask_XY(Scalar_field_XY):
         self.u = self.u * np.exp(1j * phase * t2_grating.u)
 
     @check_none('x','y',raise_exception=bool_raise_exception)
-    def squares_nxm(self, kind: Options_squares_nxm = 'amplitude', num_levels: int | tuple[int, int] = 256):
-        """Generates a matrix with nxm squares with a different value,
+    def squares_nxm(self, kind: Options_squares_nxm = 'amplitude', num_levels: int | tuple[int, int] = 256,
+                    border_size: float = 0*um):
+        """Generates a matrix with nxm squares with a different value of the transmittance
 
         Args:
-            kind (str): "amplitude", "intensity", "gray_levels", 
+            kind (str): "intensity" "gray_levels", "amplitude
             num_levels (int | tuple[int, int], optional): _description_. Defaults to 256.
-
+            border_size (float, optional): size of border of suqares. Defaults to 0.
         Returns:
             _type_: _description_
         """ 
@@ -2277,8 +2278,8 @@ class Scalar_mask_XY(Scalar_field_XY):
         else:
             num_rows, num_columns = num_levels
 
-        size_x = (self.x[-1] - self.x[0])/num_rows
-        size_y = (self.y[-1] - self.y[0])/num_columns
+        size_x = (self.x[-1] - self.x[0]-num_rows*border_size)/num_rows
+        size_y = (self.y[-1] - self.y[0]-num_columns*border_size)/num_columns
         
         pos_x = np.linspace(self.x[0]+size_x/2, self.x[-1]-size_x/2, num_rows)
         pos_y = np.linspace(self.y[0]+size_y/2, self.y[-1]-size_y/2, num_columns)

@@ -81,7 +81,8 @@ from .utils_multiprocessing import _pickle_method, _unpickle_method
 from .utils_optics import FWHM2D, beam_width_2D, field_parameters, normalize_field
 from .utils_drawing3D import draw, video_isovalue
 from .config import bool_raise_exception, Draw_XZ_Options, Draw_XY_Options
-
+from .vector_fields_XZ import Vector_field_XZ
+from .vector_fields_XY import Vector_field_XY
 
 copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 

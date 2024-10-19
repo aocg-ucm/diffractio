@@ -102,7 +102,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Hy = None
         self.Hz = None
 
-        self.n = n_background * np.ones(np.shape(self.X), dtype=complex)
+        self.n = n_background * np.ones_like(self.X, dtype=complex)
         self.borders = None  # borders at refractive index
 
         self.Ex0 = np.zeros_like(self.x)
@@ -965,7 +965,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         draw_borders=False,
         scale = '',
         only_image=False,
-        color_intensity=CONF_DRAWING["color_intensity"],
+        color_intensity=CONF_DRAWING["color_intensity"], **kwargs
     ):
         """Draws the intensity
 
@@ -1002,7 +1002,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         scale = '',
         only_image=False,
         color_intensity=CONF_DRAWING["color_intensity"],
-        draw_z = True,
+        draw_z = True, **kwargs
     ):
         """internal funcion: draws phase
 
@@ -1082,7 +1082,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         percentage_intensity: float | None = None,
         only_image: bool = False,
         color_intensity=CONF_DRAWING["color_phase"],
-        draw_z: bool = True,
+        draw_z: bool = True, **kwargs
     ):
         """internal funcion: draws phase
 
@@ -1094,7 +1094,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
             only_image: todo
             color_intensity: todo
             draw_z: todo
-            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
         """
 
         tx, ty = rcParams["figure.figsize"]
@@ -1183,7 +1182,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         percentage_intensity: float | None = None,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
-        draw_z = True, ):
+        draw_z = True, **kwargs):
         """
         Args:
             logarithm (float): If >0, intensity is scaled in logarithm
@@ -1210,6 +1209,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         h1 = plt.subplot(2, 2, 1)
 
         self.__draw1__( intensity_x, color_intensity, "$I_x$")
+        format_drawing(self, plt, scale, draw_borders, color='k.', ms=0.1)
         plt.clim(0, intensity_max)
 
         h2 = plt.subplot(2, 2, 2)
@@ -1249,7 +1249,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         scale = '',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
-        draw_z = True
+        draw_z = True,
+        **kwargs
     ):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
@@ -1364,6 +1365,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         scale = '',
         color_intensity=CONF_DRAWING["color_intensity"],
         color_stokes=CONF_DRAWING["color_stokes"],
+        **kwargs
     ):
         """__internal__: computes and draws CI, CQ, CU, CV parameters"""
 
@@ -1406,6 +1408,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
+        **kwargs
     ):
         """__internal__: computes and draws polariations ellipses.
         Args:
@@ -1457,6 +1460,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         head_width=2,
         ax=False,
         color_intensity=CONF_DRAWING["color_intensity"],
+        **kwargs
     ):
         """
 
@@ -1699,9 +1703,9 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     # T10 = np.zeros_like(kx)  
     # T11 = P * (t_TE*kx**2*kr*ks) / (k_perp2*kr*ks) 
     
-    nan_indices = np.where(np.isnan(T00)) # TODO: fix better
+    nan_indices = np.where(np.isnan(T00)) 
     
-    option = 1
+    option = 2 # TODO: fix better
     
     
     if option == 1:
@@ -1724,14 +1728,9 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         T11[nan_indices]=T11_b[nan_indices[0]] 
     
 
-   
     ex0 = T00 * Exk + T01 * Eyk
     ey0 = T10 * Exk + T11 * Eyk 
     ez0 = - (kx*ex0+ky*ey0) / (kz_s)
-    
-    # ex0 = T00 * Exk 
-    # ey0 = T11 * Eyk 
-    # ez0 = - (kx*ex0+ky*ey0) / (kz_r)
     
 
     if has_H:
@@ -1751,9 +1750,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
         hy0 = (TM10*ex0+TM11*ey0) * H_factor
         hz0 = (TM20*ex0+TM21*ey0) * H_factor
         
-        # hx0 = -(kz_s**2) * ey0 * H_factor
-        # hy0 =  (kz_s**2) * ex0 * H_factor  # cuidado, ver (3.16) pág 60 y (3.40) pág 66 de tesis VWPM
-        # hz0 =  (kx*kz_s) * ey0 * H_factor
         
     else:
         Hx_final, Hy_final, Hz_final = 0.0, 0.0, 0.0
@@ -1800,13 +1796,13 @@ def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     Ns = np.unique(n2)
 
     Ex_final = np.zeros_like(Ex, dtype=complex)
-    Ey_final = np.zeros_like(Ey, dtype=complex)
-    Ez_final = np.zeros_like(Ey, dtype=complex)
+    Ey_final = np.zeros_like(Ex, dtype=complex)
+    Ez_final = np.zeros_like(Ex, dtype=complex)
 
     if has_H:
         Hx_final = np.zeros_like(Ex, dtype=complex)
-        Hy_final = np.zeros_like(Ey, dtype=complex)
-        Hz_final = np.zeros_like(Ey, dtype=complex)
+        Hy_final = np.zeros_like(Ex, dtype=complex)
+        Hz_final = np.zeros_like(Ex, dtype=complex)
     else:
         Hx_final = 0
         Hy_final = 0
