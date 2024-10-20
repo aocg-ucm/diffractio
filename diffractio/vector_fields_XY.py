@@ -1273,7 +1273,8 @@ class Vector_field_XY():
             amplification (float): amplification of ellipses
             filename (str): if not '' stores drawing in file,
         """
-        self.surface_detection()
+        if self.n is not None:
+            self.surface_detection()
 
         draw_borders = 0
         if draw is True:
@@ -1314,10 +1315,6 @@ class Vector_field_XY():
                                                 cut_value, num_ellipses,
                                                 amplification, **kwargs)
 
-            elif kind == 'ellipses':
-                id_fig = self.__draw_ellipses__(logarithm, normalize,
-                                                cut_value, num_ellipses,
-                                                amplification, **kwargs)
                 
             else:
                 print("not good kind parameter in vector_fields_XY.draw()")
@@ -2109,14 +2106,15 @@ class Vector_field_XY():
         return (h1, h2, h3, h4)
 
 
+
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_ellipses__(self,
                           logarithm: float = 0.,
                           normalize: bool = False,
                           cut_value: float = '',
-                          draw_borders: bool=False,
                           num_ellipses: tuple[int, int] = (21, 21),
                           amplification: float = 0.75,
+                          draw_borders: bool=False,
                           color_line: str = 'w',
                           line_width: float = 0.5,
                           draw_arrow: bool = True,
@@ -2148,6 +2146,9 @@ class Vector_field_XY():
 
         Dx = self.x[-1] - self.x[0]
         Dy = self.y[-1] - self.y[0]
+
+        print(Dx, num_ellipses)
+
         size_x = Dx / (num_ellipses[0])
         size_y = Dy / (num_ellipses[1])
         x_centers = size_x/2 + size_x * np.array(range(0, num_ellipses[0]))

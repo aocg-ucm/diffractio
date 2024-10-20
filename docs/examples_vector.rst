@@ -15,3 +15,9 @@ Examples for vector propagation
    source/examples_vector/VRS_paper.ipynb
    source/examples_vector/vector_double_slit_experiment.ipynb
    source/examples_vector/SLM.ipynb
+   source/examples_vector/malus_law.ipynb
+   source/examples_vector/vector FPZ.ipynb
+   source/examples_vector/vector_grating_xy.ipynb
+   source/examples_vector/vector_grating_xz.ipynb
+
+   

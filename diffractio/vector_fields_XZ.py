@@ -605,7 +605,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+    def Poynting_vector(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
         "Poynting Vector"
 
         Sx = np.real(self.Ey * self.Hz - self.Ez * self.Hy)
@@ -618,7 +618,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         S_max = np.max((Sx, Sy, Sz))
         S_min = np.min((Sx, Sy, Sz))
         S_lim = np.max((abs(S_max), np.abs(S_min)))
-        
+        z0 = self.z
+        x0 = self.x
         if has_draw:
             tx, ty = rcParams["figure.figsize"]
 
@@ -645,9 +646,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.suptitle("Pointing vector")
 
             elif num_dims == 2:
-                z0 = self.z
-                x0 = self.x
-
                 fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
                 plt.subplot(1, 3, 1)
                 plt.title("")
@@ -656,16 +654,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.axis(scale)
                 draw_edges(self, plt,  draw_borders,  **kwargs)
                 IDimage.set_clim(-S_lim, S_lim)
-                # axes[0].set_axis_off()
-
+    
                 plt.subplot(1, 3, 2)
                 plt.title("$S_y$")
                 id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 plt.axis(scale)
                 draw_edges(self, plt,  draw_borders, **kwargs)
                 IDimage.set_clim(-S_lim, S_lim)
-                # axes[1].set_axis_off()
-
+    
                 plt.subplot(1, 3, 3)
                 id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 plt.title("$S_z$")
@@ -683,7 +679,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
         "Averaged Poynting Vector"
 
         Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
@@ -737,16 +733,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 plt.axis(scale)
                 draw_edges(self, plt,  draw_borders,  **kwargs)
                 IDimage.set_clim(-S_lim, S_lim)
-                # axes[0].set_axis_off()
-
+    
                 plt.subplot(1, 3, 2)
                 plt.title("$S_y$")
                 id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 plt.axis(scale)
                 draw_edges(self, plt,  draw_borders, **kwargs)
                 IDimage.set_clim(-S_lim, S_lim)
-                # axes[1].set_axis_off()
-
+    
                 plt.subplot(1, 3, 3)
                 id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
                 plt.title("$S_z$")
@@ -763,7 +757,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+    def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
 
         Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
@@ -797,7 +791,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):
+    def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
 
         epsilon = self.n**2
         permeability = 4*np.pi*1e-7
@@ -822,7 +816,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = '', **kwargs):# -> Any | Any:
+    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):# -> Any | Any:
         """Irradiance of the field.
         
         
@@ -1100,6 +1094,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif kind == "stokes":
                 id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, draw_borders, scale,  **kwargs)
 
+            elif kind == "ellipses":
+                id_fig = self.__draw_ellipses__(logarithm, normalize, cut_value, draw_borders, scale,  **kwargs)
+
             elif kind == "param_ellipses":
                 id_fig = self.__draw_param_ellipse__(**kwargs)
             else:
@@ -1119,7 +1116,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         only_image=False,
         color_intensity=CONF_DRAWING["color_intensity"], **kwargs
     ):
@@ -1147,6 +1144,89 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return h1
 
+    # @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    # def __draw_intensities__(
+    #     self,
+    #     logarithm,
+    #     normalize,
+    #     cut_value,
+    #     draw_borders=False,
+    #     scale = 'scaled',
+    #     only_image=False,
+    #     color_intensity=CONF_DRAWING["color_intensity"],
+    #     draw_z = True, **kwargs
+    # ):
+    #     """internal funcion: draws phase
+
+    #     Args:
+    #         logarithm (float): If >0, intensity is scaled in logarithm
+    #         normalize (bool): If True, max(intensity)=1
+    #         cut_value (float): If not None, cuts the maximum intensity to this value
+    #     """
+
+    #     tx, ty = rcParams["figure.figsize"]
+
+    #     intensity1 = np.abs(self.Ex) ** 2
+    #     intensity1 = normalize_draw(intensity1, logarithm, normalize, cut_value)
+
+    #     intensity2 = np.abs(self.Ey) ** 2
+    #     intensity2 = normalize_draw(intensity2, logarithm, normalize, cut_value)
+
+    #     intensity3 = np.abs(self.Ez) ** 2
+    #     intensity3 = normalize_draw(intensity3, logarithm, normalize, cut_value)
+
+    #     intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
+
+    #     # percentage_z = 0.01
+
+    #     # if intensity3.max() < percentage_z * intensity_max:
+    #     if draw_z is False:
+    #         plt.figure(figsize=(1.25 * tx, ty))
+
+    #         h1 = plt.subplot(1, 2, 1)
+    #         self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(0, intensity_max)
+            
+
+    #         h2 = plt.subplot(1, 2, 2)
+    #         self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(0, intensity_max)
+
+    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
+    #         plt.tight_layout()
+
+    #         return h1, h2
+    #     else:
+    #         plt.figure(figsize=(2 * tx, ty))
+
+    #         h1 = plt.subplot(1, 3, 1)
+    #         self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(0, intensity_max)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+
+    #         h2 = plt.subplot(1, 3, 2)
+    #         self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(0, intensity_max)
+
+    #         h3 = plt.subplot(1, 3, 3)
+    #         self.__draw1__(intensity3, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(0, intensity_max)
+
+    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
+    #         plt.tight_layout()
+
+    #         return h1, h2, h3
+
     @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities__(
         self,
@@ -1154,9 +1234,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         only_image=False,
-        color_intensity=CONF_DRAWING["color_intensity"],
+        cmap=CONF_DRAWING["color_intensity"],
         draw_z = True, **kwargs
     ):
         """internal funcion: draws phase
@@ -1180,69 +1260,65 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
 
-        # percentage_z = 0.01
+        z0 = self.z
+        x0 = self.x
 
-        # if intensity3.max() < percentage_z * intensity_max:
         if draw_z is False:
-            plt.figure(figsize=(1.25 * tx, ty))
-
-            h1 = plt.subplot(1, 2, 1)
-            self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
+            fig, axs = plt.subplots(nrows=1, ncols=2, sharex=True,  figsize=(1.5 * tx, 1 * ty))
+            plt.subplot(1, 2, 1)
+            id_fig, ax, IDimage = draw2D_xz(intensity1, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$I_x$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(0, intensity_max)
-            
+            draw_edges(self, plt,  draw_borders,  **kwargs)
+            IDimage.set_clim(0, intensity_max)
 
-            h2 = plt.subplot(1, 2, 2)
-            self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+            plt.subplot(1, 2, 2)
+            id_fig, ax, IDimage = draw2D_xz(intensity2, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$I_y$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(0, intensity_max)
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(0, intensity_max)
 
-            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-            plt.tight_layout()
 
-            return h1, h2
+            cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+
         else:
-            plt.figure(figsize=(2 * tx, ty))
-
-            h1 = plt.subplot(1, 3, 1)
-            self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(0, intensity_max)
+            fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
+            plt.subplot(1, 3, 1)
+            id_fig, ax, IDimage = draw2D_xz(intensity1, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$I_x$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
+            draw_edges(self, plt,  draw_borders,  **kwargs)
+            IDimage.set_clim(0, intensity_max)
 
-            h2 = plt.subplot(1, 3, 2)
-            self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+
+            plt.subplot(1, 3, 2)
+            id_fig, ax, IDimage = draw2D_xz(intensity2, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$I_y$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(0, intensity_max)
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(0, intensity_max)
 
-            h3 = plt.subplot(1, 3, 3)
-            self.__draw1__(intensity3, color_intensity, "", only_image=only_image)
+            plt.subplot(1, 3, 3)
+            id_fig, ax, IDimage = draw2D_xz(intensity3, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$I_z$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(0, intensity_max)
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(0, intensity_max)
 
-            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-            plt.tight_layout()
-
-            return h1, h2, h3
+            cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+
+    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_phases__(
         self,
         logarithm,
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
-        percentage_intensity: float | None = None,
-        only_image: bool = False,
-        color_intensity=CONF_DRAWING["color_phase"],
-        draw_z: bool = True, **kwargs
+        scale = 'scaled',
+        only_image=False,
+        percentage_intensity=None,
+        cmap=CONF_DRAWING["color_phase"],
+        draw_z = True, **kwargs
     ):
         """internal funcion: draws phase
 
@@ -1250,91 +1326,185 @@ class Vector_field_XZ(Scalar_mask_XZ):
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (bool): If True, max(intensity)=1
             cut_value (float): If not None, cuts the maximum intensity to this value
-            percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
-            only_image: todo
-            color_intensity: todo
-            draw_z: todo
         """
 
         tx, ty = rcParams["figure.figsize"]
 
-        intensity1 = np.abs(self.Ex) ** 2
-        intensity1 = normalize_draw(intensity1, logarithm, normalize, cut_value)
+        phase_x = np.angle(self.Ex)/degrees
+        phase_y = np.angle(self.Ey)/degrees
+        phase_z = np.angle(self.Ez)/degrees
 
-        intensity2 = np.abs(self.Ey) ** 2
-        intensity2 = normalize_draw(intensity2, logarithm, normalize, cut_value)
-
-        intensity3 = np.abs(self.Ez) ** 2
-        intensity3 = normalize_draw(intensity3, logarithm, normalize, cut_value)
+        intensity1 = np.abs(self.Ex)**2
+        intensity2 = np.abs(self.Ex)**2
+        intensity3 = np.abs(self.Ez)**2
 
         intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
+
+
+        z0 = self.z
+        x0 = self.x
 
         if percentage_intensity is None:
             percentage_intensity = percentage_intensity_config
 
+        phase_x[intensity1 < percentage_intensity * (intensity1.max())] = 0
+        phase_y[intensity2 < percentage_intensity * (intensity2.max())] = 0
+        phase_z[intensity3 < percentage_intensity * (intensity3.max())] = 0
+
+
         if draw_z is False:
-            plt.figure(figsize=(1.25 * tx, ty))
-
-            h1 = plt.subplot(1, 2, 1)
-            phase = np.angle(self.Ex)
-            intensity = np.abs(self.Ex) ** 2
-            phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            fig, axs = plt.subplots(nrows=1, ncols=2, sharex=True,  figsize=(1.5 * tx, 1 * ty))
+            plt.subplot(1, 2, 1)
+            id_fig, ax, IDimage = draw2D_xz(phase_x, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$I_x$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(-180, 180)
+            draw_edges(self, plt,  draw_borders,  **kwargs)
+            IDimage.set_clim(-180,180)
 
-            h2 = plt.subplot(1, 2, 2)
-            phase = np.angle(self.Ey)
-            intensity = np.abs(self.Ey) ** 2
-            phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.subplot(1, 2, 2)
+            id_fig, ax, IDimage = draw2D_xz(phase_y, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$I_y$', cmap=cmap)
             plt.axis(scale)
-            plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(-180, 180)
-            plt.tight_layout()
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(-180,180)
 
-            return h1, h2
+
+            cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+
         else:
-            plt.figure(figsize=(2 * tx, ty))
-
-            h1 = plt.subplot(1, 3, 1)
-            phase = np.angle(self.Ex)
-            intensity = np.abs(self.Ex) ** 2
-            phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
+            plt.subplot(1, 3, 1)
+            id_fig, ax, IDimage = draw2D_xz(phase_x, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$I_x$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(-180, 180)
+            draw_edges(self, plt,  draw_borders,  **kwargs)
+            IDimage.set_clim(-180,180)
 
-            h2 = plt.subplot(1, 3, 2)
-            phase = np.angle(self.Ey)
-            intensity = np.abs(self.Ey) ** 2
-            phase[intensity < percentage_intensity * (intensity.max())] = 0
 
-            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.subplot(1, 3, 2)
+            id_fig, ax, IDimage = draw2D_xz(phase_y, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$I_y$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(-180, 180)
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(-180,180)
 
-            h3 = plt.subplot(1, 3, 3)
-            phase = np.angle(self.Ez)
-            intensity = np.abs(self.Ez) ** 2
-            phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-            self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.subplot(1, 3, 3)
+            id_fig, ax, IDimage = draw2D_xz(phase_z, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$I_z$', cmap=cmap)
             plt.axis(scale)
-            draw_edges(self, plt, draw_borders, **kwargs)
-            plt.clim(-180, 180)
+            draw_edges(self, plt,  draw_borders, **kwargs)
+            IDimage.set_clim(-180,180)
 
-            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-            plt.tight_layout()
+            cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
-            return h1, h2, h3
+
+
+
+
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def __draw_phases__(
+    #     self,
+    #     logarithm,
+    #     normalize,
+    #     cut_value,
+    #     draw_borders=False,
+    #     scale = 'scaled',
+    #     percentage_intensity: float | None = None,
+    #     only_image: bool = False,
+    #     color_intensity=CONF_DRAWING["color_phase"],
+    #     draw_z: bool = True, **kwargs
+    # ):
+    #     """internal funcion: draws phase
+
+    #     Args:
+    #         logarithm (float): If >0, intensity is scaled in logarithm
+    #         normalize (bool): If True, max(intensity)=1
+    #         cut_value (float): If not None, cuts the maximum intensity to this value
+    #         percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
+    #         only_image: todo
+    #         color_intensity: todo
+    #         draw_z: todo
+    #     """
+
+    #     tx, ty = rcParams["figure.figsize"]
+
+    #     intensity1 = np.abs(self.Ex) ** 2
+    #     intensity1 = normalize_draw(intensity1, logarithm, normalize, cut_value)
+
+    #     intensity2 = np.abs(self.Ey) ** 2
+    #     intensity2 = normalize_draw(intensity2, logarithm, normalize, cut_value)
+
+    #     intensity3 = np.abs(self.Ez) ** 2
+    #     intensity3 = normalize_draw(intensity3, logarithm, normalize, cut_value)
+
+    #     intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
+
+    #     z0 = self.z
+    #     x0 = self.x
+
+    #     if percentage_intensity is None:
+    #         percentage_intensity = percentage_intensity_config
+
+    #     if draw_z is False:
+    #         plt.figure(figsize=(1.25 * tx, ty))
+
+    #         h1 = plt.subplot(1, 2, 1)
+    #         phase = np.angle(self.Ex)
+    #         intensity = np.abs(self.Ex) ** 2
+    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
+
+    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(-180, 180)
+
+    #         h2 = plt.subplot(1, 2, 2)
+    #         phase = np.angle(self.Ey)
+    #         intensity = np.abs(self.Ey) ** 2
+    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
+
+    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(-180, 180)
+    #         plt.tight_layout()
+
+    #         return h1, h2
+    #     else:
+    #         plt.figure(figsize=(2 * tx, ty))
+
+    #         h1 = plt.subplot(1, 3, 1)
+    #         phase = np.angle(self.Ex)
+    #         intensity = np.abs(self.Ex) ** 2
+    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
+
+    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(-180, 180)
+
+    #         h2 = plt.subplot(1, 3, 2)
+    #         phase = np.angle(self.Ey)
+    #         intensity = np.abs(self.Ey) ** 2
+    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
+
+    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(-180, 180)
+
+    #         h3 = plt.subplot(1, 3, 3)
+    #         phase = np.angle(self.Ez)
+    #         intensity = np.abs(self.Ez) ** 2
+    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
+
+    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+    #         plt.axis(scale)
+    #         draw_edges(self, plt, draw_borders, **kwargs)
+    #         plt.clim(-180, 180)
+
+    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
+    #         plt.tight_layout()
+
+    #         return h1, h2, h3
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
@@ -1344,7 +1514,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         percentage_intensity: float | None = None,
         color_intensity=CONF_DRAWING["color_intensity"],
         color_phase=CONF_DRAWING["color_phase"],
@@ -1416,7 +1586,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
         draw_z = True, **kwargs
@@ -1529,7 +1699,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_intensity"],
         edge=None,
         draw_z = True, **kwargs
@@ -1640,7 +1810,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
         **kwargs
@@ -1695,7 +1865,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
         **kwargs
@@ -1750,7 +1920,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_intensity"],
         edge=None,
         **kwargs
@@ -1785,7 +1955,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_intensity"],
         edge=None,
         **kwargs
@@ -1820,7 +1990,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         cmap=CONF_DRAWING["color_intensity"],
         edge=None,
         mode='modulus',
@@ -1856,7 +2026,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         normalize,
         cut_value,
         draw_borders=False,
-        scale = '',
+        scale = 'scaled',
         color_intensity=CONF_DRAWING["color_intensity"],
         color_stokes=CONF_DRAWING["color_stokes"], **kwargs
     ):
@@ -1872,26 +2042,26 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = S0.max()
 
-        plt.figure(figsize=(2.5 * tx, 1 * ty))
-        h1 = plt.subplot(1,4,1)
+        plt.figure(figsize=(1.5 * tx, 1.5 * ty))
+        h1 = plt.subplot(2,2,1)
         self.__draw1__(S0, color_intensity, "$S_0$")
         plt.axis(scale)
         draw_edges(self, plt,  draw_borders, color='w.')
         plt.clim(0, intensity_max)
 
-        h2 = plt.subplot(1,4,2)
+        h2 = plt.subplot(2,2,2)
         self.__draw1__(S1, color_stokes, "$S_1$")
         plt.axis(scale)
         draw_edges(self, plt,  draw_borders, color='k.')
         plt.clim(-intensity_max, intensity_max)
 
-        h3 = plt.subplot(1,4,3)
+        h3 = plt.subplot(2,2,3)
         self.__draw1__(S2, color_stokes, "$S_2$")
         plt.axis(scale)
         draw_edges(self, plt,  draw_borders, color='k.')
         plt.clim(-intensity_max, intensity_max)
 
-        h4 = plt.subplot(1,4,4)
+        h4 = plt.subplot(2,2,4)
         self.__draw1__(S3, color_stokes, "$S_3$")
         plt.axis(scale)
         draw_edges(self, plt,  draw_borders, color='k.')
@@ -1950,14 +2120,17 @@ class Vector_field_XZ(Scalar_mask_XZ):
         logarithm: float = 0.,
         normalize: bool = False,
         cut_value="",
+        scale='scaled',
+        draw_borders=False,
         num_ellipses=(21, 21),
         amplification=0.75,
         color_line="w",
         line_width=1,
         draw_arrow=True,
-        head_width=2,
+        head_width=.5,
         ax=False,
-        color_intensity=CONF_DRAWING["color_intensity"], **kwargs
+        color_intensity=CONF_DRAWING["color_intensity"], 
+        **kwargs
     ):
         """
 
@@ -2013,7 +2186,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         angles = np.linspace(0, 360*degrees, 64)
 
         if ax is False:
-            self.draw("intensity", logarithm=logarithm, color_intensity=color_intensity)
+            self.draw("intensity", logarithm=logarithm, color_intensity=color_intensity, scale=scale)
             ax = plt.gca()
 
         for i, xi in enumerate(ix_centers):
@@ -2031,10 +2204,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
                     ax.plot(Ey, Ex, color_line, lw=line_width)
                     if draw_arrow:
                         ax.arrow(
-                            Ex[0],
                             Ey[0],
-                            Ex[0] - Ex[1],
+                            Ex[0],
                             Ey[0] - Ey[1],
+                            Ex[0] - Ex[1],
                             width=0,
                             head_width=head_width,
                             fc=color_line,
