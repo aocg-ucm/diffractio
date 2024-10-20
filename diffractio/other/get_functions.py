@@ -1,6 +1,4 @@
-
 import os
-
 
 def list_python_files(directory):
     try:
@@ -13,8 +11,6 @@ directory = '/home/luismiguel/bitbucket/diffractio/diffractio/'
 python_files = list_python_files(directory)
 
 
-
- 
 def list_classes_and_functions(file_path):
     """
     list_classes_and_functions _summary_
@@ -27,10 +23,10 @@ def list_classes_and_functions(file_path):
     Returns:
         _type_: _description_
     """
-    
+
     classes = []
     functions = []
-    
+
     with open(file_path, 'r') as file:
         file_content = file.read()
 
@@ -42,7 +38,6 @@ def list_classes_and_functions(file_path):
         elif line.strip().startswith('def '):
             function_name = line.split()[1].split('(')[0]
             functions.append(function_name)
-    
     # Initialize class_functions after extracting class names
     class_functions = {class_name: [] for class_name in classes}
     standalone_functions = []
@@ -59,20 +54,6 @@ def list_classes_and_functions(file_path):
                 standalone_functions.append(function_name)
 
     return classes, standalone_functions, class_functions
-    
-    
-
-
-
-# file = 'scalar_masks_XY.py'
-
-# file_path = os.path.join(directory, file)
-# classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
-
- 
-
-
-
 
 def print_data_from_file(file_path) -> None:
     classes, standalone_functions, class_functions = list_classes_and_functions(file_path)
@@ -84,8 +65,6 @@ def print_data_from_file(file_path) -> None:
     print("Standalone functions:")
     for function in standalone_functions:
         print(function)
-
-
 
 
 num_functions = 0
@@ -114,12 +93,10 @@ with open('docs/functions.rst', 'w') as rst_file:
         for function in sorted(standalone_functions):
             rst_file.write(f"  - {function}\n\n")
         rst_file.write("\n\n\n\n")
-        
-        
+          
     rst_file.write(f"Summary\n")
     rst_file.write(f"============================\n\n")
 
-    
     ## Number of lines in each file
 
     for file in python_files:
@@ -131,20 +108,18 @@ with open('docs/functions.rst', 'w') as rst_file:
             lines = f.readlines()
             num_lines = len(lines)
             rst_file.write(f"  Number of lines: {num_lines}\n\n")
-            
+
         if len(classes)>0:
             rst_file.write(f"  Number of classes: {len(classes)}\n\n")
             for cl in classes:
                 if len(class_functions[cl]) > 0:
                     rst_file.write(f"    Class: {cl}, Number of functions: {len(class_functions[cl])}\n\n")
-            
+
 
     total_lines = sum(len(open(os.path.join(directory, file), 'r').readlines()) for file in python_files)
-    
-    
+
     rst_file.write(f"Total\n")
     rst_file.write(f"============================\n\n")
     rst_file.write(f" Total number of Python files: {len(python_files)}\n\n")
     rst_file.write(f" Total number of functions: {num_functions}\n\n")
     rst_file.write(f" Total number of lines across all files: {total_lines}\n\n")
-    

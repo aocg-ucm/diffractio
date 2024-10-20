@@ -2,16 +2,16 @@ Python files
 ================================
 
  - conf.py: 164 lines
- - config.py: 52 lines
+ - config.py: 56 lines
  - count_number_lines.py: 69 lines
- - get_functions.py: 162 lines
+ - get_functions.py: 150 lines
  - scalar_fields_X.py: 1723 lines
- - scalar_fields_XY.py: 2786 lines
- - scalar_fields_XYZ.py: 1561 lines
+ - scalar_fields_XY.py: 2784 lines
+ - scalar_fields_XYZ.py: 1562 lines
  - scalar_fields_XZ.py: 2126 lines
  - scalar_fields_Z.py: 472 lines
  - scalar_masks_X.py: 978 lines
- - scalar_masks_XY.py: 2627 lines
+ - scalar_masks_XY.py: 2668 lines
  - scalar_masks_XYZ.py: 261 lines
  - scalar_masks_XZ.py: 1626 lines
  - scalar_sources_X.py: 222 lines
@@ -43,11 +43,11 @@ Python files
  - utils_tests.py: 205 lines
  - utils_typing.py: 58 lines
  - vector_fields_X.py: 806 lines
- - vector_fields_XY.py: 1996 lines
- - vector_fields_XYZ.py: 690 lines
- - vector_fields_XZ.py: 1892 lines
+ - vector_fields_XY.py: 2187 lines
+ - vector_fields_XYZ.py: 771 lines
+ - vector_fields_XZ.py: 1937 lines
  - vector_fields_Z.py: 774 lines
- - vector_masks_XY.py: 652 lines
- - vector_sources_XY.py: 427 lines
+ - vector_masks_XY.py: 579 lines
+ - vector_sources_XY.py: 422 lines
 
-Total number of lines in Python files: 33723
+Total number of lines in Python files: 33994

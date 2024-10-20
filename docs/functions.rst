@@ -545,7 +545,7 @@ __________________________________________________
 scalar_masks_XY.py
 __________________________________________________
 
- Class: **Scalar_mask_XY**. (75 functions)
+ Class: **Scalar_mask_XY**. (76 functions)
     - __init__
 
     - angular_aperture
@@ -681,6 +681,8 @@ __________________________________________________
     - square
 
     - square_circle
+
+    - squares_nxm
 
     - star
 
@@ -1220,7 +1222,7 @@ __________________________________________________
 vector_fields_XY.py
 __________________________________________________
 
- Class: **Vector_field_XY**. (33 functions)
+ Class: **Vector_field_XY**. (35 functions)
     - IVFFT
 
     - RS
@@ -1234,6 +1236,8 @@ __________________________________________________
     - __add__
 
     - __draw1__
+
+    - __draw_EH__
 
     - __draw_ellipses__
 
@@ -1267,6 +1271,8 @@ __________________________________________________
 
     - draw
 
+    - draw2D_XY
+
     - duplicate
 
     - get
@@ -1294,7 +1300,7 @@ __________________________________________________
 vector_fields_XYZ.py
 __________________________________________________
 
- Class: **Vector_field_XYZ**. (13 functions)
+ Class: **Vector_field_XYZ**. (15 functions)
     - __add__
 
     - __init__
@@ -1307,6 +1313,8 @@ __________________________________________________
 
     - get
 
+    - incident_field
+
     - intensity
 
     - load_data
@@ -1316,6 +1324,8 @@ __________________________________________________
     - polarization_ellipse
 
     - polarization_states
+
+    - refractive_index_from_scalarXYZ
 
     - save_data
 
@@ -1345,7 +1355,7 @@ __________________________________________________
 vector_fields_XZ.py
 __________________________________________________
 
- Class: **Vector_field_XZ**. (39 functions)
+ Class: **Vector_field_XZ**. (38 functions)
     - FP_PWD_kernel_simple
 
     - FP_WPM
@@ -1392,15 +1402,13 @@ __________________________________________________
 
     - draw2D_xz
 
-    - draw_field
-
     - duplicate
 
     - energy_density
 
     - final_field
 
-    - format_drawing
+    - draw_edges
 
     - get
 
@@ -1558,7 +1566,7 @@ Summary
 
 **vector_sources_XY.py**
 
-  Number of lines: 427
+  Number of lines: 422
 
   Number of classes: 1
 
@@ -1567,16 +1575,16 @@ Summary
 
 **scalar_masks_XY.py**
 
-  Number of lines: 2627
+  Number of lines: 2668
 
   Number of classes: 1
 
-    Class: Scalar_mask_XY, Number of functions: 75
+    Class: Scalar_mask_XY, Number of functions: 76
 
 
 **scalar_fields_XYZ.py**
 
-  Number of lines: 1561
+  Number of lines: 1562
 
   Number of classes: 3
 
@@ -1659,7 +1667,7 @@ Summary
 
 **config.py**
 
-  Number of lines: 52
+  Number of lines: 56
 
 
 **utils_multiprocessing.py**
@@ -1687,11 +1695,11 @@ Summary
 
 **vector_fields_XY.py**
 
-  Number of lines: 1996
+  Number of lines: 2187
 
   Number of classes: 1
 
-    Class: Vector_field_XY, Number of functions: 33
+    Class: Vector_field_XY, Number of functions: 35
 
 
 **utils_dxf.py**
@@ -1701,11 +1709,11 @@ Summary
 
 **vector_fields_XZ.py**
 
-  Number of lines: 1892
+  Number of lines: 1937
 
   Number of classes: 1
 
-    Class: Vector_field_XZ, Number of functions: 39
+    Class: Vector_field_XZ, Number of functions: 38
 
 
 **utils_tests.py**
@@ -1722,7 +1730,7 @@ Summary
 
 **scalar_fields_XY.py**
 
-  Number of lines: 2786
+  Number of lines: 2784
 
   Number of classes: 1
 
@@ -1740,11 +1748,11 @@ Summary
 
 **vector_fields_XYZ.py**
 
-  Number of lines: 690
+  Number of lines: 771
 
   Number of classes: 4
 
-    Class: Vector_field_XYZ, Number of functions: 13
+    Class: Vector_field_XYZ, Number of functions: 15
 
 
 **scalar_masks_XZ.py**
@@ -1758,7 +1766,7 @@ Summary
 
 **vector_masks_XY.py**
 
-  Number of lines: 652
+  Number of lines: 579
 
   Number of classes: 1
 
@@ -1783,7 +1791,7 @@ Total
 
  Total number of Python files: 29
 
- Total number of functions: 648
+ Total number of functions: 652
 
- Total number of lines across all files: 26598
+ Total number of lines across all files: 26881
 

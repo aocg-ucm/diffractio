@@ -55,6 +55,8 @@ The magnitude is related to microns: `micron = 1.`
 
 from matplotlib import rcParams
 import copy
+
+from numpy import gradient
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
 from py_pol.jones_matrix import Jones_matrix
@@ -64,7 +66,7 @@ from .__init__ import degrees, eps, mm, np, plt, um
 from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options
 from .utils_typing import NDArrayFloat
 from .utils_common import load_data_common, save_data_common, get_date, check_none
-from .utils_drawing import normalize_draw, reduce_matrix_size
+from .utils_drawing import normalize_draw, reduce_matrix_size, draw_edges
 from .utils_math import nearest
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
@@ -100,6 +102,9 @@ class Vector_field_XY():
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
         self.Ez = np.zeros_like(self.X, dtype=complex)
+
+        self.n = None
+        self.borders = None
 
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Vector_field_XY'
@@ -397,6 +402,24 @@ class Vector_field_XY():
             return E_new
 
 
+    def refractive_index_from_scalarXY(self, u_xy: Scalar_mask_XY):
+        """
+        refractive_index_from_scalarXY. Gets the refractive index from a Scalar field and passes to a vector field.
+        
+        Obviously, the refractive index is isotropic.
+
+        Args:
+            self (Vector_field_XY): Vector_field_XY
+            u_xy (Scalar_mask_XY): Scalar_mask_XY
+        """
+        self.n = u_xy.n
+        
+        edges = self.surface_detection( min_incr = 0.1, reduce_matrix = 'standard', has_draw = False)
+
+        self.borders = edges           
+        return edges
+    
+    
     @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
@@ -1192,6 +1215,39 @@ class Vector_field_XY():
             field.Ez = Ez_new
             return field
 
+    @check_none('x','y','n')
+    def surface_detection(self,
+                          mode: int = 1,
+                          min_incr: float = 0.1,
+                          has_draw: bool = False):# -> tuple[ndarray[Any, dtype[float[Any]]] | Any, ndarray[A...:
+        """detect edges of variation in refractive index.
+
+        Args:
+            mode (int): 1 or 2, algorithms for surface detection: 1-gradient, 2-diff
+            min_incr (float): minimum incremental variation to detect
+            has_draw (bool): If True draw.
+        """
+        y_new = self.y
+        x_new = self.x
+        n_new = self.n
+
+        diff1 = gradient(np.abs(n_new), axis=0)
+        diff2 = gradient(np.abs(n_new), axis=1)
+
+        # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
+        t = np.abs(diff1) + np.abs(diff2)
+
+        ix, iy = (t > min_incr).nonzero()
+
+        self.borders = x_new[ix], y_new[iy]
+
+        if has_draw:
+            plt.figure()
+            extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
+            plt.imshow(t.transpose(), extent=extension, aspect='auto', alpha=0.5, cmap='gray')
+
+        return self.borders
+
 
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def draw(self,
@@ -1199,6 +1255,7 @@ class Vector_field_XY():
              logarithm: float = 0,
              normalize: bool = False,
              cut_value: float | None = None,
+             draw_borders: bool = True,
              num_ellipses: tuple[int, int] = (11, 11),
              amplification: float = 0.5,
              filename: str = '',
@@ -1216,6 +1273,7 @@ class Vector_field_XY():
             amplification (float): amplification of ellipses
             filename (str): if not '' stores drawing in file,
         """
+        self.surface_detection()
 
         draw_borders = 0
         if draw is True:
@@ -1237,6 +1295,9 @@ class Vector_field_XY():
             elif kind == 'EH':
                 id_fig = self.__draw_EH__(logarithm, normalize, cut_value, **kwargs)
 
+            elif kind == 'E2H2':
+                id_fig = self.__draw_E2H2__(logarithm, normalize, cut_value, **kwargs)
+
             elif kind == 'fields':
                 id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
                                               **kwargs)
@@ -1253,6 +1314,11 @@ class Vector_field_XY():
                                                 cut_value, num_ellipses,
                                                 amplification, **kwargs)
 
+            elif kind == 'ellipses':
+                id_fig = self.__draw_ellipses__(logarithm, normalize,
+                                                cut_value, num_ellipses,
+                                                amplification, **kwargs)
+                
             else:
                 print("not good kind parameter in vector_fields_XY.draw()")
                 id_fig = None
@@ -1271,8 +1337,10 @@ class Vector_field_XY():
                            logarithm: float,
                            normalize: bool,
                            cut_value: float,
+                           draw_borders: bool=False,
                            only_image: bool = False,
-                           color_intensity: str = CONF_DRAWING['color_intensity']):
+                           color_intensity: str = CONF_DRAWING['color_intensity'],
+                           **kwargs):
         """Draws the intensity
 
         Args:
@@ -1291,6 +1359,7 @@ class Vector_field_XY():
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
         self.__draw1__(intensity, color_intensity, "", only_image=only_image)
+        draw_edges(self, plt, draw_borders, **kwargs)
         plt.subplots_adjust(left=0,
                             bottom=0,
                             right=1,
@@ -1302,7 +1371,8 @@ class Vector_field_XY():
 
 
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def __draw_phases__(self, color_phase: str = CONF_DRAWING['color_phase']):
+    def __draw_phases__(self, color_phase: str = CONF_DRAWING['color_phase'], draw_borders: bool=False,
+                           **kwargs):
         """internal funcion: draws intensity X,Y.
 
         Args:
@@ -1413,7 +1483,9 @@ class Vector_field_XY():
                              logarithm: float,
                              normalize: bool,
                              cut_value: float,
-                             color_intensity: str = CONF_DRAWING['color_intensity']):
+                             draw_borders: bool=False,
+                             color_intensity: str = CONF_DRAWING['color_intensity'],
+                             **kwargs):
         """internal funcion: draws phase X,Y, Z.
 
         Args:
@@ -1511,7 +1583,9 @@ class Vector_field_XY():
             logarithm: float,
             normalize: bool,
             cut_value: float,
-            color_intensity: str = CONF_DRAWING['color_intensity']):
+            draw_borders: bool=False,
+            color_intensity: str = CONF_DRAWING['color_intensity'],
+            **kwargs):
         """internal funcion: draws intensity X,Y.
 
         Args:
@@ -1562,8 +1636,10 @@ class Vector_field_XY():
                         logarithm: float,
                         normalize: bool,
                         cut_value: float,
+                        draw_borders: bool=False,
                         color_intensity: str = CONF_DRAWING['color_intensity'],
-                        color_phase: str = CONF_DRAWING['color_phase']):
+                        color_phase: str = CONF_DRAWING['color_phase'],
+                        **kwargs):
         """__internal__: draws amplitude and phase in 2x2 drawing
 
         Args:
@@ -1695,13 +1771,13 @@ class Vector_field_XY():
             return h1, h2, h3, h4, h5, h6
 
 
-
     @check_none('x','y','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
     def __draw_EH__(
         self,
         logarithm,
         normalize,
         cut_value,
+        draw_borders: bool=False,
         scale = 'scaled',
         cmap=CONF_DRAWING["color_amplitude_sign"],
         edge=None,
@@ -1751,19 +1827,19 @@ class Vector_field_XY():
             id_fig, ax, IDimage = draw2D_XY(
                 E_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$_x$')
             plt.axis(scale)
-            #format_drawing(self, axs[0, 0], scale, draw_borders, color='k.')
+            draw_edges(self, axs[0, 0], draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
 
             id_fig, ax, IDimage = draw2D_XY(
                 E_y, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'E$_y$')
             plt.axis(scale)
-            #format_drawing(self, axs[1, 0], scale,  draw_borders, color='k.')
+            draw_edges(self, axs[0, 1], draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
 
             id_fig, ax, IDimage = draw2D_XY(
                 E_z, self.x, self.y, ax=axs[0, 2], xlabel="", ylabel="", color=cmap, title=r'E$_z$')
             plt.axis(scale)
-            #format_drawing(self, axs[2, 0], scale,  draw_borders, color='k.')
+            draw_edges(self, axs[0, 2], draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
             # ax.colorbar()
 
@@ -1771,20 +1847,20 @@ class Vector_field_XY():
             id_fig, ax, IDimage = draw2D_XY(
                 H_x, self.x, self.y, ax=axs[1, 0], xlabel="x $(\mu m)$", ylabel="y $(\mu m)$", color=cmap, title=r'H$_x$')
             plt.axis(scale)
-            #format_drawing(self, axs[0, 1], scale,  draw_borders, color='k.')
+            draw_edges(self, axs[1, 0], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
 
             id_fig, ax, IDimage = draw2D_XY(
                 H_y, self.x, self.y, ax=axs[1, 1], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
             plt.axis(scale)
-            #format_drawing(self, axs[1, 1], scale,  draw_borders, color='k.')
+            draw_edges(self, axs[1, 1], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
 
             id_fig, ax, IDimage = draw2D_XY(
                 H_z, self.x, self.y, ax=axs[1,2], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$_z$')
             # ax.colorbar()
             plt.axis(scale)
-            #format_drawing(self, axs[2, 1], scale,  draw_borders, color='k.')
+            draw_edges(self, axs[1,2], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
 
         
@@ -1796,22 +1872,148 @@ class Vector_field_XY():
 
             id_fig, ax, IDimage = draw2D_XY(
                 E_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$_x$')
-            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            draw_edges(self, axs[0,0], draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
             id_fig, ax, IDimage = draw2D_XY(
                 E_y, self.x, self.y, ax=axs[0, 1],  xlabel="x $(\mu m)$", ylabel="y $ (\mu m)$", color=cmap, title=r'E$_y$')
-            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            draw_edges(self, axs[0,1], draw_borders, **kwargs)
             IDimage.set_clim(-E_max,E_max)
 
 
             id_fig, ax, IDimage = draw2D_XY(
                 H_x, self.x, self.y, ax=axs[1, 0], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
-            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            draw_edges(self, axs[1,0], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
             id_fig, ax, IDimage = draw2D_XY(
                 H_y, self.x, self.y, ax=axs[1, 1],  xlabel="x $ (\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
-            #format_drawing(self, plt, scale,  draw_borders, color='k.')
+            draw_edges(self, axs[1,1], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
+
+        fig.subplots_adjust(right=1.25)
+        cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+        cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+        plt.tight_layout()
+            
+        return self
+
+
+
+    @check_none('x','y','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    def __draw_E2H2__(
+        self,
+        logarithm,
+        normalize,
+        cut_value,
+        draw_borders: bool=False,
+        scale = 'scaled',
+        cmap=CONF_DRAWING["color_intensity"],
+        edge=None,
+        draw_z = True,
+        **kwargs
+    ):
+        """__internal__: draws amplitude and phase in 2x2 drawing
+
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
+            normalize (bool): If True, max(intensity)=1
+            title (str): title of figure
+            cut_value (float): If not None, cuts the maximum intensity to this value
+
+        """
+
+        E2_x = np.abs(self.Ex.transpose())**2
+        E2_x = normalize_draw(E2_x, logarithm, normalize, cut_value)
+
+        E2_y = np.abs(self.Ey.transpose())**2
+        E2_y = normalize_draw(E2_y, logarithm, normalize, cut_value)
+
+        E2_z = np.abs(self.Ez.transpose())**2
+        E2_z = normalize_draw(E2_z, logarithm, normalize, cut_value)
+
+        H2_x = np.abs(self.Hx.transpose())**2
+        H2_x = normalize_draw(H2_x, logarithm, normalize, cut_value)
+
+        H2_y = np.abs(self.Hy.transpose())**2
+        H2_y = normalize_draw(H2_y, logarithm, normalize, cut_value)
+
+        H2_z = np.abs(self.Hz.transpose())**2
+        H2_z = normalize_draw(H2_z, logarithm, normalize, cut_value)
+
+        tx, ty = rcParams["figure.figsize"]
+
+        E2_max = np.max((E2_x.max(), E2_y.max(), E2_z.max()))
+        H2_max = np.max((H2_x.max(), H2_y.max(), H2_z.max()))
+
+        if draw_z is True:
+
+            
+            fig, axs = plt.subplots(
+                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(1.5 * tx, 1.5 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E2_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$^2_x$')
+            plt.axis(scale)
+            #draw_edges(self, axs[0, 0], draw_borders, color='k.')
+            IDimage.set_clim(0,E2_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E2_y, self.x, self.y, ax=axs[0, 1], xlabel="", ylabel="", color=cmap, title=r'E$^2_y$')
+            plt.axis(scale)
+            #draw_edges(self, axs[1, 0], draw_borders, color='k.')
+            IDimage.set_clim(0,E2_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E2_z, self.x, self.y, ax=axs[0, 2], xlabel="", ylabel="", color=cmap, title=r'E$^2_z$')
+            plt.axis(scale)
+            #draw_edges(self, axs[2, 0], draw_borders, color='k.')
+            IDimage.set_clim(0,E2_max)
+            # ax.colorbar()
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H2_x, self.x, self.y, ax=axs[1, 0], xlabel="x $(\mu m)$", ylabel="y $(\mu m)$", color=cmap, title=r'H$^2_x$')
+            plt.axis(scale)
+            #draw_edges(self, axs[0, 1], draw_borders, color='k.')
+            IDimage.set_clim(0,H2_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H2_y, self.x, self.y, ax=axs[1, 1], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$^2_y$')
+            plt.axis(scale)
+            #draw_edges(self, axs[1, 1], draw_borders, color='k.')
+            IDimage.set_clim(0,H2_max)
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H2_z, self.x, self.y, ax=axs[1,2], xlabel="x $(\mu m)$", ylabel="", color=cmap, title=r'H$^2_z$')
+            # ax.colorbar()
+            plt.axis(scale)
+            #draw_edges(self, axs[2, 1], draw_borders, color='k.')
+            IDimage.set_clim(0,H2_max)
+
+        
+            plt.tight_layout()
+        else: 
+            fig, axs = plt.subplots(
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(1 * tx, 1.5 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_XY(
+                E2_x, self.x, self.y, ax=axs[0, 0], xlabel="", ylabel="y $(\mu m)$", color=cmap, title=r'E$_x$')
+            #draw_edges(self, plt,  draw_borders, color='k.')
+            IDimage.set_clim(0,E2_max)
+            id_fig, ax, IDimage = draw2D_XY(
+                E2_y, self.x, self.y, ax=axs[0, 1],  xlabel="x $(\mu m)$", ylabel="y $ (\mu m)$", color=cmap, title=r'E$_y$')
+            #draw_edges(self, plt,  draw_borders, color='k.')
+            IDimage.set_clim(0,E2_max)
+
+
+            id_fig, ax, IDimage = draw2D_XY(
+                H2_x, self.x, self.y, ax=axs[1, 0], xlabel="", ylabel="", color=cmap, title=r'H$_x$')
+            #draw_edges(self, plt,  draw_borders, color='k.')
+            IDimage.set_clim(0,H2_max)
+            id_fig, ax, IDimage = draw2D_XY(
+                H2_y, self.x, self.y, ax=axs[1, 1],  xlabel="x $ (\mu m)$", ylabel="", color=cmap, title=r'H$_y$')
+            #draw_edges(self, plt,  draw_borders, color='k.')
+            IDimage.set_clim(0,H2_max)
 
         fig.subplots_adjust(right=1.25)
         cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
@@ -1827,6 +2029,7 @@ class Vector_field_XY():
                         logarithm: float,
                         normalize: bool,
                         cut_value: float,
+                        draw_borders: bool=False,
                         color_intensity: str = CONF_DRAWING['color_intensity'],
                         color_stokes: str = CONF_DRAWING['color_stokes']):
         """__internal__: computes and draws CI, CQ, CU, CV parameters
@@ -1873,7 +2076,8 @@ class Vector_field_XY():
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_param_ellipse__(self,
                                color_intensity: str = CONF_DRAWING['color_intensity'],
-                               color_phase: str = CONF_DRAWING['color_phase']):
+                               color_phase: str = CONF_DRAWING['color_phase'],
+                               draw_borders: bool=False):
         """__internal__: computes and draws polariations ellipses
         """
         A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
@@ -1910,6 +2114,7 @@ class Vector_field_XY():
                           logarithm: float = 0.,
                           normalize: bool = False,
                           cut_value: float = '',
+                          draw_borders: bool=False,
                           num_ellipses: tuple[int, int] = (21, 21),
                           amplification: float = 0.75,
                           color_line: str = 'w',

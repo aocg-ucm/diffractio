@@ -44,7 +44,7 @@ Draw_XZ_Options = Literal['amplitude', 'intensity', 'phase', 'real']
 Draw_XY_Options = Literal['amplitude', 'intensity', 'phase', 'field', 'real_field', 'contour']
 Draw_XYZ_Options = Literal['intensity', 'refractive_index']
 Draw_Vector_X_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
-Draw_Vector_XY_Options = Literal['intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes', 'param_ellipse', 'ellipses']
+Draw_Vector_XY_Options = Literal['intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes', ' param_ellipse', 'ellipses']
 Draw_Vector_XZ_Options = Literal[ 'intensity', 'intensities', 'intensities_rz', 'phases', 'fields', 'stokes']
 Draw_pyvista_Options = Literal['volume', 'clip', 'slices', 'projections']
 Draw_interactive_Options = Literal['intensity', 'amplitude', 'phase']
@@ -52,5 +52,6 @@ Save_mask_Options = Literal['amplitude', 'phase', 'intensity']
 Options_add = Literal['source', 'mask', 'phases', 'no_overlap', 'distances']
 Options_squares_nxm = Literal['amplitude', 'intensity', 'gray_levels']
 video_isovalue_Options = Literal['intensity', 'refractive_index']
-
+vector_XZ_get_Options = Literal['fields', 'intensity', 'intensities', 'phases', 'poynting_vector', 'poynting_vector_averaged',  'poynting_total', 
+                        'energy_density', 'irradiance', 'stokes', 'params_ellipse']
 bool_raise_exception = True

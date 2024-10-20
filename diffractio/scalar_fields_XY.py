@@ -132,6 +132,10 @@ class Scalar_field_XY():
             self.X = None
             self.Y = None
             self.u = None
+        
+        self.n = None
+        self.borders = None
+            
         self.info = info
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Scalar_field_XY'
@@ -2187,7 +2191,40 @@ class Scalar_field_XY():
         """
         return normalize_field(self, kind, new_field)
 
+    @check_none('x','y','n')
+    def surface_detection(self,
+                          mode: int = 1,
+                          min_incr: float = 0.1,
+                          has_draw: bool = False):# -> tuple[ndarray[Any, dtype[float[Any]]] | Any, ndarray[A...:
+        """detect edges of variation in refractive index.
 
+        Args:
+            mode (int): 1 or 2, algorithms for surface detection: 1-gradient, 2-diff
+            min_incr (float): minimum incremental variation to detect
+            has_draw (bool): If True draw.
+        """
+        y_new = self.y
+        x_new = self.x
+        n_new = self.n
+
+        diff1 = gradient(np.abs(n_new), axis=0)
+        diff2 = gradient(np.abs(n_new), axis=1)
+
+        # if np.abs(diff1 > min_incr) or np.abs(diff2 > min_incr):
+        t = np.abs(diff1) + np.abs(diff2)
+
+        ix, iy = (t > min_incr).nonzero()
+
+        self.borders = x_new[ix], y_new[iy]
+
+        if has_draw:
+            plt.figure()
+            extension = [self.x[0], self.x[-1], self.y[0], self.y[-1]]
+            plt.imshow(t.transpose(), extent=extension, aspect='auto', alpha=0.5, cmap='gray')
+
+        return self.borders
+    
+    
     @check_none('x','y','u',raise_exception=bool_raise_exception)
     def get_RS_minimum_z(self, n: float = 1., quality: float = 1., verbose=True):
         """Determines the minimum available distance for RS algorithm. If higher or lower quality parameters is required you can add as a parameter

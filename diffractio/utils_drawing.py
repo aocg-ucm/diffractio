@@ -450,3 +450,30 @@ def reduce_matrix_size(reduce_matrix: str | tuple[int], x: NDArrayFloat,
             )
         )
     return image
+
+
+def draw_edges(vector_field, plt, draw_borders: bool=True, color: str='w.', ms: float=0.1) -> None:
+    """
+    draw_edges _summary_
+
+    _extended_summary_
+
+    Args:
+        vector_field (Vector_field_XY | Vector_field_XZ): _description_
+        plt (_type_): _description_
+        scale (str, optional): _description_. Defaults to 'scaled'.
+        draw_borders (bool, optional): _description_. Defaults to True.
+        color (str, optional): _description_. Defaults to 'w.'.
+        ms (float, optional): _description_. Defaults to 0.05.
+    """
+    min_incr: float = 0.0005
+    
+    # if scale != '':
+    #     plt.axis(scale)
+
+    if draw_borders is True:
+        vector_field.surface_detection(1, min_incr)
+        border0 = vector_field.borders[0]
+        border1 = vector_field.borders[1]
+
+        plt.plot(border1, border0, color, ms=ms)

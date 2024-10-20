@@ -1504,7 +1504,7 @@ __________________________________________________
 
     - final_field
 
-    - format_drawing
+    - draw_edges
 
     - get
 

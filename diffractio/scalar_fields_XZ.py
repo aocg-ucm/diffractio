@@ -144,6 +144,9 @@ class Scalar_field_XZ():
             self.u0 = None
             self.u = None
             self.n = None
+            
+        self.borders = None
+            
         self.info = info
         self.reduce_matrix = 'standard'  # 'None, 'standard', (5,5)
         self.type = 'Scalar_field_XZ'
@@ -314,7 +317,7 @@ class Scalar_field_XZ():
             self.n = n_rotate
             self.n[self.n < 1.2] = self.n_background
 
-        self.surface_detection(mode=1, min_incr=0.1, reduce_matrix='standard')
+        self.surface_detection(mode=1, min_incr=0.1, has_draw=False)
 
         if kind in ('field', 'all'):
             u_real_rotate = rotate_image(self.z, self.x, np.real(self.u),
@@ -1417,14 +1420,12 @@ class Scalar_field_XZ():
     def surface_detection(self,
                           mode: int = 1,
                           min_incr: float = 0.1,
-                          reduce_matrix: str = 'standard',
                           has_draw: bool = False):# -> tuple[ndarray[Any, dtype[float[Any]]] | Any, ndarray[A...:
         """detect edges of variation in refractive index.
 
         Args:
             mode (int): 1 or 2, algorithms for surface detection: 1-gradient, 2-diff
             min_incr (float): minimum incremental variation to detect
-            reduce_matrix (int, int) or False: when matrix is enormous, we can reduce it only for drawing purposes. If True, reduction factor
             has_draw (bool): If True draw.
         """
         n_new = self.n
@@ -1578,7 +1579,7 @@ class Scalar_field_XZ():
 
         if draw_borders is True:
             if edge_matrix is None:
-                self.surface_detection(1, min_incr, reduce_matrix=True)
+                self.surface_detection(1, min_incr, has_draw=False)
                 border0 = self.borders[0]
                 border1 = self.borders[1]
             else:
@@ -1595,7 +1596,7 @@ class Scalar_field_XZ():
     @check_none('x','z','n')
     def draw_refractive_index(self,
                               kind: Draw_refractive_index_Options = 'all',
-                              draw_borders: bool = True,
+                              draw_borders: bool = False,
                               title: str = '',
                               filename: str = '',
                               scale: str = '',
@@ -1686,7 +1687,7 @@ class Scalar_field_XZ():
 
         if draw_borders is True:
             if self.borders is None or edge_matrix is None:
-                self.surface_detection(1, min_incr, reduce_matrix)
+                self.surface_detection(1, min_incr, has_draw=False)
                 border0 = self.borders[0]
                 border1 = self.borders[1]
             if edge_matrix is not None:

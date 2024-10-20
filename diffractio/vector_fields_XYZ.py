@@ -54,14 +54,17 @@ The magnitude is related to microns: `micron = 1.`
 
 """
 import copy
-
+import time
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import load_data_common, save_data_common, get_date, check_none
-from .utils_math import nearest
-from .utils_optics import normalize_field
+from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_drawing import normalize_draw, reduce_matrix_size
+from .utils_math import get_k, nearest
+from .utils_optics import normalize_field, fresnel_equations_kx
+
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -72,6 +75,17 @@ from .vector_fields_XY import Vector_field_XY
 from .vector_masks_XY import Vector_mask_XY
 
 from py_pol.jones_vector import Jones_vector
+
+from py_pol.jones_vector import Jones_vector
+
+from numpy.lib.scimath import sqrt as csqrt
+from scipy.fftpack import fft, fftshift, ifft, ifftshift, fft2, ifft2
+
+from py_pol.jones_vector import Jones_vector
+
+from numpy.lib.scimath import sqrt as csqrt
+from scipy.fftpack import fft, fftshift, ifft, ifftshift, fft2, ifft2
+
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 
@@ -382,6 +396,133 @@ class Vector_field_XYZ():
         # self.borders = edges           
         # return edges
 
+
+    def FP_WPM(self, has_edges: bool = True, pow_edge: int = 80, matrix: bool = False, has_H=True, verbose: bool = False):
+        """
+        WPM Method. 'schmidt methodTrue is very fast, only needs discrete number of refractive indexes'
+
+
+        Args:
+            has_edges (bool): If True absorbing edges are used.
+            pow_edge (float): If has_edges, power of the supergaussian
+            matrix (bool): if True returns a matrix else
+            has_H (bool): If True, it returns magnetic field H.
+            verbose (bool): If True prints information
+
+        References:
+
+            1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+            2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+
+        """
+
+        k0 = 2 * np.pi / self.wavelength
+
+        x = self.x
+        y = self.y
+        z = self.z
+
+        dx = x[1] - x[0]
+        dy = y[1] - y[0]
+        dz = z[1] - z[0]
+
+        self.Ex[:,:,0] = self.Ex0
+        self.Ey[:,:,0] = self.Ey0
+
+        if has_H:
+            self.Hx = np.zeros_like(self.Ex)
+            self.Hy = np.zeros_like(self.Ex)
+            self.Hz = np.zeros_like(self.Ex)
+
+        kx = get_k(x, flavour="+")
+        ky = get_k(y, flavour="+")
+
+        KX, KY = np.meshgrid(kx, ky)
+        K_perp2 = KX**2 + KY**2
+
+        if has_edges is False:
+            has_filter = np.zeros_like(self.z)
+        elif has_edges is True:
+            has_filter = np.ones_like(self.z)
+        elif isinstance(has_edges, (int, float)):
+            has_filter = np.zeros_like(self.z)
+            iz, _, _ = nearest(self.z, has_edges)
+            has_filter[iz:] = 1
+        else:
+            has_filter = has_edges
+
+        width_edge = 0.95*(self.x[-1]-self.x[0])/2
+        x_center = (self.x[-1]+self.x[0])/2
+        y_center = (self.y[-1]+self.y[0])/2
+
+        filter_x = np.exp(-(np.abs(self.X[:, :, 0]-x_center) / width_edge)**pow_edge)
+        filter_y = np.exp(-(np.abs(self.Y[:, :, 0]-y_center) / width_edge)**pow_edge)
+        filter_function = filter_x*filter_y
+
+        radius = np.sqrt((self.X[:, :, 0]-x_center)**2+(self.Y[:, :, 0]-y_center)**2)
+
+        filter_function = np.exp(-(radius / width_edge)**pow_edge)
+
+
+        t1 = time.time_ns()
+
+        num_steps = len(self.z)
+        for j in range(1, num_steps):
+
+            if has_filter[j] == 0:
+                filter_edge = 1
+            else:
+                filter_edge = filter_function
+
+            E_step, H_step = FP_WPM_schmidt_kernel(
+                self.Ex[:,:,j-1],
+                self.Ey[:,:,j-1],
+                self.n[:,:,j-1],
+                self.n[:,:,j],
+                k0,
+                kx,
+                ky,
+                self.wavelength,
+                dz,
+            ) * filter_edge
+
+            self.Ex[:,:,j] = self.Ex[:,:,j] + E_step[0] * filter_edge
+            self.Ey[:,:,j] = self.Ey[:,:,j] + E_step[1] * filter_edge
+            self.Ez[:,:,j] = E_step[2] * filter_edge
+
+            if has_H:
+                self.Hx[:,:,j] = H_step[0] * filter_edge
+                self.Hy[:,:,j] = H_step[1] * filter_edge
+                self.Hz[:,:,j] = H_step[2] * filter_edge
+
+        # at the initial point the Ez field is not computed.
+        self.Ez[:,:,0] = self.Ez[:,:,1]
+        
+        if has_H:
+            self.Hx[:,:,0] = self.Hx[:,:,1]
+            self.Hy[:,:,0] = self.Hy[:,:,1]
+            self.Hz[:,:,0] = self.Hz[:,:,1]
+
+        t2 = time.time_ns()
+        if verbose is True:
+            print(
+                "Time = {:2.2f} s, time/loop = {:2.4} ms".format(
+                    (t2 - t1) / 1e9, (t2 - t1) / len(self.z) / 1e6
+                )
+            )
+
+        if matrix is True:
+            return (self.Ex, self.Ey, self.Ez), (self.Hx, self.Hy, self.Hz)
+
+        return self
+        
+
+
+
+
+
+
     @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
@@ -526,13 +667,14 @@ class Vector_field_XYZ():
             iz, _, _ = nearest(self.z, z0)
         else:
             iz = iz0
-        print(iz, self.Ex[:,:,iz].max())
         field_output.Ex = np.squeeze(self.Ex[:, :, iz])
         field_output.Ey = np.squeeze(self.Ey[:, :, iz])
         field_output.Ez = np.squeeze(self.Ez[:, :, iz])
         field_output.Hx = np.squeeze(self.Hx[:, :, iz])
         field_output.Hy = np.squeeze(self.Hy[:, :, iz])
         field_output.Hz = np.squeeze(self.Hz[:, :, iz])
+        field_output.n = np.squeeze(self.n[:, :, iz])
+
         return field_output
 
 
@@ -741,6 +883,158 @@ class Vector_field_XYZ():
                          **kwargs)
 
         return h1
+
+
+
+
+def FP_WPM_schmidt_kernel(Ex, Ey, n1, n2, k0, kx, ky, wavelength, dz, has_H=True):
+    """
+    Kernel for fast propagation of WPM method
+
+    Args:
+        Ex (np.array): field Ex
+        Ey (np.array): field Ey
+        n1 (np.array): refractive index at the first layer
+        n2 (np.array): refractive index at the second layer
+        k0 (float): wavenumber
+        kx (np.array): transversal wavenumber
+        wavelength (float): wavelength
+        dz (float): increment in distances: z[1]-z[0]
+        has_H (bool, optional): If True computes magnetic field H. Defaults to True.
+
+    Returns:
+        E  list(Ex, Ey, Ez): Field E(z+dz) at at distance dz from the incident field.
+        H  list(Hx, Hy, Hz): Field H(z+dz) at at distance dz from the incident field.
+
+    References:
+
+        1. M. W. Fertig and K.-H. Brenner, “Vector wave propagation method,” J. Opt. Soc. Am. A, vol. 27, no. 4, p. 709, 2010.
+
+        2. S. Schmidt et al., “Wave-optical modeling beyond the thin-element-approximation,” Opt. Express, vol. 24, no. 26, p. 30188, 2016.
+    """
+    Nr = np.unique(n1)
+    Ns = np.unique(n2)
+
+    Ex_final = np.zeros_like(Ex, dtype=complex)
+    Ey_final = np.zeros_like(Ex, dtype=complex)
+    Ez_final = np.zeros_like(Ex, dtype=complex)
+
+    if has_H:
+        Hx_final = np.zeros_like(Ex, dtype=complex)
+        Hy_final = np.zeros_like(Ex, dtype=complex)
+        Hz_final = np.zeros_like(Ex, dtype=complex)
+    else:
+        Hx_final = 0
+        Hy_final = 0
+        Hz_final = 0
+
+    for r, n_r in enumerate(Nr):
+        for s, n_s in enumerate(Ns):
+            Imz = np.array(np.logical_and(n1 == n_r, n2 == n_s))
+            E, H = FP_PWD_kernel_simple(Ex, Ey, n_r, n_s, k0, kx, ky, wavelength, dz, has_H)
+
+            Ex_final = Ex_final + Imz * E[0]
+            Ey_final = Ey_final + Imz * E[1]
+            Ez_final = Ez_final + Imz * E[2]
+            Hx_final = Hx_final + Imz * H[0]
+            Hy_final = Hy_final + Imz * H[1]
+            Hz_final = Hz_final + Imz * H[2]
+    return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
+
+
+def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, ky, wavelength, dz, has_H=True):
+    """Step for Plane wave decomposition (PWD) algorithm.
+
+    Args:
+        Ex (np.array): field Ex
+        Ey (np.array): field Ey
+        n1 (np.array): refractive index at the first layer
+        n2 (np.array): refractive index at the second layer
+        k0 (float): wavenumber
+        kx (np.array): transversal wavenumber
+        wavelength (float): wavelength
+        dz (float): increment in distances: z[1]-z[0]
+        has_H (bool, optional): If True computes magnetic field H. Defaults to True.
+
+    Returns:
+        E  list(Ex, Ey, Ez): Field E(z+dz) at at distance dz from the incident field.
+        H  list(Ex, Ey, Ez): Field H(z+dz) at at distance dz from the incident field.
+        
+    """
+
+    # amplitude of waveplanes
+    Exk = fftshift(fft2(Ex))
+    Eyk = fftshift(fft2(Ey))
+
+    kr = n1 * k0 # first layer
+    ks = n2 * k0 # second layer
+            
+    KX, KY = np.meshgrid(kx, ky)
+    Kperp2 = KX**2 + KY**2
+    Kperp = np.sqrt(Kperp2)
+
+    kz_r = np.sqrt(kr**2 - Kperp2) # first layer
+    kz_s = np.sqrt(ks**2 - Kperp2) # second layer
+
+    P = np.exp(1j * kz_s * dz)
+    Gamma = kz_r*kz_s + kz_s * Kperp2 / kz_r
+    
+
+    # Fresnel coefficients
+    t_TM, t_TE, _, _ = fresnel_equations_kx(KX, wavelength, n1, n2, [1, 1, 0, 0], has_draw=False)
+
+    T00 = P * (t_TM*KX**2*Gamma + t_TE*KY**2*kr*ks) / (Kperp2*kr*ks) 
+    T01 = P * (t_TM*KX*KY*Gamma - t_TE*KX*KY*kr*ks) / (Kperp2*kr*ks) 
+    T10 = P * (t_TM*KX*KY*Gamma - t_TE*KX*KY*kr*ks) / (Kperp2*kr*ks) 
+    T11 = P * (t_TM*KY**2*Gamma + t_TE*KX**2*kr*ks) / (Kperp2*kr*ks) 
+        
+    nan_indices = np.where(np.isnan(T00)) 
+
+    if nan_indices is not None: 
+        T00_b = P * (t_TM*KX**2*Gamma + t_TE*KY**2*kr*ks) / (Kperp2*kr*ks+1e-10) 
+        T01_b = P * (t_TM*KX*KY*Gamma - t_TE*KX*KY*kr*ks) / (Kperp2*kr*ks+1e-10) 
+        T10_b = P * (t_TM*KX*KY*Gamma - t_TE*KX*KY*kr*ks) / (Kperp2*kr*ks+1e-10) 
+        T11_b = P * (t_TM*KY**2*Gamma + t_TE*KX**2*kr*ks) / (Kperp2*kr*ks+1e-10) 
+    
+        T00[nan_indices]=T00_b[nan_indices]
+        T01[nan_indices]=T01_b[nan_indices]
+        T10[nan_indices]=T10_b[nan_indices]
+        T11[nan_indices]=T11_b[nan_indices] 
+    
+
+    ex0 = T00 * Exk + T01 * Eyk
+    ey0 = T10 * Exk + T11 * Eyk 
+    ez0 = - (KX*ex0+KY*ey0) / (kz_s)
+    
+    if has_H:
+        # thesis Fertig 2011 (3.40) pág 66 I do not feel confident yet
+        TM00 = -KX*KY*Gamma 
+        TM01 = -(KY*KY*Gamma + kz_s**2)
+        TM10 = +(KX*KX*Gamma + kz_s**2)
+        TM11 = +KX*KY*Gamma
+        TM20 = -KY*kz_s
+        TM21 = +KX*kz_s
+        
+        Z0 = 376.82  # ohms (impedance of free space)
+        H_factor = n2 / (ks * kz_s * Z0)
+        
+        hx0 = (TM00*ex0+TM01*ey0) * H_factor
+        hy0 = (TM10*ex0+TM11*ey0) * H_factor
+        hz0 = (TM20*ex0+TM21*ey0) * H_factor
+        
+    else:
+        Hx_final, Hy_final, Hz_final = 0.0, 0.0, 0.0
+
+    Ex_final = ifft2(ifftshift(ex0))
+    Ey_final = ifft2(ifftshift(ey0))
+    Ez_final = ifft2(ifftshift(ez0))
+
+    Hx_final = ifft2(ifftshift(hx0))
+    Hy_final = ifft2(ifftshift(hy0))
+    Hz_final = ifft2(ifftshift(hz0))
+
+    return (Ex_final, Ey_final, Ez_final), (Hx_final, Hy_final, Hz_final)
+
 
 
 def _compute1Elipse__(x0: float, y0: float, A: float, B: float, theta: float,

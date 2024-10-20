@@ -69,7 +69,7 @@ The algorithms implemented are:
 * Vector Fast Fourier Transform (VFFT).
 * Vector Rayleigh-Sommerfeld (VRS).
 * Vector Chirped Z-Transform (VCZT).
-* Fast Polarized Wave Propagation Method (F_PWPM).
+* Fast Polarized Wave Propagation Method (FP_WPM).
 
 
 For the vector analysis, we take advantage of the py_pol module: https://pypi.org/project/py-pol/
@@ -231,7 +231,7 @@ The main algorithms for Vector propagation are:
 
 * **Vector Chirp Z-Transform (VCZT)**.  [Light: Science and Applications, 9(1), (2020)]. CZT is also implemented in vector fields.
 
-* **Fast Polarized Wave Propagation Method (FPWPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
+* **Fast Polarized Wave Propagation Method (FP_WPM)**  [Opt Express. 30(22) 40161-40173 (2022)]  Wave Propagation Method for vector fields. It is an efficient method for vector wave optical simulations of microoptics. The FPWPM is capable of handling comparably large simulation volumes while maintaining quick runtime.  By considering polarization in simulations, the FPWPM facilitates the analysis of optical elements which employ this property of electromagnetic waves as a feature in their optical design, e.g., diffractive elements, gratings, or optics with high angle of incidence like high numerical aperture lenses.
 
 
 Other features
