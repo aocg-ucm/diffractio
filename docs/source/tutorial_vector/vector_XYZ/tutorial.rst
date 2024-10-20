@@ -1,4 +1,4 @@
-Scalar_XYZ
+Vector_XYZ
 =============
 
 .. toctree::
@@ -6,10 +6,4 @@ Scalar_XYZ
    :numbered:
    :glob:
 
-   tutorial_xyz.ipynb
-
-   wpm-bpm 3d.ipynb
-
-   wpm_without_storing.ipynb
-
-   masks_xyz.ipynb
+   tutorial_vector_XYZ.ipynb

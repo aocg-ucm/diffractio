@@ -6,6 +6,4 @@ Scalar_XZ
    :numbered:
    :glob:
 
-   tutorial_vector_xz.ipynb
-
-   
+   tutorial_vector_XZ.ipynb

@@ -1079,6 +1079,9 @@ class Vector_field_XZ(Scalar_mask_XZ):
             elif kind == "EH":
                 id_fig = self.__draw_EH__(logarithm, normalize, cut_value, draw_borders, scale, **kwargs)
 
+            elif kind == "E2H2":
+                id_fig = self.__draw_E2H2__(logarithm, normalize, cut_value, draw_borders, scale, **kwargs)
+
             elif kind == "poynting_vector":
                 id_fig = self.__draw_poynting_vector__(logarithm, normalize, cut_value, draw_borders, scale, **kwargs)
 
@@ -1106,6 +1109,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             if filename != "":
                 plt.savefig(filename, dpi=300, bbox_inches="tight", pad_inches=0.1)
 
+            plt.tight_layout()
             return id_fig
 
 
@@ -1137,6 +1141,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
         self.__draw1__(intensity, color_intensity, "", only_image=only_image)
+        plt.axis(scale)
         draw_edges(self, plt, draw_borders, **kwargs)
             
 
@@ -1183,12 +1188,14 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             h1 = plt.subplot(1, 2, 1)
             self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
             
 
             h2 = plt.subplot(1, 2, 2)
             self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
@@ -1203,15 +1210,18 @@ class Vector_field_XZ(Scalar_mask_XZ):
             self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
 
             h2 = plt.subplot(1, 3, 2)
             self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
             h3 = plt.subplot(1, 3, 3)
             self.__draw1__(intensity3, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(0, intensity_max)
 
@@ -1271,6 +1281,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
@@ -1280,6 +1291,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(-180, 180)
             plt.tight_layout()
@@ -1294,6 +1307,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
@@ -1303,6 +1317,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
@@ -1312,6 +1327,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             phase[intensity < percentage_intensity * (intensity.max())] = 0
 
             self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
+            plt.axis(scale)
             draw_edges(self, plt, draw_borders, **kwargs)
             plt.clim(-180, 180)
 
@@ -1472,6 +1488,119 @@ class Vector_field_XZ(Scalar_mask_XZ):
             # ax.colorbar()
             draw_edges(self, axs[1, 2], draw_borders, **kwargs)
             IDimage.set_clim(-H_max,H_max)
+
+        else: 
+            fig, axs = plt.subplots(
+                nrows=2, ncols=2, sharex=True, sharey=True, figsize=(1 * tx, 1.5 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_xz(
+                E_x, self.z, self.x, ax=axs[0, 0], scale=scale, xlabel="", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_x$')
+            draw_edges(self, axs[0, 0], draw_borders, **kwargs)
+            IDimage.set_clim(-E_max,E_max)
+            
+            id_fig, ax, IDimage = draw2D_xz(
+                E_y, self.z, self.x, ax=axs[0, 1], scale=scale, xlabel="", ylabel="", cmap=cmap, title=r'E$_y$')
+            draw_edges(self, axs[0, 1], draw_borders, **kwargs)
+            IDimage.set_clim(-E_max,E_max)
+
+            id_fig, ax, IDimage = draw2D_xz(
+                H_x, self.z, self.x, ax=axs[1, 0], scale=scale, xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'H$_x$')
+            draw_edges(self, axs[1, 0], draw_borders, **kwargs)
+            IDimage.set_clim(-H_max,H_max)
+            
+            id_fig, ax, IDimage = draw2D_xz(
+                H_y, self.z, self.x, ax=axs[1, 1], scale=scale, xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_y$')
+            draw_edges(self, axs[1, 1], draw_borders, **kwargs)
+            IDimage.set_clim(-H_max,H_max)
+
+
+        fig.subplots_adjust(right=1.25)
+        cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+        cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+        plt.tight_layout()
+
+        return self
+
+    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    def __draw_E2H2__(
+        self,
+        logarithm,
+        normalize,
+        cut_value,
+        draw_borders=False,
+        scale = '',
+        cmap=CONF_DRAWING["color_intensity"],
+        edge=None,
+        draw_z = True, **kwargs
+    ):
+        """__internal__: draws amplitude and phase in 2x2 drawing
+
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
+            normalize (bool): If True, max(intensity)=1
+            title (str): title of figure
+            cut_value (float): If not None, cuts the maximum intensity to this value
+
+        """
+
+        E_x = np.abs(self.Ex)**2
+        E_x = normalize_draw(E_x, logarithm, normalize, cut_value)
+
+        E_y = np.abs(self.Ey)**2
+        E_y = normalize_draw(E_y, logarithm, normalize, cut_value)
+
+        E_z = np.abs(self.Ez)**2
+        E_z = normalize_draw(E_z, logarithm, normalize, cut_value)
+
+        H_x = np.abs(self.Hx)**2
+        H_x = normalize_draw(H_x, logarithm, normalize, cut_value)
+
+        H_y = np.abs(self.Hy)**2
+        H_y = normalize_draw(H_y, logarithm, normalize, cut_value)
+
+        H_z = np.abs(self.Hz)**2
+        H_z = normalize_draw(H_z, logarithm, normalize, cut_value)
+
+        tx, ty = rcParams["figure.figsize"]
+
+        E_max = np.max((E_x.max(), E_y.max(), E_z.max()))
+        H_max = np.max((H_x.max(), H_y.max(), H_z.max()))
+
+        if draw_z is True:
+
+            fig, axs = plt.subplots(
+                nrows=2, ncols=3, sharex=True, sharey=True, figsize=(2 * tx, 1.5 * ty)
+            )
+
+            id_fig, ax, IDimage = draw2D_xz(
+                E_x, self.z, self.x, ax=axs[0, 0], scale=scale, xlabel="", ylabel="x $(\mu m)$", cmap=cmap, title=r'E$_x$')
+            draw_edges(self, axs[0, 0], draw_borders, **kwargs)
+            IDimage.set_clim(0, E_max)
+            id_fig, ax, IDimage = draw2D_xz(
+                E_y, self.z, self.x, ax=axs[0, 1], scale=scale, xlabel="", ylabel="", cmap=cmap, title=r'E$_y$')
+            draw_edges(self, axs[0, 1], draw_borders, **kwargs)
+            IDimage.set_clim(0, E_max)
+            id_fig, ax, IDimage = draw2D_xz(
+                E_z, self.z, self.x, ax=axs[0, 2], scale=scale, xlabel="", ylabel="", cmap=cmap, title=r'E$_z$')
+            draw_edges(self, axs[0, 2], draw_borders, **kwargs)
+            IDimage.set_clim(0, E_max)
+            # ax.colorbar()
+
+
+            id_fig, ax, IDimage = draw2D_xz(
+                H_x, self.z, self.x, ax=axs[1, 0], scale=scale, xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=cmap, title=r'H$_x$')
+            draw_edges(self, axs[1, 0], draw_borders, **kwargs)
+            IDimage.set_clim(0, H_max)
+            id_fig, ax, IDimage = draw2D_xz(
+                H_y, self.z, self.x, ax=axs[1, 1], scale=scale, xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_y$')
+            draw_edges(self, axs[1, 1], draw_borders, **kwargs)
+            IDimage.set_clim(0, H_max)
+            id_fig, ax, IDimage = draw2D_xz(
+                H_z, self.z, self.x, ax=axs[1, 2], scale=scale, xlabel="z $(\mu m)$", ylabel="", cmap=cmap, title=r'H$_z$')
+            # ax.colorbar()
+            draw_edges(self, axs[1, 2], draw_borders, **kwargs)
+            IDimage.set_clim(0, H_max)
 
         else: 
             fig, axs = plt.subplots(
@@ -1743,7 +1872,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         intensity_max = S0.max()
 
-        plt.figure(figsize=(4 * tx, 1 * ty))
+        plt.figure(figsize=(2.5 * tx, 1 * ty))
         h1 = plt.subplot(1,4,1)
         self.__draw1__(S0, color_intensity, "$S_0$")
         plt.axis(scale)

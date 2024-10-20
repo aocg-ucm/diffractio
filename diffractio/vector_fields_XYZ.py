@@ -302,10 +302,35 @@ class Vector_field_XYZ():
                 return Intensity
 
         elif kind == 'intensities':
+            
             intensity_x = np.abs(Ex_r)**2
             intensity_y = np.abs(Ey_r)**2
-            intensity_z = np.abs(Ez_r)**2
-            return intensity_x, intensity_y, intensity_z
+            intensity_z = np.abs(Ez_r)**2 
+            
+            if is_matrix:
+                return intensity_x, intensity_y, intensity_z
+
+            else:
+                Intensity_x = Scalar_field_XYZ(x=self.x,
+                                             y=self.y,
+                                             z=self.z,
+                                             wavelength=self.wavelength)
+                Intensity_x.u = np.sqrt(intensity_x)
+
+                Intensity_y = Scalar_field_XYZ(x=self.x,
+                                             y=self.y,
+                                             z=self.z,
+                                             wavelength=self.wavelength)
+                Intensity_y.u = np.sqrt(intensity_y)
+                
+                Intensity_z = Scalar_field_XYZ(x=self.x,
+                                             y=self.y,
+                                             z=self.z,
+                                             wavelength=self.wavelength)
+                Intensity_z.u = np.sqrt(intensity_z)
+
+
+                return Intensity_x, Intensity_y, Intensity_z
 
         elif kind == 'phases':
             phase_x = np.angle(Ex_r)
