@@ -72,7 +72,6 @@ import types
 from copy import deepcopy
 from multiprocessing import Pool
 
-
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from numpy import array, concatenate, gradient, pi, sqrt, zeros
@@ -80,12 +79,12 @@ from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fft2, fftshift, ifft, ifft2
 from scipy.interpolate import RectBivariateSpline
 
-
 from .__init__ import np, plt
 from .__init__ import num_max_processors, degrees, mm, seconds, um
-from .config import bool_raise_exception, Draw_X_Options, Draw_XZ_Options, Draw_interactive_Options, Draw_refractive_index_Options, CONF_DRAWING
+from .config import (bool_raise_exception, Draw_X_Options, Draw_XZ_Options, Draw_interactive_Options, 
+                     Draw_refractive_index_Options, CONF_DRAWING, get_scalar_options)
 from .utils_typing import NDArrayFloat
-from .utils_common import add, get_date, load_data_common, save_data_common, check_none, oversampling
+from .utils_common import add, get_date, load_data_common, save_data_common, check_none, oversampling, get_scalar
 from .utils_drawing import normalize_draw, prepare_drawing
 from .utils_math import get_k, nearest, reduce_to_1, rotate_image
 from .utils_multiprocessing import _pickle_method, _unpickle_method
@@ -658,6 +657,22 @@ class Scalar_field_XZ():
                                      self.z[-1]))
         u_final.u = self.u[-1,:]
         return u_final
+    
+
+    @check_none('u',raise_exception=bool_raise_exception)
+    def get(self, kind: get_scalar_options):
+        """Get parameters from Scalar field.
+
+        Args:
+            kind (str): 'intensity', 'phase', 'field'
+
+        Returns:
+            matrices with required values
+        """
+
+        data = get_scalar(self, kind)
+        return data
+ 
 
     @check_none('x','z','n')
     def __BPM__(self,
@@ -741,6 +756,8 @@ class Scalar_field_XZ():
 
         if matrix is True:
             return self.u
+
+
 
     @check_none('x','z','n')
     def BPM(self, has_edges: bool = True, pow_edge: int = 80, division: bool = False, matrix: bool = False,

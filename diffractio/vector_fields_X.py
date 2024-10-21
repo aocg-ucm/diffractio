@@ -35,8 +35,6 @@ The magnitude is related to microns: `micron = 1.`
     * save, load data, clean, get, normalize
     * cut_resample
 
-*Vector parameters*
-    * polarization_states
 
 *Drawing functions*
     * draw: intensity, intensities, phases, fields, stokes, param_ellipse, ellipses
@@ -48,9 +46,9 @@ from matplotlib import rcParams
 
 from .__init__ import degrees, eps, mm, np, plt
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_X_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_X_Options, get_vector_options
 from .scalar_fields_X import Scalar_field_X
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, get_vector
 from .utils_drawing import normalize_draw
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
@@ -193,8 +191,8 @@ class Vector_field_X():
         return new_field
 
 
-    @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def get(self, kind: str = 'fields', is_matrix: bool = True):
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    def get(self, kind: get_vector_options, mode: str = 'modulus', **kwargs):
         """Takes the vector field and divide in Scalar_field_X.
 
         Args:
@@ -204,63 +202,8 @@ class Vector_field_X():
             Vector_field_X: (Ex, Ey, Ez),
         """
 
-        if kind == 'fields':
-            if is_matrix:
-                return self.Ex, self.Ey, self.Ez
-
-            else:
-                Ex = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ex.u = self.Ex
-                Ey = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ey.u = self.Ey
-                Ez = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ez.u = self.Ez
-                return Ex, Ey, Ez
-
-        elif kind == 'intensity':
-            intensity = np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2
-
-            if is_matrix:
-                return intensity
-            else:
-                Intensity = Scalar_field_X(x=self.x,
-                                           wavelength=self.wavelength)
-                Intensity.u = np.sqrt(intensity)
-
-                return Intensity
-
-        elif kind == 'intensities':
-            intensity_x = np.abs(self.Ex)**2
-            intensity_y = np.abs(self.Ey)**2
-            intensity_z = np.abs(self.Ez)**2
-            return intensity_x, intensity_y, intensity_z
-
-        elif kind == 'phases':
-            phase_x = np.angle(self.Ex)
-            phase_y = np.angle(self.Ey)
-            phase_z = np.angle(self.Ez)
-
-            if is_matrix:
-                return phase_x, phase_y, phase_z
-            else:
-                Ex = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ex.u = np.exp(1j * phase_x)
-                Ey = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ey.u = np.exp(1j * phase_y)
-                Ez = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-                Ez.u = np.exp(1j * phase_z)
-                return Ex, Ey, Ez
-
-        elif kind == 'stokes':
-            # S0, S1, S2, S3
-            return self.polarization_states(matrix=True)
-
-        elif kind == 'params_ellipse':
-            # A, B, theta, h
-            return self.polarization_ellipse(pol_state=None, matrix=True)
-
-        else:
-            print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
+        data = get_vector(self, kind, mode, **kwargs)
+        return data
 
 
     @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -289,87 +232,10 @@ class Vector_field_X():
         Returns: 
             intensity (ndarray). Intensity
         """
-        intensity = np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(
-            self.Ez)**2
+        intensity = self.get('intensity')
 
         return intensity
 
-
-    @check_none('x','Ex','Ey',raise_exception=bool_raise_exception)
-    def polarization_states(self, matrix: bool = False):
-        """Returns the Stokes parameters.
-
-        Args:
-            Matrix (bool): if True returns Matrix, else Scalar_field_X
-
-        Returns:
-            S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3  for Matrix=False
-        """
-
-        I = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
-        Q = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
-        U = 2 * np.real(self.Ex * np.conjugate(self.Ey))
-        V = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
-
-        if matrix is True:
-            return I, Q, U, V
-        else:
-            CI = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            CQ = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            CU = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            CV = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-
-            CI.u = I
-            CQ.u = Q
-            CU.u = U
-            CV.u = V
-
-            return CI, CQ, CU, CV
-
-
-    @check_none('x',raise_exception=bool_raise_exception)
-    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
-        """returns A, B, theta, h polarization parameter of elipses
-
-        Args:
-            pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-            Matrix (bool): if True returns Matrix, else Scalar_field_X
-
-        Returns:
-            A, B, theta, h for Matrix=True
-            CA, CB, Ctheta, Ch for Matrix=False
-        """
-        if pol_state is None:
-            I, Q, U, V = self.polarization_states(matrix=True)
-        else:
-            I, Q, U, V = pol_state
-            I = I.u
-            Q = Q.u
-            U = U.u
-            V = V.u
-
-        Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.j * U + eps
-
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L) + eps)))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
-        theta = 0.5 * np.angle(L)
-        h = np.sign(V + eps)
-
-        if matrix is True:
-            return A, B, theta, h
-        else:
-            CA = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            CB = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            Ctheta = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-            Ch = Scalar_field_X(x=self.x, wavelength=self.wavelength)
-
-            CA.u = A
-            CB.u = B
-            Ctheta.u = theta
-            Ch.u = h
-            return (CA, CB, Ctheta, Ch)
 
 
     @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -715,7 +581,7 @@ class Vector_field_X():
 
         tx, ty = rcParams['figure.figsize']
 
-        S0, S1, S2, S3 = self.polarization_states(matrix=True)
+        S0, S1, S2, S3 = self.get('stokes')
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
         S1 = normalize_draw(S1, logarithm, normalize, cut_value)
         S2 = normalize_draw(S2, logarithm, normalize, cut_value)
@@ -761,7 +627,7 @@ class Vector_field_X():
         Returns:
             _type_: _description_
         """
-        A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
+        A, B, theta, h = self.get('params_ellipse') 
 
         tx, ty = rcParams['figure.figsize']
 

@@ -78,7 +78,7 @@ from scipy.special import hankel1
 
 from .__init__ import degrees, mm, np, plt
 
-from .config import bool_raise_exception, Draw_X_Options, empty_types
+from .config import bool_raise_exception, Draw_X_Options, get_scalar_options, empty_types
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 from .utils_common import get_date, load_data_common, save_data_common, check_none, add, oversampling
 from .utils_drawing import normalize_draw
@@ -130,7 +130,6 @@ class Scalar_field_X():
     @check_none('x','u',raise_exception=bool_raise_exception)
     def __str__(self):
         """Represents main data of the atributes."""
-
 
 
         Imin = (np.abs(self.u) ** 2).min()
@@ -400,6 +399,22 @@ class Scalar_field_X():
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
         """
         self.u = u0.u
+        
+        
+    @check_none('u',raise_exception=bool_raise_exception)
+    def get(self, kind: get_scalar_options):
+        """Get parameters from Scalar field.
+
+        Args:
+            kind (str): 'intensity', 'phase', 'field'
+
+        Returns:
+            matrices with required values
+        """
+
+        data = get_scalar(self, kind)
+        return data
+        
 
     @check_none('u',raise_exception=bool_raise_exception)
     def inverse_amplitude(self, new_field: bool = False):

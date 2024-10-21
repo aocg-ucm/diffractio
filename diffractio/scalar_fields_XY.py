@@ -70,6 +70,7 @@ import time
 import matplotlib.animation as animation
 import scipy.ndimage
 from matplotlib import rcParams
+from numpy import gradient
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft2, fftshift, ifft2
 from scipy.interpolate import RectBivariateSpline
@@ -77,13 +78,12 @@ from scipy.interpolate import RectBivariateSpline
 from .__init__ import np, plt
 from .__init__ import degrees, mm, seconds, um
 
-from .config import bool_raise_exception, CONF_DRAWING, Draw_XY_Options, Save_mask_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_XY_Options, Save_mask_Options, get_scalar_options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, add, check_none, oversampling
+from .utils_common import get_date, load_data_common, save_data_common, add, check_none, oversampling, get_scalar
 from .utils_drawing import (draw2D, normalize_draw, prepare_drawing,
                             reduce_matrix_size)
-from .utils_math import (get_edges, get_k, nearest, nearest2,
-                         reduce_to_1, rotate_image, Bluestein_dft_xy)
+from .utils_math import get_edges, get_k, nearest, nearest2, reduce_to_1, rotate_image, Bluestein_dft_xy
 from .utils_optics import beam_width_2D, field_parameters, normalize_field
 from .scalar_fields_X import Scalar_field_X
 from .scalar_fields_XZ import Scalar_field_XZ
@@ -174,10 +174,10 @@ class Scalar_field_XY():
     def __add__(self, other):
         """Adds two Scalar_field_x. For example two light sources or two masks.
 
-         Args:
+        Args:
             other (Scalar_field_X): 2nd field to add
             kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
-           
+
         Returns:
             Scalar_field_X: `u3 = u1 + u2`
         """
@@ -192,7 +192,7 @@ class Scalar_field_XY():
     def add(self, other, kind):
         """Adds two Scalar_field_xy. For example two light sources or two masks.
 
-         Args:
+        Args:
             other (Scalar_field_XY): 2nd field to add
             kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
             - 'source': adds the fields as they are
@@ -560,6 +560,21 @@ class Scalar_field_XY():
             u0 (Scalar_source_X): field produced by Scalar_source_X (or a X field)
         """
         self.u = u0.u
+
+
+    @check_none('u',raise_exception=bool_raise_exception)
+    def get(self, kind: get_scalar_options):
+        """Get parameters from Scalar field.
+
+        Args:
+            kind (str): 'intensity', 'phase', 'field'
+
+        Returns:
+            matrices with required values
+        """
+
+        data = get_scalar(self, kind)
+        return data
 
     @check_none('x','y','u',raise_exception=bool_raise_exception)
     def pupil(self, r0: tuple[float, float] | None = None,
@@ -2237,7 +2252,6 @@ class Scalar_field_XY():
             Returns:
                 z_min (float): z_min for quality_factor>quality
             """
-
         
         range_x = self.x[-1] - self.x[0]
         range_y = self.y[-1] - self.y[0]
@@ -2335,6 +2349,7 @@ class Scalar_field_XY():
 
         return id_fig, IDax, IDimage
 
+
     @check_none('x','y','u',raise_exception=bool_raise_exception)
     def __draw_intensity__(self,
                            logarithm: float = 0.,
@@ -2407,6 +2422,7 @@ class Scalar_field_XY():
 
         return id_fig, IDax, IDimage
 
+
     def __draw_phase__(self,
                        title: str = r'phase/np.pi',
                        colormap_kind: str = '',
@@ -2418,7 +2434,7 @@ class Scalar_field_XY():
             title (str): title for the drawing
         """
                 
-        amplitude, intensity, phase = field_parameters(self.u,        has_amplitude_sign=True)
+        amplitude, intensity, phase = field_parameters(self.u, has_amplitude_sign=True)
         phase[phase == 1] = -1
         phase = phase/degrees
 
@@ -2443,6 +2459,7 @@ class Scalar_field_XY():
 
         return id_fig, IDax, IDimage
 
+
     def __draw_field__(self,
                        logarithm: float = 0.,
                        normalize: str = 'maximum',
@@ -2461,9 +2478,7 @@ class Scalar_field_XY():
         """
         
         amplitude, intensity, phase = field_parameters(self.u, has_amplitude_sign=True)
-
         intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y, intensity)
-
         phase = reduce_matrix_size(self.reduce_matrix, self.x, self.y, phase)
 
         if percentage_intensity is None:
@@ -2568,7 +2583,7 @@ class Scalar_field_XY():
               frames_reduction: int = 1,
               filename: str = 'video.avi',
               dpi: int = 100):
-        """Makes a video TODO
+        """Makes a video
 
         Args:
             kind(str): 'intensity', 'phase', 'amplitude'
@@ -2583,19 +2598,15 @@ class Scalar_field_XY():
         def animate(i):
             t2 = self.RS(z=zs[i], new_field=True)
 
-            image = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
-                                       t2.u)
+            image = reduce_matrix_size(self.reduce_matrix, self.x, self.y, t2.u)
 
             I_drawing = prepare_drawing(image, kind, logarithm, normalize)
             ax.imshow(I_drawing)
             ax.set_title("$z = {:2.0f} \mu m$".format(zs[i]))
             return i
 
-        ani = animation.FuncAnimation(fig,
-                                      animate,
-                                      list(range(0, len(zs), frames_reduction)),
-                                      interval=25,
-                                      blit=False)
+        ani = animation.FuncAnimation(fig, animate, list(range(0, len(zs), frames_reduction)),
+                                      interval=25, blit=False)
 
         fps = int(len(zs) / (time_video * frames_reduction))
 
@@ -2659,8 +2670,7 @@ def kernelRSinverse(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: floa
         return 1 / (2 * np.pi) * np.exp(-1.j * k * R) / R * (1 / R + 1.j * k)
 
 
-def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float,
-                  n: float = 1.):
+def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float, n: float = 1.):
     """
     Kernel for Fresnel propagation.
 
@@ -2680,8 +2690,7 @@ def kernelFresnel(X: NDArrayFloat, Y: NDArrayFloat, wavelength: float, z: float,
                              (2 * z))) / (1.j * wavelength * z)
 
 
-def PWD_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex,
-               dz: float):
+def PWD_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex, dz: float):
     """
     Step for scalar(TE) Plane wave decomposition(PWD) algorithm.
 
@@ -2709,8 +2718,7 @@ def PWD_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex,
     return result
 
 
-def WPM_schmidt_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex,
-                       dz: float):
+def WPM_schmidt_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayComplex, dz: float):
     """
     Kernel for fast propagation of WPM method
 
@@ -2740,14 +2748,8 @@ def WPM_schmidt_kernel(u: NDArrayComplex, n: float, k0: float, k_perp2: NDArrayC
     return u_final
 
 
-def get_RS_minimum_z(range_x: float,
-                     range_y: float,
-                     num_x: int,
-                     num_y: int,
-                     wavelength: float,
-                     n: float = 1.,
-                     quality: float = 1,
-                     verbose: bool = True):
+def get_RS_minimum_z(range_x: float, range_y: float, num_x: int, num_y: int,
+                     wavelength: float, n: float = 1., quality: float = 1, verbose: bool = True):
     """_summary_
 
     Args:

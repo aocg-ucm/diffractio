@@ -22,7 +22,7 @@ import psutil
 from scipy.io import loadmat, savemat
 from scipy.ndimage import center_of_mass
 
-from .config import bool_raise_exception, Options_add
+from .config import bool_raise_exception, Options_add, get_scalar_options, get_vector_options
 
 
 
@@ -39,6 +39,134 @@ def check_none(*variables, raise_exception = bool_raise_exception):
             return func(self, *args, **kwargs)
         return wrapper
     return decorator
+
+
+@check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
+def get_vector(cls, kind: get_vector_options, mode='modulus', **kwargs):
+    """Takes the vector field and divide in Scalar_field_X.
+
+    Args:
+        kind (str): 'fields', 'intensity', 'intensities', 'phases', 'poynting_vector', 'poynting_vector_averaged', 
+        'poynting_total', 'energy_density', 'irradiance', 'stokes', 'params_ellipse', 
+
+    Returns:
+        Vector_field_X: (Ex, Ey, Ez),
+    """
+
+    if kind == "E":
+        return cls.Ex, cls.Ey, cls.Ez
+    
+    if kind == "H":
+        return cls.Hx, cls.Hy, cls.Hz
+
+    if kind == "EH" or kind == 'fields':
+        return (cls.Ex, cls.Ey, cls.Ez), (cls.Hx, cls.Hy, cls.Hz)
+
+    elif kind == "intensity":
+        intensity = np.abs(cls.Ex) ** 2 + np.abs(cls.Ey) ** 2 + np.abs(cls.Ez) ** 2
+        return intensity
+
+    elif kind == "intensities":
+        intensity_x = np.abs(cls.Ex) ** 2
+        intensity_y = np.abs(cls.Ey) ** 2
+        intensity_z = np.abs(cls.Ez) ** 2
+        return intensity_x, intensity_y, intensity_z
+
+    elif kind == "phases":
+        phase_x = np.angle(cls.Ex)
+        phase_y = np.angle(cls.Ey)
+        phase_z = np.angle(cls.Ez)
+        return phase_x, phase_y, phase_z
+
+    elif kind == 'poynting_vector':
+        Sx = np.real(cls.Ey * cls.Hz - cls.Ez * cls.Hy)
+        Sy = np.real(cls.Ez * cls.Hx - cls.Ex * cls.Hz)
+        Sz = np.real(cls.Ex * cls.Hy - cls.Ey * cls.Hx)
+        return Sx, Sy, Sz
+
+    elif kind == 'poynting_vector_averaged':
+        Sx = np.real(cls.Ey * cls.Hz.conjugate() - cls.Ez * cls.Hy.conjugate()).squeeze()
+        Sy = np.real(cls.Ez * cls.Hx.conjugate() - cls.Ex * cls.Hz.conjugate()).squeeze()
+        Sz = np.real(cls.Ex * cls.Hy.conjugate() - cls.Ey * cls.Hx.conjugate()).squeeze()
+        return Sx, Sy, Sz
+
+    elif kind == 'poynting_total':
+        Sx, Sy, Sz = cls.get('poynting_vector_averaged')
+
+        S_total = np.sqrt(np.abs(Sx)**2 + np.abs(Sy)**2 + np.abs(Sz)**2)
+        return S_total
+
+    elif kind == 'energy_density':
+        epsilon = cls.n**2
+        permeability = 4*np.pi*1e-7
+        U = epsilon * np.real(np.abs(cls.Ex)**2 + np.abs(cls.Ey)**2 + np.abs(cls.Ez)**2) + permeability * (np.abs(cls.Hx)**2 + np.abs(cls.Hy)**2 + np.abs(cls.Hz)**2)
+        return U
+
+    elif kind == 'irradiance':
+        epsilon = cls.n ** 2
+        permeability = 4 * np.pi * 1e-7
+
+        Sx, Sy, Sz = cls.get('poynting_vector_averaged')
+        
+        if mode == 'modulus':
+            irradiance = np.sqrt(Sx**2 + Sy**2 + Sz**2)
+            
+        elif mode == 'Sz':
+            irradiance = Sz
+            
+        elif isinstance(mode, (list, tuple, np.ndarray)):
+            mode = np.array(mode)
+            mode = mode/np.linalg.norm(mode)
+            irradiance = mode[0] * Sx + mode[1] * Sy + mode[2] * Sz
+        return irradiance
+
+    elif kind == 'stokes':
+        # S0, S1, S2, S3
+        S0 = np.abs(cls.Ex) ** 2 + np.abs(cls.Ey) ** 2
+        S1 = np.abs(cls.Ex) ** 2 - np.abs(cls.Ey) ** 2
+        S2 = 2 * np.real(cls.Ex * np.conjugate(cls.Ey))
+        S3 = 2 * np.imag(cls.Ex * np.conjugate(cls.Ey))
+        return S0, S1, S2, S3
+
+    elif kind == "params_ellipse":
+        # A, B, theta, h
+        S0, S1, S2, S3 = cls.get('stokes')
+        Ip = np.sqrt(S1**2 + S2**2 + S3**2)
+        L = S1 + 1.0j * S2
+
+        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
+        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
+        theta = 0.5 * np.angle(L)
+        h = np.sign(S3)
+        return A, B, theta, h
+
+    else:
+        print("The parameter '{}'' in .get(kind='') is wrong. Use one of this: {}".format(kind, get_vector_options))
+
+
+
+def get_scalar(cls, kind: get_scalar_options):
+    """Get parameters from Scalar field
+
+    Args:
+        kind (str): 'intensity', 'phase', 'field'
+
+    Returns:
+        matrices with required values
+    """
+
+    if kind == "intensity":
+        intensity = np.abs(cls.u) ** 2
+        return intensity
+
+    elif kind == "phase":
+        phase = np.angle(cls.u)
+        return phase
+
+    if kind == "field":
+        intensity = np.abs(cls.u) ** 2
+        phase = np.angle(cls.u)
+        return intensity, phase
 
 
 def oversampling(cls, factor_rate: int | tuple):# -> Any:
@@ -266,7 +394,6 @@ def add(self, other, kind: Options_add  = 'source'):
             t.u[i_mayor*overlap] = other.u[i_mayor*overlap]
         
     return t
-
 
 
 def computer_parameters(verbose: bool = False) -> tuple[int, float, float, float]:

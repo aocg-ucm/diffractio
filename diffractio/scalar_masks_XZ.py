@@ -33,7 +33,7 @@ The magnitude is related to microns: `micron = 1.`
     * wedge, prism, biprism
     * ronchi_grating, sine_grating
     * probe
-    * lens_plane_convergent, lens_convergent, lens_plane_divergent, lens_divergent
+    * aspheric_lens, lens
     * roughness
 """
 
@@ -881,312 +881,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
 
 
-    def lens_plane_convergent(
-            self,
-            r0: tuple[float, float],
-            aperture: float,
-            radius: float,
-            thickness: float,
-            refractive_index: float | str,
-            angle: float = 0*degrees,
-            rotation_point: tuple[float, float] | None = None,
-            mask=0):
-        """Insert a plane-convergent lens in background-
-
-        Args:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0*um, 20*um)
-                for plane-convergent z0 is the location of the plane
-                for convergent-plane (angle =180*degrees) the thickness has to be added to z0
-            aperture (float): aperture of the lens. If it is 0, then it is not applied
-            radius (float): radius of the curved surface
-            thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
-            angle (float): angle of rotation of the semi-plane, in radians
-            mask (array, str):  (mask_depth, refractive_index) or False.
-                It masks the field outer the lens using a slit with depth = mask_depth
-            rotation_point (float, float). Rotation point
-
-        Returns:
-            (float): geometrical focal distance
-            (numpy.array): ipasa, indexes [iz,ix] of lens
-        """
-
-        x0, z0 = r0
-        if rotation_point is None:
-            rotation_point = r0
-
-        z_plane = z0
-        z_center_lens = z_plane + thickness - radius
-        if mask is False:
-            mask_depth = 0
-            mask_refractive_index = 1 - 0.1j
-        else:
-            mask_depth, mask_refractive_index = mask
-
-        if aperture > 0:
-            cond_aperture1 = "Xrot<{}".format(x0 + aperture/2)
-            cond_aperture2 = "Xrot>{}".format(x0 - aperture/2)
-        else:
-            cond_aperture1 = "Xrot<1e6"
-            cond_aperture2 = "Xrot>-1e6"
-        cond_plane = "Zrot>{}".format(z_plane)
-        cond_radius = "(Xrot - {})**2 +(Zrot -{})**2 <{}**2".format(
-            x0, z_center_lens, radius
-        )
-        Fs = [cond_aperture1, cond_aperture2, cond_plane, cond_radius]
-
-        ipasa = self.object_by_surfaces(
-            rotation_point, refractive_index, Fs, angle, v_globals={}
-        )
-
-        if mask_depth > 0:
-            self.slit(
-                r0=r0,
-                aperture=aperture,
-                depth=mask_depth,
-                refractive_index=mask_refractive_index,
-                refractive_index_center="",
-                angle=angle,
-                rotation_point=rotation_point,
-            )
-        focus = radius / (refractive_index - 1)
-        return focus, ipasa
-
-
-
-    def lens_convergent(
-            self,
-            r0: tuple[float, float],
-            aperture: float,
-            radius: float,
-            thickness: float,
-            refractive_index: float | str,
-            angle: float = 0*degrees,
-            rotation_point: tuple[float, float] | None = None,
-            mask=0):
-        """Inserts a convergent lens in background.
-
-        Args:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0*um, 20*um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
-            aperture (float): aperture of the lens. If it is 0, then it is not applied
-            radius (float, float): (radius1,radius2) radius of curvature (with sign)
-            thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
-            angle (float): angle of rotation of the semi-plane, in radians
-            rotation_point (float, float): rotation point.
-            mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
-
-        Returns:
-            (float): geometrical focal distance
-            (numpy.array): ipasa, indexes [iz,ix] of lens
-        """
-
-        x0, z0 = r0
-        if rotation_point is None:
-            rotation_point = r0
-
-        radius1, radius2 = radius
-        z_center_lens1 = z0 + radius1
-        z_center_lens2 = z0 + radius2 + thickness
-
-        if mask is False:
-            mask_depth = 0
-            mask_refractive_index = 1 - 0.1j
-        else:
-            mask_depth, mask_refractive_index = mask
-
-        if aperture > 0:
-            cond_aperture1 = "Xrot<{}".format(x0 + aperture/2)
-            cond_aperture2 = "Xrot>{}".format(x0 - aperture/2)
-        else:
-            cond_aperture1 = "Xrot<1e6"
-            cond_aperture2 = "Xrot>-1e6"
-        cond_radius1 = "(Xrot - {})**2 +(Zrot -{})**2 <({})**2".format(
-            x0, z_center_lens1, radius1
-        )
-        cond_radius2 = "(Xrot - {})**2 +(Zrot -{})**2 <({})**2".format(
-            x0, z_center_lens2, -radius2
-        )
-
-        Fs = [cond_aperture1, cond_aperture2, cond_radius1, cond_radius2]
-
-        ipasa = self.object_by_surfaces(
-            rotation_point, refractive_index, Fs, angle, v_globals={}
-        )
-
-        if mask_depth > 0:
-            self.slit(
-                r0=r0,
-                aperture=aperture,
-                depth=mask_depth,
-                refractive_index=mask_refractive_index,
-                refractive_index_center="",
-                angle=angle,
-            )
-
-        focus_1 = (refractive_index - 1) * (
-            (1 / radius1 - 1 / radius2) -
-            (refractive_index - 1) *
-            thickness /
-            (refractive_index * radius1 * radius2)
-        )
-        return 1 / focus_1, ipasa
-
-    def lens_plane_divergent(
-        self,
-        r0: tuple[float, float],
-        aperture: float,
-        radius: float,
-        thickness: float,
-        refractive_index: float | str,
-        angle: float = 0*degrees,
-        rotation_point: tuple[float, float] | None = None,
-        mask=False,
-    ):
-        """Insert a plane-divergent lens in background.
-
-        Args:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0*um, 20*um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
-            aperture (float): aperture of the lens. If it is 0, then it is not applied
-            radius (float): radius of curvature (with sign)
-            thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
-            angle (float): angle of rotation of the semi-plane, in radians
-            mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
-
-        Returns:
-            (float): geometrical focal distance
-            (numpy.array): ipasa, indexes [iz,ix] of lens
-        """
-
-        x0, z0 = r0
-        if rotation_point is None:
-            rotation_point = r0
-
-        z_center_lens = z0 + thickness + radius
-        if mask is False:
-            mask_depth = 0
-            mask_refractive_index = 1 - 0.1j
-        else:
-            mask_depth, mask_refractive_index = mask
-
-        if aperture > 0:
-            cond_aperture1 = "Xrot<{}".format(x0 + aperture/2)
-            cond_aperture2 = "Xrot>{}".format(x0 - aperture/2)
-        else:
-            cond_aperture1 = "Xrot<1e6"
-            cond_aperture2 = "Xrot>-1e6"
-        cond_plane = "Zrot>{}".format(z0)
-        cond_radius = "(Xrot - {})**2 +(Zrot -{})**2 >({})**2".format(
-            x0, z_center_lens, radius
-        )
-        cond_right = "Zrot<{}".format(z_center_lens)
-        Fs = [cond_aperture1, cond_aperture2,
-              cond_plane, cond_radius, cond_right]
-
-        ipasa = self.object_by_surfaces(
-            rotation_point, refractive_index, Fs, angle, v_globals={}
-        )
-
-        if mask_depth > 0:
-            self.slit(
-                r0=r0,
-                aperture=aperture,
-                depth=mask_depth,
-                refractive_index=mask_refractive_index,
-                refractive_index_center="",
-                angle=angle,
-                rotation_point=rotation_point)
-        focus = radius / (refractive_index - 1)
-        return focus, ipasa
-
-    def lens_divergent(
-        self,
-        r0: tuple[float, float],
-        aperture: float,
-        radius: float,
-        thickness: float,
-        refractive_index: float | str,
-        angle: float = 0*degrees,
-        rotation_point: tuple[float, float] | None = None,
-        mask=0):
-        """Insert a  divergent lens in background.
-
-        Args:
-            r0 (float, float): (x0,z0) position of the center of lens, for example (0*um, 20*um) for plane-convergent z0 is the location of the plane for convergent-plane (angle =180*degrees) the thickness has to be added to z0
-            aperture (float): aperture of the lens. If it is 0, then it is not applied
-            radius (float, float): (radius1, radius2) radius of curvature (with sign)
-            thickness (float): thickness at the center of the lens
-            refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
-            angle (float): angle of rotation of the semi-plane, in radians
-            rotation_point (float, float): rotation point
-            mask (array, str):  (mask_depth, refractive_index) or False. It masks the field outer the lens using a slit with depth = mask_depth
-
-        Returns:
-            (float): geometrical focal distance
-            (numpy.array): ipasa, indexes [iz,ix] of lens
-        """
-
-        x0, z0 = r0
-        if rotation_point is None:
-            rotation_point = r0
-
-        radius1, radius2 = radius
-        z_center_lens1 = z0 + radius1
-        z_center_lens2 = z0 + radius2 + thickness
-
-        if mask is False:
-            mask_depth = 0
-            mask_refractive_index = 1 - 0.1j
-        else:
-            mask_depth, mask_refractive_index = mask
-
-        if aperture > 0:
-            cond_aperture1 = "Xrot<{}".format(x0 + aperture/2)
-            cond_aperture2 = "Xrot>{}".format(x0 - aperture/2)
-        else:
-            cond_aperture1 = "Xrot<1e6"
-            cond_aperture2 = "Xrot>-1e6"
-        cond_radius1 = "(Xrot - {})**2 +(Zrot -{})**2>({})**2".format(
-            x0, z_center_lens1, radius1
-        )
-        cond_radius2 = "(Xrot - {})**2 +(Zrot -{})**2 >({})**2".format(
-            x0, z_center_lens2, -radius2
-        )
-        cond_right = "Zrot>{}".format(z_center_lens1)
-        cond_left = "Zrot<{}".format(z_center_lens2)
-
-        Fs = [
-            cond_aperture1,
-            cond_aperture2,
-            cond_radius1,
-            cond_radius2,
-            cond_right,
-            cond_left,
-        ]
-
-        ipasa = self.object_by_surfaces(
-            rotation_point, refractive_index, Fs, angle, v_globals={}
-        )
-
-        if mask_depth > 0:
-            self.slit(
-                r0=r0,
-                aperture=aperture,
-                depth=mask_depth,
-                refractive_index=mask_refractive_index,
-                refractive_index_center="",
-                angle=angle,
-                rotation_point=rotation_point,
-            )
-        focus_1 = (refractive_index - 1) * (
-            (1 / radius1 - 1 / radius2) -
-            (refractive_index - 1) *
-            thickness /
-            (refractive_index * radius1 * radius2)
-        )
-        return 1 / focus_1, ipasa
-
 
     def aspheric_surface_z(self, r0: tuple[float, float], refractive_index: float | str,
                            cx: float, Qx: float, a2: float, a3: float, a4: float,
@@ -1240,9 +934,9 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             angle: float,
             refractive_index: float | str,
             cx: tuple[float, float],
-            Qx: tuple[float, float],
-            depth: tuple[float, float],
+            thickness: tuple[float, float],
             size: float,
+            Qx: tuple[float, float]= (0, 0),
             a2: tuple[float, float] = (0, 0),
             a3: tuple[float, float] = (0, 0),
             a4: tuple[float, float] = (0, 0),
@@ -1254,7 +948,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         Args:
             r0 (float, float): position x,z of lens
             angle (float): rotation angle of lens + r0_rot
-            cx (float, float): curvature
+            cx (float, float): curvature radii
             Qx (float, float): Conic constant
             depth  (float, float): distance of the apex
             size (float): diameter of lens
@@ -1307,7 +1001,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             a71=a71,
             a72=a72,
             d1=z0,
-            d2=z0 + depth,
+            d2=z0 + thickness,
             sign1=sign1,
             sign2=sign2,
         )
@@ -1316,24 +1010,76 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             **params
         )
 
-        cond2 = "Zrot{sign2}{d2}+{cx2}*(Xrot-{x0})**2/(1+np.sqrt(1-(1+{Qx2})*{cx2}**2*(Xrot-{x0})**2))+{a22}*(Xrot-{x0})**4+{a32}*(Xrot-{x0})**6+{a42}*(Xrot-{x0})**8+{a52}*(Xrot-{x0})**10+{a62}*(Xrot-{x0})**12+{a72}*(Xrot-{x0})**14".format(
+        cond2 = "Zrot{sign2}{d2}+{cx2}*(Xrot-{x0})**2/(1+np.sqrt(1+(1+{Qx2})*{cx2}**2*(Xrot-{x0})**2))+{a22}*(Xrot-{x0})**4+{a32}*(Xrot-{x0})**6+{a42}*(Xrot-{x0})**8+{a52}*(Xrot-{x0})**10+{a62}*(Xrot-{x0})**12+{a72}*(Xrot-{x0})**14".format(
             **params
         )
 
         cond3 = "(Xrot-{})<{}".format(x0, size/2)
         cond4 = "(Xrot-{})>{}".format(x0, -size/2)
 
-        cond5 = "Zrot > {}".format(z0 - depth)
-        cond6 = "Zrot < {}".format(z0 + depth)
+        cond5 = "Zrot > {}".format(z0 - thickness)
+        cond6 = "Zrot < {}".format(z0 + thickness)
 
-        Fs = [cond1, cond2, cond3, cond4, cond5, cond6]
+        Fs = [cond1, cond2, cond3, cond4]
         v_globals = {"self": self, "np": np, "degrees": degrees}
 
         ipasa = self.object_by_surfaces(
             rotation_point, refractive_index, Fs, angle, v_globals=v_globals
         )
+        
+        if cx[0] != 0:
+            r1 = 1/cx[0]
+        else:
+            r1 = 1e12
+        
+        if cx[1] != 0:
+            r2 = 1/cx[1]
+        else:
+            r2 = 1e12
+                  
+        radii = (r1,r2)
+        
+        # https://en.wikipedia.org/wiki/Focal_length
+        focal = ((refractive_index-1)*(1/radii[0]-1/radii[1] + (refractive_index-1)*thickness/(refractive_index*radii[0]*radii[1])))**(-1)
 
-        return ipasa, Fs
+
+        return focal, ipasa
+
+
+    def lens(self, r0: tuple[float, float], size: float, radii: tuple[float, float], thickness: float,
+            refractive_index: float, angle: float = 0 * degrees, mask: tuple  | None= (50 * um, 1 + 2.05j)):
+        """
+        Lens defined by two radii of curvature and thickness.
+        
+        Args:
+            r0 (tuple[float, float]): position of the initial point of the lens.
+            size (float): _size of the lens, at x dimension
+            radii (tuple[float, float]): radii of curvature of the two surfaces of the lens.
+            thickness (float): thickness of the lens at the central axis.
+            refractive_index (float): refractive index of the lens.
+            angle (float, optional): angle of the lens. Defaults to 0*degrees.
+            mask (tuple | None, optional): If not None, (thicknes, refractive index) of the pupil. Defaults to (50 * um, 1 + 2.05j).
+
+        Reference:  
+            https://en.wikipedia.org/wiki/Focal_length
+
+        Returns:
+            focal: focal distance of the lens (theoretical)
+        """
+        
+        cx = (1/radii[0], 1/radii[1])
+            
+        focal, ipasa = self.aspheric_lens(r0, angle, refractive_index, cx, thickness, size)
+
+        if mask is not None:
+            mask_thickness = mask[0]
+            mask_n = mask[1]
+            
+            self.slit(r0=(0, r0[0]+thickness/2-mask_thickness/2), aperture=size, depth=mask_thickness, refractive_index=mask_n)
+
+                
+        return focal, ipasa
+
 
     def wedge(
             self, r0: tuple[float, float], length, refractive_index: float | str, angle_wedge: float,
@@ -1578,7 +1324,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point (float, float): rotation point
 
         Returns:
-            (numpy.array): ipasa, indexes [iz,ix] of lens
+            (numpy.array): ipasa, indexes [iz,ix] of surface
 
         References:
             According to Ogilvy p.224

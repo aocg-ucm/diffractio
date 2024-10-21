@@ -57,10 +57,9 @@ import copy
 import time
 
 from .__init__ import degrees, eps, mm, np, plt
-from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options, Draw_Vector_XZ_Options, get_vector_options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import load_data_common, save_data_common, get_date, check_none
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, get_vector
 from .utils_drawing import normalize_draw, reduce_matrix_size
 from .utils_math import get_k, nearest
 from .utils_optics import normalize_field, fresnel_equations_kx
@@ -251,124 +250,19 @@ class Vector_field_XYZ():
         return new_field
 
 
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def get(self, kind: str = 'fields', is_matrix=True):
-        """Takes the vector field and divide in Scalar_field_XYZ
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    def get(self, kind: get_vector_options, mode: str = 'modulus', **kwargs):
+        """Takes the vector field and divide in Scalar_field_X.
 
         Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
-            Scalar_field_XYZ: (Ex, Ey),
+            Vector_field_X: (Ex, Ey, Ez),
         """
 
-        Ex_r = self.Ex
-        Ey_r = self.Ey
-        Ez_r = self.Ez
-
-        if kind == 'fields':
-            if is_matrix:
-                return self.Ex, self.Ey, self.Ez
-            else:
-                Ex = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ex.u = Ex_r
-                Ey = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ey.u = Ey_r
-                Ez = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ez.u = Ez_r
-                return Ex, Ey, Ez
-
-        elif kind == 'intensity':
-            intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2 + np.abs(Ez_r)**2
-
-            if is_matrix:
-                return intensity
-            else:
-                Intensity = Scalar_field_XYZ(x=self.x,
-                                             y=self.y,
-                                             z=self.z,
-                                             wavelength=self.wavelength)
-                Intensity.u = np.sqrt(intensity)
-
-                return Intensity
-
-        elif kind == 'intensities':
-            
-            intensity_x = np.abs(Ex_r)**2
-            intensity_y = np.abs(Ey_r)**2
-            intensity_z = np.abs(Ez_r)**2 
-            
-            if is_matrix:
-                return intensity_x, intensity_y, intensity_z
-
-            else:
-                Intensity_x = Scalar_field_XYZ(x=self.x,
-                                             y=self.y,
-                                             z=self.z,
-                                             wavelength=self.wavelength)
-                Intensity_x.u = np.sqrt(intensity_x)
-
-                Intensity_y = Scalar_field_XYZ(x=self.x,
-                                             y=self.y,
-                                             z=self.z,
-                                             wavelength=self.wavelength)
-                Intensity_y.u = np.sqrt(intensity_y)
-                
-                Intensity_z = Scalar_field_XYZ(x=self.x,
-                                             y=self.y,
-                                             z=self.z,
-                                             wavelength=self.wavelength)
-                Intensity_z.u = np.sqrt(intensity_z)
-
-
-                return Intensity_x, Intensity_y, Intensity_z
-
-        elif kind == 'phases':
-            phase_x = np.angle(Ex_r)
-            phase_y = np.angle(Ey_r)
-            phase_z = np.angle(Ez_r)
-
-            if is_matrix:
-                return phase_x, phase_y, phase_z
-            else:
-                Ex = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ex.u = np.exp(1j * phase_x)
-                Ey = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ey.u = np.exp(1j * phase_y)
-                Ez = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-                Ez.u = np.exp(1j * phase_z)
-                return Ex, Ey, Ez
-
-        elif kind == 'stokes':
-            # S0, S1, S2, S3
-            return self.polarization_states(matrix=True)
-
-        elif kind == 'params_ellipse':
-            # A, B, theta, h
-            return self.polarization_ellipse(pol_state=None, matrix=True)
-
-        else:
-            print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
-
-
+        data = get_vector(self, kind, mode, **kwargs)
+        return data
 
 
     @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -543,11 +437,6 @@ class Vector_field_XYZ():
         return self
         
 
-
-
-
-
-
     @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def intensity(self):
         """"Returns intensity.
@@ -558,107 +447,6 @@ class Vector_field_XYZ():
         return intensity
 
     
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def polarization_states(self, matrix: bool = False):
-        """returns the Stokes parameters
-
-        Args:
-            Matrix (bool): if True returns Matrix, else Scalar_field_XYZ
-
-        Returns:
-            S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3  for Matrix=False
-        """
-
-        I = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
-        Q = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
-        U = 2 * np.real(self.Ex * np.conjugate(self.Ey))
-        V = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
-
-        if matrix is True:
-            return I, Q, U, V
-        else:
-            CI = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-            CQ = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-            CU = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-            CV = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-
-            CI.u = I
-            CQ.u = Q
-            CU.u = U
-            CV.u = V
-
-            return CI, CQ, CU, CV
-
-
-    @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
-        """returns A, B, theta, h polarization parameter of elipses
-
-        Args:
-            pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-            Matrix (bool): if True returns Matrix, else Scalar_field_XYZ
-
-        Returns:
-            A, B, theta, h for Matrix=True
-            CA, CB, Ctheta, Ch for Matrix=False
-        """
-        if pol_state is None:
-            I, Q, U, V = self.polarization_states(matrix=True)
-        else:
-            I, Q, U, V = pol_state
-            I = I.u
-            Q = Q.u
-            U = U.u
-            V = V.u
-
-        Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.j * U + eps
-
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L) + eps)))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
-        theta = 0.5 * np.angle(L)
-        h = np.sign(V + eps)
-
-        if matrix is True:
-            return A, B, theta, h
-        else:
-            CA = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-            CB = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-            Ctheta = Scalar_field_XYZ(x=self.x,
-                                      y=self.y,
-                                      z=self.z,
-                                      wavelength=self.wavelength)
-            Ch = Scalar_field_XYZ(x=self.x,
-                                  y=self.y,
-                                  z=self.z,
-                                  wavelength=self.wavelength)
-
-            CA.u = A
-            CB.u = B
-            Ctheta.u = theta
-            Ch.u = h
-            return (CA, CB, Ctheta, Ch)
-
-
     @check_none('x','y','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def normalize(self, kind='amplitude', new_field: bool = False):
         """Normalizes the field so that intensity.max()=1.
@@ -727,10 +515,17 @@ class Vector_field_XYZ():
         field_output.Ex = np.squeeze(self.Ex[iy, :, :]).transpose()
         field_output.Ey = np.squeeze(self.Ey[iy, :, :]).transpose()
         field_output.Ez = np.squeeze(self.Ez[iy, :, :]).transpose()
-        field_output.Hx = np.squeeze(self.Hx[iy, :, :]).transpose()
-        field_output.Hy = np.squeeze(self.Hy[iy, :, :]).transpose()
-        field_output.Hz = np.squeeze(self.Hz[iy, :, :]).transpose()
-        field_output.n = np.squeeze(self.n[iy, :, :]).transpose()
+        try:
+            field_output.Hx = np.squeeze(self.Hx[iy, :, :]).transpose()
+            field_output.Hy = np.squeeze(self.Hy[iy, :, :]).transpose()
+            field_output.Hz = np.squeeze(self.Hz[iy, :, :]).transpose()
+        except:
+            pass
+        
+        try:
+            field_output.n = np.squeeze(self.n[iy, :, :]).transpose()
+        except:
+            pass
         
         
         return field_output
@@ -760,10 +555,17 @@ class Vector_field_XYZ():
         field_output.Ex = np.squeeze(self.Ex[:, ix, :]).transpose()
         field_output.Ey = np.squeeze(self.Ey[:, ix, :]).transpose()
         field_output.Ez = np.squeeze(self.Ez[:, ix, :]).transpose()
-        field_output.Hx = np.squeeze(self.Hx[:, ix, :]).transpose()
-        field_output.Hy = np.squeeze(self.Hy[:, ix, :]).transpose()
-        field_output.Hz = np.squeeze(self.Hz[:, ix, :]).transpose()
-        field_output.n = np.squeeze(self.n[:, ix, :]).transpose()
+        try:
+            field_output.Hx = np.squeeze(self.Hx[:, ix, :]).transpose()
+            field_output.Hy = np.squeeze(self.Hy[:, ix, :]).transpose()
+            field_output.Hz = np.squeeze(self.Hz[:, ix, :]).transpose()
+        except:
+            pass
+        
+        try:
+            field_output.n = np.squeeze(self.n[:, ix, :]).transpose()
+        except:
+            pass
 
         return field_output
 

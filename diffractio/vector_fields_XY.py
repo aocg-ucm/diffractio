@@ -41,9 +41,6 @@ The magnitude is related to microns: `micron = 1.`
     * cut_resample
     * appy_mask
 
-*Vector parameters*
-    * polarization_states
-    * polarization_ellipse
 
 *Propagation*
     * RS - Rayleigh Sommerfeld
@@ -63,13 +60,14 @@ from py_pol.jones_matrix import Jones_matrix
 from py_pol.jones_vector import Jones_vector
 
 from .__init__ import degrees, eps, mm, np, plt, um
-from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_Vector_XY_Options, get_vector_options
 from .utils_typing import NDArrayFloat
-from .utils_common import load_data_common, save_data_common, get_date, check_none
+from .utils_common import load_data_common, save_data_common, get_date, check_none, get_vector, check_none
 from .utils_drawing import normalize_draw, reduce_matrix_size, draw_edges
 from .utils_math import nearest
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
+
 
 percentage_intensity = CONF_DRAWING['percentage_intensity']
 percentage_Ez = CONF_DRAWING['percentage_Ez']
@@ -262,79 +260,19 @@ class Vector_field_XY():
         return new_field
 
 
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def get(self, kind: str = 'fields', is_matrix=True):
-        """Returns the value of the field, depending of the kind parameter.
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    def get(self, kind: get_vector_options, mode: str = 'modulus', **kwargs):
+        """Takes the vector field and divide in Scalar_field_X.
 
         Args:
             kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
-            is_matrx (bool): If True, returns matrix instead of instance.
 
         Returns:
-            Matrices or Vector_field_XY
+            Vector_field_X: (Ex, Ey, Ez),
         """
 
-        Ex_r = self.Ex
-        Ey_r = self.Ey
-        Ez_r = self.Ez
-
-        if kind == 'fields':
-            if is_matrix:
-                return self.Ex, self.Ey, self.Ez
-
-            else:
-                Ex = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ex.u = Ex_r
-                Ey = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ey.u = Ey_r
-                Ez = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ez.u = Ez_r
-                return Ex, Ey, Ez
-
-        elif kind == 'intensity':
-            intensity = np.abs(Ex_r)**2 + np.abs(Ey_r)**2 + np.abs(Ez_r)**2
-
-            if is_matrix:
-                return intensity
-
-            else:
-                Intensity = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Intensity.u = np.sqrt(intensity)
-
-                return Intensity
-
-        elif kind == 'intensities':
-            intensity_x = np.abs(Ex_r)**2
-            intensity_y = np.abs(Ey_r)**2
-            intensity_z = np.abs(Ez_r)**2
-            return intensity_x, intensity_y, intensity_z
-
-        elif kind == 'phases':
-            phase_x = np.angle(Ex_r)
-            phase_y = np.angle(Ey_r)
-            phase_z = np.angle(Ez_r)
-
-            if is_matrix:
-                return phase_x, phase_y, phase_z
-            else:
-                Ex = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ex.u = np.exp(1j * phase_x)
-                Ey = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ey.u = np.exp(1j * phase_y)
-                Ez = Scalar_field_XY(self.x, self.y, self.wavelength)
-                Ez.u = np.exp(1j * phase_z)
-                return Ex, Ey, Ez
-
-        elif kind == 'stokes':
-            # S0, S1, S2, S3
-            return self.polarization_states(matrix=True)
-
-        elif kind == 'params_ellipse':
-            # A, B, theta, h
-            return self.polarization_ellipse(pol_state=None, matrix=True)
-
-        else:
-            print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
+        data = get_vector(self, kind, mode, **kwargs)
+        return data
 
 
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -782,10 +720,15 @@ class Vector_field_XY():
             http://stacks.iop.org/1612-202X/10/i=6/a=065004?key=crossref.890761f053b56d7a9eeb8fc6da4d9b4e
         """
 
-        e0x, e0y, _ = self.get(is_matrix=False)
+        e0xm, e0ym, _ = self.get('E')
 
+
+        e0x = Scalar_field_XY(self.x, self.y, self.wavelength)
+        e0x.u = e0xm
+        e0y = Scalar_field_XY(self.x, self.y, self.wavelength)
+        e0y.u = e0ym
         e0z = Scalar_field_XY(self.x, self.y, self.wavelength)
-        e0z.u = 0
+        e0z.u = np.zeros_like(e0x.u)
 
         # estas son las components justo en la posicion pedida
         Ex = e0x.RS(z=z,
@@ -886,8 +829,13 @@ class Vector_field_XY():
             ystart = yout[0]
             yend = yout[-1]
 
-        e0x, e0y, _ = self.get(is_matrix=False)
-        e0z = e0x.duplicate()
+        e0xm, e0ym, _ = self.get('E')
+        e0x = Scalar_field_XY(self.x, self.y, self.wavelength)
+        e0x.u = e0xm
+        e0y = Scalar_field_XY(self.x, self.y, self.wavelength)
+        e0y.u = e0ym
+        e0z = Scalar_field_XY(self.x, self.y, self.wavelength)
+        e0z.u = np.zeros_like(e0x.u)
 
         if num_z == 1:
             r = np.sqrt(self.X**2 + self.Y**2 + z**2)
@@ -965,16 +913,16 @@ class Vector_field_XY():
                 return E_out
 
             elif num_x > 1 and num_y == 1:
-                from diffractio.vector_fields_XZ import Vector_field_XY
-                E_out = vector_field_XY(xout, z, self.wavelength)
+                from diffractio.vector_fields_XZ import Vector_field_XZ
+                E_out = Vector_field_XZ(xout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
                 E_out.Ez = e0z_zs.u
                 return E_out
 
             elif num_x == 1 and num_y > 1:
-                from diffractio.vector_fields_XZ import Vector_field_XY
-                E_out = vector_field_XY(yout, z, self.wavelength)
+                from diffractio.vector_fields_XZ import Vector_field_XZ
+                E_out = Vector_field_XZ(yout, z, self.wavelength)
                 E_out.Ex = e0x_zs.u
                 E_out.Ey = e0y_zs.u
                 E_out.Ez = e0z_zs.u
@@ -987,83 +935,6 @@ class Vector_field_XY():
                 E_out.Ey = e0y_zs.u
                 E_out.Ez = e0z_zs.u
                 return E_out
-
-
-    @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def polarization_states(self, matrix: bool = False):
-        """returns the Stokes parameters
-
-        Args:
-            Matrix (bool): if True returns Matrix, else Scalar_field_XY
-
-        Returns:
-            S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3 for Matrix=False
-        """
-
-        S0 = np.abs(self.Ex)**2 + np.abs(self.Ey)**2
-        S1 = np.abs(self.Ex)**2 - np.abs(self.Ey)**2
-        S2 = 2 * np.real(self.Ex * np.conjugate(self.Ey))
-        S3 = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
-
-        if matrix is True:
-            return S0, S1, S2, S3
-        else:
-            C_S0 = Scalar_field_XY(self.x, self.y, self.wavelength)
-            C_S1 = Scalar_field_XY(self.x, self.y, self.wavelength)
-            C_S2 = Scalar_field_XY(self.x, self.y, self.wavelength)
-            C_S3 = Scalar_field_XY(self.x, self.y, self.wavelength)
-
-            C_S0.u = S0
-            C_S1.u = S1
-            C_S2.u = S2
-            C_S3.u = S3
-
-            return C_S0, C_S1, C_S2, C_S3
-
-
-    @check_none('x','y',raise_exception=bool_raise_exception)
-    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
-        """returns A, B, theta, h polarization parameter of elipses
-
-        Args:
-            pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-            Matrix (bool): if True returns Matrix, else Scalar_field_XY
-
-        Returns:
-            A, B, theta, h for Matrix=True
-            CA, CB, Ctheta, Ch for Matrix=False
-        """
-        if pol_state is None:
-            I, Q, U, V = self.polarization_states(matrix=True)
-        else:
-            I, Q, U, V = pol_state
-            I = I.u
-            Q = Q.u
-            U = U.u
-            V = V.u
-
-        Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.j * U + eps
-
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L) + eps)))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
-        theta = 0.5 * np.angle(L)
-        h = np.sign(V + eps)
-
-        if matrix is True:
-            return A, B, theta, h
-        else:
-            CA = Scalar_field_XY(self.x, self.y, self.wavelength)
-            CB = Scalar_field_XY(self.x, self.y, self.wavelength)
-            Ctheta = Scalar_field_XY(self.x, self.y, self.wavelength)
-            Ch = Scalar_field_XY(self.x, self.y, self.wavelength)
-
-            CA.u = A
-            CB.u = B
-            Ctheta.u = theta
-            Ch.u = h
-            return (CA, CB, Ctheta, Ch)
 
 
     @check_none('x','y','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -1260,7 +1131,6 @@ class Vector_field_XY():
              amplification: float = 0.5,
              filename: str = '',
              draw: bool = True,
-             only_image: bool = False,
              **kwargs):
         """Draws electromagnetic field
 
@@ -1279,16 +1149,12 @@ class Vector_field_XY():
         draw_borders = 0
         if draw is True:
             if kind == 'intensity':
-                id_fig = self.__draw_intensity__(logarithm, normalize,
-                                                 cut_value, only_image,
-                                                 **kwargs)
+                id_fig = self.__draw_intensity__(logarithm, normalize, cut_value, **kwargs)
             elif kind == 'intensities':
-                id_fig = self.__draw_intensities__(logarithm, normalize,
-                                                   cut_value, **kwargs)
+                id_fig = self.__draw_intensities__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'intensities_rz':
-                id_fig = self.__draw_intensities_rz__(logarithm, normalize,
-                                                      cut_value, **kwargs)
+                id_fig = self.__draw_intensities_rz__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'phases':
                 id_fig = self.__draw_phases__(**kwargs)
@@ -1300,20 +1166,16 @@ class Vector_field_XY():
                 id_fig = self.__draw_E2H2__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'fields':
-                id_fig = self.__draw_fields__(logarithm, normalize, cut_value,
-                                              **kwargs)
+                id_fig = self.__draw_fields__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'stokes':
-                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value,
-                                              **kwargs)
+                id_fig = self.__draw_stokes__(logarithm, normalize, cut_value, **kwargs)
 
             elif kind == 'param_ellipse':
                 id_fig = self.__draw_param_ellipse__(**kwargs)
 
             elif kind == 'ellipses':
-                id_fig = self.__draw_ellipses__(logarithm, normalize,
-                                                cut_value, num_ellipses,
-                                                amplification, **kwargs)
+                id_fig = self.__draw_ellipses__(logarithm, normalize, cut_value, num_ellipses, amplification, **kwargs)
 
                 
             else:
@@ -1321,10 +1183,7 @@ class Vector_field_XY():
                 id_fig = None
 
             if filename != '':
-                plt.savefig(filename,
-                            dpi=100,
-                            bbox_inches='tight',
-                            pad_inches=0.1)
+                plt.savefig(filename, dpi=100, bbox_inches='tight', pad_inches=0.1)
 
             return id_fig
 
@@ -1335,7 +1194,6 @@ class Vector_field_XY():
                            normalize: bool,
                            cut_value: float,
                            draw_borders: bool=False,
-                           only_image: bool = False,
                            color_intensity: str = CONF_DRAWING['color_intensity'],
                            **kwargs):
         """Draws the intensity
@@ -1348,14 +1206,13 @@ class Vector_field_XY():
 
         intensity = self.get('intensity')
 
-        intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y,
-                                       intensity)
+        intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.y, intensity)
 
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
         plt.figure()
         h1 = plt.subplot(1, 1, 1)
-        self.__draw1__(intensity, color_intensity, "", only_image=only_image)
+        self.__draw1__(intensity, color_intensity, "")
         draw_edges(self, plt, draw_borders, **kwargs)
         plt.subplots_adjust(left=0,
                             bottom=0,
@@ -2034,7 +1891,7 @@ class Vector_field_XY():
 
         tx, ty = rcParams['figure.figsize']
 
-        S0, S1, S2, S3 = self.polarization_states(matrix=True)
+        S0, S1, S2, S3 = self.get('stokes')
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
         S1 = normalize_draw(S1, logarithm, normalize, cut_value)
         S2 = normalize_draw(S2, logarithm, normalize, cut_value)
@@ -2147,7 +2004,6 @@ class Vector_field_XY():
         Dx = self.x[-1] - self.x[0]
         Dy = self.y[-1] - self.y[0]
 
-        print(Dx, num_ellipses)
 
         size_x = Dx / (num_ellipses[0])
         size_y = Dy / (num_ellipses[1])

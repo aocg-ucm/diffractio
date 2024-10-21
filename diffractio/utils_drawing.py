@@ -468,12 +468,15 @@ def draw_edges(vector_field, plt, draw_borders: bool=True, color: str='w.', ms: 
     """
     min_incr: float = 0.0005
     
-    # if scale != '':
-    #     plt.axis(scale)
-
     if draw_borders is True:
         vector_field.surface_detection(1, min_incr)
         border0 = vector_field.borders[0]
         border1 = vector_field.borders[1]
 
         plt.plot(border1, border0, color, ms=ms)
+
+        # idea to draw the refractive index with a 2d colormap
+        # h1 = plt.imshow(np.abs(vector_field.n.transpose()),
+        #         interpolation='bilinear',
+        #         aspect='auto',
+        #         origin='lower', alpha=0.25, cmap=CONF_DRAWING['color_n'])

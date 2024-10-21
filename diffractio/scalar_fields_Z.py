@@ -51,9 +51,9 @@ from scipy.interpolate import interp1d
 
 
 from .__init__ import degrees, mm, np, plt
-from .config import bool_raise_exception, Draw_Z_Options
+from .config import bool_raise_exception, Draw_Z_Options, get_scalar_options
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import add, get_date, load_data_common, save_data_common, check_none, oversampling
+from .utils_common import add, get_date, load_data_common, save_data_common, check_none, oversampling, get_scalar
 from .utils_drawing import normalize_draw
 from .utils_math import nearest
 
@@ -234,6 +234,21 @@ class Scalar_field_Z():
         """
 
         self = oversampling(self, factor_rate)
+        
+    
+    @check_none('u',raise_exception=bool_raise_exception)
+    def get(self, kind: get_scalar_options):
+        """Get parameters from Scalar field.
+
+        Args:
+            kind (str): 'intensity', 'phase', 'field'
+
+        Returns:
+            matrices with required values
+        """
+
+        data = get_scalar(self, kind)
+        return data
 
     @check_none('z','u')
     def cut_resample(self,

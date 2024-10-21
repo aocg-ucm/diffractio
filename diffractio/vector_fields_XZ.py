@@ -52,9 +52,9 @@ from scipy.interpolate import RectBivariateSpline
 
 from .__init__ import degrees, eps, mm, np, plt
 from .config import (bool_raise_exception, CONF_DRAWING, 
-                     vector_XZ_get_Options, Draw_Vector_XZ_Options)
+                     get_vector_options, Draw_Vector_XZ_Options)
 from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none
+from .utils_common import get_date, load_data_common, save_data_common, check_none, get_vector
 from .utils_drawing import normalize_draw, reduce_matrix_size, draw_edges
 from .utils_math import get_k, nearest
 from .utils_optics import normalize_field, fresnel_equations_kx
@@ -298,7 +298,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
     def refractive_index_from_scalarXZ(self, u_xz: Scalar_mask_XZ):
         """
-        refractive_index_from_scalarXZ. Gets the refractive index from a Scalar field and passes to a vector field.
+        Refractive_index_from_scalarXZ. Gets the refractive index from a Scalar field and passes to a vector field.
         
         Obviously, the refractive index is isotropic.
 
@@ -314,162 +314,19 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return edges
         
 
-    @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    def get(self, kind: vector_XZ_get_Options = "fields", is_matrix: bool =True, mode='modulus', **kwargs):
+    @check_none('Ex','Ey','Ez',raise_exception=bool_raise_exception)
+    def get(self, kind: get_vector_options, mode: str = 'modulus', **kwargs):
         """Takes the vector field and divide in Scalar_field_X.
 
         Args:
-            kind (str): 'fields', 'intensity', 'intensities', 'phases', 'poynting_vector', 'poynting_vector_averaged', 
-            'poynting_total', 'energy_density', 'irradiance', 'stokes', 'params_ellipse', 
+            kind (str): 'fields', 'intensity', 'intensities', 'phases', 'stokes', 'params_ellipse'
 
         Returns:
             Vector_field_X: (Ex, Ey, Ez),
         """
 
-
-        if kind == "fields":
-            if is_matrix:
-                return self.Ex, self.Ey, self.Ez
-
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = self.Ex
-                Ex.borders = self.borders
-                Ex.n = self.n
-                Ey = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ey.u = self.Ey
-                Ez = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ez.u = self.Ez
-                return Ex, Ey, Ez
-
-        elif kind == "intensity":
-            intensity = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2 + np.abs(self.Ez) ** 2
-
-            if is_matrix:
-                return intensity
-
-            else:
-                Intensity = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Intensity.u = np.sqrt(intensity)
-
-                return Intensity
-
-        elif kind == "intensities":
-            intensity_x = np.abs(self.Ex) ** 2
-            intensity_y = np.abs(self.Ey) ** 2
-            intensity_z = np.abs(self.Ez) ** 2
-            return intensity_x, intensity_y, intensity_z
-
-        elif kind == "phases":
-            phase_x = np.angle(self.Ex)
-            phase_y = np.angle(self.Ey)
-            phase_z = np.angle(self.Ez)
-
-            if is_matrix:
-                return phase_x, phase_y, phase_z
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = np.exp(1j * phase_x)
-                Ey = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ey.u = np.exp(1j * phase_y)
-                Ez = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ez.u = np.exp(1j * phase_z)
-                return Ex, Ey, Ez
-            
-        elif kind == 'poynting_vector':
-            Sx = np.real(self.Ey * self.Hz - self.Ez * self.Hy)
-            Sy = np.real(self.Ez * self.Hx - self.Ex * self.Hz)
-            Sz = np.real(self.Ex * self.Hy - self.Ey * self.Hx)
-            
-            if is_matrix:
-                return Sx, Sy, Sz
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = np.sqrt(Sx)
-                Ey = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ey.u = np.sqrt(Sy)
-                Ez = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ez.u = np.sqrt(Sz)
-                return Ex, Ey, Ez
-
-        elif kind == 'poynting_vector_averaged':
-            Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
-            Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
-            Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
-
-            if is_matrix:
-                return Sx, Sy, Sz
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = Sx
-                Ey = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ey.u = Sy
-                Ez = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ez.u = Sz
-                return Ex, Ey, Ez
-
-        elif kind == 'poynting_total':
-            Sx, Sy, Sz = self.get('poynting_vector_averaged')
-
-            S_total = np.sqrt(np.abs(Sx)**2 + np.abs(Sy)**2 + np.abs(Sz)**2)
-
-            if is_matrix:
-                return S_total
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = np.sqrt(S_total)
-                return Ex
-
-        elif kind == 'energy_density':
-            epsilon = self.n**2
-            permeability = 4*np.pi*1e-7
-            U = epsilon * np.real(np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2) + permeability * (np.abs(self.Hx)**2 + np.abs(self.Hy)**2 + np.abs(self.Hz)**2)
-
-            if is_matrix:
-                return U
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = np.sqrt(U)
-
-                return Ex
-
-        elif kind == 'irradiance':
-       
-            epsilon = self.n ** 2
-            permeability = 4 * np.pi * 1e-7
-
-            Sx, Sy, Sz = self.get('poynting_vector_averaged')
-            
-            if mode == 'modulus':
-                irradiance = np.sqrt(Sx**2 + Sy**2 + Sz**2)
-                
-            elif mode == 'Sz':
-                irradiance = Sz
-                
-            elif isinstance(mode, (list, tuple, np.ndarray)):
-                mode = np.array(mode)
-                mode = mode/np.linalg.norm(mode)
-                irradiance = mode[0] * Sx + mode[1] * Sy + mode[2] * Sz 
-
-            if is_matrix:
-                return irradiance
-            else:
-                Ex = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-                Ex.u = np.sqrt(irradiance)
-
-                return Ex
-            
-        elif kind == "stokes":
-            # S0, S1, S2, S3
-            return self.polarization_states(matrix=True)
-
-        elif kind == "params_ellipse":
-            # A, B, theta, h
-            return self.polarization_ellipse(pol_state=None, matrix=True)
-
-        else:
-            print("The parameter '{}'' in .get(kind='') is wrong".format(kind))
-
+        data = get_vector(self, kind, mode, **kwargs)
+        return data
 
     @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def apply_mask(self, u, new_field: bool = False):
@@ -604,265 +461,265 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return intensity
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
-        "Poynting Vector"
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def Poynting_vector(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
+    #     "Poynting Vector"
 
-        Sx = np.real(self.Ey * self.Hz - self.Ez * self.Hy)
-        Sy = np.real(self.Ez * self.Hx - self.Ex * self.Hz)
-        Sz = np.real(self.Ex * self.Hy - self.Ey * self.Hx)
+    #     Sx = np.real(self.Ey * self.Hz - self.Ez * self.Hy)
+    #     Sy = np.real(self.Ez * self.Hx - self.Ex * self.Hz)
+    #     Sz = np.real(self.Ex * self.Hy - self.Ey * self.Hx)
 
-        cmap=CONF_DRAWING["color_amplitude_sign"]
+    #     cmap=CONF_DRAWING["color_amplitude_sign"]
 
 
-        S_max = np.max((Sx, Sy, Sz))
-        S_min = np.min((Sx, Sy, Sz))
-        S_lim = np.max((abs(S_max), np.abs(S_min)))
-        z0 = self.z
-        x0 = self.x
-        if has_draw:
-            tx, ty = rcParams["figure.figsize"]
+    #     S_max = np.max((Sx, Sy, Sz))
+    #     S_min = np.min((Sx, Sy, Sz))
+    #     S_lim = np.max((abs(S_max), np.abs(S_min)))
+    #     z0 = self.z
+    #     x0 = self.x
+    #     if has_draw:
+    #         tx, ty = rcParams["figure.figsize"]
 
-            dims = np.shape(Sx)
-            num_dims = len(dims)
-            if num_dims == 1:
-                z0 = self.z
-                plt.figure(figsize=(3 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.plot(self.z, Sx)
-                plt.ylim(-S_lim, S_lim)
-                plt.title("$S_x$")
+    #         dims = np.shape(Sx)
+    #         num_dims = len(dims)
+    #         if num_dims == 1:
+    #             z0 = self.z
+    #             plt.figure(figsize=(3 * tx, 1 * ty))
+    #             plt.subplot(1, 3, 1)
+    #             plt.plot(self.z, Sx)
+    #             plt.ylim(-S_lim, S_lim)
+    #             plt.title("$S_x$")
 
-                plt.subplot(1, 3, 2)
-                plt.plot(self.z, Sy)
-                plt.title("$S_y$")
-                plt.ylim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 2)
+    #             plt.plot(self.z, Sy)
+    #             plt.title("$S_y$")
+    #             plt.ylim(-S_lim, S_lim)
 
-                plt.subplot(1, 3, 3)
-                plt.plot(self.z, Sz)
-                plt.title("$S_z$")
-                plt.ylim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 3)
+    #             plt.plot(self.z, Sz)
+    #             plt.title("$S_z$")
+    #             plt.ylim(-S_lim, S_lim)
 
-                plt.suptitle("Pointing vector")
+    #             plt.suptitle("Pointing vector")
 
-            elif num_dims == 2:
-                fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.title("")
-                id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
-                plt.axis(scale)                
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders,  **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
+    #         elif num_dims == 2:
+    #             fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
+    #             plt.subplot(1, 3, 1)
+    #             plt.title("")
+    #             id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
+    #             plt.axis(scale)                
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders,  **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
     
-                plt.subplot(1, 3, 2)
-                plt.title("$S_y$")
-                id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders, **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 2)
+    #             plt.title("$S_y$")
+    #             id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders, **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
     
-                plt.subplot(1, 3, 3)
-                id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
-                plt.title("$S_z$")
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders, **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
-                # axes[2].set_axis_off()
+    #             plt.subplot(1, 3, 3)
+    #             id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+    #             plt.title("$S_z$")
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders, **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
+    #             # axes[2].set_axis_off()
 
-                cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+    #             cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+    #             cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
-        plt.tight_layout()        
-        return Sx, Sy, Sz
+    #     plt.tight_layout()        
+    #     return Sx, Sy, Sz
 
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
-        "Averaged Poynting Vector"
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def Poynting_vector_averaged(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
+    #     "Averaged Poynting Vector"
 
-        Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
-        Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
-        Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
+    #     Sx = np.real(self.Ey * self.Hz.conjugate() - self.Ez * self.Hy.conjugate()).squeeze()
+    #     Sy = np.real(self.Ez * self.Hx.conjugate() - self.Ex * self.Hz.conjugate()).squeeze()
+    #     Sz = np.real(self.Ex * self.Hy.conjugate() - self.Ey * self.Hx.conjugate()).squeeze()
 
-        cmap=CONF_DRAWING["color_amplitude_sign"]
+    #     cmap=CONF_DRAWING["color_amplitude_sign"]
 
-        # if possible elliminate
-        # Sz[0, :] = Sz[1, :]
+    #     # if possible elliminate
+    #     # Sz[0, :] = Sz[1, :]
 
-        S_max = np.max((Sx, Sy, Sz))
-        S_min = np.min((Sx, Sy, Sz))
-        S_lim = np.max((abs(S_max), np.abs(S_min)))
+    #     S_max = np.max((Sx, Sy, Sz))
+    #     S_min = np.min((Sx, Sy, Sz))
+    #     S_lim = np.max((abs(S_max), np.abs(S_min)))
         
-        if has_draw:
-            tx, ty = rcParams["figure.figsize"]
+    #     if has_draw:
+    #         tx, ty = rcParams["figure.figsize"]
 
-            dims = np.shape(Sx)
-            num_dims = len(dims)
-            if num_dims == 1:
-                z0 = self.z
-                plt.figure(figsize=(3 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.plot(self.z, Sx)
-                plt.ylim(-S_lim, S_lim)
-                plt.title("$S_x$")
+    #         dims = np.shape(Sx)
+    #         num_dims = len(dims)
+    #         if num_dims == 1:
+    #             z0 = self.z
+    #             plt.figure(figsize=(3 * tx, 1 * ty))
+    #             plt.subplot(1, 3, 1)
+    #             plt.plot(self.z, Sx)
+    #             plt.ylim(-S_lim, S_lim)
+    #             plt.title("$S_x$")
 
-                plt.subplot(1, 3, 2)
-                plt.plot(self.z, Sy)
-                plt.title("$S_y$")
-                plt.ylim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 2)
+    #             plt.plot(self.z, Sy)
+    #             plt.title("$S_y$")
+    #             plt.ylim(-S_lim, S_lim)
 
-                plt.subplot(1, 3, 3)
-                plt.plot(self.z, Sz)
-                plt.title("$S_z$")
-                plt.ylim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 3)
+    #             plt.plot(self.z, Sz)
+    #             plt.title("$S_z$")
+    #             plt.ylim(-S_lim, S_lim)
 
-                plt.suptitle("Average Pointing vector")
+    #             plt.suptitle("Average Pointing vector")
 
-            elif num_dims == 2:
-                z0 = self.z
-                x0 = self.x
+    #         elif num_dims == 2:
+    #             z0 = self.z
+    #             x0 = self.x
 
-                fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,
-                                         figsize=(2 * tx, 1 * ty))
-                plt.subplot(1, 3, 1)
-                plt.title("")
-                id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
-                plt.axis(scale)                
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders,  **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
+    #             fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,
+    #                                      figsize=(2 * tx, 1 * ty))
+    #             plt.subplot(1, 3, 1)
+    #             plt.title("")
+    #             id_fig, ax, IDimage = draw2D_xz(Sx, z0, x0, axs[0], xlabel='z ($\mu$m)', ylabel='x ($\mu$m)', title='$S_x$', cmap=cmap)
+    #             plt.axis(scale)                
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders,  **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
     
-                plt.subplot(1, 3, 2)
-                plt.title("$S_y$")
-                id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders, **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
+    #             plt.subplot(1, 3, 2)
+    #             plt.title("$S_y$")
+    #             id_fig, ax, IDimage = draw2D_xz(Sy, z0, x0, axs[1], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders, **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
     
-                plt.subplot(1, 3, 3)
-                id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
-                plt.title("$S_z$")
-                plt.axis(scale)
-                draw_edges(self, plt,  draw_borders, **kwargs)
-                IDimage.set_clim(-S_lim, S_lim)
-                # axes[2].set_axis_off()
+    #             plt.subplot(1, 3, 3)
+    #             id_fig, ax, IDimage = draw2D_xz(Sz, z0, x0,axs[2], xlabel='z ($\mu$m)', ylabel='', title='$S_x$', cmap=cmap)
+    #             plt.title("$S_z$")
+    #             plt.axis(scale)
+    #             draw_edges(self, plt,  draw_borders, **kwargs)
+    #             IDimage.set_clim(-S_lim, S_lim)
+    #             # axes[2].set_axis_off()
 
-                cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-                cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+    #             cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+    #             cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
-        plt.tight_layout()
-        return Sx, Sy, Sz
+    #     plt.tight_layout()
+    #     return Sx, Sy, Sz
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def Poynting_total(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
 
-        Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
+    #     Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
 
-        S = np.sqrt(np.abs(Sx)**2 + np.abs(Sy)**2 + np.abs(Sz)**2)
+    #     S = np.sqrt(np.abs(Sx)**2 + np.abs(Sy)**2 + np.abs(Sz)**2)
 
-        if has_draw:
-            dims = np.shape(Sx)
-            num_dims = len(dims)
-            if num_dims == 1:
-                plt.figure()
-                plt.subplot(1, 1, 1)
-                plt.plot(self.z, S)
+    #     if has_draw:
+    #         dims = np.shape(Sx)
+    #         num_dims = len(dims)
+    #         if num_dims == 1:
+    #             plt.figure()
+    #             plt.subplot(1, 1, 1)
+    #             plt.plot(self.z, S)
 
-                plt.suptitle("$S_{total}$")
-            elif num_dims == 2:
+    #             plt.suptitle("$S_{total}$")
+    #         elif num_dims == 2:
 
-                fig, axs = plt.subplots(nrows=1, ncols=1)
+    #             fig, axs = plt.subplots(nrows=1, ncols=1)
                 
-                id_fig, ax, IDimage = draw2D_xz(
-                    S, self.z, self.x, ax=axs, xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=CONF_DRAWING["color_intensity"], title=r'$S_{total}$')
-                plt.axis(scale)
-                draw_edges(self, plt, draw_borders, **kwargs)
+    #             id_fig, ax, IDimage = draw2D_xz(
+    #                 S, self.z, self.x, ax=axs, xlabel="z $(\mu m)$", ylabel="x $(\mu m)$", cmap=CONF_DRAWING["color_intensity"], title=r'$S_{total}$')
+    #             plt.axis(scale)
+    #             draw_edges(self, plt, draw_borders, **kwargs)
                 
-                IDimage.set_clim(vmin=0)                
-                cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
-                cbar = fig.colorbar(id_fig, cmap=CONF_DRAWING["color_intensity"], cax=cb_ax, orientation='horizontal', shrink=0.5)
-                plt.tight_layout()
+    #             IDimage.set_clim(vmin=0)                
+    #             cb_ax = fig.add_axes([0.2, 0, 0.6, 0.025])
+    #             cbar = fig.colorbar(id_fig, cmap=CONF_DRAWING["color_intensity"], cax=cb_ax, orientation='horizontal', shrink=0.5)
+    #             plt.tight_layout()
                 
-        plt.tight_layout()
-        return S
+    #     plt.tight_layout()
+    #     return S
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def energy_density(self, has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):
 
-        epsilon = self.n**2
-        permeability = 4*np.pi*1e-7
+    #     epsilon = self.n**2
+    #     permeability = 4*np.pi*1e-7
 
-        U = epsilon * np.real(np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2) + permeability * (np.abs(self.Hx)**2 + np.abs(self.Hy)**2 + np.abs(self.Hz)**2)
+    #     U = epsilon * np.real(np.abs(self.Ex)**2 + np.abs(self.Ey)**2 + np.abs(self.Ez)**2) + permeability * (np.abs(self.Hx)**2 + np.abs(self.Hy)**2 + np.abs(self.Hz)**2)
 
-        if has_draw:
-            dims = np.shape(U)
-            num_dims = len(dims)
-            if num_dims == 1:
-                plt.figure()
-                plt.plot(self.z, np.real(U))
+    #     if has_draw:
+    #         dims = np.shape(U)
+    #         num_dims = len(dims)
+    #         if num_dims == 1:
+    #             plt.figure()
+    #             plt.plot(self.z, np.real(U))
 
-            elif num_dims == 2:
-                id_fig, ax, IDimage = draw2D_xz(np.real(U), self.z, self.x, title='energy_density', cmap=CONF_DRAWING["color_intensity"])
-                plt.axis(scale)
-                draw_edges(self, plt, draw_borders, **kwargs)
-                IDimage.set_clim(0)
+    #         elif num_dims == 2:
+    #             id_fig, ax, IDimage = draw2D_xz(np.real(U), self.z, self.x, title='energy_density', cmap=CONF_DRAWING["color_intensity"])
+    #             plt.axis(scale)
+    #             draw_edges(self, plt, draw_borders, **kwargs)
+    #             IDimage.set_clim(0)
 
-        plt.tight_layout()
-        return U
+    #     plt.tight_layout()
+    #     return U
 
 
-    @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):# -> Any | Any:
-        """Irradiance of the field.
+    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
+    # def irradiance(self, kind: str | tuple[float, float, float] = "modulus", has_draw: bool = False, draw_borders: bool = True,  scale: str = 'scaled', **kwargs):# -> Any | Any:
+    #     """Irradiance of the field.
         
         
-        The irradiance is defined as a scalar product between the Poynting vector and the normal vector to the surface.
-        However here we determine the irradiance as the modulus of the Poynting vector ("modulus") or the z component of the Poynting vector ("Sz")
+    #     The irradiance is defined as a scalar product between the Poynting vector and the normal vector to the surface.
+    #     However here we determine the irradiance as the modulus of the Poynting vector ("modulus") or the z component of the Poynting vector ("Sz")
 
 
-        Args:
-            kind (str | tuple[float, float, float], optional): "Sz" or "modulus". Defaults to 'Sz'.
-            has_draw (bool, optional): _description_. Defaults to False.
-            axis (str, optional): _description_. Defaults to 'scaled'.
+    #     Args:
+    #         kind (str | tuple[float, float, float], optional): "Sz" or "modulus". Defaults to 'Sz'.
+    #         has_draw (bool, optional): _description_. Defaults to False.
+    #         axis (str, optional): _description_. Defaults to 'scaled'.
 
-        Returns:
-            _type_: _description_
-        """
+    #     Returns:
+    #         _type_: _description_
+    #     """
 
-        epsilon = self.n ** 2
-        permeability = 4 * np.pi * 1e-7
+    #     epsilon = self.n ** 2
+    #     permeability = 4 * np.pi * 1e-7
 
-        Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
+    #     Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
         
-        if kind == 'modulus':
-            irradiance = np.sqrt(Sx**2 + Sy**2 + Sz**2)
+    #     if kind == 'modulus':
+    #         irradiance = np.sqrt(Sx**2 + Sy**2 + Sz**2)
             
-        elif kind == 'Sz':
-            irradiance = Sz
-        elif isinstance(kind, (list, tuple, np.ndarray)):
-            kind = np.array(kind)
-            kind = kind/np.linalg.norm(kind)
-            irradiance = kind[0] * Sx + kind[1] * Sy + kind[2] * Sz 
+    #     elif kind == 'Sz':
+    #         irradiance = Sz
+    #     elif isinstance(kind, (list, tuple, np.ndarray)):
+    #         kind = np.array(kind)
+    #         kind = kind/np.linalg.norm(kind)
+    #         irradiance = kind[0] * Sx + kind[1] * Sy + kind[2] * Sz 
 
-        if has_draw:
-            dims = np.shape(irradiance)
-            num_dims = len(dims)
-            if num_dims == 1:
-                plt.figure()
-                plt.plot(self.z, irradiance)
+    #     if has_draw:
+    #         dims = np.shape(irradiance)
+    #         num_dims = len(dims)
+    #         if num_dims == 1:
+    #             plt.figure()
+    #             plt.plot(self.z, irradiance)
 
-            elif num_dims == 2:
-                id_fig, ax, IDimage = draw2D_xz(irradiance, self.z, self.x, title='irradiance', cmap=CONF_DRAWING["color_intensity"])
-                plt.axis(scale)
-                draw_edges(self, plt, draw_borders, **kwargs)
-                IDimage.set_clim(0, irradiance.max())
+    #         elif num_dims == 2:
+    #             id_fig, ax, IDimage = draw2D_xz(irradiance, self.z, self.x, title='irradiance', cmap=CONF_DRAWING["color_intensity"])
+    #             plt.axis(scale)
+    #             draw_edges(self, plt, draw_borders, **kwargs)
+    #             IDimage.set_clim(0, irradiance.max())
 
-        plt.tight_layout()
-        return irradiance
+    #     plt.tight_layout()
+    #     return irradiance
     
     def check_energy(self, kind = 'all', has_draw : bool = True):
         """
@@ -881,11 +738,10 @@ class Vector_field_XZ(Scalar_mask_XZ):
         # permeability = 4 * np.pi * 1e-7
         # Z0 = 376.82
 
-        Sx, Sy, Sz = self.Poynting_vector_averaged(has_draw=False)
-        U = self.energy_density(has_draw=False)
+        Sx, Sy, Sz = self.get('poynting_vector_averaged')
+        U = self.get('energy_density')
         S_tot = np.sqrt(Sx**2 + Sy**2 + Sz**2)
         S_trans = np.sqrt(Sx**2 + Sy**2)
-
 
 
         energy_z1 = (Sz).mean(axis=1)/(Sz[0, :]).mean()
@@ -913,82 +769,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         return energy_z1, energy_z2, energy_z3
 
-
-    @check_none('x','z','Ex','Ey',raise_exception=bool_raise_exception)
-    def polarization_states(self, matrix: bool = False):
-        """returns the Stokes parameters
-
-        Args:
-            Matrix (bool): if True returns Matrix, else Scalar_field_X
-
-        Returns:
-            S0,S1,S2,S3 images for Matrix=True
-            S0,S1,S2,S3  for Matrix=False
-        """
-
-        I = np.abs(self.Ex) ** 2 + np.abs(self.Ey) ** 2
-        Q = np.abs(self.Ex) ** 2 - np.abs(self.Ey) ** 2
-        U = 2 * np.real(self.Ex * np.conjugate(self.Ey))
-        V = 2 * np.imag(self.Ex * np.conjugate(self.Ey))
-
-        if matrix is True:
-            return I, Q, U, V
-        else:
-            CI = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            CQ = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            CU = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            CV = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-
-            CI.u = I
-            CQ.u = Q
-            CU.u = U
-            CV.u = V
-
-            return CI, CQ, CU, CV
-
-
-    @check_none('x','z',raise_exception=bool_raise_exception)
-    def polarization_ellipse(self, pol_state=None, matrix: bool = False):
-        """returns A, B, theta, h polarization parameter of elipses
-
-        Args:
-            pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-            Matrix (bool): if True returns Matrix, else Scalar_field_X
-
-        Returns:
-            A, B, theta, h for Matrix=True
-            CA, CB, Ctheta, Ch for Matrix=False
-        """
-        if pol_state is None:
-            I, Q, U, V = self.polarization_states(matrix=True)
-        else:
-            I, Q, U, V = pol_state
-            I = I.u
-            Q = Q.u
-            U = U.u
-            V = V.u
-
-        Ip = np.sqrt(Q**2 + U**2 + V**2)
-        L = Q + 1.0j * U + eps
-
-        A = np.real(np.sqrt(0.5 * (Ip + np.abs(L) + eps)))
-        B = np.real(np.sqrt(0.5 * (Ip - np.abs(L) + eps)))
-        theta = 0.5 * np.angle(L)
-        h = np.sign(V + eps)
-
-        if matrix is True:
-            return A, B, theta, h
-        else:
-            CA = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            CB = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            Ctheta = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-            Ch = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-
-            CA.u = A
-            CB.u = B
-            Ctheta.u = theta
-            Ch.u = h
-            return (CA, CB, Ctheta, Ch)
 
     @check_none('x','z','n')
     def surface_detection(self,
@@ -1103,10 +883,11 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 print("not good kind parameter in vector_fields_XZ.draw()")
                 id_fig = None
 
+            plt.tight_layout()
+            
             if filename != "":
                 plt.savefig(filename, dpi=300, bbox_inches="tight", pad_inches=0.1)
 
-            plt.tight_layout()
             return id_fig
 
 
@@ -1117,8 +898,8 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         draw_borders=False,
         scale = 'scaled',
-        only_image=False,
-        color_intensity=CONF_DRAWING["color_intensity"], **kwargs
+        cmap=CONF_DRAWING["color_intensity"], 
+        **kwargs
     ):
         """Draws the intensity
 
@@ -1129,103 +910,21 @@ class Vector_field_XZ(Scalar_mask_XZ):
         """
 
         intensity = self.get("intensity")
-
         intensity = reduce_matrix_size(self.reduce_matrix, self.x, self.z, intensity)
-
         intensity = normalize_draw(intensity, logarithm, normalize, cut_value)
 
 
         plt.figure()
-        h1 = plt.subplot(1, 1, 1)
-        self.__draw1__(intensity, color_intensity, "", only_image=only_image)
+        fig, axs = plt.subplots(nrows=1, ncols=1, sharex=True)
+        plt.subplot(1, 1, 1)
+        id_fig, ax, IDimage = draw2D_xz(intensity, self.z, self.x, axs, xlabel='z ($\mu$m)', 
+                                        ylabel='x ($\mu$m)', title='$I$', cmap=cmap)
+
         plt.axis(scale)
         draw_edges(self, plt, draw_borders, **kwargs)
-            
+        cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
+        cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
 
-        return h1
-
-    # @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
-    # def __draw_intensities__(
-    #     self,
-    #     logarithm,
-    #     normalize,
-    #     cut_value,
-    #     draw_borders=False,
-    #     scale = 'scaled',
-    #     only_image=False,
-    #     color_intensity=CONF_DRAWING["color_intensity"],
-    #     draw_z = True, **kwargs
-    # ):
-    #     """internal funcion: draws phase
-
-    #     Args:
-    #         logarithm (float): If >0, intensity is scaled in logarithm
-    #         normalize (bool): If True, max(intensity)=1
-    #         cut_value (float): If not None, cuts the maximum intensity to this value
-    #     """
-
-    #     tx, ty = rcParams["figure.figsize"]
-
-    #     intensity1 = np.abs(self.Ex) ** 2
-    #     intensity1 = normalize_draw(intensity1, logarithm, normalize, cut_value)
-
-    #     intensity2 = np.abs(self.Ey) ** 2
-    #     intensity2 = normalize_draw(intensity2, logarithm, normalize, cut_value)
-
-    #     intensity3 = np.abs(self.Ez) ** 2
-    #     intensity3 = normalize_draw(intensity3, logarithm, normalize, cut_value)
-
-    #     intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
-
-    #     # percentage_z = 0.01
-
-    #     # if intensity3.max() < percentage_z * intensity_max:
-    #     if draw_z is False:
-    #         plt.figure(figsize=(1.25 * tx, ty))
-
-    #         h1 = plt.subplot(1, 2, 1)
-    #         self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(0, intensity_max)
-            
-
-    #         h2 = plt.subplot(1, 2, 2)
-    #         self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(0, intensity_max)
-
-    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-    #         plt.tight_layout()
-
-    #         return h1, h2
-    #     else:
-    #         plt.figure(figsize=(2 * tx, ty))
-
-    #         h1 = plt.subplot(1, 3, 1)
-    #         self.__draw1__(intensity1, color_intensity, "", only_image=only_image)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(0, intensity_max)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-
-    #         h2 = plt.subplot(1, 3, 2)
-    #         self.__draw1__(intensity2, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(0, intensity_max)
-
-    #         h3 = plt.subplot(1, 3, 3)
-    #         self.__draw1__(intensity3, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(0, intensity_max)
-
-    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-    #         plt.tight_layout()
-
-    #         return h1, h2, h3
 
     @check_none('x','z','Ex','Ey','Ez',raise_exception=bool_raise_exception)
     def __draw_intensities__(
@@ -1235,7 +934,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         draw_borders=False,
         scale = 'scaled',
-        only_image=False,
         cmap=CONF_DRAWING["color_intensity"],
         draw_z = True, **kwargs
     ):
@@ -1315,7 +1013,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
         cut_value,
         draw_borders=False,
         scale = 'scaled',
-        only_image=False,
         percentage_intensity=None,
         cmap=CONF_DRAWING["color_phase"],
         draw_z = True, **kwargs
@@ -1369,6 +1066,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
             cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
             cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
+            cbar.clim(-180,180)
 
         else:
             fig, axs = plt.subplots(nrows=1, ncols=3, sharex=True,  figsize=(2 * tx, 1 * ty))
@@ -1392,119 +1090,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             IDimage.set_clim(-180,180)
 
             cb_ax = fig.add_axes([0.1, 0, 0.8, 0.05])
-            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', shrink=0.5)
-
-
-
-
-
-    # @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
-    # def __draw_phases__(
-    #     self,
-    #     logarithm,
-    #     normalize,
-    #     cut_value,
-    #     draw_borders=False,
-    #     scale = 'scaled',
-    #     percentage_intensity: float | None = None,
-    #     only_image: bool = False,
-    #     color_intensity=CONF_DRAWING["color_phase"],
-    #     draw_z: bool = True, **kwargs
-    # ):
-    #     """internal funcion: draws phase
-
-    #     Args:
-    #         logarithm (float): If >0, intensity is scaled in logarithm
-    #         normalize (bool): If True, max(intensity)=1
-    #         cut_value (float): If not None, cuts the maximum intensity to this value
-    #         percentage_intensity (None or number): If None it takes from CONF_DRAWING['percentage_intensity'], else uses this value
-    #         only_image: todo
-    #         color_intensity: todo
-    #         draw_z: todo
-    #     """
-
-    #     tx, ty = rcParams["figure.figsize"]
-
-    #     intensity1 = np.abs(self.Ex) ** 2
-    #     intensity1 = normalize_draw(intensity1, logarithm, normalize, cut_value)
-
-    #     intensity2 = np.abs(self.Ey) ** 2
-    #     intensity2 = normalize_draw(intensity2, logarithm, normalize, cut_value)
-
-    #     intensity3 = np.abs(self.Ez) ** 2
-    #     intensity3 = normalize_draw(intensity3, logarithm, normalize, cut_value)
-
-    #     intensity_max = np.max((intensity1.max(), intensity2.max(), intensity3.max()))
-
-    #     z0 = self.z
-    #     x0 = self.x
-
-    #     if percentage_intensity is None:
-    #         percentage_intensity = percentage_intensity_config
-
-    #     if draw_z is False:
-    #         plt.figure(figsize=(1.25 * tx, ty))
-
-    #         h1 = plt.subplot(1, 2, 1)
-    #         phase = np.angle(self.Ex)
-    #         intensity = np.abs(self.Ex) ** 2
-    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(-180, 180)
-
-    #         h2 = plt.subplot(1, 2, 2)
-    #         phase = np.angle(self.Ey)
-    #         intensity = np.abs(self.Ey) ** 2
-    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(-180, 180)
-    #         plt.tight_layout()
-
-    #         return h1, h2
-    #     else:
-    #         plt.figure(figsize=(2 * tx, ty))
-
-    #         h1 = plt.subplot(1, 3, 1)
-    #         phase = np.angle(self.Ex)
-    #         intensity = np.abs(self.Ex) ** 2
-    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(-180, 180)
-
-    #         h2 = plt.subplot(1, 3, 2)
-    #         phase = np.angle(self.Ey)
-    #         intensity = np.abs(self.Ey) ** 2
-    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(-180, 180)
-
-    #         h3 = plt.subplot(1, 3, 3)
-    #         phase = np.angle(self.Ez)
-    #         intensity = np.abs(self.Ez) ** 2
-    #         phase[intensity < percentage_intensity * (intensity.max())] = 0
-
-    #         self.__draw1__(phase/degrees, color_intensity, "", only_image=only_image)
-    #         plt.axis(scale)
-    #         draw_edges(self, plt, draw_borders, **kwargs)
-    #         plt.clim(-180, 180)
-
-    #         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
-    #         plt.tight_layout()
-
-    #         return h1, h2, h3
+            cbar = fig.colorbar(id_fig, cmap=cmap, cax=cb_ax, orientation='horizontal', fraction=0.046, shrink=0.5)
 
 
     @check_none('x','z','Ex','Ey','Ez','Hx','Hy','Hz',raise_exception=bool_raise_exception)
@@ -1558,7 +1144,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
         h3 = plt.subplot(2, 2, 3)
         phase = np.angle(self.Ex)
         phase[intensity_x < percentage_intensity * (intensity_x.max())] = 0
-        print(percentage_intensity)
 
         self.__draw1__(phase/degrees, color_phase, "$\phi_x$")
         plt.axis(scale)
@@ -1573,6 +1158,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         plt.axis(scale)
         draw_edges(self, plt, draw_borders, **kwargs)
         plt.clim(-180, 180)
+        
         h4 = plt.gca()
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0.05, hspace=0)
         plt.tight_layout()
@@ -2034,7 +1620,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
 
         tx, ty = rcParams["figure.figsize"]
 
-        S0, S1, S2, S3 = self.polarization_states(matrix=True)
+        S0, S1, S2, S3 = self.get('stokes')
         S0 = normalize_draw(S0, logarithm, normalize, cut_value)
         S1 = normalize_draw(S1, logarithm, normalize, cut_value)
         S2 = normalize_draw(S2, logarithm, normalize, cut_value)
@@ -2087,7 +1673,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
             _type_: _description_
         """
 
-        A, B, theta, h = self.polarization_ellipse(pol_state=None, matrix=True)
+        A, B, theta, h = self.get('ellipses_parameters')
 
         A = reduce_matrix_size(self.reduce_matrix, self.x, self.z, A)
         B = reduce_matrix_size(self.reduce_matrix, self.x, self.z, B)
@@ -2186,7 +1772,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         angles = np.linspace(0, 360*degrees, 64)
 
         if ax is False:
-            self.draw("intensity", logarithm=logarithm, color_intensity=color_intensity, scale=scale)
+            self.draw("intensity", logarithm=logarithm, cmap=color_intensity, scale=scale)
             ax = plt.gca()
 
         for i, xi in enumerate(ix_centers):
@@ -2218,7 +1804,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                 #     print(max_r, intensity_max,
                 #           percentage_intensity * intensity_max)
 
-    def __draw1__(self, image, colormap, title: str = "", has_max=False, only_image=False):
+    def __draw1__(self, image, colormap, title: str = "", has_max=False):
         """_summary_
 
         Args:
@@ -2226,7 +1812,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
             colormap (_type_): _description_
             title (str, optional): _description_. Defaults to "".
             has_max (bool, optional): _description_. Defaults to False.
-            only_image (bool, optional): _description_. Defaults to False.
 
         Returns:
             _type_: _description_
@@ -2242,10 +1827,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
         )
         h.set_cmap(colormap)
         plt.axis(extension)
-
-        if only_image is True:
-            plt.axis("off")
-            return h
 
         plt.title(title, fontsize=16)
 
@@ -2277,47 +1858,6 @@ class Vector_field_XZ(Scalar_mask_XZ):
         return h
 
 
-def polarization_ellipse(self, pol_state=None, matrix: bool = False):
-    """returns A, B, theta, h polarization parameter of elipses
-
-    Args:
-        pol_state (None or (I, Q, U, V) ): Polarization state previously computed
-        Matrix (bool): if True returns Matrix, else Scalar_field_X
-
-    Returns:
-        A, B, theta, h for Matrix=True
-        CA, CB, Ctheta, Ch for Matrix=False
-    """
-    if pol_state is None:
-        I, Q, U, V = self.polarization_states(matrix=True)
-    else:
-        I, Q, U, V = pol_state
-        I = I.u
-        Q = Q.u
-        U = U.u
-        V = V.u
-
-    Ip = np.sqrt(Q**2 + U**2 + V**2)
-    L = Q + 1.0j * U
-
-    A = np.real(np.sqrt(0.5 * (Ip + np.abs(L))))
-    B = np.real(np.sqrt(0.5 * (Ip - np.abs(L))))
-    theta = 0.5 * np.angle(L)
-    h = np.sign(V)
-
-    if matrix is True:
-        return A, B, theta, h
-    else:
-        CA = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-        CB = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-        Ctheta = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-        Ch = Scalar_field_XZ(x=self.x, z=self.z, wavelength=self.wavelength)
-
-        CA.u = A
-        CB.u = B
-        Ctheta.u = theta
-        Ch.u = h
-        return (CA, CB, Ctheta, Ch)
 
 
 def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):

@@ -70,11 +70,11 @@ from scipy.fftpack import fft2, ifft2
 from scipy.interpolate import RegularGridInterpolator
 
 from .__init__ import degrees, mm, np, plt, num_max_processors
-from .config import bool_raise_exception, CONF_DRAWING, Draw_pyvista_Options, Draw_XYZ_Options, video_isovalue_Options
+from .config import bool_raise_exception, CONF_DRAWING, Draw_pyvista_Options, Draw_XYZ_Options, video_isovalue_Options, get_scalar_options
 from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
-from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling
+from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling, get_scalar
 from .utils_drawing import normalize_draw
 from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
@@ -403,6 +403,22 @@ class Scalar_field_XYZ():
             else:
                 raise Exception('no dictionary in load_data')
 
+
+
+    @check_none('u',raise_exception=bool_raise_exception)
+    def get(self, kind: get_scalar_options):
+        """Get parameters from Scalar field.
+
+        Args:
+            kind (str): 'intensity', 'phase', 'field'
+
+        Returns:
+            matrices with required values
+        """
+
+        data = get_scalar(self, kind)
+        return data
+
     @check_none('u',raise_exception=bool_raise_exception)
     def intensity(self):
         """Returns intensity."""
@@ -705,7 +721,7 @@ class Scalar_field_XYZ():
 
         kx1 = np.linspace(0, int(numx/2) + 1, int(numx/2))
         kx2 = np.linspace(-int(numx/2), -1, int(numx/2))
-        kx = (2 * np.pi / delta) * np.concatenate((kx1, kx2))
+        kx = (2 * np.pi / deltax) * np.concatenate((kx1, kx2))
 
         ky1 = np.linspace(0, numy/2 + 1, int(numy/2))
         ky2 = np.linspace(-numy/2, -1, int(numy/2))
