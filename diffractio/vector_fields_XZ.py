@@ -1917,7 +1917,6 @@ def FP_PWD_kernel_simple(Ex, Ey, n1, n2, k0, kx, wavelength, dz, has_H=True):
     
     option = 1 # TODO: fix better
     
-    
     if option == 1:
 
         T00[nan_indices]=T00[nan_indices[0]-1]
