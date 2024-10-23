@@ -830,22 +830,23 @@ def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: float):
 
         The first polinomial is the real part and the second de imaginary part.
 
-        * n     m        aberración
-        * 0     0        piston
-        * 1    -1        vertical tilt
-        * 1     1        horizontal tilt
-        * 2    -2        astigmatismo oblicuo
-        * 2     0        desenfoque miopía si c>0 o desenfoque hipermetropía si c<0
-        * 2     2        astigmatismo anormal si c>0 o astigmatismo normal si c<0
-        * 3    -3        trebol oblicuo
-        * 3    -1        coma vertical, c>0 empinamiento superior, c<0 emp. inferior
-        * 3     1        como horizontal
-        * 3     3        trebol horizontal
-        * 4    -4        trebol de cuatro hojas oblicuo
-        * 4    -2        astigmatismo secundario oblicuo
-        * 4     0        esférica c>0 periferia más miópica que centro, c<0 periferia más hipertrópica que el centro
-        * 4     2        astigmatismo secundario a favor o en contra de la regla
-        * 4     4        trebol de cuatro hojas horizontal
+       * n m aberration
+        * 0 0 piston
+        * 1 -1 vertical tilt
+        * 1 1 1 horizontal tilt
+        * 2 -2 oblique astigmatism
+        * 2 0 defocus myopia if c>0 or defocus hypermetropia if c<0
+        * 2 2 2 abnormal astigmatism if c>0 or normal astigmatism if c<0
+        * 3 -3 oblique trefoil
+        * 3 -1 as vertical coma, c>0 upper steepening, c<0 lower steepening
+        * 3 1 as horizontal
+        * 3 3 3 horizontal trefoil
+        * 4 -4 oblique four-leaf clover
+        * 4 -2 oblique secondary astigmatism
+        * 4 0 spherical c>0 periphery more myopic than centre, c<0 periphery more hyperopic than centre
+        * 4 2 secondary astigmatism for or against the ruler
+        * 4 4 4 horizontal four-leaf clover
+
 
     Reference:
 
@@ -854,7 +855,7 @@ def fZernike(X: NDArrayFloat, Y: NDArrayFloat, n: int, m: int, radius: float):
     """
 
     R = np.sqrt(X**2 + Y**2) / (radius)
-    THETA = np.arctan2(X, Y)
+    THETA = np.arctan2(Y,X)
 
     N = np.sqrt((n + 1) * (2 - delta_kronecker(m, 0)))
 
