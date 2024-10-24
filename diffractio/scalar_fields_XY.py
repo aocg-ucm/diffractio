@@ -2319,7 +2319,7 @@ class Scalar_field_XY():
                 logarithm, normalize, title, cut_value, colormap_kind,
                 **kwargs)
         elif kind == 'amplitude':
-            id_fig, IDax, IDimage = self.__drawAmplitude__(
+            id_fig, IDax, IDimage = self.__draw_amplitude__(
                 logarithm, normalize, title, cut_value, colormap_kind,
                 **kwargs)
         elif kind == 'phase':
@@ -2388,7 +2388,7 @@ class Scalar_field_XY():
         return id_fig, IDax, IDimage
 
 
-    def __drawAmplitude__(self,
+    def __draw_amplitude__(self,
                           logarithm: float = 0.,
                           normalize='maximum',
                           title='intensity',

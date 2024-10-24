@@ -50,10 +50,12 @@ Beta state
   - XY masks: .dxf method for loading masks from .dxf files.
 
   - XZ masks: .dxf method for loading masks from .dxf files.
+
+  - XZ masks: insert_array_masks, aspheric_lens, lens
+  
+  - XZ masks: New refractive_index_from_scalar_mask_XY method.
   
   - XYZ masks: .stl method for loading 3D masks from .stl files.
-
-  - XZ masks: New refractive_index_from_scalar_mask_XY method.
 
   - has_edges parameters in WPM and BPM methods can be an array masking in desired z positions.
 

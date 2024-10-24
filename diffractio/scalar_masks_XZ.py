@@ -57,6 +57,8 @@ from .utils_dxf import load_dxf
 from .utils_common import check_none
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_X import Scalar_mask_X
+from scipy.signal import fftconvolve
+
 
 
 class Scalar_mask_XZ(Scalar_field_XZ):
@@ -157,6 +159,55 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n[ipasa] = refractive_index
         return ipasa
 
+
+
+    @check_none('x','z',raise_exception=bool_raise_exception)
+    def insert_array_masks(self, txz, refractive_index: float, space: tuple[float], margin: tuple[float] | float = 0,
+                            angle: float = 0*degrees):
+        """Generates a matrix of shapes given in txz.
+
+        Args:
+            txz (Scalar_mask_XZ): Mask of the desired figure to be drawn
+            space (float, float) or (float): spaces between figures.
+            margin (float, float) or (float): extra space outside the mask
+            angle (float): Angle to rotate the matrix of circles
+
+        Returns:
+            (int): number of points in the mask
+        """
+
+        if isinstance(space, (int, float)):
+            delta_x, delta_z = (space, space)
+        else:
+            delta_x, delta_z = space
+
+        if isinstance(margin, (float, int)):
+            margin_x, margin_z = (margin, margin)
+        else:
+            margin_x, margin_z = margin
+
+        assert delta_x > 0 and delta_z > 0
+
+        nj = np.zeros_like(self.X)
+
+        X = margin_x + np.arange(self.x.min(), self.x.max() + delta_x, delta_x)
+        Z = margin_z + np.arange(self.z.min(), self.z.max() + delta_z, delta_z)
+        
+        mask = txz.n - txz.n_background
+        
+        
+        for i, x_i in enumerate(X):
+            i_xcercano, _, _ = nearest(self.x, x_i)
+            for j, z_j in enumerate(Z):
+                j_zcercano, _, _ = nearest(self.z, z_j)
+                if x_i < self.x.max() and x_i > self.x.min(
+                ) and z_j < self.z.max() and z_j > self.z.min():
+                    nj[i_xcercano, j_zcercano] = 1
+
+        n_new = fftconvolve(nj, mask, mode='same')
+        # u[u > 1] = refractive_index
+        self.n = n_new + self.n_background
+        return self
 
     @check_none('x','z',raise_exception=bool_raise_exception)
     def mask_from_array(

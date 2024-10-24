@@ -912,7 +912,10 @@ class Scalar_field_XYZ():
                 iz, tmp1, tmp2 = nearest(self.z, z0)
             else:
                 iz = iz0
+                
             field_output.u = np.squeeze(self.u[:, :, iz])
+            field_output.n = np.squeeze(self.n[:, :, iz])
+
             return field_output
 
         if matrix is True:
@@ -943,10 +946,13 @@ class Scalar_field_XYZ():
                                            z=self.z,
                                            wavelength=self.wavelength)
             if iy0 is None:
-                iy, tmp1, tmp2 = nearest(self.y, y0)
+                iy, _, _ = nearest(self.y, y0)
             else:
                 iy = iy0
             field_output.u = np.squeeze(self.u[iy, :, :])
+            field_output.n = np.squeeze(self.n[iy, :, :])
+
+                
             return field_output
 
         if matrix is True:
@@ -981,6 +987,8 @@ class Scalar_field_XYZ():
             else:
                 ix = ix0
             field_output.u = np.squeeze(self.u[:, ix, :])
+            field_output.n = np.squeeze(self.n[:, ix, :])
+
             return field_output
 
         if matrix is True:
