@@ -55,25 +55,26 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
 
     @check_none('X','Y','Z',raise_exception=bool_raise_exception)
     def object_by_surfaces(self,
-                           r0: tuple[float],
+                           r0: tuple[float, float,float],
                            refractive_index: float,
                            Fs,
-                           angles,
+                           angles: tuple[float, float,float],
                            v_globals={}):
-        """ TODO
-        Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
+        """  Mask defined by n surfaces given in array Fs={f1, f2,    h(x,y,z)=f1(x,y,z)*f2(x,y,z)*....*fn(x,y,z)
 
+        TODO: check angles
 
         Args:
-            rotation_point (float, float, float): location of the mask
+            r0 (float, float, float): location of the mask
             refractive_index (float, str): can be a number or a function n(x, y,z)
             Fs (tuple): condtions as str that will be computed using eval
             array1 (numpy.array): array (x,y,z) that delimits the second surface
-            angle (float): angle of rotation (radians)
+            angles (float): angle of rotation (psi, phi, sigma)
             v_globals (dict): dict with global variables
-            verbose (bool): shows data if true
-
         """
+
+        x0, y0, z0 = r0
+
 
         if angles not in ('', None, []):
             psi, phi, sigma = angles
@@ -87,6 +88,9 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         v_locals['Xrot'] = Xrot
         v_locals['Yrot'] = Yrot
         v_locals['Zrot'] = Zrot
+        v_locals['x0'] = x0
+        v_locals['y0'] = y0
+        v_locals['z0'] = z0
 
         conditions = []
         for fi in Fs:
@@ -259,3 +263,5 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         self, voi= voxelize_volume_diffractio(self, mesh, refractive_index = refractive_index)
 
         return voi, mesh, bounds
+
+

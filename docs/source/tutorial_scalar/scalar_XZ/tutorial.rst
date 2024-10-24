@@ -8,4 +8,5 @@ Scalar_XZ
 
    tutorial_xz.ipynb
    masks_xz.ipynb
+   mask_xz_procedures.ipynb
    drawing_xz.ipynb

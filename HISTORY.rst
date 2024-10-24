@@ -23,7 +23,9 @@ Beta state
   - 'oversampling function' has been implemented to increase the resolution of the masks (utils_common, and Scalar X, XY, XYZ, XZ, Z). This is also performed with the cut_resample function. However, this function oversamples with integer factors.
 
   - FP_WPM for vector XZ and XYZ fields has been implemented.
-  
+
+  - Implementation of scalar (intensity, phase, amplitude) and vector (irradiance, energy_density, etc) parameters in get function.
+
 
 
 * Fix bugs:

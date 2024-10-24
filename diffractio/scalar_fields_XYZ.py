@@ -235,7 +235,8 @@ class Scalar_field_XYZ():
         return u3
 
     @check_none('X','Y','Z','u',raise_exception=bool_raise_exception)
-    def __rotate__(self, psi: float, phi: float, sigma: float):
+    def __rotate__(self, psi: float, phi: float, sigma: float, 
+                    r0: tuple[float,float,float] = (0.,0.,0.)):
         """Function to rotate around any of the 3 axis of rigid solid.
 
         Args:
@@ -251,6 +252,9 @@ class Scalar_field_XYZ():
         References:
             http://estudiarfisica.wordpress.com/2011/03/17/ampliacion-del-solido-rigido-matrices-de-rotation-angles-y-transformaciones-de-euler-velocidad-angular-momento-angular-tensor-de-inercia-teorema-de-steiner-utilsizado/
         """
+        
+        x0, y0, z0 = r0
+        
         cp = cos(psi)
         sp = sin(psi)
         cf = cos(phi)
@@ -258,11 +262,11 @@ class Scalar_field_XYZ():
         cs = cos(sigma)
         ss = sin(sigma)
 
-        Xrot = self.X * (cp * cf - sp * cs * sf) + self.Y * (
-            cp * sf + sp * cs * cf) + self.Z * (sp * ss)
-        Yrot = self.X * (-sp * cf - cp * cs * sf) + self.Y * (
+        Xrot = (self.X-x0) * (cp * cf - sp * cs * sf) + (self.Y-y0) * (
+            cp * sf + sp * cs * cf) + (self.Z-z0) * (sp * ss)
+        Yrot = (self.X-x0) * (-sp * cf - cp * cs * sf) + (self.Y-y0) * (
             -sp * sf + cp * cs * cf) + self.Z * (cp * ss)
-        Zrot = self.X * (ss * sf) + self.Y * (-ss * cf) + self.Z * (cs)
+        Zrot = (self.X-x0) * (ss * sf) + (self.Y-y0) * (-ss * cf) + (self.Z-z0) * (cs)
         return Xrot, Yrot, Zrot
 
 
