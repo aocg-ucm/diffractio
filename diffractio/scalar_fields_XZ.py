@@ -160,6 +160,8 @@ class Scalar_field_XZ():
         Imax = (np.abs(self.u)**2).max()
         phase_min = (np.angle(self.u)).min()/degrees
         phase_max = (np.angle(self.u)).max()/degrees
+        nmin = self.n.min()
+        nmax = self.n.max()
         print("{}\n - x:  {},   z:  {},   u:  {}".format(
             self.type, self.x.shape, self.z.shape, self.u.shape))
         print(
@@ -168,6 +170,8 @@ class Scalar_field_XZ():
         print(
             " - zmin:       {:2.2f} um,  zmax:      {:2.2f} um,  Dz:   {:2.2f} um"
             .format(self.z[0], self.z[-1], self.z[1] - self.z[0]))
+        print(" - nmin:       {:2.2f},     nmax:      {:2.2f}".format(
+            nmin, nmax))
         print(" - Imin:       {:2.2f},     Imax:      {:2.2f}".format(
             Imin, Imax))
         print(" - phase_min:  {:2.2f} deg, phase_max: {:2.2f} deg".format(

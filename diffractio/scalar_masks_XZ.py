@@ -209,6 +209,55 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         self.n = n_new + self.n_background
         return self
 
+    #@check_none('x','z','u',raise_exception=bool_raise_exception)
+    def repeat_structure(self,
+                            num_repetitions: tuple[int,int],
+                            position: str = 'center',
+                            new_field: bool = True):
+        """Repeat the structure (n x m) times.
+
+        Args:
+            num_repetitions (int, int): Number of repetitions of the mask
+            position (string or number,number): 'center', 'previous' or initial position. Initial x
+            new_field (bool): If True, a new mask is produced, else, the mask is modified.
+
+        """
+
+        n_new = np.tile(self.n, (num_repetitions[1], num_repetitions[0]))
+
+        x_min = self.x[0]
+        x_max = self.x[-1]
+
+        z_min = self.z[0]
+        z_max = self.z[-1]
+
+        x_new = np.linspace(num_repetitions[0] * x_min,
+                            num_repetitions[0] * x_max,
+                            num_repetitions[0] * len(self.z))
+        z_new = np.linspace(num_repetitions[1] * z_min,
+                            num_repetitions[1] * z_max,
+                            num_repetitions[1] * len(self.z))
+
+        center_x = (x_new[-1] + x_new[0])/2
+        center_z = (z_new[-1] + z_new[0])/2
+
+        if position == 'center':
+            x_new = x_new - center_x
+            z_new = z_new - center_z
+
+        elif position == 'previous':
+            x_new = x_new - x_new[0] + x0[0]
+            z_new = z_new - z_new[0] + z0[0]
+
+        elif isinstance(position, np.array):
+            x_new = x_new - x_new[0] + position[0]
+            z_new = z_new - z_new[0] + position[1]
+
+        t_new = Scalar_mask_XZ(x=x_new, z=z_new, wavelength=self.wavelength)
+        t_new.n = n_new
+
+        return t_new
+
     @check_none('x','z',raise_exception=bool_raise_exception)
     def mask_from_array(
         self,
