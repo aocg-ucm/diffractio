@@ -1529,7 +1529,7 @@ class Scalar_field_XYZ():
                 frame = self.to_Scalar_field_XY(iz0=i_prog,
                                                 z0=None,
                                                 is_class=True,
-                                                matrix=False)
+                                                matrix=False) # type: ignore
                 intensity = f(frame.u, kind)
                 image.set_array(intensity)
                 if kind == 'intensity':
@@ -1543,17 +1543,12 @@ class Scalar_field_XYZ():
                 plt.draw()
                 plt.savefig("{}_{:04.0f}.png".format(file, i_prog))
                 if verbose:
-                    if (sys.version_info > (3, 0)):
-                        print(
-                            "{} de {}: z={}, max= {:2.2f} min={:2.2f}".format(
-                                i_prog, n_frames, self.z[i_prog] / mm,
-                                intensity.max(), intensity.min()),
-                            end='\r')
-                    else:
-                        print((
-                            "{} de {}: z={}, max= {:2.2f} min={:2.2f}").format(
-                                i_prog, n_frames, self.z[i_prog] / mm,
-                                intensity.max(), intensity.min()))
+                    print(
+                        "{} de {}: z={}, max= {:2.2f} min={:2.2f}".format(
+                            i_prog, n_frames, self.z[i_prog] / mm,
+                            intensity.max(), intensity.min()),
+                        end='\r')
+
             os.chdir(current_directory)
 
         elif extension == '.avi' or extension == '.mp4':
@@ -1576,15 +1571,10 @@ class Scalar_field_XYZ():
                     plt.draw()
                     writer.grab_frame(facecolor='k')
                     if verbose:
-                        if (sys.version_info > (3, 0)):
-                            print("{} de {}: z={}, max= {:2.2f} min={:2.2f}".
-                                  format(i_prog, n_frames, self.z[i_prog] / mm,
-                                         intensity.max(), intensity.min()),
-                                  end='\r')
-                        else:
-                            print(("{} de {}: z={}, max= {:2.2f} min={:2.2f}"
-                                   ).format(i_prog,
-                                            n_frames, self.z[i_prog] / mm,
-                                            intensity.max(), intensity.min()))
+                        print("{} de {}: z={}, max= {:2.2f} min={:2.2f}".
+                                format(i_prog, n_frames, self.z[i_prog] / mm,
+                                        intensity.max(), intensity.min()),
+                                end='\r')
+
 
         plt.close()

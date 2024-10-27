@@ -1957,69 +1957,6 @@ class Scalar_field_XZ():
 
         return widths, positions_center
 
-    # def video_profiles(self,
-    #                    kind: str = 'intensity',
-    #                    kind_profile='transversal',
-    #                    step=1,
-    #                    wait=0.001,
-    #                    logarithm: float = 0.,
-    #                    normalize: bool = False,
-    #                    filename: str = '',
-    #                    verbose: bool = False):
-    #     """Draws profiles in a video fashion
-
-    #     Args:
-    #         kind (str): 'intensity', 'amplitude', 'phase'
-    #         kind_profile (str): 'transversal', 'longitudinal'
-    #         step (tuple): number of frames shown (if 1 shows all, if 2 1/2, ..) for accelerating pruposes in video.
-    #         wait (float) : (in seconds) time for slow down the video
-    #         logarithm (float): If >0, intensity is scaled in logarithm
-    #         normalize (bool): If True, max(intensity)=1
-    #         filename: (str))  filename of video
-    #         verbose (bool): If True shows info
-    #     """
-
-    #     fig = plt.figure()
-    #     if kind_profile == 'transversal':
-    #         h1, = plt.plot(self.x, np.zeros_like(self.x), 'k', lw=2)
-    #         plt.xlim(self.x[0], self.x[-1])
-    #         plt.xlabel(r'$x (\mu m)$')
-    #     elif kind_profile == 'longitudinal':
-    #         h1, = plt.plot(self.z, np.zeros_like(self.z), 'k', lw=2)
-    #         plt.xlim(self.z[0], self.z[-1])
-    #         plt.xlabel(r'$z (\mu m)$')
-
-    #     I_drawing = prepare_drawing(self.u, kind, logarithm, normalize)
-
-    #     plt.ylim(I_drawing.min(), I_drawing.max())
-
-    #     writer = prepare_video(fps=15, title='', artist='', comment='')
-
-    #     with writer.saving(fig, filename, 300):
-    #         if kind_profile == 'transversal':
-    #             for i in range(0, len(self.z), step):
-    #                 h1.set_ydata(I_drawing[:, i])
-    #                 plt.title("z={:6.2f}, i={}".format(round(self.z[i], 2), i))
-    #                 plt.draw()
-    #                 if filename == '':
-    #                     plt.pause(wait)
-    #                 else:
-    #                     if verbose:
-    #                         print(("{}/{}".format(i, len(self.z))))
-    #                     writer.grab_frame()
-    #         elif kind_profile == 'longitudinal':
-    #             for i in range(0, len(self.x), step):
-    #                 h1.set_ydata(I_drawing[i, :])
-    #                 plt.title("x={:6.2f}, i={}".format(round(self.x[i], 2), i))
-    #                 plt.draw()
-    #                 if filename == '':
-    #                     plt.pause(wait)
-    #                 else:
-    #                     if verbose:
-    #                         print(("{}/{}".format(i, len(self.z))))
-    #                     writer.grab_frame()
-    #     plt.close('')
-
 
     @check_none('x','z','u')
     def video(self,

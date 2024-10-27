@@ -594,7 +594,7 @@ class Scalar_mask_XY(Scalar_field_XY):
         return vertices
 
     @check_none('x','y',raise_exception=bool_raise_exception)
-    def star(self, num_peaks: int, radii: tuple[float], angle: float = 0*degrees):
+    def star(self, num_peaks: int, radii: tuple[float, float], angle: float = 0*degrees):
         """Generates a regular polygon
 
         Args:
@@ -604,15 +604,6 @@ class Scalar_mask_XY(Scalar_field_XY):
 
         Returns:
             vertices (np.array): position of vertices
-
-        Example:
-            x0 = np.linspace(-3*mm, 3*mm, 512)
-            y0 = np.linspace(-3*mm, 3*mm, 512)
-            wavelength = 0.6328 *um
-            t = Scalar_mask_XY(x0, y0, wavelength)
-            vertices = t.stars(5, (2*mm,1*mm), 0*degrees)
-            t.draw()
-
         """
         radii = np.array(radii)
 
