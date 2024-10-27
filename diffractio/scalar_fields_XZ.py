@@ -1017,11 +1017,11 @@ class Scalar_field_XZ():
         K_perp2 = kx**2
         num_steps = len(self.z)
         self.clear_field()
-        self.u[:, 0] = self.u0.u
+        self.u[0,:] = self.u0.u
         for i, zi in enumerate(self.z[0:-1]):
-            result = self.u[:, i]
+            result = self.u[i,:]
             result_next = PWD_kernel(result, n, k0, K_perp2, dz)
-            self.u[:, i + 1] = result_next
+            self.u[i + 1,:] = result_next
             if verbose:
                 print("{}/{}".format(i, num_steps), sep='\r', end='\r')
 
