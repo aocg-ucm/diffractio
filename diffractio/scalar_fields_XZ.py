@@ -129,7 +129,7 @@ class Scalar_field_XZ():
         self.n_background = n_background
         self.fast = False
         self.quality = 0
-        self.borders = None  # borders at refractive index
+        self.borders = None  
         self.CONF_DRAWING = CONF_DRAWING
 
         if x is not None and z is not None:

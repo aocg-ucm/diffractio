@@ -71,7 +71,7 @@ from scipy.fftpack import fft, fftshift, ifft, ifftshift
 percentage_intensity_config = CONF_DRAWING['percentage_intensity']
 
 
-class Vector_field_XZ(Scalar_mask_XZ):
+class Vector_field_XZ():
     """Class for vectorial fields.
 
     Args:
@@ -91,7 +91,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
                  wavelength: float | None = None, n_background: float = 1., info: str = ""):
         self.x = x
         self.z = z
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
         self.n_background = n_background
 
         self.X, self.Z = np.meshgrid(x, z)
@@ -105,7 +105,7 @@ class Vector_field_XZ(Scalar_mask_XZ):
         self.Hz = None
 
         self.n = n_background * np.ones_like(self.X, dtype=complex)
-        self.borders = None  # borders at refractive index
+        self.borders = None  
 
         self.Ex0 = np.zeros_like(self.x)
         self.Ey0 = np.zeros_like(self.x)

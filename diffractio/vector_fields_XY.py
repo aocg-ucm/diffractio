@@ -94,7 +94,7 @@ class Vector_field_XY():
                  wavelength: float | None = None, info: str = ""):
         self.x = x
         self.y = y
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
         self.X, self.Y = np.meshgrid(x, y)
 
         self.Ex = np.zeros_like(self.X, dtype=complex)

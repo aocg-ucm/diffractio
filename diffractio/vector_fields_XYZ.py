@@ -115,7 +115,7 @@ class Vector_field_XYZ():
         self.x = x
         self.y = y
         self.z = z
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
         self.X, self.Y, self.Z = np.meshgrid(self.x, self.y, self.z)
 
         self.Ex = np.zeros_like(self.X, dtype=complex)

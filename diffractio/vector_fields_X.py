@@ -73,7 +73,7 @@ class Vector_field_X():
     def __init__(self, x: NDArrayFloat = None, wavelength: float | None = None,
                  info: str = ""):
         self.x = x
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
 
         self.Ex = np.zeros_like(self.x, dtype=complex)
         self.Ey = np.zeros_like(self.x, dtype=complex)

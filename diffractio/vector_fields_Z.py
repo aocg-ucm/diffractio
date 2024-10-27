@@ -80,7 +80,7 @@ class Vector_field_Z():
     def __init__(self, z: NDArrayFloat | None = None, wavelength: float | None = None,
                  n_background: float = 1., info: str = ""):
         self.z = z
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
 
         self.Ex = np.zeros_like(self.z, dtype=complex)
         self.Ey = np.zeros_like(self.z, dtype=complex)

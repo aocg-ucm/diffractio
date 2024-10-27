@@ -124,7 +124,7 @@ class Scalar_field_XY():
                  wavelength: float  = 0., info: str = ""):
         self.x = x
         self.y = y
-        self.wavelength = wavelength  # la longitud de onda
+        self.wavelength = wavelength
         if x is not None and y is not None:
             self.X, self.Y = np.meshgrid(x, y)
             self.u = np.zeros(np.shape(self.X), dtype=complex)

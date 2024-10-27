@@ -949,8 +949,8 @@ class Scalar_field_XYZ():
                 iy, _, _ = nearest(self.y, y0)
             else:
                 iy = iy0
-            field_output.u = np.squeeze(self.u[iy, :, :])
-            field_output.n = np.squeeze(self.n[iy, :, :])
+            field_output.u = np.squeeze(self.u[iy, :, :].transpose())
+            field_output.n = np.squeeze(self.n[iy, :, :].transpose())
 
                 
             return field_output
