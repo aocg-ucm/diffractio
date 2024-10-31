@@ -134,11 +134,11 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
                refractive_index: float,
                angles=None,
                rotation_point: tuple[float] = None):
-        """ Insert a rectangle in background. If something previous, is removed.
+        """ Insert a square in background. If something previous, is removed.
 
         Args:
-            r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
-            size (float, float, float): x,y,z size of the rectangle
+            r0 (float, float, float): (x0, y0,z0) Location of the square, for example (0*um, 0*um, 0*um)
+            size (float, float, float): x,y,z size of the square
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float, float). Rotation point
@@ -173,7 +173,7 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         """ Insert a cylinder in background. If something previous, is removed.
 
         Args:
-            r0 (float, float, float): (x0, y0,z0) Location of the rectangle, for example (0*um, 0*um, 0*um)
+            r0 (float, float, float): (x0, y0,z0) Location of the square, for example (0*um, 0*um, 0*um)
             radius (float,float): x,y, size of the circular part of cylinder
             length (float): length of cylidner
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
@@ -190,25 +190,23 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         x0, y0, z0 = r0
         radiusx, radiusy = radius
 
-        ipasar = (self.X - x0)**2 / radiusx**2 + (self.Y -
-                                                  y0)**2 / radiusy**2 <= 1
-        ipasaz1 = self.Z >= z0 - length/2
-        ipasaz2 = self.Z <= z0 + length/2
-        ipasa = ipasar * ipasaz1 * ipasaz2
-        """
-        FIXME: not working
+        # FIXME: not working
 
-        # psi,phi,sigma=angles
+        #psi,phi,sigma=angles
         # if not (psi ==0 and phi==0 and sigma==0):
         if angle != 0:
             # Xrot, Yrot, Zrot = self.__rotate__(psi, phi, sigma)
-            Xrot, Yrot, Zrot = self..__rotate_axis__(axis, angle)
+            Xrot, Yrot, Zrot = self.__rotate_axis__(axis, angle)
         else:
 
             Xrot=self.X
             Yrot=self.Y
             Zrot=self.Z
-          """
+
+        ipasar = (Xrot - x0)**2 / radiusx**2 + (Yrot - y0)**2 / radiusy**2 <= 1
+        ipasaz1 = Zrot >= z0 - length/2
+        ipasaz2 = Zrot <= z0 + length/2
+        ipasa = ipasar * ipasaz1 * ipasaz2
 
         self.n[ipasa] = refractive_index
 

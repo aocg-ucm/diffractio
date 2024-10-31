@@ -277,7 +277,6 @@ class Scalar_field_XYZ():
         Args:
             axis (float, float, float): direction of the axis
             angle (float): angle of rotation in radians
-            sigma (float): Euler angle in radians
 
         Returns:
             numpy.array: Yrot: direction of the axis

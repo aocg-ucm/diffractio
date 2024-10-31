@@ -56,7 +56,7 @@ def _func_polychromatic_BPM_(wavelength):
     u1 = Scalar_mask_XZ(x0, z, wavelength, n_background=1)
     u1.incident_field(f1 * t1)
 
-    u1.rectangle(r0=(-100*um, 1500*um),
+    u1.square(r0=(-100*um, 1500*um),
                  size=(200*um, 1000*um),
                  angle=0*degrees,
                  refractive_index=4)
@@ -442,7 +442,7 @@ class Test_Scalar_fields_XZ():
         u0.plane_wave(A=1, theta=0*degrees)
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
-        u1.rectangle(r0=(0*um, 100*um),
+        u1.square(r0=(0*um, 100*um),
                      size=(150*um, 50*um),
                      angle=45*degrees,
                      refractive_index=1.5 - 0 * .00025j)
@@ -471,7 +471,7 @@ class Test_Scalar_fields_XZ():
         u0.plane_wave(A=1, theta=0*degrees)
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
-        u1.rectangle(r0=(0*um, 100*um),
+        u1.square(r0=(0*um, 100*um),
                      size=(150*um, 50*um),
                      angle=45*degrees,
                      refractive_index=1.5 - 0 * .00025j)
@@ -699,7 +699,7 @@ class Test_Scalar_fields_XZ():
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
 
-        u1.rectangle(r0=(0*um, 45*um),
+        u1.square(r0=(0*um, 45*um),
                      size=(25*um, 25*um),
                      angle=0*degrees,
                      refractive_index=1.5)
@@ -752,7 +752,7 @@ class Test_Scalar_fields_XZ():
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
         u1.incident_field(u0)
 
-        u1.rectangle(r0=(0*um, 45*um),
+        u1.square(r0=(0*um, 45*um),
                      size=(25*um, 25*um),
                      angle=0*degrees,
                      refractive_index=4)
@@ -797,7 +797,7 @@ class Test_Scalar_fields_XZ():
 
         u1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
 
-        u1.rectangle(r0=(0*um, 45*um),
+        u1.square(r0=(0*um, 45*um),
                      size=(25*um, 25*um),
                      angle=0*degrees,
                      refractive_index=2)

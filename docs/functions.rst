@@ -772,7 +772,7 @@ __________________________________________________
 
     - probe
 
-    - rectangle
+    - square
 
     - ronchi_grating
 

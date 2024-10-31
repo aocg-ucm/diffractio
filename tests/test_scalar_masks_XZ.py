@@ -418,7 +418,7 @@ class Test_Scalar_masks_XZ():
         wavelength = 0.6238*um
 
         t1 = Scalar_mask_XZ(x=x0, z=z0, wavelength=wavelength)
-        t1.rectangle(r0=(0*um, 100*um),
+        t1.square(r0=(0*um, 100*um),
                      size=(150*um, 50*um),
                      angle=0*degrees,
                      refractive_index=1.5)

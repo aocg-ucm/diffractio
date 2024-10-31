@@ -29,7 +29,7 @@ The magnitude is related to microns: `micron = 1.`
 *Functions*
     * extrude_mask, mask_from_function, mask_from_array, object_by_surfaces
     * image
-    * semi_plane, layer, rectangle, slit, cylinder, semi_cylinder
+    * semi_plane, layer, square, slit, cylinder, semi_cylinder
     * wedge, prism, biprism
     * ronchi_grating, sine_grating
     * probe
@@ -448,7 +448,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             verbose (bool): shows data if true
         """
 
-        # Rotacion del square/rectangle
+        # Rotacion del square/square
         Xrot, Zrot = self.__rotate__(angle, rotation_point)
 
         v_locals = {"self": self, "degrees": degrees, "um": um, "np": np}
@@ -820,14 +820,14 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
 
 
-    def rectangle(self, r0: tuple[float, float], size: tuple[float, float],
+    def square(self, r0: tuple[float, float], size: tuple[float, float],
                   refractive_index: float | str, angle: float = 0*degrees,
                   rotation_point: tuple[float, float] | None = None):
-        """Insert a rectangle in background. Something previous, is removed.
+        """Insert a square in background. Anything previous, is removed.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
-            size (float, float): x,z size of the rectangle
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
+            size (float, float): x,z size of the square
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
             rotation_point (float, float). Rotation point
@@ -847,7 +847,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         else:
             angle, rotation_point = angle
 
-        # Definition of square/rectangle
+        # Definition of square/square
         xmin = x0 - sizex/2
         xmax = x0 + sizex/2
         zmin = z0 - sizez/2
@@ -874,7 +874,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a slit in background.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             aperture (float): length of the opened part of the slit
             depth (float): depth of the slit
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
@@ -917,7 +917,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a cylinder in background.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the cylinder, for example (0*um, 20*um)
             radius (float, float): radius x,y of the cylinder (ellipsoid)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
@@ -951,7 +951,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a semi_cylinder in background.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             radius (float, float): radius x,y of the cylinder (ellipsoid)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle (float): angle of rotation of the semi-plane, in radians
@@ -978,8 +978,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             rotation_point, refractive_index, Fs, angle, v_globals={}
         )
         return ipasa
-
-
 
 
     def aspheric_surface_z(self, r0: tuple[float, float], refractive_index: float | str,
@@ -1187,7 +1185,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a wedge pointing towards the light beam
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             length (float): length of the long part (z direction)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle_wedge (float), angle of the wedge in radians
@@ -1215,7 +1213,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Similar to wedge but the use is different. Also the angle is usually different. One of the sides is paralel to x=x0.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             length (float): length of the long part (z direction)
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
             angle_prism (float), angle of the prism in radians
@@ -1247,7 +1245,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Fresnel biprism.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             length (float): length of the long part (z direction)
             height (float): height of biprism
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j
@@ -1301,7 +1299,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         """Insert a ronchi grating in background.
 
         Args:
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             period (float): period of the grating
             fill_factor (float): [0,1], fill factor of the grating
             length (float): length of the grating
@@ -1328,7 +1326,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             angle=angle)
 
         if heigth_substrate > 0:
-            self.rectangle(
+            self.square(
                 r0, (length, heigth_substrate), refractive_index_substrate, angle
             )
         self.slit(
@@ -1356,7 +1354,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             fill_factor (float): [0,1], fill factor of the grating
             heigth_sine (float): height of the grating
             heigth_substrate (float): height of the substrate
-            r0 (float, float): (x0,z0) Location of the rectangle, for example (0*um, 20*um)
+            r0 (float, float): (x0,z0) Location of the square, for example (0*um, 20*um)
             length (float): length of the grating
             Dx (float): displacement of grating with respect x=0
             refractive_index (float, str): refractive index , for example: 1.5 + 1.0j

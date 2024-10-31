@@ -41,6 +41,7 @@ Beta state
 
   - XZ masks: sphere -> cylinder.
               semi-sphere -> semi-cylinder.
+              square -> rectangle,
 
 
 * New features:
