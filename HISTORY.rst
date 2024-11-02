@@ -26,6 +26,8 @@ Beta state
 
   - Implementation of scalar (intensity, phase, amplitude) and vector (irradiance, energy_density, etc) parameters in get function.
 
+  - new module diffractio.py to import all the modules: u = Diffractio('scalar', 'source', x=x, wavelength=0.6328*um)  produced the same as u=Scalar_source_X(x=x, wavelength=0.6328*um)
+
 
 
 * Fix bugs:

@@ -9,6 +9,29 @@ To use Python diffraction and interference in a project:
     import diffractio
 
 
+New procedure: Diffractio class
+==================================
+
+.. code-block:: python
+
+  from diffractio import np
+  from diffractio import um, degrees
+  from diffractio.diffractio import Diffractio
+
+  x = np.linspace(-100 * um, 100 * um, 512)
+  y = np.linspace(-100 * um, 100 * um, 512)
+  wavelength = 0.6328 * um
+
+  u0 = Diffractio("scalar", "source", x=x, y=y, z=None, wavelength=wavelength, info='source')
+  u0.plane_wave()
+
+  t = Diffractio("scalar", "mask", x=x, y=y, z=None, wavelength=wavelength, info='mask')
+  t.square(r0=(0,0), size=100*um, angle=0*degrees)
+
+  u1 = u0 * t
+
+
+
 
 X fields
 =================
