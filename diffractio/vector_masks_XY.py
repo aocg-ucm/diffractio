@@ -57,8 +57,8 @@ Draw_Options = Literal['amplitudes', 'phases', 'jones', 'jones_ap']
 class Vector_mask_XY(Vector_field_XY):
 
     def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
-                 wavelength: float | None = None, info: str = ""):
-        super().__init__(x, y, wavelength, info)
+                 wavelength: float | None = None,  n_background: float = 1, info: str = ""):
+        super().__init__(x, y, wavelength, n_background, info)
         self.type = 'Vector_mask_XY'
 
         self.M00 = np.zeros_like(self.X, dtype=complex)
@@ -66,7 +66,30 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = np.zeros_like(self.X, dtype=complex)
         self.M11 = np.zeros_like(self.X, dtype=complex)
 
+
+
         del self.Ex, self.Ey, self.Ez
+
+
+    def __str__(self):
+        """Represents data from class."""
+
+
+        print("{}\n - x:  {},   y:  {},   M00:  {}".format(
+            self.type, self.x.shape, self.y.shape, self.M00.shape))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
+        print(
+            " - ymin:       {:2.2f} um,  ymay:      {:2.2f} um,  Dy:   {:2.2f} um"
+            .format(self.y[0], self.y[-1], self.y[1] - self.y[0]))
+
+        print(" - wavelength: {:2.2f} um".format(self.wavelength))
+        print(" - date:       {}".format(self.date))
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
+        return ""
+    
 
     @check_none('x','y')
     def __add__(self, other, kind: str = 'standard'):

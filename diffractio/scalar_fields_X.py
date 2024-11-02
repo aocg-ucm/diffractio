@@ -69,7 +69,6 @@ import time
 import types
 
 
-
 from numpy import angle, array, concatenate, exp, linspace, pi, shape, sqrt, zeros
 from numpy.lib.scimath import sqrt as csqrt
 from scipy.fftpack import fft, fftshift, ifft

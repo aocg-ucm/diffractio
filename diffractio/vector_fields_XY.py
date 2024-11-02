@@ -91,11 +91,13 @@ class Vector_field_XY():
     """
 
     def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
-                 wavelength: float | None = None, info: str = ""):
+                 wavelength: float | None = None, n_background: float = 1.0, info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength
         self.X, self.Y = np.meshgrid(x, y)
+        self.n_background = n_background
+
 
         self.Ex = np.zeros_like(self.X, dtype=complex)
         self.Ey = np.zeros_like(self.X, dtype=complex)
@@ -118,7 +120,7 @@ class Vector_field_XY():
         Imin = intensity.min()
         Imax = intensity.max()
 
-        print("{}\n - x:  {},   y:  {},   u:  {}".format(
+        print("{}\n - x:  {},   y:  {},   Ex:  {}".format(
             self.type, self.x.shape, self.y.shape, self.Ex.shape))
         print(
             " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"

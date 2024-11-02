@@ -147,7 +147,7 @@ class Vector_field_XYZ():
         Imin = intensity.min()
         Imax = intensity.max()
 
-        print("{}\n - x:  {},   y:  {},  z:  {},   u:  {}".format(
+        print("{}\n - x:  {},   y:  {},  z:  {},   Ex:  {}".format(
             self.type, self.x.shape, self.y.shape, self.z.shape, self.Ex.shape))
 
         print(
@@ -164,8 +164,8 @@ class Vector_field_XYZ():
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
-
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
         return ""
 
 

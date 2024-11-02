@@ -84,9 +84,9 @@ class Scalar_mask_XY(Scalar_field_XY):
     """
 
     def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
-                 wavelength: float | None = None, info: str = ""):
+                 wavelength: float | None = None,  n_background: float = 1., info: str = ""):
 
-        super().__init__(x, y, wavelength, info)
+        super().__init__(x, y, wavelength, n_background, info)
         self.type = 'Scalar_mask_XY'
 
 

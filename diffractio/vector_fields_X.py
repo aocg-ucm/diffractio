@@ -70,10 +70,11 @@ class Vector_field_X():
         self.Ez (numpy.array): Electric_z field
     """
 
-    def __init__(self, x: NDArrayFloat = None, wavelength: float | None = None,
+    def __init__(self, x: NDArrayFloat = None, wavelength: float | None = None, n_background: float = 1.0,
                  info: str = ""):
         self.x = x
         self.wavelength = wavelength
+        self.n_background = n_background
 
         self.Ex = np.zeros_like(self.x, dtype=complex)
         self.Ey = np.zeros_like(self.x, dtype=complex)
@@ -107,8 +108,8 @@ class Vector_field_X():
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
-
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
         return ""
 
     @check_none('x','Ex','Ey','Ez',raise_exception=bool_raise_exception)
@@ -420,7 +421,7 @@ class Vector_field_X():
 
         tx, ty = rcParams['figure.figsize']
 
-        logarithm = False
+        logarithm = 0
         normalize = False
         cut_value = None
 

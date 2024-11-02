@@ -121,10 +121,11 @@ class Scalar_field_XY():
 # flake8: noqa
 
     def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
-                 wavelength: float  = 0., info: str = ""):
+                 wavelength: float  = 0., n_background: float = 1., info: str = ""):
         self.x = x
         self.y = y
         self.wavelength = wavelength
+        self.n_background = n_background
         if x is not None and y is not None:
             self.X, self.Y = np.meshgrid(x, y)
             self.u = np.zeros(np.shape(self.X), dtype=complex)
@@ -168,7 +169,7 @@ class Scalar_field_XY():
         print(" - date:       {}".format(self.date))
         if self.info != "":
             print(" - info:       {}".format(self.info))
-        return ("")
+        return ""
 
     @check_none('x','u',raise_exception=bool_raise_exception)
     def __add__(self, other):
