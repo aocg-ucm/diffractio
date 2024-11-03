@@ -384,7 +384,7 @@ class Vector_field_Z():
 
         tx, ty = rcParams['figure.figsize']
 
-        logarithm = False
+        logarithm = 0
         normalize = False
         cut_value = None
 

@@ -179,8 +179,9 @@ class Scalar_field_XZ():
 
         print(" - wavelength: {:2.2f} um".format(self.wavelength))
         print(" - date:       {}".format(self.date))
-        print(" - info:       {}".format(self.info))
-
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
+        return ""
         return ""
 
     @check_none('x','z','u',raise_exception=bool_raise_exception)

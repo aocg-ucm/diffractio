@@ -53,7 +53,8 @@ Draw_pyvista_Options = Literal['volume', 'clip', 'slices', 'projections']
 Draw_interactive_Options = Literal['intensity', 'amplitude', 'phase']
 Save_mask_Options = Literal['amplitude', 'phase', 'intensity']
 
-
+Options_Diffractio_kind = Literal['scalar', 'vector']
+Options_Diffractio_frame = Literal['field', 'mask', 'source']
 Options_add = Literal['source', 'mask', 'phases', 'no_overlap', 'distances']
 Options_squares_nxm = Literal['amplitude', 'intensity', 'gray_levels']
 video_isovalue_Options = Literal['intensity', 'refractive_index']
