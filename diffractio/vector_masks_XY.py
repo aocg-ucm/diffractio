@@ -372,6 +372,16 @@ class Vector_mask_XY(Vector_field_XY):
         self.M11 = uno * M[1, 1]
 
 
+    def vacuum(self):
+        """No polarizing structure.
+
+        Args:
+        """
+        PL = Jones_matrix('vacuum')
+        PL.vacuum()
+        self.from_py_pol(PL)
+
+
     def polarizer_linear(self, azimuth: float=0*degrees):
         """Generates an XY linear polarizer.
 
@@ -416,6 +426,121 @@ class Vector_mask_XY(Vector_field_XY):
         PL = Jones_matrix('m0')
         PL.diattenuator_retarder_linear(R=R, p1=p1, p2=p2, azimuth=azimuth)
         self.from_py_pol(PL)
+
+
+    def radial_polarizer(self, r0: tuple[float, float]=(0.,0.)):
+        """Radial polarizer.
+
+        Args:
+            r0 (tuple[float, float]): position of center
+         """
+
+        x0, y0 = r0
+
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
+
+        
+        self.M00 = np.cos(THETA)**2
+        self.M01 = np.cos(THETA)*np.sin(THETA)
+        self.M10 = np.cos(THETA)*np.sin(THETA)
+        self.M11 = np.sin(THETA)**2
+
+
+    def azimuthal_polarizer(self, r0: tuple[float, float]=(0.,0.)):
+        """Generates an azimuthal-polarizer
+
+        Args:
+            r0 (tuple[float, float]): position of center
+        """
+
+        x0, y0 = r0
+
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
+
+        
+        self.M00 = np.sin(THETA)**2
+        self.M01 = -np.cos(THETA)*np.sin(THETA)
+        self.M10 = -np.cos(THETA)*np.sin(THETA)
+        self.M11 = np.cos(THETA)**2
+
+
+
+    def RCP(self):
+        """Right circular polarizer
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = 0.5j*ones
+        self.M10 = -0.5j*ones
+        self.M11 = 0.5j*ones
+
+
+    def LCP(self):
+        """Left circular polarizer.
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = -0.5j*ones
+        self.M10 = 0.5j*ones
+        self.M11 = 0.5j*ones
+
+
+
+    def RCP2LCP(self):
+        """Rght circular polarizer to Left circular polarizer
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = -0.5j*ones
+        self.M10 = -0.5j*ones
+        self.M11 = -0.5j*ones
+
+
+    def LCP2RCP(self):
+        """Left circular polarizer to Right circular polarizer
+        """
+
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = 0.5j*ones
+        self.M10 = 0.5j*ones
+        self.M11 = -0.5j*ones
+
+
+    def q_plate(self, r0: tuple[float, float],  q: float, phi: float = np.pi, theta = 0*degrees):
+        """Generates a q_plate. 
+
+        Args:
+            r0 (tuple[float, float]): position of 0.
+            q (float): _description_
+            phi (float, optional): _description_. Defaults to np.pi.
+            theta (_type_, optional): angle of the q_plate. Defaults to 0*degrees.
+
+
+        Reference:
+            J.A. Davis et al. "Analysis of a segmented q-plate tunable retarder for the generation of first-order vector beams" Applied Optics Vol. 54, No. 32 p. 9583 (2015) http://dx.doi.org/10.1364/AO.54.009583
+        """
+
+
+        x0, y0 = r0
+
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
+
+        self.M00 = np.cos(phi/2)-1j*np.sin(phi/2)*np.cos(2*q*(THETA-theta))
+        self.M01 = -1j*np.sin(phi/2)*np.sin(2*q*(THETA-theta))
+        self.M10 = -1j*np.sin(phi/2)*np.sin(2*q*(THETA-theta))
+        self.M11 = np.cos(phi/2)+1j*np.sin(phi/2)*np.cos(2*q*(THETA-theta))
 
 
 

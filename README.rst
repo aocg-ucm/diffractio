@@ -329,8 +329,10 @@ BibTex:
       URL = {https://doi.org/10.1117/12.3021879}
    }
 
+CFF:  
 
-
+   There is a cff file (CITATION.cff) at top of the project.
+   
 Credits
 ---------------------------
 

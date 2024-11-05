@@ -66,7 +66,7 @@ Beta state
 
   - vector XYZ fields:   FPWPM algorithm has been implemented for vector propagation.
 
-  - vector XY mask: SLM (spatial light modulator) to simulate the behaviour of a SLM.
+  - vector XY mask: q_plate, SLM, radial_polarizer, azimuthal_polarizer, RCP, LCP, RCP2LCP, LCP2 RCP.
 
 * Documentation:
  

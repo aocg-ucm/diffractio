@@ -7,7 +7,8 @@ def list_python_files(directory):
     except FileNotFoundError:
         return f"The directory {directory} does not exist."
 
-directory = '/home/luismiguel/bitbucket/diffractio/diffractio/'
+print(os.getcwd())
+directory = '/home/luismiguel/github/diffractio/diffractio/'
 python_files = list_python_files(directory)
 
 
