@@ -246,28 +246,22 @@ Conventions
 In this module we assume that the optical field is defined as:
 
 .. math::
+   u(x,y,z)=A e^{i(\vec{k} . \vec{r}-\omega t)},
 
-\[
-u(x,y,z)=Ae^{i(\overrightarrow{k}\overrightarrow{r}-\omega t)},
-\]
-
-where `A` is the amplitude, `k` is the wave vector, `r` is the position vector, `omega` is the angular frequency, and `t` is the time.
+where `A` is the amplitude, `k` is the wave vector, `r` is the position vector, :math:`\omega` is the angular frequency, and `t` is the time.
 
 For the vector case, the field is defined as:
 
 .. math::
+   \vec{E}(x,y,z)=\left[\begin{array}{c}
+   E_{x}(x,y)\\
+   E_{y}(x,y)\\
+   E_{z}(x,y)
+   \end{array}\right]e^{i(\vec{k} . \vec{r}-\omega t)},
 
-\[
-\overrightarrow{E}(x,y,z)=\left[\begin{array}{c}
-E_{x}(x,y)\\
-E_{y}(x,y)\\
-E_{z}(x,y)
-\end{array}\right]e^{i(kz-\omega t)},
-\]
+where :math:`E_x`, :math:`E_y` and :math:`E_z` are the components of the electric field. 
 
-where :math:`E_x`, `E_y` and :math:`E_z` are the components of the electric field. 
-
-The spatial units are defined in micrometers: `\mu m = 1`.
+The spatial units are defined in micrometers:  :math:`\mu m = 1`.
 
 
 
