@@ -133,7 +133,7 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
     def mask_from_function(
             self, r0: tuple[float, float], refractive_index: float | str, f1, f2, z_sides: tuple[float],
-            angle: float, v_globals: dict = {}):
+            angle: float, r_rot: tuple[float, float] | None = None, v_globals: dict = {}):
         """
         Phase mask defined between two surfaces f1 and f1: h(x,z)=f2(x,z)-f1(x,z)
 
@@ -144,15 +144,19 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             f2 (str): function that delimits the second surface
             z_sides (float, float): limiting upper and lower values in z,
             angle (float): angle of rotation (radians)
+            r_rot (float, float): rotation point. If None then r_rot = r0.
             v_globals (dict): dict with global variables
         """
 
         v_locals = {"self": self, "np": np, "degrees": degrees, "um": um}
+        
+        if r_rot == None:
+            r_rot = r0
 
         F2 = eval(f2, v_globals, v_locals)
         F1 = eval(f1, v_globals, v_locals)
 
-        Xrot, Zrot = self.__rotate__(angle, r0)
+        Xrot, Zrot = self.__rotate__(angle, r_rot)
 
         ipasa = (Xrot > z_sides[0]) & (
             Xrot < z_sides[1]) & (Zrot < F2) & (Zrot > F1)
@@ -288,8 +292,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         x_c, z_c = r0
 
         f1_interp = interp1d(
-            array1[:,0] + x_c,
-            array1[:,1] + z_c,
+            array1[0,:] + x_c,
+            array1[1,:] + z_c,
             kind=interp_kind,
             bounds_error=False,
             fill_value=1, # array1[1,0] + z_c,
@@ -297,8 +301,8 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         )
 
         f2_interp = interp1d(
-            array2[:,0] + x_c,
-            array2[:,1] + z_c,
+            array2[0,:] + x_c,
+            array2[1,:] + z_c,
             kind=interp_kind,
             bounds_error=False,
             fill_value=1, # array2[1,0] + z_c,

@@ -13,3 +13,5 @@ Scalar_XYZ
    wpm_without_storing.ipynb
 
    masks_xyz.ipynb
+
+   masks_xyz_procedures.ipynb

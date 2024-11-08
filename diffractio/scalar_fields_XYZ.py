@@ -213,9 +213,8 @@ class Scalar_field_XYZ():
         u3.u = self.u + other.u
 
         return u3
-
-   
-
+    
+    
     @check_none('x','y','z','u',raise_exception=bool_raise_exception)
     def __sub__(self, other):
         """Substract two Scalar_field_XYZ For example two light sources or two masks.
@@ -234,9 +233,9 @@ class Scalar_field_XYZ():
         u3.u = self.u - other.u
         return u3
 
+
     @check_none('X','Y','Z','u',raise_exception=bool_raise_exception)
-    def __rotate__(self, psi: float, phi: float, sigma: float, 
-                    r0: tuple[float,float,float] = (0.,0.,0.)):
+    def __XYZ_rotate_point__(self, angles: tuple[float,float,float], point: tuple[float,float,float]):
         """Function to rotate around any of the 3 axis of rigid solid.
 
         Args:
@@ -245,16 +244,15 @@ class Scalar_field_XYZ():
             sigma (float): Euler angle in radians
 
         Returns:
-            numpy.array: Yrot: (xyz matrix rotation of solid angle)
-            numpy.array: Xrot: (xyz matrix rotation of solid angle)
-            numpy.array: Zrot: (xyz matrix rotation of solid angle)
-
+            tuple[ NDarray, NDarray, NDarray]: Xrot, Yrot, Zrot
+        
         References:
             http://estudiarfisica.wordpress.com/2011/03/17/ampliacion-del-solido-rigido-matrices-de-rotation-angles-y-transformaciones-de-euler-velocidad-angular-momento-angular-tensor-de-inercia-teorema-de-steiner-utilsizado/
         """
         
-        x0, y0, z0 = r0
-        
+        psi, phi, sigma = angles
+        x0, y0, z0 = point
+                
         cp = cos(psi)
         sp = sin(psi)
         cf = cos(phi)
@@ -262,41 +260,75 @@ class Scalar_field_XYZ():
         cs = cos(sigma)
         ss = sin(sigma)
 
-        Xrot = (self.X-x0) * (cp * cf - sp * cs * sf) + (self.Y-y0) * (
-            cp * sf + sp * cs * cf) + (self.Z-z0) * (sp * ss)
-        Yrot = (self.X-x0) * (-sp * cf - cp * cs * sf) + (self.Y-y0) * (
-            -sp * sf + cp * cs * cf) + self.Z * (cp * ss)
-        Zrot = (self.X-x0) * (ss * sf) + (self.Y-y0) * (-ss * cf) + (self.Z-z0) * (cs)
+        Xrot = (self.X-x0) * (cp*cf-sp*cs*sf)  + (self.Y-y0) * (cp*sf+sp*cs*cf)  + (self.Z-z0) * (sp*ss)
+        Yrot = (self.X-x0) * (-sp*cf-cp*cs*sf) + (self.Y-y0) * (-sp*sf+cp*cs*cf) + (self.Z-z0) * (cp*ss)
+        Zrot = (self.X-x0) * (ss*sf)           + (self.Y-y0) * (-ss*cf)          + (self.Z-z0) * (cs)
+        
         return Xrot, Yrot, Zrot
 
 
     @check_none('X','Y','Z','u',raise_exception=bool_raise_exception)
-    def __rotate_axis__(self, axis: float, angle: float):
+    def __XYZ_rotate_axis__(self,  angle: float, point: tuple[float, float, float], axis: tuple[float, float, float]):
         """rotate around an axis.
 
         Args:
             axis (float, float, float): direction of the axis
             angle (float): angle of rotation in radians
-
+            
         Returns:
-            numpy.array: Yrot: direction of the axis
-            numpy.array: Xrot: (xyz matrix rotation of solid angle)
-            numpy.array: Zrot: (xyz matrix rotation of solid angle)
+            tuple[ NDarray, NDarray, NDarray]: Xrot, Yrot, Zrot
         """
         # normalized axis
         u, v, w = axis / np.sqrt(axis[0]**2 + axis[1]**2 + axis[2]**2)
+        x0, y0, z0 = point
+
 
         ct = cos(angle)
         st = sin(angle)
 
-        Xrot = self.X * (u**2 + (v**2 + w**2) * ct) + self.Y * (
-            u * v * (1 - ct) - w * st) + self.Z * (u * w * (1 - ct) + v * st)
-        Yrot = self.X * (u * v * (1 - ct) + w * st) + self.Y * (
-            v**2 + (u**2 + w**2) * ct) + self.Z * (v * w * (1 - ct) - u * st)
-        Zrot = self.X * (u * w * (1 - ct) - v * st) + self.Y * (
-            v * w * (1 - ct) + u * st) + self.Z * (w**2 + (u**2 + v**2) * ct)
+        Xrot = (self.X-x0) * (u**2 + (v**2 + w**2) * ct) + (self.Y-y0) * (
+            u * v * (1 - ct) - w * st) + (self.Z-z0) * (u * w * (1 - ct) + v * st)
+        Yrot = (self.X-x0) * (u * v * (1 - ct) + w * st) + (self.Y-y0) * (
+            v**2 + (u**2 + w**2) * ct) + (self.Z-z0) * (v * w * (1 - ct) - u * st)
+        Zrot = (self.X-x0) * (u * w * (1 - ct) - v * st) + (self.Y-y0) * (
+            v * w * (1 - ct) + u * st) + (self.Z-z0) * (w**2 + (u**2 + v**2) * ct)
 
         return Xrot, Yrot, Zrot
+
+
+
+    @check_none('X','Y','Z','u',raise_exception=bool_raise_exception)
+    def __XYZ_rotate__(self, rotation: dict):
+        """Rotates the field around an axis or a point.
+        
+        Args:
+            rotation (dict): kind: 'axis' or 'point'
+                             if 'axis': angle (float) and axis (tuple[float,float,float])
+                             if 'point': angle (tuple[float,float,float]) and point (tuple[float,float,float])
+                             
+        Returns:
+            tuple[ NDarray, NDarray, NDarray]: Xrot, Yrot, Zrot
+        """
+        
+        if rotation['kind'] == 'axis':
+            axis = rotation['axis']
+            angle = rotation['angle']
+            point = rotation['point']
+        elif rotation['kind'] == 'point':
+            point = rotation['point']
+            angles = rotation['angle']
+
+        if rotation['kind'] == 'axis' and angle != 0:
+            Xrot, Yrot, Zrot = self.__XYZ_rotate_axis__(angle, point, axis)
+        elif rotation['kind'] == 'point':
+            Xrot, Yrot, Zrot = self.__XYZ_rotate_point__(angles, point)
+        else:
+            Xrot=self.X
+            Yrot=self.Y
+            Zrot=self.Z
+            
+        return Xrot, Yrot, Zrot
+            
 
     @check_none('u',raise_exception=bool_raise_exception)
     def conjugate(self, new_field: bool = True):
@@ -985,8 +1017,8 @@ class Scalar_field_XYZ():
                 ix, _, _ = nearest(self.x, x0)
             else:
                 ix = ix0
-            field_output.u = np.squeeze(self.u[:, ix, :])
-            field_output.n = np.squeeze(self.n[:, ix, :])
+            field_output.u = np.squeeze(self.u[:, ix, :]).transpose()
+            field_output.n = np.squeeze(self.n[:, ix, :]).transpose()
 
             return field_output
 
@@ -995,7 +1027,7 @@ class Scalar_field_XYZ():
                 ix, _, _ = nearest(self.x, x0)
             else:
                 ix = ix0
-            return np.squeeze(self.u[:, ix, :])
+            return np.squeeze(self.u[:, ix, :]).transpose()
 
 
     @check_none('x','y','z','u',raise_exception=bool_raise_exception)
