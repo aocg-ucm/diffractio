@@ -74,7 +74,7 @@ from .config import bool_raise_exception, CONF_DRAWING, Draw_pyvista_Options, Dr
 from .utils_typing import NDArrayFloat
 from .scalar_fields_XY import PWD_kernel, Scalar_field_XY, WPM_schmidt_kernel
 from .scalar_fields_XZ import Scalar_field_XZ
-from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling, get_scalar
+from .utils_common import get_date, load_data_common, save_data_common, check_none, oversampling, get_scalar, add
 from .utils_drawing import normalize_draw
 from .utils_math import get_k, nearest, reduce_to_1
 from .utils_multiprocessing import _pickle_method, _unpickle_method
@@ -189,30 +189,46 @@ class Scalar_field_XYZ():
         if self.info != "":
             print(" - info:       {}".format(self.info))
         return ("")
+    
+    
+    @check_none('x','u',raise_exception=bool_raise_exception)
+    def __add__(self, other):
+        """Adds two Scalar_field_x. For example two light sources or two masks.
 
-    @check_none('x','y','z','u',raise_exception=bool_raise_exception)
-    def __add__(self, other,):
-        """Adds two Scalar_field_XYZ. For example two light sources or two masks.
-        
         Args:
-            other (Vector_field_X): 2nd field to add
-            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'distances'].
-                - 'source': adds the fields as they are
-                - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
-                - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
-                - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
-                - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
+            other (Scalar_field_X): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
 
         Returns:
-            Scalar_field_XYZ: `u3 = u1 + u2`
+            Scalar_field_X: `u3 = u1 + u2`
         """
 
-        u3 = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength, self.n_background)
-        u3.n = self.n
+        if self.type == 'Scalar_mask_XYZ':
+            t = add(self, other, kind='refractive_index')
+        elif self.type == 'Scalar_source_XYZ' or 'Scalar_field_XYZ':
+            t = add(self, other, kind='source')
+            
+        return t
 
-        u3.u = self.u + other.u
+    def add(self, other, kind):
+        """Adds two Scalar_field_xy. For example two light sources or two masks.
 
-        return u3
+        Args:
+            other (Scalar_field_XY): 2nd field to add
+            kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'distances', 'no_overlap].
+            - 'source': adds the fields as they are
+            - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+            - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+            - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+            - 'distances': adds the fields as they are. If the fields overlap, the field with the smallest distance is kept.
+
+
+        Returns:
+            Scalar_field_XY: `u3 = u1 + u2`
+        """
+
+        t = add(self, other, kind)
+        return t
     
     
     @check_none('x','y','z','u',raise_exception=bool_raise_exception)

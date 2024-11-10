@@ -242,7 +242,7 @@ def add(self, other, kind: Options_add  = 'source'):
     
     Args:
         other (Other field): 2nd field to add
-        kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'distances'].
+        kind (str): instruction how to add the fields: ['source', 'mask', 'refractive_index', 'phases', 'no_overlap', 'distances'].
             - 'source': adds the fields as they are
             - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
             - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
@@ -258,8 +258,10 @@ def add(self, other, kind: Options_add  = 'source'):
     from diffractio.scalar_masks_X import Scalar_mask_X
     from diffractio.scalar_masks_XY import Scalar_mask_XY
     from diffractio.scalar_fields_XZ import Scalar_field_XZ
+    from diffractio.scalar_masks_XZ import Scalar_mask_XZ
     from diffractio.scalar_fields_Z import Scalar_field_Z
-    
+    from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
+    from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
 
     if isinstance(self, Scalar_mask_XY):
         t = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -269,10 +271,17 @@ def add(self, other, kind: Options_add  = 'source'):
         t = Scalar_mask_X(self.x, self.wavelength)
     elif isinstance(self, Scalar_source_X):
         t = Scalar_source_X(self.x,  self.wavelength)
+    elif isinstance(self, Scalar_mask_XZ):
+        t = Scalar_mask_XZ(self.x, self.z, self.wavelength)
     elif isinstance(self, Scalar_field_XZ):
         t = Scalar_field_XZ(self.x, self.z, self.wavelength)
     elif isinstance(self, Scalar_field_Z):
         t = Scalar_field_Z(self.z, self.wavelength)
+    elif isinstance(self, Scalar_field_XYZ):
+        t = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength)
+    elif isinstance(self, Scalar_mask_XYZ):
+        t = Scalar_mask_XYZ(self.x, self.y, self.z, self.wavelength)
+
 
     if kind == 'source':
         if isinstance(other, tuple):
@@ -341,7 +350,17 @@ def add(self, other, kind: Options_add  = 'source'):
             i_pos2 = t2>0
             if (i_pos1 & i_pos2).any():
                 raise ValueError('The two fields overlap')
-            
+    
+
+    elif kind == 'refractive_index':
+        if isinstance(other, tuple):
+            t.n = self.n
+            for o in other:
+                t.n += o.n - o.n_background
+        else:        
+            t.n = self.n + other.n - other.n_background
+        
+        
     elif kind == 'distances':
         #todo: with simultaneous control of distances, not with for loop.
         if isinstance(other, tuple):

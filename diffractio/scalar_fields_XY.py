@@ -2299,7 +2299,7 @@ class Scalar_field_XY():
         """Draws  XY field.
 
         Args:
-            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'contour'
+            kind (str): type of drawing: 'amplitude', 'intensity', 'phase', ' 'field', 'real_field', 'refractive_index'
             logarithm (float): If >0, intensity is scaled in logarithm
             normalize (str):  False, 'maximum', 'area', 'intensity'
             title (str): title for the drawing
@@ -2335,8 +2335,11 @@ class Scalar_field_XY():
         elif kind == 'real_field':
             id_fig, IDax, IDimage = self.__draw_real_field__(
                 logarithm, normalize, title, cut_value, **kwargs)
+            
+        elif kind == 'refractive_index':
+            id_fig, IDax, IDimage = self.__draw_refractive_index__(title, cut_value, **kwargs)
         else:
-            print("Accepted values: intensity, amplitude, phase, field, real_field")
+            print("Accepted values:", Draw_XY_Options)
 
         if has_colorbar in ('horizontal', 'vertical'):
             plt.colorbar(orientation=has_colorbar, shrink=0.5)
@@ -2573,6 +2576,41 @@ class Scalar_field_XY():
                                        **kwargs)
 
         return id_fig, IDax, IDimage
+
+
+    @check_none('x','y','n',raise_exception=bool_raise_exception)
+    def __draw_refractive_index__(self,
+                           title: str = "",
+                           cut_value: float | None = None,
+                           colormap_kind: str = '',
+                           **kwargs):
+        """Draws refractive index, normally coming from  XYZ field.
+
+        Args:
+            logarithm (float): If >0, intensity is scaled in logarithm
+            normalize (str):  False, 'maximum', 'area', 'intensity'
+            title (str): title for the drawing
+            cut_value (float): if provided, maximum value to show
+        """
+        
+        if colormap_kind in ['', None, []]:
+            colormap_kind = self.CONF_DRAWING["color_n"]
+        id_fig, IDax, IDimage = draw2D(np.abs(self.n),
+                                       self.x,
+                                       self.y,
+                                       xlabel="$x  (\mu m)$",
+                                       ylabel="$y  (\mu m)$",
+                                       title=title,
+                                       color=colormap_kind,
+                                       reduce_matrix=self.reduce_matrix,
+                                       **kwargs)
+        plt.tight_layout()
+
+        # if self.type == 'Scalar_mask_XY':
+        #     plt.clim(0, 1)
+
+        return id_fig, IDax, IDimage
+
 
 
     def video(self,
