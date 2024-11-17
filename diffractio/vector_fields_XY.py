@@ -370,64 +370,64 @@ class Vector_field_XY():
         return intensity
 
 
-    @check_none('x','y',raise_exception=bool_raise_exception)
-    def RS(self,
-           z=10*mm,
-           n: float = 1.,
-           new_field: bool = True,
-           amplification=(1, 1),
-           verbose: bool = False):
-        """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
+    # @check_none('x','y',raise_exception=bool_raise_exception)
+    # def RS(self,
+    #        z=10*mm,
+    #        n: float = 1.,
+    #        new_field: bool = True,
+    #        amplification=(1, 1),
+    #        verbose: bool = False):
+    #     """Fast-Fourier-Transform  method for numerical integration of diffraction Rayleigh-Sommerfeld formula. `Thin Element Approximation` is considered for determining the field just after the mask: :math:`\mathbf{E}_{0}(\zeta,\eta)=t(\zeta,\eta)\mathbf{E}_{inc}(\zeta,\eta)` Is we have a field of size N*M, the result of propagation is also a field N*M. Nevertheless, there is a parameter `amplification` which allows us to determine the field in greater observation planes (jN)x(jM).
 
-        Args:
-            z (float): distance to observation plane.
-                if z<0 inverse propagation is executed
-            n (float): refractive index
-            new_field (bool): if False the computation goes to self.u
-                            if True a new instance is produced
-            amplification (int, int): number of frames in x and y direction
-            verbose (bool): if True it writes to shell. Not implemented yet
+    #     Args:
+    #         z (float): distance to observation plane.
+    #             if z<0 inverse propagation is executed
+    #         n (float): refractive index
+    #         new_field (bool): if False the computation goes to self.u
+    #                         if True a new instance is produced
+    #         amplification (int, int): number of frames in x and y direction
+    #         verbose (bool): if True it writes to shell. Not implemented yet
 
-        Returns:
-            if New_field is True: Scalar_field_X, else None
+    #     Returns:
+    #         if New_field is True: Scalar_field_X, else None
 
-        Note:
-            One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
+    #     Note:
+    #         One adventage of this approach is that it returns a quality parameter: if self.quality>1, propagation is right.
 
-        References:
-            From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
-        """
+    #     References:
+    #         From Applied Optics vol 45 num 6 pp. 1102-1110 (2006)
+    #     """
 
-        e0x, e0y, _ = self.get()
+    #     e0x, e0y, _ = self.get()
 
-        # estas son las components justo en la posicion pedida
-        Ex = e0x.RS(z=z,
-                    n=n,
-                    new_field=True,
-                    kind='z',
-                    amplification=amplification)
-        Ey = e0y.RS(z=z,
-                    n=n,
-                    new_field=True,
-                    kind='z',
-                    amplification=amplification,
-                    verbose=verbose)
+    #     # estas son las components justo en la posicion pedida
+    #     Ex = e0x.RS(z=z,
+    #                 n=n,
+    #                 new_field=True,
+    #                 kind='z',
+    #                 amplification=amplification)
+    #     Ey = e0y.RS(z=z,
+    #                 n=n,
+    #                 new_field=True,
+    #                 kind='z',
+    #                 amplification=amplification,
+    #                 verbose=verbose)
 
-        if new_field is True:
-            EM = Vector_field_XY(Ex.x, Ex.y, self.wavelength)
-            EM.Ex = Ex.u
-            EM.Ey = Ey.u
-            EM.Ez = np.zeros_like(EM.X)
-            EM.x = Ex.x
-            EM.y = Ex.y
-            return EM
+    #     if new_field is True:
+    #         EM = Vector_field_XY(Ex.x, Ex.y, self.wavelength)
+    #         EM.Ex = Ex.u
+    #         EM.Ey = Ey.u
+    #         EM.Ez = np.zeros_like(EM.X)
+    #         EM.x = Ex.x
+    #         EM.y = Ex.y
+    #         return EM
 
-        else:
-            self.Ex = Ex.u
-            self.Ey = Ey.u
-            self.Ez = np.zeros_like(EM.X)
-            self.x = Ex.x
-            self.y = Ex.y
+    #     else:
+    #         self.Ex = Ex.u
+    #         self.Ey = Ey.u
+    #         self.Ez = np.zeros_like(EM.X)
+    #         self.x = Ex.x
+    #         self.y = Ex.y
 
 
     @check_none('x','y','Ex','Ey','Ez',raise_exception=False)

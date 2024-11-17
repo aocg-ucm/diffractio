@@ -258,6 +258,7 @@ def add(self, other, kind: Options_add  = 'source'):
     from diffractio.scalar_masks_X import Scalar_mask_X
     from diffractio.scalar_masks_XY import Scalar_mask_XY
     from diffractio.scalar_fields_XZ import Scalar_field_XZ
+    from diffractio.scalar_fields_XY import Scalar_field_XY
     from diffractio.scalar_masks_XZ import Scalar_mask_XZ
     from diffractio.scalar_fields_Z import Scalar_field_Z
     from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
@@ -281,6 +282,8 @@ def add(self, other, kind: Options_add  = 'source'):
         t = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength)
     elif isinstance(self, Scalar_mask_XYZ):
         t = Scalar_mask_XYZ(self.x, self.y, self.z, self.wavelength)
+    elif isinstance(self, Scalar_field_XY):
+        t = Scalar_field_XY(self.x, self.y, self.wavelength)
 
 
     if kind == 'source':
