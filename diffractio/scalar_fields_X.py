@@ -79,7 +79,8 @@ from .__init__ import degrees, mm, np, plt
 
 from .config import bool_raise_exception, Draw_X_Options, get_scalar_options, empty_types
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
-from .utils_common import get_date, load_data_common, save_data_common, check_none, add, oversampling
+from .utils_common import (get_date, load_data_common, save_data_common, check_none, add,
+                           oversampling, get_scalar)
 from .utils_drawing import normalize_draw
 from .utils_math import (fft_filter, get_edges, nearest, reduce_to_1, Bluestein_dft_x, get_k, nearest2)
 from .utils_multiprocessing import (_pickle_method, _unpickle_method,
@@ -414,6 +415,20 @@ class Scalar_field_X():
         data = get_scalar(self, kind)
         return data
         
+
+
+    def normalize(self, kind='amplitude', new_field: bool = False):
+        """Normalizes the field so that intensity.max()=1.
+
+        Args:
+            kind (str): 'amplitude', or 'intensity'
+            new_field (bool): If False the computation goes to self.u. If True a new instance is produced.
+        
+        Returns
+            u (numpy.array): normalized optical field
+        """
+        return normalize_field(self, kind, new_field)
+
 
     @check_none('u',raise_exception=bool_raise_exception)
     def inverse_amplitude(self, new_field: bool = False):
@@ -1192,17 +1207,52 @@ class Scalar_field_X():
 
         return u_iter, u_out_gv, u_out_roi, u_axis_x, u_axis_z, u_max, z_max
 
-    def normalize(self, kind='amplitude', new_field: bool = False):
-        """Normalizes the field so that intensity.max()=1.
+    def to_far_field(self, angles: np.array,  z_obs: float | None = None,  has_draw: bool = True, has_logarithm=True, verbose: bool = True, **kwargs):
+        """
+        Compute the far field of a source or mask. 
+        
+
+        The function calculates the far field (in angles) of a mask or source using the CZT function. 
+        In fact, the CZT function is used to compute the far field, and the x positions are computed considering far field.
 
         Args:
-            kind (str): 'amplitude', or 'intensity'
-            new_field (bool): If False the computation goes to self.u. If True a new instance is produced.
-        
-        Returns
-            u (numpy.array): normalized optical field
+            angles (np.array): Angles to compute the far field.
+            z_obs (float | None, optional): Distance where the far field is computed. If None, the distance is given by $\pi size^2 /\wavelength$. Defaults to None.
+            has_draw (bool, optional): Draws the far field diffraction pattern, in angles. Defaults to False.
+            has_logarithm (bool, optional): If True, the drawing is made in logarithm scale. Defaults to False.
+            verbose (bool, optional): Prints information. Defaults to True.
+
+        Returns:
+            I_far (np.array): Intensity at the far field
         """
-        return normalize_field(self, kind, new_field)
+
+        if z_obs is None: 
+            size_frame = self.x[-1]-self.x[0]
+            z_obs = np.pi*size_frame**2/self.wavelength
+
+        xout = np.sin(angles)*z_obs
+
+        u_far = self.CZT(z=z_obs, xout=xout)
+        I_far = u_far.intensity()
+        
+        if has_logarithm:
+            function = plt.semilogy
+        else:
+            function = plt.plot
+
+        if has_draw:
+            plt.figure(**kwargs)
+            function(angles/degrees, I_far,'k')
+            plt.ylim(0,I_far.max())
+            plt.xlim(angles[0]/degrees, angles[-1]/degrees)
+            plt.xlabel('angles (degrees)')
+            plt.grid('on')
+            
+        if verbose:
+            print("z_obs = {:2.2f} mm".format(z_obs/mm))
+            
+        return I_far
+
 
 
     @check_none('x', 'u',raise_exception=bool_raise_exception)

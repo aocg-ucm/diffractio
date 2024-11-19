@@ -216,7 +216,6 @@ class Scalar_mask_X(Scalar_field_X):
         u[ix] = 1
         self.u = u
 
-        return u
 
     def double_slit(self, x0: float, size: float, separation: float):
         """double slit: 1 inside, 0 outside
@@ -235,7 +234,6 @@ class Scalar_mask_X(Scalar_field_X):
         slit2.slit(x0=x0 + separation/2, size=size)
         self.u = slit1.u + slit2.u
 
-        return self.u
 
     def two_levels(self, level1: float = 0., level2: float = 1.,
                    x_edge: float = 0.):

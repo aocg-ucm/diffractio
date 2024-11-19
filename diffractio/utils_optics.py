@@ -15,11 +15,13 @@
 """ General purpose optics functions """
 
 import pandas as pd
+from scipy.signal import argrelextrema
+from scipy.interpolate import CubicSpline, PchipInterpolator, Akima1DInterpolator
 
 from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
 
 
-from .__init__ import degrees, np, plt
+from .__init__ import degrees, np, plt, um
 from .utils_math import fft_convolution1d, fft_convolution2d, find_extrema, nearest
 
 
@@ -1226,3 +1228,231 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float
         plt.grid()
 
     return T_TM, T_TE, R_TM, R_TE  # parallel, perpendicular
+
+
+
+def determine_extrema(I_far: np.array, angles: np.array,  change_order_0: bool = True,  
+                      has_draw: bool = True, has_logarithm: bool = True,  verbose: bool = True,
+                      **kwargs):
+        
+    """
+     Determine the extrema of a 1D far field diffraction pattern. 
+     
+     It can be in positions x or angles.
+    
+    Args:
+        I_far (np.array): Intensity distribution of the far field
+        angles (np.array): angles of the far field.
+        change_order_0 (bool): if True, the central maxima is included in the minima
+        has_draw (bool): It draws the far field with the maxima and minima.
+        has_logarithm (bool): It draws the far field with logarithm or not.
+        verbose (bool): if True, it prints the maxima and minima.
+        
+
+    Returns:
+        (i_minima, i_maxima): List with indexes of minima and maxima
+        (angles[i_minima], angles[i_maxima]): List with angles of minima and maxima
+        (I_far[i_minima], I_far[i_maxima]): List with intensities of minima and maxima
+    """
+        
+    i_minima = argrelextrema(I_far, np.less)
+    i_minima = np.array(i_minima).flatten()
+
+    i_maxima = argrelextrema(I_far, np.greater)
+    i_maxima = np.array(i_maxima).flatten()
+    i_central_max = np.argmax(I_far)
+
+    if change_order_0:
+
+
+        i_minima= np.append(i_minima, i_central_max)
+        i_minima = np.sort(i_minima)
+        
+    
+    if verbose:
+        print("Central maxima: {:2.2f}, angle: {} degrees".format(I_far[i_central_max], angles[i_central_max]/degrees))
+        print("Angles minima:")
+        print(angles[i_minima]/degrees)
+        print("Angles maxima:")
+        print(angles[i_maxima]/degrees)
+    
+    if has_draw:
+        if has_logarithm:
+            function = plt.semilogy
+        else:
+            function = plt.plot
+
+        plt.figure(**kwargs)
+        function(angles/degrees, I_far,'k')
+        function(angles[i_maxima]/degrees, I_far[i_maxima], 'ro')
+        function(angles[i_minima]/degrees, I_far[i_minima], 'bo')
+
+        plt.ylim(I_far.min(),I_far.max())
+        plt.xlim(angles[0]/degrees, angles[-1]/degrees)
+        plt.xlabel('angles (degrees)')
+        plt.grid('on')
+        
+        
+    return (i_minima, i_maxima), (angles[i_minima], angles[i_maxima]), (I_far[i_minima], I_far[i_maxima])
+
+
+def size_from_diffraction_minima(angles_minima: np.array, wavelength, size_slit: float | None = None, 
+                                 has_draw: bool = False, verbose: bool = False):
+
+    """We have the minima of a 1D diffraction pattern and determine the size.
+
+    _extended_summary_
+
+    Returns:
+        angles_minima (np.array):
+        wavelength (float):
+        size_slit (float | None):
+        has_draw (bool): It draws the far field with the maxima and minima.
+        verbose (bool): if True, it prints the maxima and minima.
+    """
+    diff_angles = np.diff((angles_minima))
+    diff_angles = np.diff(np.sin(angles_minima))
+    sizes_slit = wavelength/diff_angles
+    
+    # i_bad = np.where(sizes_slit<0.6*size_slit)
+    # sizes_slit[i_bad] = sizes_slit[i_bad]*2
+
+    # i_good = np.where(sizes_slit<1.2*size_slit)
+    # size_slit_measured_center = sizes_slit[i_good].max()
+
+    diameter_fitting = np.polyfit(angles_minima[0:-1], sizes_slit, 2)
+    estimated_diameter_fitting = diameter_fitting[2]
+    size_slit_measured_center = estimated_diameter_fitting
+
+    if size_slit is not None:
+        percent_error_size_slit_center = 100*(size_slit_measured_center-size_slit)/size_slit
+        error_size_slit_center = (size_slit_measured_center-size_slit)
+    else:
+        error_size_slit_center=None
+
+    
+    # quadratic fitting to the diffraction minima
+    fitting = np.poly1d(diameter_fitting)
+    diameter_squared = fitting(angles_minima)
+
+    if has_draw:
+
+        plt.figure(figsize=(20,5))
+
+        plt.plot(angles_minima[0:-1]/degrees, sizes_slit, 'kx', label='local size')
+        if size_slit is not None:
+            plt.plot(np.array([angles_minima[0], angles_minima[-1]])/degrees, (size_slit, size_slit), 'r--', label='real size')
+        plt.plot(np.array([angles_minima[0], angles_minima[-1]])/degrees, (size_slit_measured_center, size_slit_measured_center), 'g--', label='measured size center')
+        plt.plot(angles_minima/degrees, diameter_squared, 'k', label='fitting')
+
+        plt.legend()
+        
+        if size_slit is not None:
+            plt.title(f" {size_slit/um:.2f}  Measured slit size:  {size_slit_measured_center/um:.2f}, error:  {error_size_slit_center*1000:.2f} nm = {percent_error_size_slit_center:.2f}%")
+
+        plt.xlim(angles_minima[0]/degrees, angles_minima[-1]/degrees)
+        plt.xlabel(r'$\theta$ (degrees)')
+        plt.ylabel("Diameter estimation")
+
+
+    if verbose:
+        print("sizes_slit")
+        print(sizes_slit)
+        print(f"estimated diameter: {estimated_diameter_fitting/um:.2f} um")
+
+        
+    return sizes_slit, size_slit_measured_center, error_size_slit_center
+
+
+def envelopes(angles: np.array, I_far: np.array, has_draw: bool = True, has_logarithm: bool = True):
+    """Generates envelopes, and also contrast from these envelopes.
+
+    Args:
+        angles (np.array): angles for the observaton
+        I_far (np.array): Intensity at far field
+        has_draw (bool, optional): If True, makes some drawingT. Defaults to True.
+        has_logarithm (bool, optional): If True, drawings are in logarithm scale. Defaults to True.
+
+    Returns:
+        I_max_interpolated (np.array)
+        I_min_interpolated (np.array))
+        Contrast (np.array)
+    
+    TODO:  
+        Improve: The envolvente should be always above or below the diffraction pattern.
+        1. Find local minima at difference
+        2. Move points at envolvente to this local minima
+        3. New interpolation
+    """
+    
+    i_extrema, angles_extrema, I_extrema = determine_extrema(I_far = I_far, angles = angles, change_order_0 = False,
+                                                             has_draw = False, has_logarithm=has_logarithm, verbose = False)
+
+    angles_minima = angles_extrema[0]
+    angles_maxima = angles_extrema[1]
+    
+    I_minima = I_extrema[0]
+    I_maxima = I_extrema[1]
+    
+    
+    spl_max  = CubicSpline(angles_maxima, I_maxima)
+    spl_max  = PchipInterpolator(angles_maxima, I_maxima)
+    spl_max  = Akima1DInterpolator(angles_maxima, I_maxima)
+    I_max_interpolated = spl_max (angles)
+
+
+    spl_min  = CubicSpline(angles_minima, I_minima)
+    spl_min  = PchipInterpolator(angles_minima, I_minima)
+    spl_min  = Akima1DInterpolator(angles_minima, I_minima)
+    I_min_interpolated  = spl_min (angles)
+
+
+    differences  = I_far - I_max_interpolated
+    i_to_solve = np.where(differences>0)
+    
+    
+    if has_draw:
+        plt.figure(figsize=(20,5))
+        plt.plot(angles/degrees, differences,'k')
+        plt.plot(angles/degrees, np.zeros_like(angles), 'k-.')
+        plt.title('Differences')
+        plt.plot(angles[i_to_solve]/degrees, differences[i_to_solve],'ro')
+        plt.plot(angles_maxima/degrees, np.zeros_like(angles_maxima),'go')
+        plt.xlabel(r'$\theta$ (degrees)')
+        plt.ylabel("Enolventes")
+
+        
+    # angles_maxima_envolvente = angles_maxima
+    
+    # diff_maxima = np.diff(angles_maxima).max()/10    
+    
+    if has_logarithm:
+        function = plt.semilogy
+    else:
+        function = plt.plot
+
+    Contrast = (I_max_interpolated - I_min_interpolated)/(I_max_interpolated + I_min_interpolated)
+
+    if has_draw:
+        plt.figure(figsize=(20,5))
+        plt.plot(angles/degrees, Contrast,'k')
+        plt.ylim(0,1.05)
+        plt.xlim(angles[0]/degrees, angles[-1]/degrees)
+        plt.xlabel(r'$\theta$ (degrees)')
+        plt.ylabel("contrast")
+
+
+        plt.figure(figsize=(20,5))
+        function(angles/degrees, I_far,'k')
+        function(angles_maxima/degrees, I_maxima, 'ro')
+        function(angles/degrees, I_max_interpolated, 'r')  # nejor interpolacion por splines ?
+
+        function(angles_minima/degrees, I_minima, 'bo')
+        function(angles/degrees, I_min_interpolated , 'b')  # nejor interpolacion por splines ?
+
+        plt.xlim(angles[0]/degrees, angles[-1]/degrees)
+        plt.xlabel(r'$\theta$ (degrees)')
+        plt.ylabel("envelopes")
+
+
+    return I_max_interpolated, I_min_interpolated, Contrast
