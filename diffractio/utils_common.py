@@ -22,7 +22,8 @@ import psutil
 from scipy.io import loadmat, savemat
 from scipy.ndimage import center_of_mass
 
-from .config import bool_raise_exception, Options_add, get_scalar_options, get_vector_options
+from .config import (bool_raise_exception, Options_add, Options_sub,
+                     get_scalar_options, get_vector_options)
 
 
 
@@ -285,7 +286,6 @@ def add(self, other, kind: Options_add  = 'source'):
     elif isinstance(self, Scalar_field_XY):
         t = Scalar_field_XY(self.x, self.y, self.wavelength)
 
-
     if kind == 'source':
         if isinstance(other, tuple):
             t.u = self.u
@@ -415,6 +415,130 @@ def add(self, other, kind: Options_add  = 'source'):
             t.u[i_menor*overlap] = self.u[i_menor*overlap]
             t.u[i_mayor*overlap] = other.u[i_mayor*overlap]
         
+    return t
+
+
+def sub(self, other, kind: Options_sub  = 'source'):
+    """substracts two fields. For example two light sources or two masks. The fields are added as complex numbers and then normalized so that the maximum amplitude is 1.
+    
+    Args:
+        other (Other field): 2nd field to add
+        kind (str): instruction how to add the fields: ['source', 'mask', 'phases', 'no_overlap', 'refractive_index'].
+            - 'source': adds the fields as they are
+            - 'mask': adds the fields as complex numbers and then normalizes so that the maximum amplitude is 1.
+            - 'phases': adds the phases and then normalizes so that the maximum amplitude is 1.
+            - 'np_overlap': adds the fields as they are. If the sum of the amplitudes is greater than 1, an error is produced
+
+    Returns:
+        Substraction of the two fields.
+    """
+    
+    from diffractio.scalar_sources_X import Scalar_source_X
+    from diffractio.scalar_sources_XY import Scalar_source_XY
+    from diffractio.scalar_masks_X import Scalar_mask_X
+    from diffractio.scalar_masks_XY import Scalar_mask_XY
+    from diffractio.scalar_fields_XZ import Scalar_field_XZ
+    from diffractio.scalar_masks_XZ import Scalar_mask_XZ
+    from diffractio.scalar_fields_Z import Scalar_field_Z
+    from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
+    from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
+    
+
+    if isinstance(self, Scalar_mask_XY):
+        t = Scalar_mask_XY(self.x, self.y, self.wavelength)
+    elif isinstance(self, Scalar_source_XY):
+        t = Scalar_source_XY(self.x, self.y, self.wavelength)
+    elif isinstance(self, Scalar_mask_X):
+        t = Scalar_mask_X(self.x, self.wavelength)
+    elif isinstance(self, Scalar_source_X):
+        t = Scalar_source_X(self.x,  self.wavelength)
+    elif isinstance(self, Scalar_field_XZ):
+        t = Scalar_field_XZ(self.x, self.z, self.wavelength)
+    elif isinstance(self, Scalar_field_Z):
+        t = Scalar_field_Z(self.z, self.wavelength)
+    elif isinstance(self, Scalar_mask_XY):
+        t = Scalar_mask_XY(self.x, self.y, self.wavelength)
+    elif isinstance(self, Scalar_mask_XZ):
+        t = Scalar_mask_XZ(self.x, self.z, self.wavelength)
+    elif isinstance(self, Scalar_field_XYZ):
+        t = Scalar_field_XYZ(self.x, self.y, self.z, self.wavelength)
+    elif isinstance(self, Scalar_mask_XYZ):
+        t = Scalar_mask_XYZ(self.x, self.y, self.z, self.wavelength)  
+
+    if kind == 'source':
+        if isinstance(other, tuple):
+            t.u = self.u
+            for o in other:
+                t.u -= o.u
+        else:        
+            t.u = self.u - other.u
+    
+    elif kind == 'mask':
+        t1 = np.abs(self.u)
+        f1 = np.angle(self.u)
+        if isinstance(other, tuple):
+            t.u = self.u
+            for o in other:
+                t2 = np.abs(o.u)
+                f2 = np.angle(o.u)
+                t.u = t.u - o.u
+                i_change = t1-t2<0
+                t.u[i_change]=(np.exp(1j*f1[i_change])-np.exp(1j*f2[i_change])).astype(np.complex128)
+                t.u[i_change]= t.u[i_change]/np.abs( t.u[i_change])
+        else:
+            t2 = np.abs(other.n)
+            f2 = np.angle(other.n)
+
+            t.n = self.n - other.n
+            i_change = t1-t2<0
+            t.n[i_change]=np.exp(1j*f1[i_change])-np.exp(1j*f2[i_change])
+            t.n[i_change]= t.n[i_change]/np.abs(t.n[i_change])
+    
+    elif kind == 'phases':
+        t1 = np.abs(self.u)
+        f1 = np.angle(self.u)
+        
+        if isinstance(other, tuple):
+            t.u = self.u
+            for o in other:
+                t2 = np.abs(o.u)
+                f2 = np.angle(o.u)
+                t.u -= o.u
+                t.u = t1 * np.exp(1j * (f1 - f2))
+        else:
+            t2 = np.abs(other.u)
+            f2 = np.angle(other.u)
+        
+            ts = t1 - t2
+            ts[ts < 0] = 0.
+            t.u = ts * np.exp(1j * (f1 - f2))
+
+    elif kind == 'no_overlap':
+        
+        if isinstance(other, tuple):
+            t.u = self.u
+            for i, o in enumerate(other):
+                i_pos1 = np.abs(t.u)>0
+                i_pos2 = np.abs(o.u)>0
+                if (i_pos1 & i_pos2).any():
+                    raise ValueError('The field {i} overlap with a previous one')
+                t.u -= o.u
+        else:
+            t1 = np.abs(self.u)
+            t2 = np.abs(other.u)
+            i_pos1 = t1>0
+            i_pos2 = t2>0
+            if (i_pos1 & i_pos2).any():
+                raise ValueError('The two fields overlap')
+
+    elif kind == 'refractive_index':
+        if isinstance(other, tuple):
+            t.n = self.n
+            for o in other:
+                t.n -= (o.n - o.n_background)
+        else:        
+            t.n = self.n - (other.n - other.n_background)
+            
     return t
 
 

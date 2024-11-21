@@ -1231,7 +1231,7 @@ def transmitances_reflectances(theta: NDArrayFloat, wavelength: float, n1: float
 
 
 
-def determine_extrema(I_far: np.array, angles: np.array,  change_order_0: bool = True,  
+def determine_extrema(I_far: np.array, angles_x: np.array,  is_angles: bool = False, change_order_0: bool = True,  
                       has_draw: bool = True, has_logarithm: bool = True,  verbose: bool = True,
                       **kwargs):
         
@@ -1242,7 +1242,8 @@ def determine_extrema(I_far: np.array, angles: np.array,  change_order_0: bool =
     
     Args:
         I_far (np.array): Intensity distribution of the far field
-        angles (np.array): angles of the far field.
+        angles_x (np.array): angles of the far field.
+        is_angles (bool): if True, the far field is in angles, if False, the far field is in x.
         change_order_0 (bool): if True, the central maxima is included in the minima
         has_draw (bool): It draws the far field with the maxima and minima.
         has_logarithm (bool): It draws the far field with logarithm or not.
@@ -1263,18 +1264,23 @@ def determine_extrema(I_far: np.array, angles: np.array,  change_order_0: bool =
     i_central_max = np.argmax(I_far)
 
     if change_order_0:
-
-
         i_minima= np.append(i_minima, i_central_max)
         i_minima = np.sort(i_minima)
         
     
     if verbose:
-        print("Central maxima: {:2.2f}, angle: {} degrees".format(I_far[i_central_max], angles[i_central_max]/degrees))
-        print("Angles minima:")
-        print(angles[i_minima]/degrees)
-        print("Angles maxima:")
-        print(angles[i_maxima]/degrees)
+        if is_angles:
+            print("Central maxima: {:2.2f}, angle: {} degrees".format(I_far[i_central_max], angles_x[i_central_max]/degrees))
+            print("Angles minima:")
+            print(angles_x[i_minima]/degrees)
+            print("Angles maxima:")
+            print(angles_x[i_maxima]/degrees)
+        else:
+            print("Central maxima: {:2.2f}, position: {} ".format(I_far[i_central_max], angles_x[i_central_max]))
+            print("Positions minima:")
+            print(angles_x[i_minima]/um)
+            print("Positions maxima:")
+            print(angles_x[i_maxima]/um)
     
     if has_draw:
         if has_logarithm:
@@ -1283,17 +1289,27 @@ def determine_extrema(I_far: np.array, angles: np.array,  change_order_0: bool =
             function = plt.plot
 
         plt.figure(**kwargs)
-        function(angles/degrees, I_far,'k')
-        function(angles[i_maxima]/degrees, I_far[i_maxima], 'ro')
-        function(angles[i_minima]/degrees, I_far[i_minima], 'bo')
+        
+        if is_angles:
+            function(angles_x/degrees, I_far,'k')
+            function(angles_x[i_maxima]/degrees, I_far[i_maxima], 'ro')
+            function(angles_x[i_minima]/degrees, I_far[i_minima], 'bo')
 
-        plt.ylim(I_far.min(),I_far.max())
-        plt.xlim(angles[0]/degrees, angles[-1]/degrees)
-        plt.xlabel('angles (degrees)')
-        plt.grid('on')
+            plt.ylim(I_far.min(),I_far.max())
+            plt.xlim(angles_x[0]/degrees, angles_x[-1]/degrees)
+            plt.xlabel('angles (degrees)')
+            plt.grid('on')
+        else:
+            function(angles_x, I_far,'k')
+            function(angles_x[i_maxima], I_far[i_maxima], 'ro')
+            function(angles_x[i_minima], I_far[i_minima], 'bo')
+
+            plt.ylim(I_far.min(),I_far.max())
+            plt.xlim(angles_x[0]/um, angles_x[-1]/um)
+            plt.xlabel('x ($mu$m)')
+            plt.grid('on')         
         
-        
-    return (i_minima, i_maxima), (angles[i_minima], angles[i_maxima]), (I_far[i_minima], I_far[i_maxima])
+    return (i_minima, i_maxima), (angles_x[i_minima], angles_x[i_maxima]), (I_far[i_minima], I_far[i_maxima])
 
 
 def size_from_diffraction_minima(angles_minima: np.array, wavelength, size_slit: float | None = None, 
@@ -1385,7 +1401,7 @@ def envelopes(angles: np.array, I_far: np.array, has_draw: bool = True, has_loga
         3. New interpolation
     """
     
-    i_extrema, angles_extrema, I_extrema = determine_extrema(I_far = I_far, angles = angles, change_order_0 = False,
+    i_extrema, angles_extrema, I_extrema = determine_extrema(I_far = I_far, angles_x = angles, change_order_0 = False,
                                                              has_draw = False, has_logarithm=has_logarithm, verbose = False)
 
     angles_minima = angles_extrema[0]

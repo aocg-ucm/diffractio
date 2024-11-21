@@ -55,6 +55,8 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
         super().__init__(x, y, z, wavelength, n_background, info)
         self.type = 'Scalar_mask_XYZ'
 
+
+
     @check_none('X','Y','Z','n', raise_exception=bool_raise_exception)
     def mask_from_function(
             self, r0: tuple[float, float, float], refractive_index: float | str, fs: tuple[str], rotation: dict | None, v_globals: dict = {}):
@@ -82,7 +84,6 @@ class Scalar_mask_XYZ(Scalar_field_XYZ):
     
         F = []
         for i, fi in enumerate(fs):
-            print(i)
             Fi = eval(fi, v_globals, v_locals)
             F.append(Fi)
 

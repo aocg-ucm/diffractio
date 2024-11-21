@@ -46,6 +46,7 @@ import matplotlib.image as mpimg
 import numexpr as ne
 import scipy.ndimage as ndimage
 from scipy.interpolate import interp1d
+from scipy.signal import fftconvolve
 
 
 from .__init__ import degrees, np, plt, sp, um
@@ -57,7 +58,6 @@ from .utils_dxf import load_dxf
 from .utils_common import check_none
 from .scalar_fields_XZ import Scalar_field_XZ
 from .scalar_masks_X import Scalar_mask_X
-from scipy.signal import fftconvolve
 
 
 
@@ -93,6 +93,64 @@ class Scalar_mask_XZ(Scalar_field_XZ):
         info: text to describe the instance of the class"""
         super().__init__(x, z, wavelength, n_background, info)
         self.type = "Scalar_mask_XZ"
+
+
+    @check_none('x','z',raise_exception=bool_raise_exception)
+    def object_by_surfaces(
+        self, rotation_point: tuple[float, float], refractive_index: float | str,
+        Fs: list, angle: float, v_globals: dict = {}, verbose: bool = False
+    ):
+        """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
+        h(x,z)=f1(x,z)*f2(x,z)*....*fn(x,z)
+
+
+        Args:
+            rotation_point (float, float): location of the mask
+            refractive_index (float, str): can be a number or a function n(x,z)
+            Fs (tuple): condtions as str that will be computed using eval
+            angle (float): angle of rotation (radians)
+            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
+            verbose (bool): shows data if true
+        """
+
+        # Rotacion del square/square
+        Xrot, Zrot = self.__rotate__(angle, rotation_point)
+
+        v_locals = {"self": self, "degrees": degrees, "um": um, "np": np}
+
+        v_locals["Xrot"] = Xrot
+        v_locals["Zrot"] = Zrot
+
+        conditions = []
+        for fi in Fs:
+            try:
+                result_condition = ne.evaluate(fi, v_globals, v_locals)
+            except:
+                result_condition = eval(fi, v_globals, v_locals)
+
+            conditions.append(result_condition)
+
+        # Transmitancia de los puntos interiores
+        ipasa = conditions[0]
+        for cond in conditions:
+            ipasa = ipasa & cond
+
+        if verbose is True:
+            print(("n = {}".format(refractive_index)))
+
+        if isinstance(refractive_index, (int, float, complex)):
+            self.n[ipasa] = refractive_index
+            return ipasa
+        else:
+            v_locals = {"self": self, "np": np, "degrees": degrees, "um": um}
+            tmp_refractive_index = refractive_index
+
+            v_locals["X"] = Xrot
+            v_locals["Z"] = Zrot
+
+            refractive_index = eval(tmp_refractive_index, v_globals, v_locals)
+            self.n[ipasa] = refractive_index[ipasa]
+            return ipasa
 
 
     @check_none('x','z',raise_exception=bool_raise_exception)
@@ -162,6 +220,177 @@ class Scalar_mask_XZ(Scalar_field_XZ):
             Xrot < z_sides[1]) & (Zrot < F2) & (Zrot > F1)
         self.n[ipasa] = refractive_index
         return ipasa
+
+    @check_none('x','z',raise_exception=bool_raise_exception)
+    def mask_from_array(
+        self,
+        r0=(0*um, 0*um),
+        refractive_index=1.5,
+        array1: NDArrayFloat | None = None,
+        array2: NDArrayFloat | None = None,
+        x_sides: tuple[float, float] | None = None,
+        angle: float = 0*degrees,
+        v_globals: dict = {},
+        interp_kind: str = "quadratic",
+        has_draw: bool = False,
+    ):
+        """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
+        For the definion of f1 and f2 from arrays is performed an interpolation
+
+        Args:
+            r0 (float, float): location of the mask
+            refractive_index (float, str): can be a number or a function n(x,z)
+            array1 (numpy.array): array (x,z) that delimits the first surface
+            array2 (numpy.array): array (x,z) that delimits the second surface
+            x_sides (float, float): limiting upper and lower values in x,
+            angle (float): angle of rotation (radians): TODO -> not working
+            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
+            interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
+        """
+
+        x_c, z_c = r0
+
+        f1_interp = interp1d(
+            array1[0,:] + x_c,
+            array1[1,:] + z_c,
+            kind=interp_kind,
+            bounds_error=False,
+            fill_value=1, # array1[1,0] + z_c,
+            assume_sorted=False,
+        )
+
+        f2_interp = interp1d(
+            array2[0,:] + x_c,
+            array2[1,:] + z_c,
+            kind=interp_kind,
+            bounds_error=False,
+            fill_value=1, # array2[1,0] + z_c,
+            assume_sorted=False,
+        )
+
+        F1 = f1_interp(self.x)
+        F2 = f2_interp(self.x)
+
+        if has_draw is True:
+            plt.figure()
+            plt.plot(self.x, F1, "b")
+            plt.plot(self.x, F2, "r")
+            
+
+        Xrot, Zrot = self.__rotate__(angle, r0)
+
+        i_z1, _, _ = nearest2(self.z, F1)
+        i_z2, _, _ = nearest2(self.z, F2)
+        ipasa1 = np.zeros_like(self.n, dtype=bool)
+        for i, xi in enumerate(self.x):
+            ipasa1[i_z1[i]: i_z2[i], i] = True
+            
+        if x_sides is None:
+            self.n[ipasa1] = refractive_index
+            return ipasa1
+
+        else:
+            ipasa2 = Xrot < x_sides[1]
+            ipasa3 = Xrot > x_sides[0]
+
+            self.n[ipasa1 * ipasa2 * ipasa3] = refractive_index
+            return ipasa1 * ipasa2 * ipasa3
+
+
+
+    # @check_none('x','z',raise_exception=bool_raise_exception)
+    # def mask_from_array_proposal(
+    #     self,
+    #     r0: tuple[float, float] = (0*um, 0*um),
+    #     refractive_index_substrate: float | float = 1.5,
+    #     refractive_index_mask: float | float = None,
+    #     array1: NDArrayFloat | float = None,
+    #     array2: NDArrayFloat | float = None,
+    #     x_sides: tuple[float, float] = None,
+    #     angle: float = 0*degrees,
+    #     v_globals: dict = {},
+    #     interp_kind: str = "quadratic",
+    #     has_draw: bool = False,
+    # ):
+    #     """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
+    #     For the definion of f1 and f2 from arrays is performed an interpolation
+
+    #     Args:
+    #         r0 (float, float): location of the mask
+    #         refractive_index_mask (float, str): can be a number or a function n(x,z)
+    #         refractive_index_substrate (float, str): can be a number or a function n(x,z)
+
+    #         array1 (numpy.array): array (x,z) that delimits the first surface
+    #         array2 (numpy.array): array (x,z) that delimits the second surface
+    #         x_sides (float, float): limiting upper and lower values in x,
+    #         angle (float): angle of rotation (radians): TODO -> not working
+    #         v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
+    #         interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
+    #     """
+
+    #     x0, z0 = r0
+
+    #     f1_interp = interp1d(
+    #         array1[:, 0] + x0,
+    #         array1[:, 1] + z0,
+    #         kind=interp_kind,
+    #         bounds_error=False,
+    #         fill_value=array1[0, 1] + z0,
+    #         assume_sorted=True,
+    #     )
+
+    #     f2_interp = interp1d(
+    #         array2[:, 0] + x0,
+    #         array2[:, 1] + z0,
+    #         kind=interp_kind,
+    #         bounds_error=False,
+    #         fill_value=array2[0, 1] + z0,
+    #         assume_sorted=True,
+    #     )
+
+    #     F1 = f1_interp(self.x)
+    #     F2 = f2_interp(self.x)
+
+    #     if has_draw is True:
+    #         plt.figure()
+    #         plt.plot(self.x, F1)
+    #         plt.plot(self.x, F2, "r")
+
+    #     Xrot, Zrot = self.__rotate__(angle, r0)
+
+    #     i_z1, _, _ = nearest2(self.z, F1)
+    #     i_z2, _, _ = nearest2(self.z, F2)
+    #     ipasa = np.zeros_like(self.n, dtype=bool)
+
+    #     for i, xi in enumerate(self.x):
+    #         minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
+    #         ipasa[i, minor:mayor] = True
+
+    #     if refractive_index_mask not in (None, "", []):
+    #         ipasa_substrate = np.zeros_like(self.u)
+    #         z_subst_0 = np.max(F1)
+    #         z_subst_1 = np.min(F2)
+
+    #         i_z1, _, _ = nearest(self.z, z_subst_0)
+    #         i_z2, _, _ = nearest(self.z, z_subst_1)
+    #         ipasa_substrate[:, i_z1:i_z2] = refractive_index_substrate
+
+    #     if x_sides is None:
+    #         self.n[ipasa] = refractive_index_mask
+    #         if refractive_index_mask not in (None, "", []):
+    #             ipasa_substrate[:, i_z1:i_z2] = refractive_index_substrate
+    #             self.n[ipasa_substrate] = refractive_index_substrate
+
+    #         return ipasa
+
+    #     else:
+    #         ipasa2 = Xrot < x_sides[1]
+    #         ipasa3 = Xrot > x_sides[0]
+
+    #         self.n[ipasa * ipasa2 * ipasa3] = refractive_index_mask
+    #         self.n[ipasa_substrate] = refractive_index_substrate
+
+    #         return ipasa * ipasa2 * ipasa3
 
 
 
@@ -262,234 +491,6 @@ class Scalar_mask_XZ(Scalar_field_XZ):
 
         return t_new
 
-    @check_none('x','z',raise_exception=bool_raise_exception)
-    def mask_from_array(
-        self,
-        r0=(0*um, 0*um),
-        refractive_index=1.5,
-        array1: NDArrayFloat | None = None,
-        array2: NDArrayFloat | None = None,
-        x_sides: tuple[float, float] | None = None,
-        angle: float = 0*degrees,
-        v_globals: dict = {},
-        interp_kind: str = "quadratic",
-        has_draw: bool = False,
-    ):
-        """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
-        For the definion of f1 and f2 from arrays is performed an interpolation
-
-        Args:
-            r0 (float, float): location of the mask
-            refractive_index (float, str): can be a number or a function n(x,z)
-            array1 (numpy.array): array (x,z) that delimits the first surface
-            array2 (numpy.array): array (x,z) that delimits the second surface
-            x_sides (float, float): limiting upper and lower values in x,
-            angle (float): angle of rotation (radians): TODO -> not working
-            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
-            interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
-        """
-
-        x_c, z_c = r0
-
-        f1_interp = interp1d(
-            array1[0,:] + x_c,
-            array1[1,:] + z_c,
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=1, # array1[1,0] + z_c,
-            assume_sorted=False,
-        )
-
-        f2_interp = interp1d(
-            array2[0,:] + x_c,
-            array2[1,:] + z_c,
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=1, # array2[1,0] + z_c,
-            assume_sorted=False,
-        )
-
-        F1 = f1_interp(self.x)
-        F2 = f2_interp(self.x)
-
-        if has_draw is True:
-            plt.figure()
-            plt.plot(self.x, F1, "b")
-            plt.plot(self.x, F2, "r")
-            
-
-        Xrot, Zrot = self.__rotate__(angle, r0)
-
-        i_z1, _, _ = nearest2(self.z, F1)
-        i_z2, _, _ = nearest2(self.z, F2)
-        ipasa1 = np.zeros_like(self.n, dtype=bool)
-        for i, xi in enumerate(self.x):
-            ipasa1[i_z1[i]: i_z2[i], i] = True
-            
-        if x_sides is None:
-            self.n[ipasa1] = refractive_index
-            return ipasa1
-
-        else:
-            ipasa2 = Xrot < x_sides[1]
-            ipasa3 = Xrot > x_sides[0]
-
-            self.n[ipasa1 * ipasa2 * ipasa3] = refractive_index
-            return ipasa1 * ipasa2 * ipasa3
-
-
-
-    @check_none('x','z',raise_exception=bool_raise_exception)
-    def mask_from_array_proposal(
-        self,
-        r0: tuple[float, float] = (0*um, 0*um),
-        refractive_index_substrate: float | float = 1.5,
-        refractive_index_mask: float | float = None,
-        array1: NDArrayFloat | float = None,
-        array2: NDArrayFloat | float = None,
-        x_sides: tuple[float, float] = None,
-        angle: float = 0*degrees,
-        v_globals: dict = {},
-        interp_kind: str = "quadratic",
-        has_draw: bool = False,
-    ):
-        """Mask defined between two surfaces given by arrays (x,z): h(x,z)=f2(x,z)-f1(x,z).
-        For the definion of f1 and f2 from arrays is performed an interpolation
-
-        Args:
-            r0 (float, float): location of the mask
-            refractive_index_mask (float, str): can be a number or a function n(x,z)
-            refractive_index_substrate (float, str): can be a number or a function n(x,z)
-
-            array1 (numpy.array): array (x,z) that delimits the first surface
-            array2 (numpy.array): array (x,z) that delimits the second surface
-            x_sides (float, float): limiting upper and lower values in x,
-            angle (float): angle of rotation (radians): TODO -> not working
-            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
-            interp_kind: 'linear', 'nearest', 'zero', 'slinear', 'quadratic', 'cubic'
-        """
-
-        x0, z0 = r0
-
-        f1_interp = interp1d(
-            array1[:, 0] + x0,
-            array1[:, 1] + z0,
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=array1[0, 1] + z0,
-            assume_sorted=True,
-        )
-
-        f2_interp = interp1d(
-            array2[:, 0] + x0,
-            array2[:, 1] + z0,
-            kind=interp_kind,
-            bounds_error=False,
-            fill_value=array2[0, 1] + z0,
-            assume_sorted=True,
-        )
-
-        F1 = f1_interp(self.x)
-        F2 = f2_interp(self.x)
-
-        if has_draw is True:
-            plt.figure()
-            plt.plot(self.x, F1)
-            plt.plot(self.x, F2, "r")
-
-        Xrot, Zrot = self.__rotate__(angle, r0)
-
-        i_z1, _, _ = nearest2(self.z, F1)
-        i_z2, _, _ = nearest2(self.z, F2)
-        ipasa = np.zeros_like(self.n, dtype=bool)
-
-        for i, xi in enumerate(self.x):
-            minor, mayor = min(i_z1[i], i_z2[i]), max(i_z1[i], i_z2[i])
-            ipasa[i, minor:mayor] = True
-
-        if refractive_index_mask not in (None, "", []):
-            ipasa_substrate = np.zeros_like(self.u)
-            z_subst_0 = np.max(F1)
-            z_subst_1 = np.min(F2)
-
-            i_z1, _, _ = nearest(self.z, z_subst_0)
-            i_z2, _, _ = nearest(self.z, z_subst_1)
-            ipasa_substrate[:, i_z1:i_z2] = refractive_index_substrate
-
-        if x_sides is None:
-            self.n[ipasa] = refractive_index_mask
-            if refractive_index_mask not in (None, "", []):
-                ipasa_substrate[:, i_z1:i_z2] = refractive_index_substrate
-                self.n[ipasa_substrate] = refractive_index_substrate
-
-            return ipasa
-
-        else:
-            ipasa2 = Xrot < x_sides[1]
-            ipasa3 = Xrot > x_sides[0]
-
-            self.n[ipasa * ipasa2 * ipasa3] = refractive_index_mask
-            self.n[ipasa_substrate] = refractive_index_substrate
-
-            return ipasa * ipasa2 * ipasa3
-
-
-    @check_none('x','z',raise_exception=bool_raise_exception)
-    def object_by_surfaces(
-        self, rotation_point: tuple[float, float], refractive_index: float | str,
-        Fs: list, angle: float, v_globals: dict = {}, verbose: bool = False
-    ):
-        """Mask defined by n surfaces given in array Fs={f1, f2, ....}.
-        h(x,z)=f1(x,z)*f2(x,z)*....*fn(x,z)
-
-
-        Args:
-            rotation_point (float, float): location of the mask
-            refractive_index (float, str): can be a number or a function n(x,z)
-            Fs (tuple): condtions as str that will be computed using eval
-            angle (float): angle of rotation (radians)
-            v_globals (dict): dict with global variables -> TODO perphaps it is not necessary
-            verbose (bool): shows data if true
-        """
-
-        # Rotacion del square/square
-        Xrot, Zrot = self.__rotate__(angle, rotation_point)
-
-        v_locals = {"self": self, "degrees": degrees, "um": um, "np": np}
-
-        v_locals["Xrot"] = Xrot
-        v_locals["Zrot"] = Zrot
-
-        conditions = []
-        for fi in Fs:
-            try:
-                result_condition = ne.evaluate(fi, v_globals, v_locals)
-            except:
-                result_condition = eval(fi, v_globals, v_locals)
-
-            conditions.append(result_condition)
-
-        # Transmitancia de los puntos interiores
-        ipasa = conditions[0]
-        for cond in conditions:
-            ipasa = ipasa & cond
-
-        if verbose is True:
-            print(("n = {}".format(refractive_index)))
-
-        if isinstance(refractive_index, (int, float, complex)):
-            self.n[ipasa] = refractive_index
-            return ipasa
-        else:
-            v_locals = {"self": self, "np": np, "degrees": degrees, "um": um}
-            tmp_refractive_index = refractive_index
-
-            v_locals["X"] = Xrot
-            v_locals["Z"] = Zrot
-
-            refractive_index = eval(tmp_refractive_index, v_globals, v_locals)
-            self.n[ipasa] = refractive_index[ipasa]
-            return ipasa
 
     
     @check_none('x','z',raise_exception=bool_raise_exception)
