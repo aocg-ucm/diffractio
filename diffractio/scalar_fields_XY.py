@@ -881,7 +881,7 @@ class Scalar_field_XY():
             self.X, self.Y = np.meshgrid(self.x, self.y)
 
 
-    @check_none('x','y',raise_exception=bool_raise_exception)
+    @check_none('x','y','u', raise_exception=bool_raise_exception)
     def _RS_(self, z: float, n: float, new_field: bool = True, out_matrix: bool = False,
              kind: str = 'z', xout: float | None = None, yout: float | None = None,
              verbose: bool = False):

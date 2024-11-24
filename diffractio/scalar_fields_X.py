@@ -916,7 +916,6 @@ class Scalar_field_X():
         References:
             [Light: Science and Applications, 9(1), (2020)]
         """
-
         
         if xout is None:
             xout = self.x
@@ -951,16 +950,18 @@ class Scalar_field_X():
                 delta_out[0] = (xend - xstart) / (num_x - 1)
 
             # calculating scalar diffraction below
-
             R = np.sqrt(xout**2 + z**2)
-            F0 = (0.5j * k * z / R) * hankel1(1, k * R)
+            if z>=0:
+                F0 = (0.5j * k * z / R) * hankel1(1, k * R)
+            else:
+                F0 = (-0.5j * k * z / R) * hankel1(1, k * R).conjugate()
 
             R = np.sqrt(self.x**2 + z**2)
-            F = (0.5j * k * z / R) * hankel1(1, k * R)
-
-            # F0 = np.exp(1j * k * z) / (1j * self.wavelength * z) * np.exp(
-            #     1j * k/2 / z * (xout**2))
-            # F = np.exp(1j * k/2 / z * (self.x**2))
+            if z>=0:
+                F = (0.5j * k * z / R) * hankel1(1, k * R)
+            else:
+                F = (-0.5j * k * z / R) * hankel1(1, k * R).conjugate()
+                
             u0 = self.u * F
 
             fs = self.wavelength * z / dx  # dimension of the imaging plane
@@ -968,7 +969,7 @@ class Scalar_field_X():
             fx2 = xend + fs/2
             u0 = Bluestein_dft_x(u0, fx1, fx2, fs, num_x)
 
-            k_factor = np.sqrt(z * self.wavelength) * dx
+            k_factor = np.sqrt(np.abs(z) * self.wavelength) * dx
 
             u0 = F0 * u0 * k_factor
             # obtain the complex amplitude of the outgoing light beam
@@ -990,16 +991,19 @@ class Scalar_field_X():
                     delta_out[0] = (xend - xstart) / (num_x - 1)
 
                 # calculating scalar diffraction below
+                
                 R = np.sqrt(xout**2 + z_now**2)
-                F0 = (0.5j * k * z_now / R) * hankel1(1, k * R)
+                if z>=0:
+                    F0 = (0.5j * k * z_now / R) * hankel1(1, k * R)
+                else:
+                    F0 = (-0.5j * k * z_now / R) * hankel1(1, k * R).conjugate()
 
                 R = np.sqrt(self.x**2 + z_now**2)
-                F = (0.5j * k * z_now / R) * hankel1(1, k * R)
+                if z>=0:
+                    F = (0.5j * k * z_now / R) * hankel1(1, k * R)
+                else:
+                    F = (-0.5j * k * z_now / R) * hankel1(1, k * R).conjugate()
 
-                # F0 = np.exp(1j * k * z_now) / (
-                #     1j * self.wavelength * z_now) * np.exp(1j * k/2 / z_now *
-                #                                            (xout**2))
-                # F = np.exp(1j * k/2 / z_now * (self.x**2))
                 u0 = self.u * F
 
                 fs = self.wavelength * z_now / dx  # dimension of the imaging plane
@@ -1009,7 +1013,7 @@ class Scalar_field_X():
 
                 u0 = F0 * u0  # obtain the complex amplitude of the outgoing light beam
 
-                k_factor = np.sqrt(z_now * self.wavelength) * dx
+                k_factor = np.sqrt(np.abs(z_now) * self.wavelength) * dx
 
                 u_zs[i, :] = u0 * k_factor
 
@@ -1528,9 +1532,9 @@ def kernelRSinverse(x: NDArrayFloat, wavelength: float, z: float,
     R = sqrt(x**2 + z**2)
 
     if fast is False:
-        hk1 = hankel1(1, k * R)
+        hk1 = hankel1(1, k * R).conjugate()
     elif fast is True:
-        hk1 = sqrt(2 / (pi * k * R)) * exp(1.0j * (k * R - 3 * pi / 4))
+        hk1 = sqrt(2 / (pi * k * R)) * exp(-1.0j * (k * R - 3 * pi / 4))
 
     if kind == "z":
         return (-0.5j * k * z / R) * hk1
@@ -1538,6 +1542,26 @@ def kernelRSinverse(x: NDArrayFloat, wavelength: float, z: float,
         return (-0.5j * k * x / R) * hk1
     elif kind == "0":
         return (-0.5j * k) * hk1
+
+
+def kernelFresnel(x: NDArrayFloat, wavelength: float, z: float, n: float = 1.):
+    """
+    Kernel for Fresnel propagation.
+
+    Args:
+        x(numpy.np.array): positions x
+        wavelength(float): wavelength of incident fields
+        z(float): distance for propagation
+        n(float): refractive index of background
+
+    Returns:
+        complex np.array: kernel
+    """
+
+    k = 2 * np.pi * n / wavelength
+    return np.exp(1.j * k * (z + x**2 / (2 * z))) / (1.j * wavelength * z)
+
+
 
 
 def PWD_kernel(u: NDArrayComplex, n: NDArrayComplex, k0: float, k_perp2: NDArray[Any], dz: float):

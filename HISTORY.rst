@@ -26,7 +26,7 @@ Beta state
 
   - Implementation of scalar (intensity, phase, amplitude) and vector (irradiance, energy_density, etc) parameters in get function.
 
-  - new module diffractio.py to import all the modules: u = Diffractio('scalar', 'source', x=x, wavelength=0.6328*um)  produced the same as u=Scalar_source_X(x=x, wavelength=0.6328*um)
+  - new module diffractio.py to import all the frames: u = Diffractio('scalar', 'source', x=x, wavelength=0.6328*um)  produced the same as u=Scalar_source_X(x=x, wavelength=0.6328*um)
 
 
 
@@ -35,6 +35,8 @@ Beta state
   - new definition of X mask: fresnel_lens
   
   - ndgrid -> meshgrid (this produced a lot of minor bugs)
+
+  - bug in scalar_x field: kernelRSinverse and CZT when z<0. (bakcward propagation).
   
 
 * Refactoring:
@@ -68,7 +70,10 @@ Beta state
 
   - vector XY mask: q_plate, SLM, radial_polarizer, azimuthal_polarizer, RCP, LCP, RCP2LCP, LCP2 RCP.
 
+
 * Documentation:
+
+  - New pages for the new features.
  
   - Changed citing reference to SPIE article:  Luis Miguel Sanchez-Brea, Angela Soria-Garcia, Joaquin Andres-Porras, Veronica Pastor-Villarrubia, Mahmoud H. Elshorbagy, Jesus del Hoyo Muñoz, Francisco Jose Torcal-Milla, and Javier Alda "Diffractio: an open-source library for diffraction and interference calculations", Proc. SPIE 12997, Optics and Photonics for Advanced Dimensional Metrology III, 129971B (18 June 2024); https://doi.org/10.1117/12.3021879 
 
