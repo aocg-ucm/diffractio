@@ -1297,7 +1297,7 @@ def determine_extrema(I_far: np.array, angles_x: np.array,  is_angles: bool = Fa
 
             plt.ylim(I_far.min(),I_far.max())
             plt.xlim(angles_x[0]/degrees, angles_x[-1]/degrees)
-            plt.xlabel('angles (degrees)')
+            plt.xlabel('angles $\,(^{\circ})$')
             plt.grid('on')
         else:
             function(angles_x, I_far,'k')
@@ -1306,7 +1306,7 @@ def determine_extrema(I_far: np.array, angles_x: np.array,  is_angles: bool = Fa
 
             plt.ylim(I_far.min(),I_far.max())
             plt.xlim(angles_x[0]/um, angles_x[-1]/um)
-            plt.xlabel('x ($mu$m)')
+            plt.xlabel('x ($\mu$m)')
             plt.grid('on')         
         
     return (i_minima, i_maxima), (angles_x[i_minima], angles_x[i_maxima]), (I_far[i_minima], I_far[i_maxima])
