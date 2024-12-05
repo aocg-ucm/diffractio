@@ -3,7 +3,7 @@ About functiong
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :numbered:
    :glob:
 
@@ -16,3 +16,8 @@ About functiong
    source/functioning/quality_factor.ipynb
    source/functioning/WPM_ws.ipynb
    source/functioning/has_edges.ipynb
+   source/functioning/dxf_XY.ipynb
+   source/functioning/dxf_XZ.ipynb
+   source/functioning/add_fields.ipynb
+   source/functioning/oversampling_xy.ipynb
+   source/functioning/backpropagation.ipynb

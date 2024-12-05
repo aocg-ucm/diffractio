@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """The setup script."""
 
 from setuptools import find_packages, setup
@@ -10,13 +10,11 @@ with open('README.rst', encoding='utf8') as readme_file:
 with open('HISTORY.rst', encoding='utf8') as history_file:
     history = history_file.read()
 
-# requirements = [
-#     'Click>=6.0', 'numpy', 'scipy', 'matplotlib','nbsphinx',
-# ]
 
 requirements = [
+    'matplotlib', 'numpy>=1.20,<2', 'scipy', 'ezdxf',
     'screeninfo', 'Pillow', 'numexpr', 'pandas', 'py_pol',
-    'ipywidgets', 'ipympl', 'opencv-python', "psutil"
+    'ipywidgets', 'ipympl>=0.9.3', 'opencv-python', 'psutil', 'pyvista'
 ]
 
 setup_requirements = [
@@ -33,7 +31,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GPLv3 License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
@@ -47,20 +45,20 @@ setup(
         ],
     },
     install_requires=requirements,
-    license="MIT license",
+    license="GPLv3 license",
     # long_description=readme + '\n\n' + history,
     long_description=readme,
     include_package_data=True,
     keywords=[
         'diffractio', 'optics', 'diffraction', 'interference',
-        'BPM', 'WPM', 'CZT', 'RS', 'VRS'
+        'BPM', 'WPM', 'CZT', 'RS', 'VRS', 'VCZT', 'FPWPM'
     ],
     name='diffractio',
     packages=find_packages(include=['diffractio']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://bitbucket.org/optbrea/diffractio/src/master/',
+    url='https://github.com/optbrea/diffractio',
     version='0.3.1',
     zip_safe=False,
 )

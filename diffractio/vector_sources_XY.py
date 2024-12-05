@@ -1,5 +1,18 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# ----------------------------------------------------------------------
+# Name:        vector_sources_XY.py
+# Purpose:     Define the Vector_source_XY class for vector field sources
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Licence:     GPLv3
+# ----------------------------------------------------------------------
+
+
+# flake8: noqa
+
 """
 This module generates Vector_source_XY class for defining sources. Its parent is Vector_field_XY.
 The main atributes are:
@@ -26,7 +39,11 @@ The magnitude is related to microns: `micron = 1.`
 
 from py_pol.jones_vector import Jones_vector
 
-from . import degrees, eps, np, um
+
+from .__init__ import degrees, eps, np, um
+from .utils_typing import npt, Any, NDArray, NDArrayFloat, NDArrayComplex
+from .utils_common import check_none
+from .config import bool_raise_exception
 from .scalar_fields_XY import Scalar_field_XY
 from .scalar_masks_XY import Scalar_mask_XY
 from .scalar_sources_XY import Scalar_source_XY
@@ -36,7 +53,7 @@ from .vector_fields_XY import Vector_field_XY
 class Vector_source_XY(Vector_field_XY):
     """Class for vectorial fields.
 
-    Parameters:
+    Args:
         x (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         y (numpy.array): linear array with equidistant positions. The number of data is preferibly 2**n.
         wavelength (float): wavelength of the incident field
@@ -51,10 +68,13 @@ class Vector_source_XY(Vector_field_XY):
 
     """
 
-    def __init__(self, x, y, wavelength, info=''):
-        super().__init__(x, y, wavelength, info)
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 wavelength: float | None = None, n_background: float = 1, info: str = ""):
+        super().__init__(x, y, wavelength, n_background, info)
         self.type = 'Vector_source_XY'
 
+
+    @check_none('x','y','Ex','Ey',raise_exception=bool_raise_exception)
     def constant_polarization(self,
                               u=1,
                               v=(1, 0),
@@ -62,7 +82,7 @@ class Vector_source_XY(Vector_field_XY):
                               radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             v (float, float): polarization vector
             normalize (bool): If True, normalize polarization vector
@@ -85,10 +105,12 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def azimuthal_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -111,10 +133,12 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def radial_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -137,10 +161,12 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def radial_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -163,10 +189,12 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def azimuthal_inverse_wave(self, u=1, r0=(0., 0.), radius=0.):
         """Provides a constant polarization to a scalar_source_xy
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0(float, float): center of rotation
             radius (float, float): Radius of a circular mask
@@ -189,6 +217,8 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave(self,
                                     u=1,
                                     r0=(0., 0.),
@@ -196,9 +226,8 @@ class Vector_source_XY(Vector_field_XY):
                                     fi0=0,
                                     radius=0.):
         """"local radial polarized vector wave.
-
-
-        Parameters:
+        
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): r0 of beam
             m (integer): integer with order
@@ -228,16 +257,17 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave_radial(self,
                                            u=1,
-                                           r0=(0 * um, 0 * um),
+                                           r0=(0*um, 0*um),
                                            m=1,
                                            fi0=0,
                                            radius=0.):
         """local radial polarized vector wave.
 
-
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
@@ -255,8 +285,8 @@ class Vector_source_XY(Vector_field_XY):
         radius = (radiusx, radiusy)
 
         if radius == 0:
-            radius_x = (self.x[-1] - self.x[0]) / 2
-            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius_x = (self.x[-1] - self.x[0])/2
+            radius_y = (self.y[-1] - self.y[0])/2
             radius = (radius_x, radius_y)
 
         elif isinstance(radius, (float, int, complex)):
@@ -276,17 +306,18 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def local_polarized_vector_wave_hybrid(self,
                                            u=1,
-                                           r0=(0 * um, 0 * um),
+                                           r0=(0*um, 0*um),
                                            m=1,
-                                           n=1,
+                                           n: float = 1.,
                                            fi0=0,
                                            radius=(0, 0)):
         """local hibrid polarized vector wave.
             Qwien Zhan 'Vectorial Optial Fields' page 36
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of beam
             m (integer): integer with order
@@ -302,8 +333,8 @@ class Vector_source_XY(Vector_field_XY):
         radius = (radiusx, radiusy)
 
         if radiusx * radiusy == 0:
-            radius_x = (self.x[-1] - self.x[0]) / 2
-            radius_y = (self.y[-1] - self.y[0]) / 2
+            radius_x = (self.x[-1] - self.x[0])/2
+            radius_y = (self.y[-1] - self.y[0])/2
             radius = (radius_x, radius_y)
 
         elif isinstance(radius, (float, int, complex)):
@@ -324,14 +355,16 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
+
+    @check_none('X','Y','Ex','Ey',raise_exception=bool_raise_exception)
     def spiral_polarized_beam(self,
                               u=1,
-                              r0=(0 * um, 0 * um),
+                              r0=(0*um, 0*um),
                               alpha=0,
                               radius=(0, 0)):
         """Define spiral polarized beams:
 
-        Parameters:
+        Args:
             u (Scalar_source_XY or np.complex): field to apply the polarization or constant value
             r0 (float, float): center of radiality
             radius (float): mask for circle if radius >0.
@@ -361,20 +394,16 @@ class Vector_source_XY(Vector_field_XY):
         if radiusx * radiusy > 0:
             self.pupil(r0=r0, radius=radius)
 
-    def to_py_pol(self):
-        """Pass Ex, Ey field to py_pol package for software analysis
-        """
-
-        j0 = Jones_vector(name="from Diffractio")
-        j0.from_components(Ex=self.Ex, Ey=self.Ey)
-
-        return j0
+    # @check_none('Ex','Ey',raise_exception=bool_raise_exception)
+    # def to_py_pol(self):
+    #     """Pass Ex, Ey field to py_pol package for software analysis
+    #     """
 
 
 def define_initial_field(EM, u=None):
     """Defines the initial field EM = (Ex, Ey) in terms of u.
 
-        Parameters:
+        Args:
             EM (vector_source_XY):
             u (scalar_source_XY, or None, or 1): if scalar_source it is written in Ex and Ey, is 1 Ex=1, Ey=1, if None, does nothing,
     """
@@ -386,7 +415,7 @@ def define_initial_field(EM, u=None):
     elif isinstance(u, (Scalar_mask_XY, Scalar_field_XY, Scalar_source_XY)):
         EM.Ex = u.u
         EM.Ey = u.u
-    if u in (0, None, '', []):
+    elif u in (0, None, '', []):
         EM.Ex = np.ones_like(EM.Ex)
         EM.Ey = np.ones_like(EM.Ey)
 

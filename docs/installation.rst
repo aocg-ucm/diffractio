@@ -40,6 +40,7 @@ In some schemes, the following modules are also required:
 * numpy, scipy, matplotlib
 * Pillow, numexpr, pandas, screeninfo, opencv-python
 * ipywidgets, ipympl
+* Pyvista
 
 They should previously be installed before Diffractio module.
 
@@ -47,14 +48,14 @@ They should previously be installed before Diffractio module.
 From sources
 ------------
 
-The sources for Python diffraction and interference can be downloaded from the `Bitbucket repo`_.
+The sources for Python diffraction and interference can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-	$ git clone git@bitbucket.org:optbrea/diffractio.git
-	$ git clone https://optbrea@bitbucket.org/optbrea/diffractio.git
+	$ git clone https://github.com/optbrea/diffractio.git
+	$ git clone git@github.com:optbrea/diffractio.git
 
 
 
@@ -70,4 +71,4 @@ Once you have a copy of the source, you can install it with:
 
 
 
-.. _Bitbucket repo: https://bitbucket.org/optbrea/diffractio/src/master/
+.. _Github repo: https://github.com/optbrea/diffractio

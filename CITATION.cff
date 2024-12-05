@@ -1,0 +1,12 @@
+cff-version: 0.3.1
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Sanchez-Brea
+    given-names: Luis Miguel
+    orcid: https://orcid.org/0000-0003-1337-969X
+title: "Diffractio"
+version: 0.3.1
+identifiers:
+  - type: doi
+    value: 10.1117/12.3021879
+date-released: 2019-01-01

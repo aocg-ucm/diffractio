@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# ----------------------------------------------------------------------
+# Name:        vector_masks_XY.py
+# Purpose:     Defines the Vector_mask_XY class for vector masks operations
+#
+# Author:      Luis Miguel Sanchez Brea
+#
+# Created:     2024
+# Licence:     GPLv3
+# ----------------------------------------------------------------------
+
+
+# flake8: noqa
+
 """
 This module generates Vector_mask_XY class for defining vector masks. Its parent is Vector_field_XY.
 The main atributes are:
@@ -24,21 +36,29 @@ The main atributes are:
     * polarizer_retarder
 """
 import copy
+from typing import Literal
 
+from matplotlib import rcParams
 from py_pol.jones_matrix import Jones_matrix
 
-from . import degrees, np, number_types, plt
-from .config import CONF_DRAWING
+
+from .__init__ import degrees, np, plt
+from .config import bool_raise_exception, CONF_DRAWING, number_types
+from .utils_typing import npt, Any, NDArray,  NDArrayFloat, NDArrayComplex
+from .utils_common import check_none
 from .scalar_masks_XY import Scalar_mask_XY
 from .utils_optics import field_parameters
 from .vector_fields_XY import Vector_field_XY
 from .vector_sources_XY import Vector_source_XY
 
 
+Draw_Options = Literal['amplitudes', 'phases', 'jones', 'jones_ap']
+
 class Vector_mask_XY(Vector_field_XY):
 
-    def __init__(self, x, y, wavelength, info=''):
-        super().__init__(x, y, wavelength, info)
+    def __init__(self, x: NDArrayFloat | None = None, y: NDArrayFloat | None = None,
+                 wavelength: float | None = None,  n_background: float = 1, info: str = ""):
+        super().__init__(x, y, wavelength, n_background, info)
         self.type = 'Vector_mask_XY'
 
         self.M00 = np.zeros_like(self.X, dtype=complex)
@@ -46,12 +66,36 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = np.zeros_like(self.X, dtype=complex)
         self.M11 = np.zeros_like(self.X, dtype=complex)
 
+
+
         del self.Ex, self.Ey, self.Ez
 
-    def __add__(self, other, kind='standard'):
+
+    def __str__(self):
+        """Represents data from class."""
+
+
+        print("{}\n - x:  {},   y:  {},   M00:  {}".format(
+            self.type, self.x.shape, self.y.shape, self.M00.shape))
+        print(
+            " - xmin:       {:2.2f} um,  xmax:      {:2.2f} um,  Dx:   {:2.2f} um"
+            .format(self.x[0], self.x[-1], self.x[1] - self.x[0]))
+        print(
+            " - ymin:       {:2.2f} um,  ymay:      {:2.2f} um,  Dy:   {:2.2f} um"
+            .format(self.y[0], self.y[-1], self.y[1] - self.y[0]))
+
+        print(" - wavelength: {:2.2f} um".format(self.wavelength))
+        print(" - date:       {}".format(self.date))
+        if self.info != "":
+            print(" - info:       {}".format(self.info))
+        return ""
+    
+
+    @check_none('x','y')
+    def __add__(self, other, kind: str = 'standard'):
         """adds two Vector_mask_XY. For example two  masks
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd field to add
             kind (str): instruction how to add the fields:
 
@@ -69,11 +113,12 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
+    @check_none('x','y')
     def __mul__(self, other):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd object to multiply.
 
         Returns:
@@ -101,11 +146,12 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
+    @check_none('x','y')
     def __rmul__(self, other):
         """
         Multilies the Vector_mask_XY matrix by another Vector_mask_XY.
 
-        Parameters:
+        Args:
             other (Vector_mask_XY): 2nd object to multiply.
 
         Returns:
@@ -126,17 +172,21 @@ class Vector_mask_XY(Vector_field_XY):
 
         return m3
 
-    def duplicate(self, clear=False):
+
+    def duplicate(self, clear: bool = False):
         """Duplicates the instance"""
         new_field = copy.deepcopy(self)
         if clear is True:
             new_field.clear_field()
         return new_field
 
-    def apply_circle(self, r0=None, radius=None):
+
+    @check_none('x','y')
+    def apply_circle(self, r0: tuple[float, float] | None = None,
+                     radius: tuple[float, float] | None = None):
         """The same circular mask is applied to all the Jones Matrix.
 
-        Parameters:
+        Args:
             r0 (float, float): center, if None it is generated
             radius (float, float): radius, if None it is generated
         """
@@ -144,12 +194,12 @@ class Vector_mask_XY(Vector_field_XY):
             x_min, x_max = self.x[0], self.x[-1]
             y_min, y_max = self.y[0], self.y[-1]
 
-            x_radius, y_radius = (x_max - x_min) / 2, (y_max - y_min) / 2
+            x_radius, y_radius = (x_max - x_min)/2, (y_max - y_min)/2
 
             radius = (x_radius, y_radius)
 
         if r0 is None:
-            x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
+            x_center, y_center = (x_min + x_max)/2, (y_min + y_max)/2
             r0 = (x_center, y_center)
 
         u_pupil = Scalar_mask_XY(self.x, self.y, self.wavelength)
@@ -160,27 +210,30 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * u_pupil.u
         self.M11 = self.M11 * u_pupil.u
 
-    def pupil(self, r0=None, radius=None, angle=0 * degrees):
+
+    @check_none('x','y')
+    def pupil(self, r0: tuple[float, float] | None = None,
+              radius: tuple[float, float] | None = None, angle: float = 0*degrees):
         """place a pupil in the mask. If r0 or radius are None, they are computed using the x,y parameters.
 
-        Parameters:
+        Args:
             r0 (float, float): center of circle/ellipse
             radius (float, float) or (float): radius of circle/ellipse
             angle (float): angle of rotation in radians
 
         Example:
 
-            pupil(r0=(0 * um, 0 * um), radius=(250*um, 125*um), angle=0*degrees)
+            pupil(r0=(0*um, 0*um), radius=(250*um, 125*um), angle=0*degrees)
         """
 
         if r0 is None:
-            x0 = (self.x[-1] + self.x[0]) / 2
-            y0 = (self.y[-1] + self.y[0]) / 2
+            x0 = (self.x[-1] + self.x[0])/2
+            y0 = (self.y[-1] + self.y[0])/2
             r0 = (x0, y0)
 
         if radius is None:
-            radiusx = (self.x[-1] - self.x[0]) / 2
-            radiusy = (self.y[-1] - self.y[0]) / 2
+            radiusx = (self.x[-1] - self.x[0])/2
+            radiusy = (self.y[-1] - self.y[0])/2
             radius = (radiusx, radiusy)
 
         x0, y0 = r0
@@ -190,10 +243,8 @@ class Vector_mask_XY(Vector_field_XY):
         else:
             radiusx, radiusy = radius
 
-        # Rotacion del circula/elipse
         Xrot, Yrot = self.__rotate__(angle, (x0, y0))
 
-        # Definicion de la transmitancia
         pupil0 = np.zeros(np.shape(self.X))
         ipasa = (Xrot)**2 / (radiusx + 1e-15)**2 + \
             (Yrot)**2 / (radiusy**2 + 1e-15) < 1
@@ -203,27 +254,28 @@ class Vector_mask_XY(Vector_field_XY):
         self.M10 = self.M10 * pupil0
         self.M11 = self.M11 * pupil0
 
-    def scalar_to_vector_mask(self, mask, state, is_intensity=True):
+
+    def scalar_to_vector_mask(self, mask: Scalar_mask_XY, pol_state:  None |Jones_matrix = None, is_intensity: bool = True):
         """The same mask (binary) is applied to all the Jones Matrix.
 
-        Parameters:
+        Args:
             mask (scalar_mask_XY): mask to apply.
-            state (Jones Matrix or Jones_matrix): Polarization state to apply
+            pol_state (Jones Matrix or Jones_matrix): Polarization state to apply
             is intensity (bool): If True, abs(mask)**2 is applied.
         """
 
-        if isinstance(state, Jones_matrix):
-            state = state.M.squeeze()
+        if pol_state is None:
+            pol_state = Jones_matrix().vacuum()
 
-        # if is_intensity:
-        #     t = np.abs(mask.u)**2
-        # else:
-        t = mask.u
+        if isinstance(pol_state, Jones_matrix):
+            pol_state = pol_state.M.squeeze()
 
-        self.M00 = state[0, 0] * t
-        self.M01 = state[0, 1] * t
-        self.M10 = state[1, 0] * t
-        self.M11 = state[1, 1] * t
+        t = mask.u      
+
+        self.M00 = pol_state[0, 0] * t
+        self.M01 = pol_state[0, 1] * t
+        self.M10 = pol_state[1, 0] * t
+        self.M11 = pol_state[1, 1] * t
 
         # Change elements = -0 to 0, to represent correctly phases.
         self.M01.real = np.where(np.real(self.M01) == -0, 0, np.real(self.M01))
@@ -231,23 +283,25 @@ class Vector_mask_XY(Vector_field_XY):
         self.M00.real = np.where(np.real(self.M00) == -0, 0, np.real(self.M00))
         self.M11.real = np.where(np.real(self.M11) == -0, 0, np.real(self.M11))
 
-    def complementary_masks(self, mask, state_0, state_1, is_binarized=True):
-        """Creates a vector mask from a scalar mask. It assign an state_0 to 0 values and a state_1 to 1 values..
+
+    @check_none('x','y')
+    def complementary_masks(self, mask: Scalar_mask_XY, pol_state_0: Jones_matrix, pol_state_1: Jones_matrix,           is_binarized: bool=True):
+        """Creates a vector mask from a scalar mask. It assign an pol_state_0 to 0 values and a pol_state_1 to 1 values..
         For generality, ik mask is a decimal number between 0 and 1, it takes the linear interpolation.
 
-        Parameters:
+        Args:
             mask (scalar_mask_XY): Mask preferently binary. if not, it is binarized
-            state_0 (2x2 numpy.array or Jones_matrix): Jones matrix for 0s.
-            state_1 (2x2 numpy.array or Jones_matrix): Jones matrix for 1s.
+            pol_state_0 (2x2 numpy.array or Jones_matrix): Jones matrix for 0s.
+            pol_state_1 (2x2 numpy.array or Jones_matrix): Jones matrix for 1s.
 
         Warning:
             TODO: Mask should be binary. Else the function should binarize it.
         """
 
-        if isinstance(state_0, Jones_matrix):
-            state_0 = state_0.M.squeeze()
-        if isinstance(state_1, Jones_matrix):
-            state_1 = state_1.M.squeeze()
+        if isinstance(pol_state_0, Jones_matrix):
+            pol_state_0 = pol_state_0.M.squeeze()
+        if isinstance(pol_state_1, Jones_matrix):
+            pol_state_1 = pol_state_1.M.squeeze()
 
         t = np.abs(mask.u)**2
         if is_binarized:
@@ -255,17 +309,18 @@ class Vector_mask_XY(Vector_field_XY):
             t[t < 0.5] = 0
             t[t >= 0.5] = 1
 
-        self.M00 = t * state_1[0, 0] + (1 - t) * state_0[0, 0]
-        self.M01 = t * state_1[0, 1] + (1 - t) * state_0[0, 1]
-        self.M10 = t * state_1[1, 0] + (1 - t) * state_0[1, 0]
-        self.M11 = t * state_1[1, 1] + (1 - t) * state_0[1, 1]
+        self.M00 = t * pol_state_1[0, 0] + (1 - t) * pol_state_0[0, 0]
+        self.M01 = t * pol_state_1[0, 1] + (1 - t) * pol_state_0[0, 1]
+        self.M10 = t * pol_state_1[1, 0] + (1 - t) * pol_state_0[1, 0]
+        self.M11 = t * pol_state_1[1, 1] + (1 - t) * pol_state_0[1, 1]
 
-    def multilevel_mask(self, mask, states, discretize=True, normalize=True):
+
+    def multilevel_mask(self, mask: Scalar_mask_XY, states: Jones_matrix, discretize: bool=True, normalize: bool=True):
         """Generates a multilevel vector mask, based in a scalar_mask_XY. The levels should be integers in amplitude (0,1,..., N).
             If it is not like this, discretize generates N levels.
             Usually masks are 0-1. Then normalize generates levels 0-N.
 
-            Parameters:
+            Args:
                 mask (scalar_mask_XY): 0-N discrete scalar mask.
                 states (np.array or Jones_matrix): Jones matrices to assign to each level
                 discretize (bool): If True, a continuous mask is converted to N levels.
@@ -286,19 +341,20 @@ class Vector_mask_XY(Vector_field_XY):
         mask_new.u = np.real(mask_new.u)
         mask_new.u = mask_new.u.astype(int)
 
-        for i, state in enumerate(states):
+        for i, pol_state in enumerate(states):
             i_level = (mask_new.u == i)
 
-            self.M00[i_level] = state.M[0, 0, 0]
-            self.M01[i_level] = state.M[0, 1, 0]
-            self.M11[i_level] = state.M[1, 1, 0]
-            self.M10[i_level] = state.M[1, 0, 0]
+            self.M00[i_level] = pol_state.M[0, 0, 0]
+            self.M01[i_level] = pol_state.M[0, 1, 0]
+            self.M11[i_level] = pol_state.M[1, 1, 0]
+            self.M10[i_level] = pol_state.M[1, 0, 0]
 
-    def from_py_pol(self, polarizer):
+
+    def from_py_pol(self, polarizer: Jones_matrix):
         """Generates a constant polarization mask from py_pol Jones_matrix.
         This is the most general function to obtain a polarizer.
 
-        Parameters:
+        Args:
             polarizer (2x2 numpy.matrix): Jones_matrix
         """
 
@@ -309,50 +365,59 @@ class Vector_mask_XY(Vector_field_XY):
 
         uno = np.ones_like(self.X, dtype=complex)
         M = np.asarray(M)
-
+        
         self.M00 = uno * M[0, 0]
         self.M01 = uno * M[0, 1]
         self.M10 = uno * M[1, 0]
         self.M11 = uno * M[1, 1]
 
-    def polarizer_linear(self, azimuth=0 * degrees):
+
+    def vacuum(self):
+        """No polarizing structure.
+
+        Args:
+        """
+        PL = Jones_matrix('vacuum')
+        PL.vacuum()
+        self.from_py_pol(PL)
+
+
+    def polarizer_linear(self, azimuth: float=0*degrees):
         """Generates an XY linear polarizer.
 
-        Parameters:
+        Args:
             angle (float): linear polarizer angle
         """
         PL = Jones_matrix('m0')
         PL.diattenuator_perfect(azimuth=azimuth)
         self.from_py_pol(PL)
 
-    def quarter_waveplate(self, azimuth=0 * degrees):
+
+    def quarter_waveplate(self, azimuth: float=0*degrees):
         """Generates an XY quarter wave plate.
 
-        Parameters:
+        Args:
             azimuth (float): polarizer angle
         """
         PL = Jones_matrix('m0')
         PL.quarter_waveplate(azimuth=azimuth)
         self.from_py_pol(PL)
 
-    def half_waveplate(self, azimuth=0 * degrees):
+
+    def half_waveplate(self, azimuth:float=0*degrees):
         """Generates an XY half wave plate.
 
-        Parameters:
+        Args:
             azimuth (float): polarizer angle
         """
         PL = Jones_matrix('m0')
         PL.half_waveplate(azimuth=azimuth)
         self.from_py_pol(PL)
 
-    def polarizer_retarder(self,
-                           R=0 * degrees,
-                           p1=1,
-                           p2=1,
-                           azimuth=0 * degrees):
+    def polarizer_retarder(self, R: float=0*degrees, p1: float=1, p2: float=1, azimuth: float=0*degrees):
         """Generates an XY retarder.
 
-        Parameters:
+        Args:
             R (float): retardance between Ex and Ey components.
             p1 (float): transmittance of fast axis.
             p2 (float): transmittance of slow axis.
@@ -362,59 +427,177 @@ class Vector_mask_XY(Vector_field_XY):
         PL.diattenuator_retarder_linear(R=R, p1=p1, p2=p2, azimuth=azimuth)
         self.from_py_pol(PL)
 
-    def to_py_pol(self):
-        """Pass mask to py_pol.jones_matrix
 
-        Returns:
-            py_pol.jones_matrix
+    def radial_polarizer(self, r0: tuple[float, float]=(0.,0.)):
+        """Radial polarizer.
 
+        Args:
+            r0 (tuple[float, float]): position of center
+         """
+
+        x0, y0 = r0
+
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
+
+        
+        self.M00 = np.cos(THETA)**2
+        self.M01 = np.cos(THETA)*np.sin(THETA)
+        self.M10 = np.cos(THETA)*np.sin(THETA)
+        self.M11 = np.sin(THETA)**2
+
+
+    def azimuthal_polarizer(self, r0: tuple[float, float]=(0.,0.)):
+        """Generates an azimuthal-polarizer
+
+        Args:
+            r0 (tuple[float, float]): position of center
         """
 
-        m0 = Jones_matrix(name="from Diffractio")
-        m0.from_components((self.M00, self.M01, self.M10, self.M11))
-        m0.shape = self.M00.shape
+        x0, y0 = r0
 
-        return m0
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
 
-    def draw(self, kind='amplitudes', range_scale='um'):
+        
+        self.M00 = np.sin(THETA)**2
+        self.M01 = -np.cos(THETA)*np.sin(THETA)
+        self.M10 = -np.cos(THETA)*np.sin(THETA)
+        self.M11 = np.cos(THETA)**2
+
+
+
+    def RCP(self):
+        """Right circular polarizer
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = 0.5j*ones
+        self.M10 = -0.5j*ones
+        self.M11 = 0.5j*ones
+
+
+    def LCP(self):
+        """Left circular polarizer.
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = -0.5j*ones
+        self.M10 = 0.5j*ones
+        self.M11 = 0.5j*ones
+
+
+
+    def RCP2LCP(self):
+        """Rght circular polarizer to Left circular polarizer
+        """
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = -0.5j*ones
+        self.M10 = -0.5j*ones
+        self.M11 = -0.5j*ones
+
+
+    def LCP2RCP(self):
+        """Left circular polarizer to Right circular polarizer
+        """
+
+
+        ones = np.ones_like(self.X)
+
+        self.M00 = 0.5*ones
+        self.M01 = 0.5j*ones
+        self.M10 = 0.5j*ones
+        self.M11 = -0.5j*ones
+
+
+    def q_plate(self, r0: tuple[float, float],  q: float, phi: float = np.pi, theta = 0*degrees):
+        """Generates a q_plate. 
+
+        Args:
+            r0 (tuple[float, float]): position of 0.
+            q (float): _description_
+            phi (float, optional): _description_. Defaults to np.pi.
+            theta (_type_, optional): angle of the q_plate. Defaults to 0*degrees.
+
+
+        Reference:
+            J.A. Davis et al. "Analysis of a segmented q-plate tunable retarder for the generation of first-order vector beams" Applied Optics Vol. 54, No. 32 p. 9583 (2015) http://dx.doi.org/10.1364/AO.54.009583
+        """
+
+
+        x0, y0 = r0
+
+        R = np.sqrt((self.X-x0)**2 + (self.Y-y0)**2)
+        THETA = np.arctan2((self.Y-y0),(self.X-x0))
+
+        self.M00 = np.cos(phi/2)-1j*np.sin(phi/2)*np.cos(2*q*(THETA-theta))
+        self.M01 = -1j*np.sin(phi/2)*np.sin(2*q*(THETA-theta))
+        self.M10 = -1j*np.sin(phi/2)*np.sin(2*q*(THETA-theta))
+        self.M11 = np.cos(phi/2)+1j*np.sin(phi/2)*np.cos(2*q*(THETA-theta))
+
+
+
+    def SLM(self, mask: Scalar_mask_XY, states_jones: Jones_matrix) -> None:
+        """
+        Mask for an Spatial Light Modulator (SLM). 
+        
+        Each pixel of the mask is converted to a Jones_matrix, according to its value
+
+        Args:
+            mask (Scalar_mask_XY): (0-1) Scalar_mask_XY to send to the SLM. It is a 2D array with values between 0 and 1. The function discretizes the values in the number of levels equal to the lenght of states_jones.
+            states_jones (Jones_matrix): Jones matrix calibration of the SLM. It is a LUT with the Jones matrices of the SLM for each level of the mask.
+
+        Returns:
+                Vector_mask_XY: Vector simulation of the Spatial Light Modulator.
+ 
+        """
+        
+        mask_level = np.int_(mask.u*(len(states_jones)-1))
+
+        for i, matrix in enumerate(states_jones):
+            index = np.where(mask_level == i)
+            self.M00[index] = matrix.M[0,0]
+            self.M01[index] = matrix.M[0,1]
+            self.M10[index] = matrix.M[1,0]
+            self.M11[index] = matrix.M[1,1]
+            
+
+    def draw(self, kind: Draw_Options ='amplitudes', range_scale: str='um', cmap_max=1.):
         """Draws the mask. It must be different to sources.
 
-        Parameters:
+        Args:
             kind (str): 'amplitudes', 'phases', 'jones', 'jones_ap'.
 
             'jones' is for real and imaginary parts.
             'jones_ap' is for amplitud and phase.
         """
-        from matplotlib import rcParams
-        # def draw_masks(self, kind='fields'):
         xsize, ysize = rcParams['figure.figsize']
 
         extension = np.array([self.x[0], self.x[-1], self.y[0], self.y[-1]])
         if range_scale == 'mm':
             extension = extension / 1000.
 
-        a00, int00, phase00 = field_parameters(self.M00,
-                                               has_amplitude_sign=False)
+        a00, int00, phase00 = field_parameters(self.M00, has_amplitude_sign=False)
 
-        a01, int01, phase01 = field_parameters(self.M01,
-                                               has_amplitude_sign=False)
-        a10, int10, phase10 = field_parameters(self.M10,
-                                               has_amplitude_sign=False)
-        a11, int11, phase11 = field_parameters(self.M11,
-                                               has_amplitude_sign=False)
+        a01, int01, phase01 = field_parameters(self.M01, has_amplitude_sign=False)
+        a10, int10, phase10 = field_parameters(self.M10, has_amplitude_sign=False)
+        a11, int11, phase11 = field_parameters(self.M11, has_amplitude_sign=False)
 
-        a_max = np.abs((a00, a01, a10, a11)).max()
+        if cmap_max == 1.:
+            a_max = 1
+        else:
+            a_max = np.abs((a00, a01, a10, a11)).max()
 
         if kind in ('amplitudes', 'jones_ap'):
             plt.set_cmap(CONF_DRAWING['color_intensity'])
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
@@ -437,7 +620,8 @@ class Vector_mask_XY(Vector_field_XY):
             plt.suptitle("amplitudes", fontsize=15)
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
-            cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
+            if cmap_max == 1.:
+                cbar.set_ticks([0, 0.25, 0.5, 0.75, 1.0])
 
             if range_scale == 'um':
                 axs[1, 0].set_xlabel(r'x ($\mu$m)')
@@ -448,44 +632,30 @@ class Vector_mask_XY(Vector_field_XY):
 
         if kind in ('phases', 'jones_ap'):
             plt.set_cmap(CONF_DRAWING['color_phase'])
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
-            im1 = axs[0, 0].imshow(np.angle(self.M00) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.angle(self.M00)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.angle(self.M01) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.angle(self.M01)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.angle(self.M10) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.angle(self.M10)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.angle(self.M11) / degrees,
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.angle(self.M11)/degrees, extent=extension, origin='lower')
             im1.set_clim(-180, 180)
             axs[1, 1].set_title("J11")
 
             plt.suptitle("phases", fontsize=15)
             cax = plt.axes([.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
-            cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
+            if cmap_max == 1.:
+                cbar.set_ticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
 
             if range_scale == 'um':
                 axs[1, 0].set_xlabel(r'x ($\mu$m)')
@@ -497,84 +667,50 @@ class Vector_mask_XY(Vector_field_XY):
         if kind in ('jones'):
             plt.set_cmap(CONF_DRAWING['color_stokes'])
 
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
-            im1 = axs[0, 0].imshow(np.real(self.M00),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.real(self.M00), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.real(self.M01),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.real(self.M01), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.real(self.M10),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.real(self.M10), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.real(self.M11),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.real(self.M11), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
-
-            #intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
             plt.suptitle("$\Re$ (Jones)", fontsize=15)
             cax = plt.axes([0.89, 0.2, 0.03, 0.6])
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
-            fig, axs = plt.subplots(2,
-                                    2,
-                                    sharex='col',
-                                    sharey='row',
-                                    gridspec_kw={
-                                        'hspace': 0.25,
-                                        'wspace': 0.025
-                                    })
+            fig, axs = plt.subplots(2,  2,  sharex='col',  sharey='row',  gridspec_kw={'hspace': 0.25, 'wspace': 0.025  })
             fig.set_figwidth(xsize)
             fig.set_figheight(1.25 * ysize)
 
-            im1 = axs[0, 0].imshow(np.imag(self.M00),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 0].imshow(np.imag(self.M00), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 0].set_title("J00")
 
-            im1 = axs[0, 1].imshow(np.imag(self.M01),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[0, 1].imshow(np.imag(self.M01), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[0, 1].set_title("J01")
 
-            im1 = axs[1, 0].imshow(np.imag(self.M10),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 0].imshow(np.imag(self.M10), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 0].set_title("J10")
 
-            im1 = axs[1, 1].imshow(np.imag(self.M11),
-                                   extent=extension,
-                                   origin='lower')
+            im1 = axs[1, 1].imshow(np.imag(self.M11), extent=extension, origin='lower')
             im1.set_clim(-1, 1)
             axs[1, 1].set_title("J11")
-
-            #intensity_max = np.real(self.M00.max())
 
             plt.tight_layout()
             plt.suptitle("$\Im$ (Jones)", fontsize=15)
@@ -582,11 +718,10 @@ class Vector_mask_XY(Vector_field_XY):
             cbar = plt.colorbar(im1, cax=cax, shrink=0.66)
 
 
-
-def rotation_matrix_Jones(angle):
+def rotation_matrix_Jones(angle: float):
     """Creates an array of Jones 2x2 rotation matrices.
 
-    Parameters:
+    Args:
         angle (np.array): array of angle of rotation, in radians.
 
     Returns:

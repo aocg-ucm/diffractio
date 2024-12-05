@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 # -------------------------------------------------------------------------------
 # Name:        scalar_sources_X.py
@@ -9,7 +9,7 @@
 #
 # Created:     2019/01/30
 #
-# Licence:     GPL
+# Licence:     GPLv3
 # -------------------------------------------------------------------------------
 
 import datetime
@@ -19,7 +19,6 @@ import sys
 from diffractio import degrees, mm, no_date, np, um
 from diffractio.scalar_sources_X import Scalar_source_X
 from diffractio.utils_tests import comparison, save_figure_test
-from numpy import linspace
 
 # from functools import wraps
 
@@ -38,7 +37,7 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_sources_X(object):
+class Test_Scalar_sources_X():
     # def saving_data(f):
     #     @wraps(f)
     #     def wrapped(inst, *args, **kwargs):
@@ -58,11 +57,11 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-1000 * um, 1000 * um, 512)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-1000*um, 1000*um, 512)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.plane_wave(theta=1 * degrees, z0=0 * um)
+        u0.plane_wave(theta=1*degrees, z0=0*um)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
@@ -73,14 +72,14 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 2048)
-        wavelength = .5 * um
+        x0 = np.linspace(-500*um, 500*um, 2048)
+        wavelength = .5*um
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
         u0.gauss_beam(A=1,
-                      x0=0 * um,
-                      z0=-2000 * um,
-                      w0=25 * um,
-                      theta=0 * degrees)
+                      x0=0*um,
+                      z0=-2000*um,
+                      w0=25*um,
+                      theta=0*degrees)
 
         u0.draw(kind='field')
 
@@ -92,11 +91,11 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(A=1, x0=0 * um, z0=5 * mm)
+        u0.spherical_wave(A=1, x0=0*um, z0=5*mm)
         u0.pupil(x0=0, radius=200*um)
         u0.draw(kind='field')
 
@@ -108,11 +107,11 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
-        u0.spherical_wave(A=1, x0=0 * um, z0=-5 * mm)
+        u0.spherical_wave(A=1, x0=0*um, z0=-5*mm)
         u0.pupil(x0=0, radius=200*um)
         u0.draw(kind='field')
 
@@ -124,13 +123,13 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
         u0.plane_waves_several_inclined(A=1,
                                         num_beams=5,
-                                        max_angle=5 * degrees)
+                                        max_angle=5*degrees)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
@@ -144,17 +143,17 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
         u0.gauss_beams_several_parallel(A=1,
                                         num_beams=5,
-                                        w0=50 * um,
-                                        z0=0 * um,
-                                        x_central=0 * um,
-                                        x_range=750 * um,
-                                        theta=0 * degrees)
+                                        w0=50*um,
+                                        z0=0*um,
+                                        x_central=0*um,
+                                        x_range=750*um,
+                                        theta=0*degrees)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
@@ -165,16 +164,16 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        x0 = np.linspace(-500 * um, 500 * um, 1024)
-        wavelength = 0.6328 * um
+        x0 = np.linspace(-500*um, 500*um, 1024)
+        wavelength = 0.6328*um
 
         u0 = Scalar_source_X(x=x0, wavelength=wavelength)
         u0.gauss_beams_several_inclined(A=1,
                                         num_beams=5,
-                                        w0=250 * um,
-                                        x0=0 * um,
-                                        z0=0 * um,
-                                        max_angle=5 * degrees)
+                                        w0=250*um,
+                                        x0=0*um,
+                                        z0=0*um,
+                                        max_angle=5*degrees)
         u0.draw(kind='field')
 
         u0.save_data(filename=filename + '.npz')
@@ -185,23 +184,23 @@ class Test_Scalar_sources_X(object):
         func_name = sys._getframe().f_code.co_name
         filename = '{}{}'.format(newpath, func_name)
 
-        length = 2 * mm
-        x0 = linspace(-length / 2, length / 2, 1024)
-        wavelength0 = 0.6238 * um
+        length = 2*mm
+        x0 = np.linspace(-length/2, length/2, 1024)
+        wavelength0 = 0.6238*um
 
         u1 = Scalar_source_X(x=x0, wavelength=wavelength0)
         u2 = Scalar_source_X(x=x0, wavelength=wavelength0)
 
         u1.gauss_beam(A=1,
-                      x0=0 * um,
-                      z0=0 * um,
-                      w0=250 * um,
-                      theta=.25 * degrees)
+                      x0=0*um,
+                      z0=0*um,
+                      w0=250*um,
+                      theta=.25*degrees)
         u2.gauss_beam(A=1,
-                      x0=0 * um,
-                      z0=0 * um,
-                      w0=250 * um,
-                      theta=-.25 * degrees)
+                      x0=0*um,
+                      z0=0*um,
+                      w0=250*um,
+                      theta=-.25*degrees)
 
         u0 = u1 + u2
         u0.draw(kind='intensity')

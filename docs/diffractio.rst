@@ -116,6 +116,22 @@ diffractio.utils\_drawing module
    :undoc-members:
    :show-inheritance:
 
+diffractio.utils\_drawing3D module
+----------------------------------
+
+.. automodule:: diffractio.utils_drawing3D
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.utils\_dxf module
+----------------------------
+
+.. automodule:: diffractio.utils_dxf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 diffractio.utils\_math module
 -----------------------------
 
@@ -140,18 +156,18 @@ diffractio.utils\_optics module
    :undoc-members:
    :show-inheritance:
 
-diffractio.utils\_slicer\_deprecated module
--------------------------------------------
-
-.. automodule:: diffractio.utils_slicer_deprecated
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 diffractio.utils\_tests module
 ------------------------------
 
 .. automodule:: diffractio.utils_tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+diffractio.utils\_typing module
+-------------------------------
+
+.. automodule:: diffractio.utils_typing
    :members:
    :undoc-members:
    :show-inheritance:

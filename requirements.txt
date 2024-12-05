@@ -1,6 +1,6 @@
 traitlets
 nodejs
-numpy
+numpy>=1.20,<2
 scipy
 matplotlib
 py_pol
@@ -9,7 +9,7 @@ Pillow
 numexpr
 pandas
 ipywidgets
-ipympl
-psutil
-
+ipympl>=0.9.3
+ezdxf 
+pyvista
 # opencv-python

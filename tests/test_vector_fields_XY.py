@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import datetime
 import os
@@ -30,7 +30,7 @@ v_lineal = (1, 0, 0)
 v_circular = (1, 1j, 0) / np.sqrt(2)
 
 
-class Test_Vector_fields_XY(object):
+class Test_Vector_fields_XY():
 
     def test_save_load(self):
         # func_name = sys._getframe().f_code.co_name
@@ -46,27 +46,26 @@ class Test_Vector_fields_XY(object):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 250 * um
+        length = 250*um
         num_data = 256
-        wavelength = 0.6328 * um
+        wavelength = 0.6328*um
 
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
 
         mask = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        mask.fresnel_lens(r0=(0 * um, 0 * um),
-                          radius=(125 * um, 125 * um),
-                          focal=(2 * mm, 2 * mm),
+        mask.fresnel_lens(r0=(0*um, 0*um),
+                          radius=(125*um, 125*um),
+                          focal=(2*mm, 2*mm),
                           kind='amplitudes')
 
-        state=np.array([[1,0], [0,1j]])
-
+        pol_state = np.array([[1, 0], [0, 1j]])
 
         vc = Vector_mask_XY(x0, y0, wavelength)
-        vc.scalar_to_vector_mask(mask=mask, state=state)
+        vc.scalar_to_vector_mask(mask=mask, pol_state=pol_state)
 
         vp = Vector_mask_XY(x0, y0, wavelength)
-        vp.polarizer_linear(azimuth=0 * degrees)
+        vp.polarizer_linear(azimuth=0*degrees)
 
         EM = vp
         EM.draw(kind='intensities')
@@ -85,15 +84,15 @@ class Test_Vector_fields_XY(object):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 250 * um
+        length = 250*um
         num_data = 512
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 0.6328
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.azimuthal_wave(u=1,
-                          r0=(0 * um, 0 * um),
+                          r0=(0*um, 0*um),
                           radius=(length / 5, length / 5))
 
         EM.draw(kind='stokes')
@@ -112,14 +111,14 @@ class Test_Vector_fields_XY(object):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 250 * um
+        length = 250*um
         num_data = 256
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 2
 
         u0 = Scalar_source_XY(x0, y0, wavelength)
-        u0.gauss_beam(A=1, z0=0 * um, r0=(0, 0), w0=(25 * um, 25 * um))
+        u0.gauss_beam(A=1, z0=0*um, r0=(0*um, 0*um), w0=(25*um, 25*um))
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.constant_polarization(u0, v=[1, 1])
@@ -134,10 +133,10 @@ class Test_Vector_fields_XY(object):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}.npz'.format(newpath, func_name)
 
-        length = 500 * um
+        length = 500*um
         num_data = 16
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
         wavelength = 0.6328
 
         # con esto definimos el field E
@@ -150,12 +149,12 @@ class Test_Vector_fields_XY(object):
         save_figure_test(newpath, func_name, add_name='_1')
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        t1.circle(r0=(0 * um, 0 * um),
+        t1.circle(r0=(0*um, 0*um),
                   radius=(
-                      length / 2,
-                      length / 2,
-                  ),
-                  angle=0 * degrees)
+                      length/2,
+                      length/2,
+        ),
+            angle=0*degrees)
 
         EM.apply_mask(t1)
 
@@ -171,14 +170,14 @@ class Test_Vector_fields_XY(object):
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         num_data = 256
-        length = 150 * um
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        length = 150*um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.local_polarized_vector_wave_radial(u=1,
-                                              r0=(0 * um, 0 * um),
+                                              r0=(0*um, 0*um),
                                               m=1,
                                               fi0=0,
                                               radius=0.)
@@ -190,7 +189,7 @@ class Test_Vector_fields_XY(object):
         EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_2S')
 
-        EMz = EM.VRS(z=.5 * mm)
+        EMz = EM.VRS(z=.5*mm)
         EMz.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_3EH_p')
 
@@ -204,14 +203,14 @@ class Test_Vector_fields_XY(object):
         # filename = '{}{}.npz'.format(newpath, func_name)
 
         num_data = 256
-        length = 150 * um
-        x0 = np.linspace(-length / 2, length / 2, num_data)
-        y0 = np.linspace(-length / 2, length / 2, num_data)
-        wavelength = 2 * um
+        length = 150*um
+        x0 = np.linspace(-length/2, length/2, num_data)
+        y0 = np.linspace(-length/2, length/2, num_data)
+        wavelength = 2*um
 
         EM = Vector_source_XY(x0, y0, wavelength)
         EM.local_polarized_vector_wave_radial(u=1,
-                                              r0=(0 * um, 0 * um),
+                                              r0=(0*um, 0*um),
                                               m=1,
                                               fi0=0,
                                               radius=0.)
@@ -223,7 +222,7 @@ class Test_Vector_fields_XY(object):
         EM.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_2S')
 
-        EMz = EM.VRS(z=.5 * mm)
+        EMz = EM.VRS(z=.5*mm)
         EMz.draw(kind='intensities')
         save_figure_test(newpath, func_name, add_name='_3EH_p')
 

@@ -2,7 +2,7 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
 ===================================================================================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
    :numbered:
    :glob:
@@ -12,12 +12,15 @@ Welcome to Diffractio: Python diffraction and interference's  documentation!
    usage
    modules
    new
-   tutorials
-   examples
+   tutorials_scalar
+   tutorials_vector
+   examples_scalar
+   examples_vector
    functioning
    contributing
    authors
-   results
+   references
+   statistics
    history
    todo
 

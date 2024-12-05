@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 Test for scalar_sources_XYZ"""
 
@@ -27,27 +27,27 @@ if not os.path.exists(newpath):
     os.makedirs(newpath)
 
 
-class Test_Scalar_masks_XYZ(object):
+class Test_Scalar_masks_XYZ():
 
     def test_sphere(self):
         func_name = sys._getframe().f_code.co_name
         # filename = '{}{}'.format(newpath, func_name)
 
-        length = 100 * um
+        length = 100*um
         numdataX = 64
         numdataZ = 64
 
-        longitud = 50 * um
+        longitud = 50*um
 
-        x0 = np.linspace(-length / 2, length / 2, numdataX)
-        y0 = np.linspace(-length / 2, length / 2, numdataX)
+        x0 = np.linspace(-length/2, length/2, numdataX)
+        y0 = np.linspace(-length/2, length/2, numdataX)
         z0 = np.linspace(-longitud, longitud, numdataZ)
-        wavelength = 0.55 * um
+        wavelength = 0.55*um
 
         t1 = Scalar_mask_XY(x=x0, y=y0, wavelength=wavelength)
-        t1.circle(r0=(0 * um, 0 * um),
-                  radius=(20 * um, 20 * um),
-                  angle=0 * degrees)
+        t1.circle(r0=(0*um, 0*um),
+                  radius=(20*um, 20*um),
+                  angle=0*degrees)
 
         uxyz = Scalar_mask_XYZ(x=x0,
                                y=y0,
@@ -55,9 +55,9 @@ class Test_Scalar_masks_XYZ(object):
                                wavelength=wavelength,
                                n_background=1.,
                                info='')
-        uxyz.sphere(r0=(0 * um, 0 * um, 0 * um),
-                    radius=(10 * um, 30 * um, 50 * um),
+        uxyz.sphere(r0=(0*um, 0*um, 0*um),
+                    radius=(10*um, 30*um, 50*um),
                     refractive_index=2,
-                    angles=(0 * degrees, 0 * degrees, 45 * degrees))
+                    angles=(0*degrees, 0*degrees, 45*degrees))
         uxyz.incident_field(t1)
         assert True
